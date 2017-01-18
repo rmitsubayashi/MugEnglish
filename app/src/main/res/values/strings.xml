@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">MyEnglish</string>
+    <string name="searchField">検索</string>
+
+    <!--Theme Details Page-->
+    <string name="theme_details_lastPlayed">Last Played</string>
+    <string name="theme_details_bestScore">Best Score</string>
+    <string name="theme_details_playButton">GO</string>
+
+    <!--user interests list-->
+    <string name="user_interests_add">追加</string>
+    <string name="title_activity_fab">fab</string>
+</resources>

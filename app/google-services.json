@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "837341620782",
+    "firebase_url": "https://myenglish-2a63c.firebaseio.com",
+    "project_id": "myenglish-2a63c",
+    "storage_bucket": "myenglish-2a63c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:837341620782:android:2286a4d204921f93",
+        "android_client_info": {
+          "package_name": "com.example.ryomi.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "837341620782-70vskuckqf6k8k4nb6j5oms9gd4p243g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ryomi.myapplication",
+            "certificate_hash": "6A931C49D0E134C4A81DB0F07A0430C9F31A158D"
+          }
+        },
+        {
+          "client_id": "837341620782-cq5gqjef0jkhp8gt5t2kfoaifpj1iug5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrFGeCSvlhXVKP9nMGU-uyJBASuQoyQWU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "837341620782-cq5gqjef0jkhp8gt5t2kfoaifpj1iug5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

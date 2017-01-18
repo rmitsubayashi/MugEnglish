@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_theme_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ryomi.myenglish.gui.ThemeDetails">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/theme_details_outOfScreenLayout"
+        android:weightSum="1.1">
+        <!--info about the theme-->
+        <!--bottom padding on the linear layout necessary for the button's shadow-->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.6"
+            android:paddingBottom="5dp"
+            android:clipToPadding="false"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/darkWhite"
+                android:textSize="24sp"
+                android:id="@+id/theme_details_title"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/theme_grid_extraInfo"
+                android:text="@string/theme_details_lastPlayed"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/theme_grid_extraInfo"
+                android:layout_gravity="right"
+                android:id="@+id/theme_details_lastPlayed"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/theme_grid_extraInfo"
+                android:text="@string/theme_details_bestScore"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/theme_grid_extraInfo"
+                android:layout_gravity="right"
+                android:id="@+id/theme_details_bestScore"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/theme_details_star1"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/theme_details_star2"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/theme_details_star3"/>
+
+            </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:text="@string/theme_details_playButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:elevation="5dp"
+                android:id="@+id/theme_details_playButton"/>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:id="@+id/theme_details_mainImage"
+            android:layout_weight="0.5"
+            />
+
+    </LinearLayout>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/darkWhite"
+            android:entries="@array/test"
+            android:id="@+id/theme_details_selectInstanceSpinner"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/darkWhite"
+            android:id="@+id/theme_details_description"/>
+    </LinearLayout>
+</ScrollView>
