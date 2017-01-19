@@ -21,6 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Test extends AppCompatActivity {
     // Choose an arbitrary request code value
@@ -59,6 +62,7 @@ public class Test extends AppCompatActivity {
                     // not signed in
                     startActivityForResult(
                             AuthUI.getInstance().createSignInIntentBuilder()
+                                    .setProviders(getSelectedProviders())
                                     .setIsSmartLockEnabled(!BuildConfig.DEBUG)
                                     .build(),
                             RC_SIGN_IN);
@@ -143,5 +147,41 @@ public class Test extends AppCompatActivity {
             System.out.println("Result code: " + resultCode);
         }
     }
+
+    private List<AuthUI.IdpConfig> getSelectedProviders() {
+        List<AuthUI.IdpConfig> selectedProviders = new ArrayList<>();
+
+        selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
+
+        /*
+        selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
+        */
+        selectedProviders.add(
+                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                        .setPermissions(getFacebookPermissions())
+                        .build());
+
+        /*selectedProviders.add(
+                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
+                        .setPermissions(getGooglePermissions())
+                        .build());*/
+        return selectedProviders;
+    }
+
+    private List<String> getFacebookPermissions(){
+        List<String> result = new ArrayList<>();
+        result.add("public_profile");
+        result.add("user_likes");
+        result.add("user_hometown");
+        result.add("user_games_activity");
+        result.add("user_events");
+        result.add("user_education_history");
+        result.add("user_birthday");
+        result.add("user_location");
+        result.add("user_religion_politics");
+        result.add("user_tagged_places");
+        result.add("user_work_history");
+        return result;
+}
 
 }

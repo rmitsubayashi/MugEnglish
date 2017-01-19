@@ -14,7 +14,13 @@
         <activity android:name=".gui.Test">
 
         </activity>
-        <activity android:name=".gui.ThemeList"></activity>
+        <activity android:name=".gui.ThemeList" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".gui.SearchInterests"
             android:launchMode="singleTop">
@@ -28,11 +34,10 @@
         </activity>
         <activity android:name=".gui.ThemeDetails" />
         <activity android:name=".gui.UserProfile">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+        </activity>
+        <activity android:name=".gui.UserInterests">
+
         </activity>
     </application>
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.media.Image;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -49,8 +50,6 @@ public class ThemeDetails extends AppCompatActivity {
         ValueEventListener getThemeData = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Get Post object and use the values to update the UI
-                System.out.println(dataSnapshot);
                 ThemeData data = dataSnapshot.getValue(ThemeData.class);
                 ImageView imageView = (ImageView) ThemeDetails.this.findViewById(R.id.theme_details_mainImage);
                 int imageID = GUIUtils.stringToDrawableID(data.getImage(), ThemeDetails.this);
@@ -66,7 +65,11 @@ public class ThemeDetails extends AppCompatActivity {
                 bestScoreTextView.setText("10/10");
 
                 TextView descriptionTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_description);
-                descriptionTextView.setText(Html.fromHtml(data.getDescription()));
+                if (Build.VERSION.SDK_INT >= 24) {
+                    descriptionTextView.setText(Html.fromHtml(data.getDescription(), Html.FROM_HTML_MODE_COMPACT));
+                } else {
+                    descriptionTextView.setText((Html.fromHtml(data.getDescription())));
+                }
             }
 
             @Override

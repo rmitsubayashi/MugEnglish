@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">MyEnglish</string>
+
+    <string name="facebook_application_id" translatable="false">159539307868031</string>
+
     <string name="searchField">検索</string>
 
     <!--Theme Details Page-->
