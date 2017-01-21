@@ -41,10 +41,7 @@ public class SearchInterests extends AppCompatActivity {
 
         searcher = new EntitySearcher(
                 new WikiDataAPISearchConnector(
-                        WikiBaseEndpointConnector.JAPANESE),
-                new WikiDataAPIGetConnector(
-                        WikiBaseEndpointConnector.JAPANESE
-                )
+                        WikiBaseEndpointConnector.JAPANESE)
         );
 
         createGUI();
@@ -56,20 +53,17 @@ public class SearchInterests extends AppCompatActivity {
         //we have to instantiate this in the java file instead of the xml file
         //because we want this to be a header view of the listview
         //but we can't replicate that relation in the xml file.
-        SearchView searchView = new SearchView(this);
-        //basic formatting
-        //wrap_content makes sure the search icon starts in the middle of the page
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        searchView.setLayoutParams(params);
+        SearchView searchView = (SearchView)getLayoutInflater().inflate(R.layout.inflatable_search_interests_search_bar, null);
         //font
         int searchSrcTextId = getResources().getIdentifier("android:id/search_src_text", null, null);
         EditText searchEditText = (EditText) searchView.findViewById(searchSrcTextId);
         searchEditText.setTextColor(Color.parseColor("#737373"));
 
-        //this is default but just to mke sure
-        searchView.setIconified(true);
+        //make it so the user can search without having to tap the search box
+        searchView.setIconified(false);
+        searchView.setFocusable(true);
+        searchView.requestFocusFromTouch();
+
 
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
@@ -84,13 +78,9 @@ public class SearchInterests extends AppCompatActivity {
         int searchBarId = searchView.getContext().getResources().getIdentifier("android:id/search_bar", null, null);
         LinearLayout searchBar = (LinearLayout) searchView.findViewById(searchBarId);
         searchBar.setLayoutTransition(new LayoutTransition());
-
-        LayoutTransition transition = new LayoutTransition();
-        transition.setStartDelay(LayoutTransition.CHANGING, 1000);
-        searchView.setLayoutTransition(transition);
         //end transition
 
-        ListView list = (ListView) findViewById(R.id.testOutput);
+        ListView list = (ListView) findViewById(R.id.search_results_result_list);
         list.setAdapter(new SearchResultsAdapter(this));
 
         LinearLayout centerWrapper = new LinearLayout(this);
@@ -127,7 +117,7 @@ public class SearchInterests extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            ListView testOutput = (ListView) findViewById(R.id.testOutput);
+            ListView testOutput = (ListView) findViewById(R.id.search_results_result_list);
             try {
                 SearchConnection conn = new SearchConnection();
                 String[] queryList = {query, currentRowCt.toString()};

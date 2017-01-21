@@ -1,5 +1,6 @@
 package com.example.ryomi.myenglish.questiongenerator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -12,6 +13,7 @@ import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
+import com.example.ryomi.myenglish.questionmanager.QuestionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,7 +44,7 @@ public abstract class Theme {
 	protected final Set<String> userInterests = new HashSet<>();
 	protected int themeTopicCount;
 	protected EndpointConnector connector = null;
-
+	private Activity activity;
 	
 	
 	public Theme(EndpointConnector connector, ThemeData data){
@@ -54,8 +56,8 @@ public abstract class Theme {
 	//in the database. Then, fill the rest of the topics
 	//then instantiate the question manager and start*
 	//*we should ideally return the instance data and start the question manager in the activity..
-	public void initiateQuestions(Context context) {
-
+	public void initiateQuestions(Activity activity) {
+		this.activity = activity;
 		startFlow();
 	}
 
@@ -204,6 +206,12 @@ public abstract class Theme {
 				userID, questionIDs, System.currentTimeMillis());
 		DatabaseReference ref2 = db.getReference("themeInstances/"+userID+"/"+themeData.getId()+"/"+key);
 		ref2.setValue(data);
+
+		startInstance(data);
+	}
+
+	private void startInstance(ThemeInstanceData data){
+		QuestionManager manager = new QuestionManager(data, activity);
 	}
 		
 	

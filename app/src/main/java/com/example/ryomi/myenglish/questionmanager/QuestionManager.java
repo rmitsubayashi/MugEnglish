@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class QuestionManager implements Serializable{
 	private Boolean correct;
 	private String response;
 	//records how many times a user touches a vocabulary word
-	private Map<String, Integer> vocabularyTouchedCt;
+	private Map<String, Integer> vocabularyTouchedCt = new HashMap<>();
 	//end variables
 
 
@@ -53,7 +54,7 @@ public class QuestionManager implements Serializable{
 	public QuestionManager(ThemeInstanceData data, Activity startingActivity){
 		this.currentActivity = startingActivity;
 		this.instanceData = data;
-		//initializeQuestions();
+		initializeQuestions();
 	}
 
 	public void setActivity(Activity activity){
