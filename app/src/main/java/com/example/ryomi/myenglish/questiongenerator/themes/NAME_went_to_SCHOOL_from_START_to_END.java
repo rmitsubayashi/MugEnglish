@@ -10,6 +10,7 @@ import com.example.ryomi.myenglish.connectors.EndpointConnector;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.myenglish.questiongenerator.Question;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
@@ -38,7 +39,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	private final String startDatePH = "startDate";
 	private final String endDatePH = "endDate";
 	
-	private List<QueryResult> queryResults;
+	private List<QueryResult> queryResults = new ArrayList<>();
 	private class QueryResult {
 		private String educationInstitutionNameEN;
 		private String educationInstitutionNameForeign;
@@ -61,16 +62,12 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		}
 	}
 	
-	public NAME_went_to_SCHOOL_from_START_to_END(EndpointConnector connector){
-		super(connector);
-		super.themeID = ThemeMappings.NAME_went_to_SCHOOL_from_START_to_END;
-		super.name = "~から~まで";
-		super.description = "'go to' つまり「～に行く」を勉強しましょう！あなたの気になるあの人、どこの学校出身かな？";
+	public NAME_went_to_SCHOOL_from_START_to_END(EndpointConnector connector, ThemeData data){
+		super(connector, data);
 		super.themeTopicCount = 3;
-		super.wikiDataIDPH = this.personNamePH;
-		this.queryResults = new ArrayList<QueryResult>();
+		super.wikiDataIDPH = this.personNamePH;/*
 		super.backupIDsOfTopics.add("Q5284");//Bill Gates
-		super.backupIDsOfTopics.add("Q8027");//Elon Musk
+		super.backupIDsOfTopics.add("Q8027");//Elon Musk*/
 	}
 	
 	protected String getSPARQLQuery(){
@@ -157,12 +154,12 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		for (QueryResult qr : queryResults){
 			String statementEN = this.NAME_went_to_SCHOOL_from_START_to_END_EN_correct(qr);
 			Question q = new TrueFalseQuestion(statementEN, true);
-			super.questions.add(q);
+			//super.questions.add(q);
 			String statementForeign = this.formatSentenceForeign(qr);
 			List<String> allCorrectSentencesEN = this.allCorrectSentencesEN(qr);
 			List<String> puzzlePieces = this.puzzlePiecesEN(qr);
 			Question q2 = new SentencePuzzleQuestion(statementForeign, allCorrectSentencesEN, puzzlePieces);
-			super.questions.add(q2);
+			//super.questions.add(q2);
 			
 			
 		}

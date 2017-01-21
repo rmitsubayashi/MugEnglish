@@ -2,21 +2,31 @@ package com.example.ryomi.myenglish.db.datawrappers;
 
 import java.util.List;
 
-/**
- * Created by ryomi on 1/19/2017.
- */
-
-public class Question {
+public class QuestionData {
     private String id;
     private String themeId;
-    private List<String> topicIds;
+    private String topicId;
     private Integer questionType;
     private String question;
     private List<String> choices;
     private String answer;
     private List<String> vocabulary;
 
-    public Question(){}
+    public QuestionData(){}
+
+    public QuestionData(String id, String themeId,
+                        String topicId, Integer questionType,
+                        String question, List<String> choices,
+                        String answer, List<String> vocabulary) {
+        this.id = id;
+        this.themeId = themeId;
+        this.topicId = topicId;
+        this.questionType = questionType;
+        this.question = question;
+        this.choices = choices;
+        this.answer = answer;
+        this.vocabulary = vocabulary;
+    }
 
     public String getId() {
         return id;
@@ -34,12 +44,12 @@ public class Question {
         this.themeId = themeId;
     }
 
-    public List<String> getTopicIds() {
-        return topicIds;
+    public String getTopicId() {
+        return topicId;
     }
 
-    public void setTopicIds(List<String> topicIds) {
-        this.topicIds = topicIds;
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
     }
 
     public Integer getQuestionType() {

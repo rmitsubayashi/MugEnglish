@@ -1,4 +1,4 @@
-package com.example.ryomi.myenglish.gui;
+package com.example.ryomi.myenglish.gui.widgets;
 
 import android.content.Context;
 import android.widget.ImageView;

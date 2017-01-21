@@ -12,6 +12,7 @@ import com.example.ryomi.myenglish.connectors.EndpointConnector;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
 
@@ -26,7 +27,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	private final String schoolENPH = "schoolEN";
 	private final String sitelinksPH = "sitelinks";
 	
-	private List<QueryResult> queryResults;
+	private List<QueryResult> queryResults = new ArrayList<>();
 	private class QueryResult {
 		private String personEN;
 		private String personForeign;
@@ -49,17 +50,14 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 		}
 	}
 	
-	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnector connector){
-		super(connector);
-		super.themeID = ThemeMappings.NAME_went_to_SCHOOL_So_did_NAME2;
-		super.name = "so did";
-		super.description = "So did を勉強しよう！";
+	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnector connector, ThemeData data){
+		super(connector, data);
 		super.themeTopicCount = 3;
 		super.wikiDataIDPH = this.personPH;
-		queryResults = new ArrayList<QueryResult>();
+		/*
 		super.backupIDsOfTopics.add("Q281734");//Nagatomo
 		super.backupIDsOfTopics.add("Q37876");//Natalie Portman
-		super.backupIDsOfTopics.add("Q175535");//Matt Damon
+		super.backupIDsOfTopics.add("Q175535");//Matt Damon*/
 	}
 	
 	protected String getSPARQLQuery(){

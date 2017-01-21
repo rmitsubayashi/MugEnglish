@@ -10,8 +10,12 @@ import org.w3c.dom.NodeList;
 
 import com.example.ryomi.myenglish.connectors.EndpointConnector;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.myenglish.questiongenerator.QGUtils;
 import com.example.ryomi.myenglish.questiongenerator.Question;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
 import com.example.ryomi.myenglish.questiongenerator.questions.TrueFalseQuestion;
@@ -27,13 +31,16 @@ public class NAME_plays_SPORT extends Theme{
 	private List<QueryResult> queryResults;
 	
 	private class QueryResult {
+		private String personID;
 		private String personNameEN;
 		private String personNameForeign;
 		private String sportID;
 		private String sportNameForeign;
 		
-		private QueryResult(String personNameEN, String personNameForeign,
+		private QueryResult( String personID,
+				String personNameEN, String personNameForeign,
 				String sportID, String sportNameForeign){
+			this.personID = personID;
 			this.personNameEN = personNameEN;
 			this.personNameForeign = personNameForeign;
 			this.sportID = sportID;
@@ -43,20 +50,17 @@ public class NAME_plays_SPORT extends Theme{
 	
 	private IdentifyWhetherSportsUsePlayDoGo sportHelper;
 	
-	public NAME_plays_SPORT(EndpointConnector connector){
-		super(connector);
-		super.themeID = ThemeMappings.NAME_plays_SPORT;
-		super.name = "スポーツ";
-		super.description = "有名人の好きなスポーツを勉強しよう！";
+	public NAME_plays_SPORT(EndpointConnector connector, ThemeData data){
+		super(connector, data);
 		super.themeTopicCount = 5;
-		super.wikiDataIDPH = personNamePH;
 		sportHelper = new IdentifyWhetherSportsUsePlayDoGo();
 		queryResults = new ArrayList<QueryResult>();
+		/*
 		super.backupIDsOfTopics.add("Q10520");//Beckham
 		super.backupIDsOfTopics.add("Q486359");//Pacquiao
 		super.backupIDsOfTopics.add("Q41421");//Michael Jordan
 		super.backupIDsOfTopics.add("Q39562");//Michael Phelps
-		super.backupIDsOfTopics.add("Q5799");//Allyson Felix
+		super.backupIDsOfTopics.add("Q5799");//Allyson Felix*/
 	}
 	
 	protected String getSPARQLQuery(){
@@ -66,7 +70,7 @@ public class NAME_plays_SPORT extends Theme{
 				"		WHERE " +
 				"		{ " +
 				"		    ?" + personNamePH + " wdt:P31 wd:Q5 . " +
-				"			?" + personNamePH + " wdt:P641 ?" + sportIDPH + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res " +
+				"			?" + personNamePH + " wdt:P641 ?" + sportIDPH + " . " +
 				"		    FILTER NOT EXISTS { ?" + personNamePH + " wdt:P570 ?dateDeath } . " +//死んでいない（played ではなくてplays）
 				"		  	SERVICE wikibase:label { bd:serviceParam wikibase:language '" + 
 							WikiBaseEndpointConnector.ENGLISH + "' . " +
@@ -95,9 +99,7 @@ public class NAME_plays_SPORT extends Theme{
 			
 			Node head = results.item(0);
 			String id = SPARQLDocumentParserHelper.findValueByNodeName(head, sportIDPH);
-			// ~entity/id になってるから削る
-			int lastIndexID = id.lastIndexOf('/');
-			id = id.substring(lastIndexID+1);
+			id = QGUtils.stripWikidataID(id);
 			if (sportHelper.sportExists(id)){
 				this.addResultsToMainDocument(resultDOM);
 			}
@@ -116,15 +118,17 @@ public class NAME_plays_SPORT extends Theme{
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
+			String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, personNamePH);
+			personID = QGUtils.stripWikidataID(personID);
 			String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, personNameENPH);
 			String personNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, personNameForeignPH);
 			String sportID = SPARQLDocumentParserHelper.findValueByNodeName(head, sportIDPH);
 			// ~entity/id になってるから削る
-			int lastIndexID = sportID.lastIndexOf('/');
-			sportID = sportID.substring(lastIndexID+1);
+			sportID = QGUtils.stripWikidataID(sportID);
 			String sportNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, sportNameForeignPH);
 			
-			QueryResult qr = new QueryResult(personNameEN, personNameForeign,
+			QueryResult qr = new QueryResult(personID,
+					personNameEN, personNameForeign,
 					sportID, sportNameForeign);
 			
 			queryResults.add(qr);
@@ -133,11 +137,17 @@ public class NAME_plays_SPORT extends Theme{
 	}
 	
 	protected void createQuestionsFromResults(){
+		List<String> choices = new ArrayList<>();
+		choices.add("true");
+		choices.add("false");
 		for (QueryResult qr : queryResults){
 			try {
 				String trueFalseQuestion = this.NAME_plays_SPORT_EN_correct(qr);
-				Question q = new TrueFalseQuestion(trueFalseQuestion, true);
-				super.questions.add(q);
+				QuestionData data = new QuestionData("", super.themeData.getId(),
+						qr.personID, QuestionTypeMappings.TRUE_FALSE,
+						trueFalseQuestion, choices,
+						"true", new ArrayList<String>());
+				super.questions.add(data);
 			} catch (Exception e){
 				continue;
 			}
@@ -146,7 +156,7 @@ public class NAME_plays_SPORT extends Theme{
 	
 	private String NAME_plays_SPORT_EN_correct(QueryResult qr) throws Exception{
 		String verbObject = sportHelper.findVerbObject(qr.sportID, IdentifyWhetherSportsUsePlayDoGo.PRESENT3RD);
-		String sentence = qr.personNameEN + " " + verbObject + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+		String sentence = qr.personNameEN + " " + verbObject + ".";
 		return sentence;
 	}
 	

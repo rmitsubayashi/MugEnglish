@@ -5,11 +5,20 @@ import java.util.List;
 public class ThemeInstanceData {
     private String id;
     private String themeId;
-    private String userId;
+    private String userId; //can be blank
     private List<String> questionIds;
-    private String createdTimestamp;
+    private long createdTimestamp;
 
     public ThemeInstanceData(){}
+
+    public ThemeInstanceData(String id, String themeId,
+                     String userId, List<String> questionIds, long createdTimestamp) {
+        this.id = id;
+        this.themeId = themeId;
+        this.userId = userId;
+        this.questionIds = questionIds;
+        this.createdTimestamp = createdTimestamp;
+    }
 
     public String getThemeId() {
         return themeId;
@@ -35,11 +44,11 @@ public class ThemeInstanceData {
         this.questionIds = questionIds;
     }
 
-    public String getCreatedTimestamp() {
+    public long getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public void setCreatedTimestamp(String createdTimestamp) {
+    public void setCreatedTimestamp(long createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }
 

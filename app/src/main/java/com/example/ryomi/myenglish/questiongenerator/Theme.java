@@ -1,76 +1,149 @@
 package com.example.ryomi.myenglish.questiongenerator;
 
+import android.content.Context;
+import android.os.AsyncTask;
 
-//DOM
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.EndpointConnector;
+import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
+import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
-
+//this class (inherited classes) will create the questions for the theme
+//the first time around.
+//from the second time on, we can just read the questions in from the db
 public abstract class Theme {
-	public static int NEW_INSTANCE = -1;
-	protected String themeID;
-	protected String name;
-	protected String description;
+	protected ThemeData themeData;
 	//the user can create multiple instances of the same theme
-	protected int instanceID;
+	protected ThemeInstanceData themeInstanceData;
 	//so we can grab the wikidata IDs
 	protected String wikiDataIDPH;
-	protected List<Question> questions = new ArrayList<Question>();;
+	//where we will populate questions for this instance
+	protected List<QuestionData> questions = new ArrayList<>();
 	//これが出題される問題のトピック
 	protected Document documentOfTopics = null;
-	/*
-	 * トピック数が足りないときに付け足す用のバックアップ
-	 *IDを入れるかxmlファイルを入れるか悩む
-	 *xmlのほうが速いけどID入れるほうが最近のデータをクエリーできる。
-	 *今は適当に2，3個ハードコードする。
-	 *データベースが整ったら、トップ100ぐらい
-	 *( ?entity wikibase:sitelinks ?num で判断)
-	 * で事前に検索してデータベースに入れる。
-	 * クエリーによっては7~10秒かかる場合もあるから
-	 */
-	protected Set<String> backupIDsOfTopics = new HashSet<String>();;
+	protected final Set<String> userInterests = new HashSet<>();
 	protected int themeTopicCount;
 	protected EndpointConnector connector = null;
+
 	
 	
-	public Theme(EndpointConnector connector){
+	public Theme(EndpointConnector connector, ThemeData data){
+		this.themeData = data;
 		this.connector = connector;
-	};
-	
-	public String getThemeID(){
-		return this.themeID;
 	}
-	
-	public String getName(){
-		return this.name;
+
+	//check if a question for this theme with the matching topics already exists
+	//in the database. Then, fill the rest of the topics
+	//then instantiate the question manager and start*
+	//*we should ideally return the instance data and start the question manager in the activity..
+	public void initiateQuestions(Context context) {
+
+		startFlow();
 	}
-	
-	public String getDescription(){
-		return this.description;
+
+
+	//the next method is inside the previous method so we can make these
+	//asynchronous methods act synchronously
+	private void startFlow(){
+		populateUserInterests();
+		System.out.println("Called end of startFlow");
+		//populate user interests
+		//populate existing questions
+		//populateResults, processResultsIntoClassWrappers, createQuestionsFromResults
+		//save questions in db
+		//create instance
 	}
-	
-	public List<Question> getQuestions(){
-		return questions;
-	}
-	
-	public void createQuestions(int instanceID) throws Exception {
-		this.instanceID = instanceID;
-		
-		if (this.instanceID == NEW_INSTANCE){
-			createNewQuestions();
-		} else {
-			recoverOldQuestions(instanceID);
+
+	private  void populateUserInterests(){
+		if (FirebaseAuth.getInstance().getCurrentUser() != null){
+			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+			FirebaseDatabase db = FirebaseDatabase.getInstance();
+			DatabaseReference ref = db.getReference("userInterests/"+userID);
+			ref.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot dataSnapshot) {
+					for (DataSnapshot child : dataSnapshot.getChildren()){
+						WikiDataEntryData data = child.getValue(WikiDataEntryData.class);
+						userInterests.add(data.getWikiDataID());
+					}
+					System.out.println("Finish populating user interests");
+					populateExistingQuestions();
+				}
+
+				@Override
+				public void onCancelled(DatabaseError databaseError) {
+
+				}
+			});
 		}
 	}
+
+	//the db is organized like
+	//questions
+	// +--theme id
+	//     +--wikidata id
+	//        +--question1
+	//        +--question2
+	//        +-- ...
+	private void populateExistingQuestions(){
+		FirebaseDatabase db = FirebaseDatabase.getInstance();
+		DatabaseReference ref = db.getReference("questions/"+themeData.getId());
+		ref.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				//remove user interest if we can pre-populate the question
+				List<String> toRemove = new ArrayList<String>();
+				for (String interestID : userInterests){
+					if (dataSnapshot.hasChild(interestID)){
+						DataSnapshot questionSet = dataSnapshot.child(interestID);
+						for (DataSnapshot snapshot : questionSet.getChildren()){
+							QuestionData data = snapshot.getValue(QuestionData.class);
+							questions.add(data);
+						}
+						//one less topic we have to search for
+						themeTopicCount--;
+						toRemove.add(interestID);
+						if (themeTopicCount == 0){
+							break;
+						}
+					}
+				}
+				//remove matched user interests
+				for (String removeID : toRemove){
+					userInterests.remove(removeID);
+				}
+
+				//we have to do this in a separate thread because the
+				//onDataChange method runs on the UI thread
+				CreateQuestionHelper helper = new CreateQuestionHelper();
+				helper.execute();
+			}
+
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+
+			}
+		});
+	}
+
 	
 	//検索するのは特定のentityひとつに対するクエリー
 	//UNIONしてまとめて検索してもいいけど時間が異常にかかる
@@ -81,6 +154,57 @@ public abstract class Theme {
 	protected abstract void processResultsIntoClassWrappers();
 	//問題を作ってリストに保存する
 	protected abstract void createQuestionsFromResults();
+
+	//called after QuestionData is populated
+	//where the question ID is set as an empty string
+	private void saveQuestionsInDB(){
+		FirebaseDatabase db = FirebaseDatabase.getInstance();
+		for (QuestionData data : questions){
+			//if the question already has an ID,
+			//that means it is a question we read from
+			//the database and not a question we just generated
+			if (!data.getId().equals("")){
+				continue;
+			}
+			String topicID = data.getTopicId();
+			DatabaseReference ref = db.getReference("questions/"+themeData.getId()+"/"+topicID);
+			String key = ref.push().getKey();
+			//set ID in data
+			data.setId(key);
+			//save in db
+			DatabaseReference ref2 = db.getReference(
+					"questions/"+themeData.getId()+"/"+topicID+"/"+key
+			);
+			ref2.setValue(data);
+		}
+
+		System.out.println("Finished saving into db");
+
+		saveInstance();
+
+	}
+
+	private void saveInstance(){
+		String userID;
+		if (FirebaseAuth.getInstance().getCurrentUser() == null){
+			userID = "temp";
+		} else {
+			userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+		}
+		FirebaseDatabase db = FirebaseDatabase.getInstance();
+		DatabaseReference ref = db.getReference("themeInstances/"+userID+"/"+themeData.getId());
+		String key = ref.push().getKey();
+
+		//create instance
+		List<String> questionIDs = new ArrayList<>();
+		for (QuestionData q : questions){
+			questionIDs.add(q.getId());
+		}
+		ThemeInstanceData data = new ThemeInstanceData(key, themeData.getId(),
+				userID, questionIDs, System.currentTimeMillis());
+		DatabaseReference ref2 = db.getReference("themeInstances/"+userID+"/"+themeData.getId()+"/"+key);
+		ref2.setValue(data);
+	}
 		
 	
 	protected int countResults(Document doc){
@@ -112,129 +236,30 @@ public abstract class Theme {
 		}
 		
 	}
-	
+
 	//ひとつのクエリーで複数のエンティティを入れる必要があるかも？？
 	protected String addEntityToQuery(String entity){
 		String query = this.getSPARQLQuery();
 		return String.format(query, entity);
 	}
-	
-	protected String addEntittToQuery(List<String> entityList){
-		String query = this.getSPARQLQuery();
-		return String.format(query, entityList);
-	}
-	
-	private void populateTopicsWithUserInterests() throws Exception{
-		Set<String> userInterests = null;
-		this.populateResults(userInterests);
-	}
-	
-	private void populateRemainingTopicsWithBackupTopics() throws Exception{
-		if (documentOfTopics == null || this.countResults(documentOfTopics) < themeTopicCount){
-			this.populateResults(backupIDsOfTopics);
-		}
-	}
-	
-	private void createNewQuestions() throws Exception{
-		//add instance into database
-		/*PreparedStatement ps = dbConnector.CONN.prepareStatement("SELECT MAX(instanceNumber) AS maxInstanceNumber FROM `questionInstances` WHERE " +
-				"userID = ? AND themeID = ?");
-		ps.setInt(1, user.getUserID());
-		ps.setInt(2, this.themeID);
-		ResultSet rs = ps.executeQuery();
-		int maxInstanceNumber;
-		if (rs.next()){
-			maxInstanceNumber = rs.getInt("maxInstanceNumber");
-		} else {
-			maxInstanceNumber = 0;
-		}
-		
-		int instanceNumber = maxInstanceNumber + 1;
-		//create new question instance
-		createNewInstance(instanceNumber, user);
-		
-		
-		Statement st3 = dbConnector.CONN.createStatement();
-		//grabbing last insert in createNewInstance()
-		ResultSet rs3 = st3.executeQuery("SELECT LAST_INSERT_ID() AS id");
-		int instanceID;
-		if (rs3.next()){
-			instanceID = rs3.getInt("id");
-		} else {
-			System.out.println("Could not create/retrieve question instance");
-			return;
-		}
-		
-		this.populateTopicsWithUserInterests(user);
-		//ユーザーの興味だけでは質問を作れなかった場合
-		this.populateRemainingTopicsWithBackupTopics();
-		
-		this.saveWikiDataIDsOfInstance(instanceID);
-		
-		this.processResultsIntoClassWrappers();
-		
-		this.createQuestionsFromResults();
-		*/
-	}
-	
-	private void createNewInstance(int instanceNumber) throws Exception{
-		/*Statement st = dbConnector.CONN.createStatement();
-		ResultSet rs = st.executeQuery("SELECT currentVersionNumber FROM `themes` WHERE themeID = " + this.themeID + " LIMIT 1");
-		String themeVersionNumber = "";
-		if (rs.next()){
-			themeVersionNumber = rs.getString("currentVersionNumber");
-		}
-		
-		PreparedStatement ps2 = dbConnector.CONN.prepareStatement("INSERT INTO `questioninstances` (themeID, themeVersionNumber, instanceNumber, userID)"
-				+ " VALUES (?,?,?,?)");
-		ps2.setInt(1, this.themeID);
-		ps2.setString(2, themeVersionNumber);
-		ps2.setInt(3, instanceNumber);
-		ps2.setInt(4, user.getUserID());
-		
-		ps2.executeQuery();*/
-	}
-	
-	private void recoverOldQuestions(int instanceID) throws Exception{
-		/*PreparedStatement ps = dbConnector.CONN.prepareStatement("SELECT wikiDataID FROM `questioninstancewikidataids` WHERE instanceID = ? " );
-		ps.setInt(1, instanceID);
-		Set<String> instanceWikiDataIDs = new HashSet<String>();
-		ResultSet rs = ps.executeQuery();
-		while(rs.next()){
-			String id = rs.getString("wikiDataID");
-			instanceWikiDataIDs.add(id);
-		}
-		
-		this.populateResults(instanceWikiDataIDs);
-		//should not have to call this
-		//but we might if data on the WikiData database is changed
-		this.populateRemainingTopicsWithBackupTopics();
-		
-		this.processResultsIntoClassWrappers();
-		
-		this.createQuestionsFromResults();*/
-	}
-	
-	private void saveWikiDataIDsOfInstance(int instanceID) throws Exception{
-		//1. loop through document and get all unique wikiData IDs
-		//2. save them in a database along with the instance ID
-		Set<String> wikiDataIDs = new HashSet<String>();
-		NodeList allResults = documentOfTopics.getElementsByTagName("result");
-		int resultLength = allResults.getLength();
-		for (int i=0; i<resultLength; i++){
-			Node head = allResults.item(i);
-			String wikiDataID = SPARQLDocumentParserHelper.findValueByNodeName(head, wikiDataIDPH);
-			int lastIndexID = wikiDataID.lastIndexOf('/');
-			wikiDataID = wikiDataID.substring(lastIndexID+1);
-			wikiDataIDs.add(wikiDataID);
-			
-		}
-		
-		for (String id : wikiDataIDs){
-			/*PreparedStatement ps = dbConnector.CONN.prepareStatement("INSERT INTO `questioninstancewikidataids` (instanceID, wikiDataID) VALUES (?,?)");
-			ps.setInt(1, instanceID);
-			ps.setString(2, id);
-			ps.executeQuery();*/
+
+	//more of the workflow
+	private class CreateQuestionHelper extends AsyncTask<Void, Integer, Boolean>{
+		@Override
+		protected Boolean doInBackground(Void... params){
+			try {
+				//these are all synchronous
+				populateResults(userInterests);
+				processResultsIntoClassWrappers();
+				createQuestionsFromResults();
+				//from here the methods are not synchronous
+				//more methods embedded in this
+				saveQuestionsInDB();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			return false;
 		}
 	}
 	

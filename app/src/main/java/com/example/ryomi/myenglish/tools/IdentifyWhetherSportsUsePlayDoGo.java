@@ -62,34 +62,12 @@ public class IdentifyWhetherSportsUsePlayDoGo {
 	}
 	
 	public boolean sportExists(String wikiDataID) throws Exception{
-		/*
-		PreparedStatement ps = dbConnector.CONN.prepareStatement(
-				"Select `wikiDataID` from `sportverbmapping` WHERE `wikiDataID` = ? LIMIT 1");
-		ps.setString(1, wikiDataID);
-		ResultSet rs = ps.executeQuery();
-		return rs.next();*/
+
 		return true;
 	}
 	
 	public String findVerbObject(String wikiDataID, String tense) throws Exception{
-		/*PreparedStatement ps = dbConnector.CONN.prepareStatement(
-				"SELECT name, verb from `sportverbmapping` WHERE `wikiDataID` = ? LIMIT 1");
-		ps.setString(1, wikiDataID);
-		ResultSet rs = ps.executeQuery();
-		if (!rs.next())
-		{
-			System.out.println("Couldn't find sport : Class IdentifyWhetherSportsUsePlayDoGo");
-			return this.caseOfSportsVerb("play", tense) + " a sport";
-		}
-		String obj = rs.getString("name");
-		String verb = rs.getString("verb");
-		//do this manually
-		String inflectedVerb = this.caseOfSportsVerb(verb, tense);
-		
-		String returnString = inflectedVerb;
-		if (!obj.equals(""))
-			returnString += " " + obj;
-		return returnString;*/
+
 		return "";
 	}
 	

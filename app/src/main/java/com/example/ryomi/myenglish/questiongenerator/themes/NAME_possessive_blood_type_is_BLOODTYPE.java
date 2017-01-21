@@ -12,6 +12,7 @@ import com.example.ryomi.myenglish.connectors.EndpointConnector;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.myenglish.questiongenerator.Question;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
@@ -25,7 +26,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	private final String personNameENPH = "personNameEN";
 	private final String bloodTypePH = "bloodType";
 	
-	private List<QueryResult> queryResults;
+	private List<QueryResult> queryResults = new ArrayList<QueryResult>();
 	private class QueryResult {
 		private String personNameEN;
 		private String personNameForeign;
@@ -42,17 +43,14 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		}
 	}
 	
-	public NAME_possessive_blood_type_is_BLOODTYPE(EndpointConnector connector){
-		super(connector);
-		super.themeID = ThemeMappings.NAME_possessive_blood_type_is_BLOODTYPE;
-		super.name = "~の";
-		super.description = "\"~'s\" つまり「~の」を勉強しましょう！あの有名人の血液型は？？";
+	public NAME_possessive_blood_type_is_BLOODTYPE(EndpointConnector connector, ThemeData data){
+		super(connector, data);
 		super.themeTopicCount = 3;
 		super.wikiDataIDPH = this.personNamePH;
-		queryResults = new ArrayList<QueryResult>();
+		/*
 		super.backupIDsOfTopics.add("Q211553"); //Ken Watanabe
 		super.backupIDsOfTopics.add("Q22686"); //Donald Trump
-		super.backupIDsOfTopics.add("Q9696");//John F Kennedy
+		super.backupIDsOfTopics.add("Q9696");//John F Kennedy*/
 		
 	}
 	
@@ -111,14 +109,14 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 			List<String> puzzlePiecesEN = this.puzzlePiecesEN(qr);
 			List<String> allCorrectSentencesEN = this.allCorrectSentencesEN(qr);
 			Question q = new SentencePuzzleQuestion(statementForeign, allCorrectSentencesEN, puzzlePiecesEN);
-			super.questions.add(q);
+			//super.questions.add(q);
 			
 			String multipleChoiceQuestionEN = this.multipleChoiceQuestionEN(qr);
 			String multipleChoiceAnswerEN = this.multipleChoiceAnswerEN();
 			List<String> multipleChoiceWrongAnswersEN = this.multipleChoiceWrongAnswersEN();
 			Question q2 = new MultipleChoiceQuestion(multipleChoiceQuestionEN,
 					multipleChoiceAnswerEN, multipleChoiceWrongAnswersEN);
-			super.questions.add(q2);
+			//super.questions.add(q2);
 		}
 		
 	}

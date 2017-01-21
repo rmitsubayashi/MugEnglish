@@ -14,6 +14,7 @@ import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.AchievementStars;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.gui.widgets.DynamicPaddedCell;
+import com.example.ryomi.myenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.myenglish.gui.widgets.ThemeCellImageView;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
