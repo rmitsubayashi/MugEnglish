@@ -25,16 +25,20 @@ import java.util.Map;
 //manages the execution of questions.
 //this means that any new instances will be generated before calling this class
 
-//this class will be passed to each question activity
-
-//parcelable is faster but more boilerplate code
-//and since the difference is ~10ms I don't care about speed
-public class QuestionManager implements Serializable{
-	private Context currentActivity;
-	ThemeInstanceData instanceData;
-	private final List<QuestionData> questionData = new ArrayList<>();
+//this class should be passed to each question activity
+//but serializing seemed like a pain
+//so making it a singleton.
+//the only real demerit I see is harder to unit test?
+public class QuestionManager{
+	private static QuestionManager singleton;
+	private Boolean started = false;
+	private Context currentActivity = null;
+	private ThemeInstanceData instanceData = null;
+	//we will fetch the question data on initialization
+	private List<QuestionData> questionData = new ArrayList<>();
 	//-1 so first call of nextQuestion() would be 0
 	private int questionMkr = -1;
+	//record user actions
 	List<QuestionRecord> questionRecord = new ArrayList<>();
 	//variables to save individual question records before adding them into the array
 	private long questionStartTime;
@@ -51,10 +55,22 @@ public class QuestionManager implements Serializable{
 		//should not call without inserting instance information
 	}
 
-	public QuestionManager(ThemeInstanceData data, Activity startingActivity){
-		this.currentActivity = startingActivity;
-		this.instanceData = data;
-		initializeQuestions();
+	public static QuestionManager getInstance(){
+		if (singleton == null){
+			singleton = new QuestionManager();
+		}
+		return singleton;
+	}
+
+	public void startQuestions(ThemeInstanceData data, Activity startingActivity){
+		if(!started) {
+			started = true;
+			this.currentActivity = startingActivity;
+			this.instanceData = data;
+			initializeQuestions();
+		} else {
+			System.out.println("Already started an instance");
+		}
 	}
 
 	public void setActivity(Activity activity){
@@ -66,22 +82,24 @@ public class QuestionManager implements Serializable{
 	}
 
 	public void nextQuestion(){
+		if(!started)return;
 		clearRecord();
 		questionMkr ++;
 
 		if (questionMkr == questionData.size()){
 			System.out.println("Finished all questions");
+			resetManager();
 			return;
 		}
 
-		QuestionData data = questionData.get(questionMkr);
 
 		//start activity
-		Intent intent = findQuestionIntent(data.getQuestionType());
+		Intent intent = findQuestionIntent(getQuestionData().getQuestionType());
 		//close previous activity
 		((Activity)currentActivity).finish();
 		currentActivity.startActivity(intent);
-
+		//note that we need to save the next intent into the question manager
+		//once we've started it from teh activity itself?
 		questionStartTime = System.currentTimeMillis();
 
 	}
@@ -120,17 +138,18 @@ public class QuestionManager implements Serializable{
 	private void initializeQuestions(){
 		final List<String> questionIDs = instanceData.getQuestionIds();
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		DatabaseReference ref = db.getReference("questions/"+instanceData.getThemeId());
+		DatabaseReference ref = db.getReference("questions");
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
-				int questionCt = questionIDs.size();
-				for (int i=0; i<questionCt; i++){
+
+				for (String questionID : questionIDs){
 					//find question
-					QuestionData data = dataSnapshot.child(questionIDs.get(i)).getValue(QuestionData.class);
+					QuestionData data = dataSnapshot.child(questionID).getValue(QuestionData.class);
 					questionData.add(data);
 				}
 
+				//do this only after every question is populated
 				nextQuestion();
 			}
 
@@ -147,9 +166,17 @@ public class QuestionManager implements Serializable{
 		//everything else right now are just strings that can be overwritten
 	}
 
+	private void resetManager(){
+		started = false;
+		questionMkr = -1;
+		currentActivity = null;
+		instanceData = null;
+		questionData.clear();
+		clearRecord();
+	}
+
 	private Intent findQuestionIntent(int questionType){
 		Intent intent = new Intent(currentActivity, Question_MultipleChoice.class);
-		intent.putExtra("manager",this);
 		return intent;
 	}
 

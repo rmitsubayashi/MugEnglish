@@ -34,6 +34,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/readInterest"
             android:text="Read Interest"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/goToTheme"
+            android:text="Theme"/>
 
     </LinearLayout>
 

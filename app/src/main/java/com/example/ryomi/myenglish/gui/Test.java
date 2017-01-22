@@ -97,6 +97,15 @@ public class Test extends AppCompatActivity {
             }
         });
 
+        Button goToInterest = (Button) findViewById(R.id.goToTheme);
+        goToInterest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Test.this, ThemeList.class);
+                startActivity(intent);
+            }
+        });
+
 
         TextView tv = (TextView) findViewById(R.id.test_output);
         Async async = new Async();

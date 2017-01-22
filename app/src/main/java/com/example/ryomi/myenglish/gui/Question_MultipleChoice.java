@@ -18,15 +18,12 @@ public class Question_MultipleChoice extends AppCompatActivity {
         setContentView(R.layout.activity_question__multiple_choice);
 
         Intent intent = getIntent();
-        if (intent.hasExtra("manager")){
-            this.manager = (QuestionManager)intent.getSerializableExtra("manager");
-            manager.setActivity(this);
 
-            populateQuestion();
-        }
+        populateQuestion();
     }
 
     private void populateQuestion(){
+        QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();
         TextView tv = (TextView) findViewById(R.id.testQuestion);
         tv.setText(data.getAnswer());

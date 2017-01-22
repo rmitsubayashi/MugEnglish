@@ -31,6 +31,7 @@ public class SearchInterests extends AppCompatActivity {
     private EntitySearcher searcher;
     //initital row count of search results
     private final int defaultRowCt = 20;
+    //we can do continue=# to get the results from that number of results
     //increment when we want more rows
     private Integer currentRowCt = defaultRowCt;
 

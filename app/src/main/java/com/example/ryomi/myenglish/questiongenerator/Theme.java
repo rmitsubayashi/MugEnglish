@@ -37,11 +37,20 @@ public abstract class Theme {
 	protected ThemeInstanceData themeInstanceData;
 	//so we can grab the wikidata IDs
 	protected String wikiDataIDPH;
-	//where we will populate questions for this instance
-	protected List<QuestionData> questions = new ArrayList<>();
+	//where we will populate new questions for this instance
+	protected List<QuestionData> newQuestions = new ArrayList<>();
+	//a full list of question IDs we will save into the theme instance data.
+	//any existing questions we are putting into the instance will be put in here
+	//directly as the ID instead of having to query again to get the question data
+	protected List<String> questionIDs = new ArrayList<>();
 	//これが出題される問題のトピック
 	protected Document documentOfTopics = null;
 	protected final Set<String> userInterests = new HashSet<>();
+	//how many questions we have
+	protected int questionsLeftToPopulate;
+	//MAXIMUM number of theme topics we need.
+	//not directly related to the number of topics since one topic
+	//may create more than one question
 	protected int themeTopicCount;
 	protected EndpointConnector connector = null;
 	private Activity activity;
@@ -107,7 +116,7 @@ public abstract class Theme {
 	//        +-- ...
 	private void populateExistingQuestions(){
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		DatabaseReference ref = db.getReference("questions/"+themeData.getId());
+		DatabaseReference ref = db.getReference("questionTopics/"+themeData.getId());
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
@@ -115,17 +124,19 @@ public abstract class Theme {
 				List<String> toRemove = new ArrayList<String>();
 				for (String interestID : userInterests){
 					if (dataSnapshot.hasChild(interestID)){
+						//there most likely will be more than one question per topic
 						DataSnapshot questionSet = dataSnapshot.child(interestID);
 						for (DataSnapshot snapshot : questionSet.getChildren()){
-							QuestionData data = snapshot.getValue(QuestionData.class);
-							questions.add(data);
+							String questionID = (String)snapshot.getValue();
+							questionIDs.add(questionID);
+							questionsLeftToPopulate--;
+
+							if (questionsLeftToPopulate == 0) break;
 						}
 						//one less topic we have to search for
 						themeTopicCount--;
 						toRemove.add(interestID);
-						if (themeTopicCount == 0){
-							break;
-						}
+						if (questionsLeftToPopulate == 0) break;
 					}
 				}
 				//remove matched user interests
@@ -133,10 +144,17 @@ public abstract class Theme {
 					userInterests.remove(removeID);
 				}
 
-				//we have to do this in a separate thread because the
-				//onDataChange method runs on the UI thread
-				CreateQuestionHelper helper = new CreateQuestionHelper();
-				helper.execute();
+				//we don't need to create new questions
+				if (questionsLeftToPopulate == 0){
+					//skip creating questions
+					//and saving them in the db
+					saveInstance();
+				} else {
+					//we have to do this in a separate thread because the
+					//onDataChange method runs on the UI thread
+					CreateQuestionHelper helper = new CreateQuestionHelper();
+					helper.execute();
+				}
 			}
 
 			@Override
@@ -161,7 +179,7 @@ public abstract class Theme {
 	//where the question ID is set as an empty string
 	private void saveQuestionsInDB(){
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		for (QuestionData data : questions){
+		for (QuestionData data : newQuestions){
 			//if the question already has an ID,
 			//that means it is a question we read from
 			//the database and not a question we just generated
@@ -169,15 +187,23 @@ public abstract class Theme {
 				continue;
 			}
 			String topicID = data.getTopicId();
-			DatabaseReference ref = db.getReference("questions/"+themeData.getId()+"/"+topicID);
+			DatabaseReference ref = db.getReference("questions");
 			String key = ref.push().getKey();
 			//set ID in data
 			data.setId(key);
 			//save in db
-			DatabaseReference ref2 = db.getReference(
-					"questions/"+themeData.getId()+"/"+topicID+"/"+key
-			);
+			DatabaseReference ref2 = db.getReference("questions/"+key);
 			ref2.setValue(data);
+
+			//now save a reference for the question topics
+			//so we can easily detect if a topic for a theme exists
+			//and grab the question id
+			DatabaseReference ref3 = db.getReference("questionTopics/"+themeData.getId()+
+				"/"+data.getTopicId());
+			String key2 = ref3.push().getKey();
+			DatabaseReference ref4 = db.getReference("questionTopics/"+themeData.getId()+
+				"/"+data.getTopicId()+"/"+key2);
+			ref4.setValue(data.getId());
 		}
 
 		System.out.println("Finished saving into db");
@@ -198,8 +224,7 @@ public abstract class Theme {
 		String key = ref.push().getKey();
 
 		//create instance
-		List<String> questionIDs = new ArrayList<>();
-		for (QuestionData q : questions){
+		for (QuestionData q : newQuestions){
 			questionIDs.add(q.getId());
 		}
 		ThemeInstanceData data = new ThemeInstanceData(key, themeData.getId(),
@@ -211,7 +236,8 @@ public abstract class Theme {
 	}
 
 	private void startInstance(ThemeInstanceData data){
-		QuestionManager manager = new QuestionManager(data, activity);
+		QuestionManager manager = QuestionManager.getInstance();
+		manager.startQuestions(data, activity);
 	}
 		
 	

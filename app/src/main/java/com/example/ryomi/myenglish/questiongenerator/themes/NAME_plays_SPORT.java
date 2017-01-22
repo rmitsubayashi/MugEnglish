@@ -52,7 +52,8 @@ public class NAME_plays_SPORT extends Theme{
 	
 	public NAME_plays_SPORT(EndpointConnector connector, ThemeData data){
 		super(connector, data);
-		super.themeTopicCount = 5;
+		super.themeTopicCount = 3;
+		super.questionsLeftToPopulate = 3;
 		sportHelper = new IdentifyWhetherSportsUsePlayDoGo();
 		queryResults = new ArrayList<QueryResult>();
 		/*
@@ -106,7 +107,7 @@ public class NAME_plays_SPORT extends Theme{
 			else
 				continue;
 			
-			if (this.countResults(documentOfTopics) >= themeTopicCount){
+			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
 				break;
 			}
 		}
@@ -147,7 +148,7 @@ public class NAME_plays_SPORT extends Theme{
 						qr.personID, QuestionTypeMappings.TRUE_FALSE,
 						trueFalseQuestion, choices,
 						"true", new ArrayList<String>());
-				super.questions.add(data);
+				super.newQuestions.add(data);
 			} catch (Exception e){
 				continue;
 			}
