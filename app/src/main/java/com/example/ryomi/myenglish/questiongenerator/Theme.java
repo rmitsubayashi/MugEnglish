@@ -175,9 +175,39 @@ public abstract class Theme {
 	//問題を作ってリストに保存する
 	protected abstract void createQuestionsFromResults();
 
+	//if we ever want to access the database when writing the questions
+	//overwrite this method.
+	//1. write your createquestionsfromresults, accessing the database
+	//2. put the saveQuestionsInDB() inside the db listener
+	protected void accessDBWhenCreatingQuestions(){
+		createQuestionsFromResults();
+		saveQuestionsInDB();
+	}
+
+	private class CreateQuestionHelper extends AsyncTask<Void, Integer, Boolean>{
+		@Override
+		protected Boolean doInBackground(Void... params){
+			try {
+				//these are all synchronous
+				populateResults(userInterests);
+				processResultsIntoClassWrappers();
+
+				//from here the methods are not (might not be) synchronous
+				//more methods embedded in this.
+				//create quesitons
+				//save in db
+				accessDBWhenCreatingQuestions();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			return false;
+		}
+	}
+
 	//called after QuestionData is populated
 	//where the question ID is set as an empty string
-	private void saveQuestionsInDB(){
+	protected void saveQuestionsInDB(){
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
 		for (QuestionData data : newQuestions){
 			//if the question already has an ID,
@@ -277,25 +307,7 @@ public abstract class Theme {
 		return String.format(query, entity);
 	}
 
-	//more of the workflow
-	private class CreateQuestionHelper extends AsyncTask<Void, Integer, Boolean>{
-		@Override
-		protected Boolean doInBackground(Void... params){
-			try {
-				//these are all synchronous
-				populateResults(userInterests);
-				processResultsIntoClassWrappers();
-				createQuestionsFromResults();
-				//from here the methods are not synchronous
-				//more methods embedded in this
-				saveQuestionsInDB();
-				return true;
-			} catch (Exception e){
-				e.printStackTrace();
-			}
-			return false;
-		}
-	}
+
 	
 	
 }

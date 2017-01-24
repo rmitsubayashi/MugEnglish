@@ -2,6 +2,7 @@ package com.example.ryomi.myenglish.gui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -41,7 +42,11 @@ public class ThemeList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme_list);
-        final String[] blueShades = {"#19B5FE","#3498DB","#6BB9F0","#3A539B"};
+        final int[] blueShades = {
+                ContextCompat.getColor(this, R.color.lblue600),
+                ContextCompat.getColor(this, R.color.lblue500),
+                ContextCompat.getColor(this, R.color.lblue300),
+                ContextCompat.getColor(this, R.color.lblue700)};
 
         final GridView gridview = (GridView) findViewById(R.id.grid);
 
@@ -77,7 +82,7 @@ public class ThemeList extends AppCompatActivity {
                 textView.setText(data.getCategory());
 
                 //set background
-                cell.setBackgroundColor(Color.parseColor(blueShades[position%4]));
+                cell.setBackgroundColor(blueShades[position%4]);
             }
         };
 
@@ -90,7 +95,7 @@ public class ThemeList extends AppCompatActivity {
                 ThemeData data = adapter.getItem(position);
                 String idString = data.getId();
                 //get view color
-                String color = blueShades[position%4];
+                int color = blueShades[position%4];
 
                 Intent intent = new Intent(ThemeList.this, ThemeDetails.class);
                 intent.putExtra("id",idString);

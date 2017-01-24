@@ -7,6 +7,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
+
+import com.example.ryomi.myenglish.gui.widgets.UserInterestAdapter;
+import com.example.ryomi.myenglish.gui.widgets.UserInterestViewHolder;
 import com.getbase.floatingactionbutton.AddFloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
@@ -27,7 +30,7 @@ public class UserInterests extends AppCompatActivity {
     FirebaseRecyclerAdapter firebaseAdapter;
 
     //holder for user interest list cells
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder  extends RecyclerView.ViewHolder {
         private final TextView label;
         private final TextView description;
 
@@ -44,6 +47,7 @@ public class UserInterests extends AppCompatActivity {
         public void setDescription(String description) {
             this.description.setText(description);
         }
+
     }
 
     @Override
@@ -52,21 +56,19 @@ public class UserInterests extends AppCompatActivity {
         setContentView(R.layout.activity_user_interests);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            populateList();
-
+            setListListeners();
             populateFABs();
         }
     }
 
-    private void populateList(){
+    private void setListListeners(){
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.user_interests_list);
-        //recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference("userInterests/"+userID);
-        firebaseAdapter = new FirebaseRecyclerAdapter<WikiDataEntryData, ViewHolder>(
+        /*firebaseAdapter = new FirebaseRecyclerAdapter<WikiDataEntryData, ViewHolder>(
                 WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
                 ViewHolder.class, ref
         ) {
@@ -76,9 +78,15 @@ public class UserInterests extends AppCompatActivity {
                 holder.setDescription(data.getDescription());
                 System.out.println("Called populate view...");
             }
-        };
+        };*/
+        firebaseAdapter = new UserInterestAdapter(
+                WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
+                UserInterestViewHolder.class, ref
+        );
 
         recyclerView.setAdapter(firebaseAdapter);
+
+
 
     }
 

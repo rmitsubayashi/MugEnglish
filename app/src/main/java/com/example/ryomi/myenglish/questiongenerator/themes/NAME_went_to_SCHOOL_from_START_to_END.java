@@ -2,20 +2,21 @@ package com.example.ryomi.myenglish.questiongenerator.themes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.w3c.dom.NodeList;
 
 import com.example.ryomi.myenglish.connectors.EndpointConnector;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
-import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
+import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
-import com.example.ryomi.myenglish.questiongenerator.Question;
+import com.example.ryomi.myenglish.questiongenerator.QGUtils;
+import com.example.ryomi.myenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
-import com.example.ryomi.myenglish.questiongenerator.questions.SentencePuzzleQuestion;
-import com.example.ryomi.myenglish.questiongenerator.questions.TrueFalseQuestion;
 
 import org.w3c.dom.Node;
 
@@ -41,6 +42,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	
 	private List<QueryResult> queryResults = new ArrayList<>();
 	private class QueryResult {
+		private String personID;
 		private String educationInstitutionNameEN;
 		private String educationInstitutionNameForeign;
 		private String personNameEN;
@@ -49,10 +51,12 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		private String endDate;
 		
 		private QueryResult(
+				String personID,
 				String educationInstitutionNameEN, String educationInstitutionNameForeign,
 				String personNameEN, String personNameForeign,
 				String startDate, String endDate)
 		{
+			this.personID = personID;
 			this.educationInstitutionNameEN = educationInstitutionNameEN;
 			this.educationInstitutionNameForeign = educationInstitutionNameForeign;
 			this.personNameEN = personNameEN;
@@ -64,8 +68,8 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	
 	public NAME_went_to_SCHOOL_from_START_to_END(EndpointConnector connector, ThemeData data){
 		super(connector, data);
-		super.themeTopicCount = 3;
-		super.wikiDataIDPH = this.personNamePH;/*
+		super.themeTopicCount = 2;
+		super.questionsLeftToPopulate = 4;/*
 		super.backupIDsOfTopics.add("Q5284");//Bill Gates
 		super.backupIDsOfTopics.add("Q8027");//Elon Musk*/
 	}
@@ -82,7 +86,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 				"    ?" + personNamePH + " wdt:P31 wd:Q5 . " + //is human
 				"    ?" + personNamePH + " p:P69 ?educationStatement . " + //this person is educated somewhere
 				"    ?educationStatement ps:P69 ?education . " + //grabbing name of institution
-				"    ?educationStatement pq:P580 ?" + startDatePH + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res " + //grabbing start date
+				"    ?educationStatement pq:P580 ?" + startDatePH + " . " + //grabbing start date
 				"    ?educationStatement pq:P582 ?" + endDatePH + " . " + //grabbing end date
 				"	 SERVICE wikibase:label { bd:serviceParam wikibase:language '" + 
 				     WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //these labels should be in the foreign language
@@ -117,7 +121,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 			String query = super.addEntityToQuery(entityID);
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
 			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= themeTopicCount){
+			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
 				break;
 			}
 		}
@@ -129,6 +133,9 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
+			String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, personNamePH);
+			personID = QGUtils.stripWikidataID(personID);
+
 			String educationInstitutionNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, educationInstitutionNameENPH);
 			String educationInstitutionNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, educationInstitutionNameForeignPH);
 			
@@ -142,6 +149,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 			String personNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, personNameForeignPH);
 			
 			QueryResult qr = new QueryResult(
+					personID,
 					educationInstitutionNameEN, educationInstitutionNameForeign,
 					personNameEN, personNameForeign,
 					startDate, endDate);
@@ -152,14 +160,11 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
-			String statementEN = this.NAME_went_to_SCHOOL_from_START_to_END_EN_correct(qr);
-			Question q = new TrueFalseQuestion(statementEN, true);
-			//super.questions.add(q);
-			String statementForeign = this.formatSentenceForeign(qr);
-			List<String> allCorrectSentencesEN = this.allCorrectSentencesEN(qr);
-			List<String> puzzlePieces = this.puzzlePiecesEN(qr);
-			Question q2 = new SentencePuzzleQuestion(statementForeign, allCorrectSentencesEN, puzzlePieces);
-			//super.questions.add(q2);
+			QuestionData trueFalseQuestion = createTrueFalseQuestion(qr);
+			super.newQuestions.add(trueFalseQuestion);
+
+			QuestionData puzzlePiecesQuestion = createPuzzlePiecesQuestion(qr);
+			super.newQuestions.add(puzzlePiecesQuestion);
 			
 			
 		}
@@ -173,9 +178,8 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	
 	//correct sentences
 	//
-	private List<String> allCorrectSentencesEN(QueryResult qr){
-		List<String> sentences = new ArrayList<String>();
-		sentences.add(this.NAME_went_to_SCHOOL_from_START_to_END_EN_correct(qr));
+	private List<String> alternativeCorrectSentencesEN(QueryResult qr){
+		List<String> sentences = new ArrayList<>();
 		sentences.add(this.from_START_to_END_NAME_went_to_SCHOOL_EN_correct(qr));
 		return sentences;
 	}
@@ -184,7 +188,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		String institution = GrammarRules.definiteArticleBeforeSchoolName(qr.educationInstitutionNameEN);
 		
 		String sentence = qr.personNameEN + " went to " + institution + 
-				" from " + qr.startDate + " to " + qr.endDate + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+				" from " + qr.startDate + " to " + qr.endDate + ".";
 		//人の名前は絶対大文字で始まるから、わざわざやらなくていいはず？
 		sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
 		return sentence;
@@ -195,33 +199,83 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		//正確にはFrom a to b, person went to C.
 		//カンマは気にしない？
 		return "From " + qr.startDate + " to " + qr.endDate + " " +
-		qr.personNameEN + " went to " + institution + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+		qr.personNameEN + " went to " + institution + ".";
 	}
 	
 	//incorrect sentences as questions
 	//
-	private String NAME_went_to_SCHOOL_to_START_from_END_EN_incorrect(QueryResult qr){
+	private String NAME_went_to_SCHOOL_from_END_to_START_EN_incorrect(QueryResult qr){
 		String institution = GrammarRules.definiteArticleBeforeSchoolName(qr.educationInstitutionNameEN);
-		return qr.personNameEN + " went to " + institution + " to " + qr.startDate + " from " + qr.endDate + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+		return qr.personNameEN + " went to " + institution + " from " + qr.endDate + " to " + qr.startDate + ".";
 	}
 	
 	//puzzle pieces for sentence puzzle question
-	private List<String> puzzlePiecesEN(QueryResult qr){
-		List<String> pieces = new ArrayList<String>();
+	private List<String> puzzlePieces(QueryResult qr){
+		List<String> pieces = new ArrayList<>();
 		String institution = GrammarRules.definiteArticleBeforeSchoolName(qr.educationInstitutionNameEN);
-		pieces.add(institution);
+
 		pieces.add(qr.personNameEN);
-		pieces.add(qr.startDate);
-		pieces.add(qr.endDate);
 		pieces.add("went to");
+		pieces.add(institution);
 		pieces.add("from");
+		pieces.add(qr.startDate);
 		pieces.add("to");
-		pieces.add("build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res");
+		pieces.add(qr.endDate);
 		return pieces;
+	}
+
+	private String puzzlePiecesAnswer(QueryResult qr){
+		return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
 	}
 	
 	//correct sentence in foreign language (need only one?)
 	private String formatSentenceForeign(QueryResult qr){
 		return qr.personNameForeign + "は" + qr.startDate + "年から" + qr.endDate + "年まで" + qr.educationInstitutionNameForeign + "に通いました。";
+	}
+
+	private QuestionData createTrueFalseQuestion(QueryResult qr){
+		String question = "";
+		String answer = "";
+		if (new Random(System.currentTimeMillis()).nextInt() % 2 == 0) {
+			question = NAME_went_to_SCHOOL_from_START_to_END_EN_correct(qr);
+			answer = QuestionUtils.TRUE_FALSE_QUESTION_TRUE;
+		}
+		else {
+			question = NAME_went_to_SCHOOL_from_END_to_START_EN_incorrect(qr);
+			answer = QuestionUtils.TRUE_FALSE_QUESTION_FALSE;
+		}
+
+		QuestionData data = new QuestionData();
+		data.setId("");
+		data.setThemeId(super.themeData.getId());
+		data.setTopicId(qr.personID);
+		data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
+		data.setQuestion(question);
+		data.setChoices(null);
+		data.setAnswer(answer);
+		data.setAcceptableAnswers(null);
+		data.setVocabulary(new ArrayList<String>());
+
+		return data;
+	}
+
+	private QuestionData createPuzzlePiecesQuestion(QueryResult qr){
+		String question = this.formatSentenceForeign(qr);
+		List<String> alternatives = this.alternativeCorrectSentencesEN(qr);
+		List<String> puzzlePieces = this.puzzlePieces(qr);
+		String answer = puzzlePiecesAnswer(qr);
+
+		QuestionData data = new QuestionData();
+		data.setId("");
+		data.setThemeId(super.themeData.getId());
+		data.setTopicId(qr.personID);
+		data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+		data.setQuestion(question);
+		data.setChoices(puzzlePieces);
+		data.setAnswer(answer);
+		data.setAcceptableAnswers(alternatives);
+		data.setVocabulary(new ArrayList<String>());
+
+		return data;
 	}
 }

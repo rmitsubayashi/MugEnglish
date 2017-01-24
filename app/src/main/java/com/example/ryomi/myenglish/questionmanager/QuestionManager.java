@@ -5,18 +5,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionRecord;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
 import com.example.ryomi.myenglish.gui.Question_MultipleChoice;
-import com.example.ryomi.myenglish.gui.ThemeList;
+import com.example.ryomi.myenglish.gui.Question_Puzzle_Piece;
+import com.example.ryomi.myenglish.gui.Question_TrueFalse;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -176,7 +177,14 @@ public class QuestionManager{
 	}
 
 	private Intent findQuestionIntent(int questionType){
-		Intent intent = new Intent(currentActivity, Question_MultipleChoice.class);
+		Intent intent = null;
+		if (questionType == QuestionTypeMappings.MULTIPLE_CHOICE)
+			intent = new Intent(currentActivity, Question_MultipleChoice.class);
+		else if (questionType == QuestionTypeMappings.TRUE_FALSE)
+			intent = new Intent(currentActivity, Question_TrueFalse.class);
+		else if (questionType == QuestionTypeMappings.SENTENCE_PUZZLE)
+			intent = new Intent(currentActivity, Question_Puzzle_Piece.class);
+
 		return intent;
 	}
 

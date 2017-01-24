@@ -8,15 +8,21 @@
     android:paddingTop="20dp"
     android:paddingBottom="20dp"
     android:minHeight="72dp">
+    <!--padding bottom 5dp not part of material guidelines-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="17sp"
+        android:paddingBottom="5dp"
         android:id="@+id/user_interests_list_item_label"/>
+    <!--so is the padding left-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="15sp"
+        android:paddingLeft="5dp"
+        android:paddingStart="5dp"
+        android:textColor="@color/subtextFontColor"
         android:id="@+id/user_interests_list_item_description"/>
 
 </LinearLayout>

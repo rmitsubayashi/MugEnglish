@@ -10,6 +10,7 @@ public class QuestionData {
     private String question;
     private List<String> choices;
     private String answer;
+    private List<String> acceptableAnswers;
     private List<String> vocabulary;
 
     public QuestionData(){}
@@ -17,7 +18,8 @@ public class QuestionData {
     public QuestionData(String id, String themeId,
                         String topicId, Integer questionType,
                         String question, List<String> choices,
-                        String answer, List<String> vocabulary) {
+                        String answer, List<String> acceptableAnswers,
+                        List<String> vocabulary) {
         this.id = id;
         this.themeId = themeId;
         this.topicId = topicId;
@@ -25,6 +27,7 @@ public class QuestionData {
         this.question = question;
         this.choices = choices;
         this.answer = answer;
+        this.acceptableAnswers = acceptableAnswers;
         this.vocabulary = vocabulary;
     }
 
@@ -91,4 +94,8 @@ public class QuestionData {
     public void setVocabulary(List<String> vocabulary) {
         this.vocabulary = vocabulary;
     }
+
+    public List<String> getAcceptableAnswers() {return acceptableAnswers;}
+
+    public void setAcceptableAnswers(List<String> acceptableAnswers){this.acceptableAnswers = acceptableAnswers; }
 }

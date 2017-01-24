@@ -13,4 +13,9 @@
     <!--user interests list-->
     <string name="user_interests_add">追加</string>
     <string name="title_activity_fab">fab</string>
+
+    <!--questions-->
+    <string name="question_true_false_true">本当</string>
+    <string name="question_true_false_false">嘘</string>
+    <string name="question_puzzle_piece_submit">確定</string>
 </resources>

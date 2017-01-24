@@ -47,7 +47,12 @@ import com.google.firebase.database.FirebaseDatabase;
  * ともかく、今はこれで十分
  */
 
-public class IdentifyWhetherSportsUsePlayDoGo {
+/*
+ * 今のところinflectionはNLGのAPIは使わず自分でやる。
+ * あまりスポーツのような特例はないから。。
+ */
+
+public class SportsHelper {
 	private WikiDataSPARQLConnector sparqlConn;
 	private WikipediaConnector wikipediaConn;
 	
@@ -56,7 +61,7 @@ public class IdentifyWhetherSportsUsePlayDoGo {
 	public static final String PASTPARTICIPLE = "pastParticiple";
 	public static final String PRESENTPARTICIPLE = "presentParticiple";
 	
-	public IdentifyWhetherSportsUsePlayDoGo(){
+	public SportsHelper(){
 		sparqlConn = new WikiDataSPARQLConnector();
 		wikipediaConn = new WikipediaConnector();
 	}
@@ -65,10 +70,18 @@ public class IdentifyWhetherSportsUsePlayDoGo {
 
 		return true;
 	}
-	
-	public String findVerbObject(String wikiDataID, String tense) throws Exception{
 
-		return "";
+	//returns 'V O' or 'V' depending on the sport
+	//we want to just pass in the wikidata ID and search the database,
+	//but that's hard to do because of the asynchronous nature of Firebase.
+	//so we are just inputting the verb and object we fetch from the theme class
+	public static String getVerbObject(String verb, String object, String tense){
+		String inflectedVerb = inflectVerb(verb, tense);
+		String objectPart = "";
+		if (!object.equals("")){
+			objectPart += " " + object;
+		}
+		return inflectedVerb + objectPart;
 	}
 	
 	public void run() throws Exception{
@@ -160,7 +173,7 @@ public class IdentifyWhetherSportsUsePlayDoGo {
 		}
 	}
 	
-	private String caseOfSportsVerb(String verb, String tense){
+	private static String inflectVerb(String verb, String tense){
 		switch (tense){
 		case PAST :
 			if (verb.equals("do"))

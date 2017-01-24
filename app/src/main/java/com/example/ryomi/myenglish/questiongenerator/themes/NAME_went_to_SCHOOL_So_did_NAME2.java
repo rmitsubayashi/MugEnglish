@@ -53,7 +53,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnector connector, ThemeData data){
 		super(connector, data);
 		super.themeTopicCount = 3;
-		super.wikiDataIDPH = this.personPH;
+		super.questionsLeftToPopulate = 3;
 		/*
 		super.backupIDsOfTopics.add("Q281734");//Nagatomo
 		super.backupIDsOfTopics.add("Q37876");//Natalie Portman
@@ -70,7 +70,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 				"{ " +
 				"    ?" + personPH + " wdt:P69 ?education . " +
 				"    ?person2 wdt:P69 ?education . " +
-				"    ?person2 wikibase:sitelinks ?" + sitelinksPH + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res " +
+				"    ?person2 wikibase:sitelinks ?" + sitelinksPH + " . " +
 				    
 				"	SERVICE wikibase:label { bd:serviceParam wikibase:language '" + 
 				                            WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "'," +
@@ -97,7 +97,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
 			//reorder based on popularity and get top few
 			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= themeTopicCount){
+			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
 				break;
 			}
 		}

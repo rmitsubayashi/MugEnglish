@@ -54,7 +54,8 @@ public class SearchInterests extends AppCompatActivity {
         //we have to instantiate this in the java file instead of the xml file
         //because we want this to be a header view of the listview
         //but we can't replicate that relation in the xml file.
-        SearchView searchView = (SearchView)getLayoutInflater().inflate(R.layout.inflatable_search_interests_search_bar, null);
+        LinearLayout searchWrapper = (LinearLayout)getLayoutInflater().inflate(R.layout.inflatable_search_interests_search_bar, null);
+        SearchView searchView = (SearchView)searchWrapper.findViewById(R.id.search_interests_search_bar_view);
         //font
         int searchSrcTextId = getResources().getIdentifier("android:id/search_src_text", null, null);
         EditText searchEditText = (EditText) searchView.findViewById(searchSrcTextId);
@@ -84,26 +85,18 @@ public class SearchInterests extends AppCompatActivity {
         ListView list = (ListView) findViewById(R.id.search_results_result_list);
         list.setAdapter(new SearchResultsAdapter(this));
 
-        LinearLayout centerWrapper = new LinearLayout(this);
-        //this gravity makes sure the search icon starts in the center
-        //not layout_gravity
-        centerWrapper.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        centerWrapper.setLayoutParams(param);
-        centerWrapper.setOrientation(LinearLayout.VERTICAL);
-        centerWrapper.addView(searchView);
+
         //dynamic padding
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
         int width = displayMetrics.widthPixels;
         int height = displayMetrics.heightPixels;
         int paddingHorizontal = (int)(width * 0.1);
-        int paddingVertical = (int)(height * 0.1);
-        centerWrapper.setPadding(paddingHorizontal,paddingVertical,
-                paddingHorizontal,paddingVertical);
+        int paddingTop = (int)(height * 0.1);
+        int paddingBottom = (int)(height * 0.05);
+        searchWrapper.setPadding(paddingHorizontal,paddingTop,
+                paddingHorizontal,paddingBottom);
 
-        list.addHeaderView(centerWrapper);
+        list.addHeaderView(searchWrapper);
     }
 
     //we don't need to handle the intent in the

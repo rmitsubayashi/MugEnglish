@@ -10,14 +10,14 @@ import org.w3c.dom.NodeList;
 
 import com.example.ryomi.myenglish.connectors.EndpointConnector;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
-import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
+import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
-import com.example.ryomi.myenglish.questiongenerator.Question;
+import com.example.ryomi.myenglish.questiongenerator.QGUtils;
+import com.example.ryomi.myenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
-import com.example.ryomi.myenglish.questiongenerator.questions.MultipleChoiceQuestion;
-import com.example.ryomi.myenglish.questiongenerator.questions.SentencePuzzleQuestion;
 
 public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	//placeholders
@@ -26,17 +26,20 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	private final String personNameENPH = "personNameEN";
 	private final String bloodTypePH = "bloodType";
 	
-	private List<QueryResult> queryResults = new ArrayList<QueryResult>();
+	private List<QueryResult> queryResults = new ArrayList<>();
 	private class QueryResult {
+		private String personID;
 		private String personNameEN;
 		private String personNameForeign;
 		private String bloodType;
 		
 		private QueryResult(
+				String personID,
 				String personNameEN,
 				String personNameForeign,
 				String bloodType)
 		{
+			this.personID = personID;
 			this.personNameEN = personNameEN;
 			this.personNameForeign = personNameForeign;
 			this.bloodType = bloodType;
@@ -46,7 +49,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	public NAME_possessive_blood_type_is_BLOODTYPE(EndpointConnector connector, ThemeData data){
 		super(connector, data);
 		super.themeTopicCount = 3;
-		super.wikiDataIDPH = this.personNamePH;
+		super.questionsLeftToPopulate = 6;
 		/*
 		super.backupIDsOfTopics.add("Q211553"); //Ken Watanabe
 		super.backupIDsOfTopics.add("Q22686"); //Donald Trump
@@ -61,7 +64,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 				"WHERE " +
 				"{" +
 				"    ?" + personNamePH + " wdt:P31 wd:Q5 . " + //is human
-				"    ?" + personNamePH + " wdt:P1853 ?" + bloodTypePH + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res " + //has a blood type
+				"    ?" + personNamePH + " wdt:P1853 ?" + bloodTypePH + " . " + //has a blood type
 				"    SERVICE wikibase:label {bd:serviceParam wikibase:language '" +
 				     WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //foreign label if possible
 				"    '" + WikiBaseEndpointConnector.ENGLISH + "' . " + //fallback language is English
@@ -82,7 +85,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 			String query = super.addEntityToQuery(entityID);
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
 			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= themeTopicCount){
+			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
 				break;
 			}
 		}
@@ -94,42 +97,37 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
+			String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, personNamePH);
+			personID = QGUtils.stripWikidataID(personID);
 			String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, personNameENPH);
 			String personNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, personNameForeignPH);
 			String bloodType = SPARQLDocumentParserHelper.findValueByNodeName(head, bloodTypePH+"Label");
 			
-			QueryResult qr = new QueryResult(personNameEN, personNameForeign, bloodType);
+			QueryResult qr = new QueryResult(personID, personNameEN, personNameForeign, bloodType);
 			queryResults.add(qr);
 		}
 	}
 	
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
-			String statementForeign = this.formatSentenceForeign(qr);
-			List<String> puzzlePiecesEN = this.puzzlePiecesEN(qr);
-			List<String> allCorrectSentencesEN = this.allCorrectSentencesEN(qr);
-			Question q = new SentencePuzzleQuestion(statementForeign, allCorrectSentencesEN, puzzlePiecesEN);
-			//super.questions.add(q);
-			
-			String multipleChoiceQuestionEN = this.multipleChoiceQuestionEN(qr);
-			String multipleChoiceAnswerEN = this.multipleChoiceAnswerEN();
-			List<String> multipleChoiceWrongAnswersEN = this.multipleChoiceWrongAnswersEN();
-			Question q2 = new MultipleChoiceQuestion(multipleChoiceQuestionEN,
-					multipleChoiceAnswerEN, multipleChoiceWrongAnswersEN);
-			//super.questions.add(q2);
+			QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
+			super.newQuestions.add(sentencePuzzleQuestion);
+
+			QuestionData multipleChoiceQuestion = createMultipleChoiceQuestion(qr);
+			super.newQuestions.add(multipleChoiceQuestion);
 		}
 		
 	}
 	
-	private List<String> allCorrectSentencesEN(QueryResult qr){
-		List<String> sentences = new ArrayList<String>();
+	private List<String> alternativeCorrectSentences(QueryResult qr){
+		List<String> sentences = new ArrayList<>();
 		sentences.add(this.NAME_possessive_blood_type_is_BLOODTYPE_EN_correct(qr));
 		return sentences;
 	}
 	
 	private String NAME_possessive_blood_type_is_BLOODTYPE_EN_correct(QueryResult qr){
 		String possessiveName = GrammarRules.possessiveCaseOfSingularNoun(qr.personNameEN);
-		String sentence = possessiveName + " blood type is " + qr.bloodType + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+		String sentence = possessiveName + " blood type is " + qr.bloodType + ".";
 		//no need since all names are capitalized?
 		sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
 		return sentence;
@@ -141,33 +139,76 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	}
 	
 	//puzzle pieces for sentence puzzle question
-	private List<String> puzzlePiecesEN(QueryResult qr){
-		List<String> pieces = new ArrayList<String>();
+	private List<String> puzzlePieces(QueryResult qr){
+		List<String> pieces = new ArrayList<>();
 		String possessiveName = GrammarRules.possessiveCaseOfSingularNoun(qr.personNameEN);
 		pieces.add(possessiveName);
 		pieces.add("blood type");
 		pieces.add("is");
 		pieces.add(qr.bloodType);
-		pieces.add("build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res");
 		return pieces;
-		
+	}
+
+	private String puzzlePiecesAnswer(QueryResult qr){
+		return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
 	}
 	
-	//multiple choice question sentence
-	//tests the possessive case
-	private String multipleChoiceQuestionEN(QueryResult qr){
-		return qr.personNameEN + Question.BLANK_MARKER + " blood type is " + 
-				qr.bloodType + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+	//multiple choice question asks what the blood type of that person is
+	//but not something like A, B, or AB
+	//because that's impossible...
+	private String multipleChoiceQuestion(QueryResult qr){
+		String possessiveName = GrammarRules.possessiveCaseOfSingularNoun(qr.personNameEN);
+		String question = "What is " + possessiveName + " blood type?";
+		return question;
 	}
 	
-	private String multipleChoiceAnswerEN(){
-		return GrammarRules.possessiveCaseOfSingularNoun("");
+	private String multipleChoiceAnswer(QueryResult qr){
+		return qr.bloodType;
 	}
 	
-	private List<String> multipleChoiceWrongAnswersEN(){
-		List<String> wrongAnswers = new ArrayList<String>();
-		wrongAnswers.add("s'");
-		wrongAnswers.add("'es");
+	private List<String> multipleChoiceWrongAnswers(){
+		List<String> wrongAnswers = new ArrayList<>();
+		wrongAnswers.add("blood");
+		wrongAnswers.add("red");
 		return wrongAnswers;
+	}
+
+	QuestionData createSentencePuzzleQuestion(QueryResult qr){
+		String question = this.formatSentenceForeign(qr);
+		List<String> choices = this.puzzlePieces(qr);
+		String answer = puzzlePiecesAnswer(qr);
+		QuestionData data = new QuestionData();
+		data.setId("");
+		data.setThemeId(super.themeData.getId());
+		data.setTopicId(qr.personID);
+		data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+		data.setQuestion(question);
+		data.setChoices(choices);
+		data.setAnswer(answer);
+		data.setAcceptableAnswers(null);
+		data.setVocabulary(new ArrayList<String>());
+
+		return data;
+	}
+
+	QuestionData createMultipleChoiceQuestion(QueryResult qr){
+		String question = this.multipleChoiceQuestion(qr);
+		String answer = this.multipleChoiceAnswer(qr);
+		List<String> choices = this.multipleChoiceWrongAnswers();
+		//add correct answer to list of wrong answers
+		choices.add(answer);
+
+		QuestionData data = new QuestionData();
+		data.setId("");
+		data.setThemeId(super.themeData.getId());
+		data.setTopicId(qr.personID);
+		data.setQuestionType(QuestionTypeMappings.MULTIPLE_CHOICE);
+		data.setQuestion(question);
+		data.setChoices(choices);
+		data.setAnswer(answer);
+		data.setAcceptableAnswers(null);
+		data.setVocabulary(new ArrayList<String>());
+
+		return data;
 	}
 }

@@ -37,6 +37,7 @@ dependencies {
 
 dependencies {
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'org.apmem.tools:layouts:1.10@aar'
 }
 
 allprojects {

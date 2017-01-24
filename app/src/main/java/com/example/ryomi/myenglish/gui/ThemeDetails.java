@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -47,7 +48,7 @@ public class ThemeDetails extends AppCompatActivity {
             //get data
             String id = intent.getStringExtra("id");
             populateData(id);
-            String bgColor = intent.getStringExtra("backgroundColor");
+            int bgColor = intent.getIntExtra("backgroundColor",0);
             setBackgroundColor(bgColor);
             adjustLayout();
             addActionListeners();
@@ -90,9 +91,9 @@ public class ThemeDetails extends AppCompatActivity {
         ref.addListenerForSingleValueEvent(getThemeData);
     }
 
-    private void setBackgroundColor(String colorString){
+    private void setBackgroundColor(int color){
         ScrollView activity = (ScrollView) findViewById(R.id.activity_theme_details);
-        activity.setBackgroundColor(Color.parseColor(colorString));
+        activity.setBackgroundColor(color);
     }
 
     private void adjustLayout(){
