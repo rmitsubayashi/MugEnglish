@@ -33,10 +33,6 @@ import java.util.concurrent.locks.ReentrantLock;
 //from the second time on, we can just read the questions in from the db
 public abstract class Theme {
 	protected ThemeData themeData;
-	//the user can create multiple instances of the same theme
-	protected ThemeInstanceData themeInstanceData;
-	//so we can grab the wikidata IDs
-	protected String wikiDataIDPH;
 	//where we will populate new questions for this instance
 	protected List<QuestionData> newQuestions = new ArrayList<>();
 	//a full list of question IDs we will save into the theme instance data.
@@ -45,13 +41,22 @@ public abstract class Theme {
 	protected List<String> questionIDs = new ArrayList<>();
 	//これが出題される問題のトピック
 	protected Document documentOfTopics = null;
-	protected final Set<String> userInterests = new HashSet<>();
+	//interests to search for more relevant topics
+	protected final Set<WikiDataEntryData> userInterests = new HashSet<>();
+			//makes sure we are not giving the same question
+	protected final Set<String> userQuestionHistory = new HashSet<>();
+	//save topics in the instance as unique identifiers
+	// for when we display a list of instances to the user.
+	//We can't serialize sets, but we don't want duplicates.
+	//to make it act like a set call setTopic(topic)
+	protected final List<String> topics = new ArrayList<>();
 	//how many questions we have
 	protected int questionsLeftToPopulate;
 	//MAXIMUM number of theme topics we need.
 	//not directly related to the number of topics since one topic
 	//may create more than one question
 	protected int themeTopicCount;
+
 	protected EndpointConnector connector = null;
 	private Activity activity;
 	
@@ -93,9 +98,40 @@ public abstract class Theme {
 				public void onDataChange(DataSnapshot dataSnapshot) {
 					for (DataSnapshot child : dataSnapshot.getChildren()){
 						WikiDataEntryData data = child.getValue(WikiDataEntryData.class);
-						userInterests.add(data.getWikiDataID());
+						userInterests.add(data);
 					}
 					System.out.println("Finish populating user interests");
+					populateUserQuestionHistory();
+				}
+
+				@Override
+				public void onCancelled(DatabaseError databaseError) {
+
+				}
+			});
+		}
+	}
+
+	//we need to skip over questions the user has already covered
+	private void populateUserQuestionHistory(){
+		if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+			FirebaseDatabase db = FirebaseDatabase.getInstance();
+			DatabaseReference ref = db.getReference("themeInstances/" + userID + "/" + themeData.getId());
+			ref.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot dataSnapshot) {
+					for (DataSnapshot child : dataSnapshot.getChildren()) {
+						ThemeInstanceData data = child.getValue(ThemeInstanceData.class);
+						List<String> questionIDs = data.getQuestionIds();
+						//shouldn't be null?
+						//mainly for debug purposes
+						if (questionIDs != null)
+							userQuestionHistory.addAll(questionIDs);
+
+					}
+
+					System.out.println("previous question ct: " + userQuestionHistory.size());
 					populateExistingQuestions();
 				}
 
@@ -106,6 +142,11 @@ public abstract class Theme {
 			});
 		}
 	}
+
+
+	//we are fetching all topics for questions of that thee.
+	//if any match the user & the user has not had that question yet,
+	//add it to the list of questions
 
 	//the db is organized like
 	//questions
@@ -119,23 +160,31 @@ public abstract class Theme {
 		DatabaseReference ref = db.getReference("questionTopics/"+themeData.getId());
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
-			public void onDataChange(DataSnapshot dataSnapshot) {
+			public void onDataChange(DataSnapshot topicsForTheme) {
 				//remove user interest if we can pre-populate the question
-				List<String> toRemove = new ArrayList<String>();
-				for (String interestID : userInterests){
-					if (dataSnapshot.hasChild(interestID)){
+
+				List<String> toRemove = new ArrayList<>();
+				for (WikiDataEntryData data : userInterests){
+					String interestID = data.getWikiDataID();
+					if (topicsForTheme.hasChild(interestID)){
 						//there most likely will be more than one question per topic
-						DataSnapshot questionSet = dataSnapshot.child(interestID);
-						for (DataSnapshot snapshot : questionSet.getChildren()){
-							String questionID = (String)snapshot.getValue();
-							questionIDs.add(questionID);
-							questionsLeftToPopulate--;
+						DataSnapshot questionSet = topicsForTheme.child(interestID);
+						for (DataSnapshot question : questionSet.getChildren()){
+							String questionID = (String)question.getValue();
+							if (!userQuestionHistory.contains(questionID)) {
+								questionIDs.add(questionID);
+								addTopic(data.getLabel());
+								questionsLeftToPopulate--;
+							}
 
 							if (questionsLeftToPopulate == 0) break;
 						}
-						//one less topic we have to search for
-						themeTopicCount--;
+						//if the user's interest exists for the theme,
+						//no matter if the questions are new(we will add them to the question list)
+						// or previously done (we do not add it to our question list),
+						//we will not need to search for the interest again
 						toRemove.add(interestID);
+
 						if (questionsLeftToPopulate == 0) break;
 					}
 				}
@@ -164,32 +213,12 @@ public abstract class Theme {
 		});
 	}
 
-	
-	//検索するのは特定のentityひとつに対するクエリー
-	//UNIONしてまとめて検索してもいいけど時間が異常にかかる
-	protected abstract String getSPARQLQuery();
-	//一つ一つのクエリーを送って、まとめる
-	protected abstract void populateResults(Set<String> wikiDataIDs) throws Exception;
-	//ドキュメントのデータを、わかりやすいクラスに入れる
-	protected abstract void processResultsIntoClassWrappers();
-	//問題を作ってリストに保存する
-	protected abstract void createQuestionsFromResults();
-
-	//if we ever want to access the database when writing the questions
-	//overwrite this method.
-	//1. write your createquestionsfromresults, accessing the database
-	//2. put the saveQuestionsInDB() inside the db listener
-	protected void accessDBWhenCreatingQuestions(){
-		createQuestionsFromResults();
-		saveQuestionsInDB();
-	}
-
+	//Firebase onChange works on the main UI Thread so we have to make a separate thread
 	private class CreateQuestionHelper extends AsyncTask<Void, Integer, Boolean>{
 		@Override
 		protected Boolean doInBackground(Void... params){
 			try {
-				//these are all synchronous
-				populateResults(userInterests);
+				populateResults();
 				processResultsIntoClassWrappers();
 
 				//from here the methods are not (might not be) synchronous
@@ -203,6 +232,57 @@ public abstract class Theme {
 			}
 			return false;
 		}
+	}
+
+	
+	//検索するのは特定のentityひとつに対するクエリー
+	//UNIONしてまとめて検索してもいいけど時間が異常にかかる
+	protected abstract String getSPARQLQuery();
+	//一つ一つのクエリーを送って、まとめる
+	protected void populateResults() throws Exception {
+		for (WikiDataEntryData interest : userInterests){
+			String entityID = interest.getWikiDataID();
+			String query = addEntityToQuery(entityID);
+			Document resultDOM = connector.fetchDOMFromGetRequest(query);
+			this.addResultsToMainDocument(resultDOM);
+			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
+				break;
+			}
+		}
+
+		//TODO recommendation algorithm when creating questions
+
+		//if we can't populate results with user interests, fetch random questions from the db
+
+	}
+	//ドキュメントのデータを、わかりやすいクラスに入れる
+	protected abstract void processResultsIntoClassWrappers();
+	//save topic data
+	protected abstract void saveResultTopics();
+	//helper
+	protected void addTopic(String topic){
+		if(!topics.contains(topic)){
+			topics.add(topic);
+		}
+	}
+	//問題を作ってリストに保存する
+	protected abstract void createQuestionsFromResults();
+
+	/* if we ever want to access the database when writing the questions
+	 * overwrite this method.
+	 * 1. write your createquestionsfromresults, accessing the database
+	 * 2. put the saveQuestionsInDB() inside the db listener
+	 * see NAME_plays_SPORT for example
+	 */
+	protected void accessDBWhenCreatingQuestions(){
+		//we are saving the result topics in here because
+		//typically when we are accessing the db at this point
+		//we are trying to read a value.
+		//If we fail to locate the value, we just remove the question (for now).
+		//so we should save the topics after potentially removing questions
+		saveResultTopics();
+		createQuestionsFromResults();
+		saveQuestionsInDB();
 	}
 
 	//called after QuestionData is populated
@@ -258,7 +338,7 @@ public abstract class Theme {
 			questionIDs.add(q.getId());
 		}
 		ThemeInstanceData data = new ThemeInstanceData(key, themeData.getId(),
-				userID, questionIDs, System.currentTimeMillis());
+				userID, questionIDs, topics, System.currentTimeMillis(),0);
 		DatabaseReference ref2 = db.getReference("themeInstances/"+userID+"/"+themeData.getId()+"/"+key);
 		ref2.setValue(data);
 

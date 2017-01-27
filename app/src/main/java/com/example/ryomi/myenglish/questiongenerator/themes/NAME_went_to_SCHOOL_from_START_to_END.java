@@ -116,17 +116,6 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		return query;
 	}
 	
-	protected void populateResults(Set<String> wikidataIDs) throws Exception{
-		for (String entityID : wikidataIDs){
-			String query = super.addEntityToQuery(entityID);
-			Document resultDOM = connector.fetchDOMFromGetRequest(query);
-			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
-				break;
-			}
-		}
-	}
-	
 	protected void processResultsIntoClassWrappers(){
 		Document document = super.documentOfTopics;
 		NodeList allResults = document.getElementsByTagName("result");
@@ -155,6 +144,13 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 					startDate, endDate);
 			
 			queryResults.add(qr);
+		}
+	}
+
+	@Override
+	protected void saveResultTopics(){
+		for (QueryResult qr : queryResults){
+			addTopic(qr.personNameForeign);
 		}
 	}
 	

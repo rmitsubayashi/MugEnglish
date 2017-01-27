@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,20 +13,44 @@ import com.example.ryomi.myenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.myenglish.questionmanager.QuestionManager;
 
 import org.apmem.tools.layouts.FlowLayout;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
 
-public class Question_Puzzle_Piece extends AppCompatActivity {
+public class Question_Puzzle_Piece extends Question_General {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question__puzzle__piece);
+        QuestionManager.getInstance().setCurrentContext(this);
         populateQuestion();
         createChoiceButtons();
         setSubmitButtonListener();
+    }
+
+    @Override
+    protected int getLayoutResourceID(){
+        return R.layout.activity_question__puzzle__piece;
+    }
+
+    //for the puzzles the clicked view is a submit button
+    //so it's not relevant
+    @Override
+    protected String getResponse(View clickedView){
+        FlowLayout answerLayout = (FlowLayout) findViewById(R.id.question_puzzle_piece_answer);
+        int childCt = answerLayout.getChildCount();
+        String answer = "";
+        for (int i=0; i<childCt; i++){
+            Button choiceButton = (Button)answerLayout.getChildAt(i);
+            String choice = choiceButton.getText().toString();
+            answer += choice + "|";
+        }
+        //just in case nothing is selected
+        if (answer.length() > 0){
+            answer = answer.substring(0,answer.length()-1);
+        }
+
+        return answer;
     }
 
     private void populateQuestion(){
@@ -45,7 +68,7 @@ public class Question_Puzzle_Piece extends AppCompatActivity {
 
 
         //creating a new button every time looks expensive?
-        final View.OnClickListener moveToAnswer = new View.OnClickListener() {
+        View.OnClickListener moveToAnswer = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FlowLayout answerLayout =
@@ -81,32 +104,7 @@ public class Question_Puzzle_Piece extends AppCompatActivity {
 
     private void setSubmitButtonListener(){
         Button button = (Button) findViewById(R.id.question_puzzle_piece_submit);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FlowLayout answerLayout = (FlowLayout) findViewById(R.id.question_puzzle_piece_answer);
-                int childCt = answerLayout.getChildCount();
-                String answer = "";
-                for (int i=0; i<childCt; i++){
-                    Button choiceButton = (Button)answerLayout.getChildAt(i);
-                    String choice = choiceButton.getText().toString();
-                    answer += choice + "|";
-                }
-                //just in case nothing is selected
-                if (answer.length() > 0){
-                    answer = answer.substring(0,answer.length()-1);
-                }
-
-                QuestionManager manager = QuestionManager.getInstance();
-                QuestionData data = manager.getQuestionData();
-                String correctAnswer = data.getAnswer();
-                if (answer.equals(correctAnswer)){
-                    manager.nextQuestion();
-                } else {
-                    Toast.makeText(Question_Puzzle_Piece.this, correctAnswer ,Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        button.setOnClickListener(getResponseListener());
     }
 
 

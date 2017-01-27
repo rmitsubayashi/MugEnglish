@@ -120,7 +120,9 @@ public class ThemeList extends AppCompatActivity {
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference("achievements/"+userID+"/"+themeID);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        //want to update it when we've completed an achievement
+        //so listen continuously
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //exists

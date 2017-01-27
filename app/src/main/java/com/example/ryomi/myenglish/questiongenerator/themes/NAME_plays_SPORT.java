@@ -2,7 +2,6 @@ package com.example.ryomi.myenglish.questiongenerator.themes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -30,8 +29,8 @@ public class NAME_plays_SPORT extends Theme{
 	private final String personNameENPH = "personNameEN";
 	private final String sportIDPH = "sportID";
 	private final String sportNameForeignPH = "sportNameForeign";
-	
-	private List<QueryResult> queryResults = new ArrayList<QueryResult>();;
+
+	private List<QueryResult> queryResults = new ArrayList<>();
 	
 	private class QueryResult {
 		private String personID;
@@ -66,7 +65,8 @@ public class NAME_plays_SPORT extends Theme{
 		super.backupIDsOfTopics.add("Q39562");//Michael Phelps
 		super.backupIDsOfTopics.add("Q5799");//Allyson Felix*/
 	}
-	
+
+	@Override
 	protected String getSPARQLQuery(){
 		String query = 
 				"SELECT ?" + personNamePH + " ?" + personNameENPH + " ?" + personNameForeignPH + 
@@ -90,36 +90,8 @@ public class NAME_plays_SPORT extends Theme{
 		
 		return query;
 	}
-	
-	protected void populateResults(Set<String> wikiDataIDs) throws Exception {
-		
-		for (String entityID : wikiDataIDs){
-			String query = super.addEntityToQuery(entityID);
-			Document resultDOM = connector.fetchDOMFromGetRequest(query);
-			/*we are not going to check if the sport exists
-			due to the nature of asynchronous programming...
-			we have to restructure a LOT of the theme logic if we want to call the database here
-			*/
-			//check if the sport exists
-			//NodeList results = resultDOM.getElementsByTagName("result");
-			//if (results.getLength() == 0)
-			//	continue;
-			
-			//Node head = results.item(0);
-			//String id = SPARQLDocumentParserHelper.findValueByNodeName(head, sportIDPH);
-			//id = QGUtils.stripWikidataID(id);
-			//if (SportsHelper.sportExists(id)){
-			this.addResultsToMainDocument(resultDOM);
-			//}
-			//else
-				//continue;
-			
-			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
-				break;
-			}
-		}
-	}
-	
+
+	@Override
 	protected void processResultsIntoClassWrappers() {
 		Document document = super.documentOfTopics;
 		NodeList allResults = document.getElementsByTagName("result");
@@ -143,7 +115,15 @@ public class NAME_plays_SPORT extends Theme{
 			
 		}
 	}
-	
+
+	@Override
+	protected void saveResultTopics(){
+		for (QueryResult qr : queryResults){
+			addTopic(qr.personNameForeign);
+		}
+	}
+
+	@Override
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
 			QuestionData trueFalseQuestion = createTrueFalseQuestion(qr);
@@ -181,6 +161,8 @@ public class NAME_plays_SPORT extends Theme{
 				for(QueryResult qr : toRemove){
 					queryResults.remove(qr);
 				}
+
+				NAME_plays_SPORT.this.saveResultTopics();
 				NAME_plays_SPORT.this.createQuestionsFromResults();
 				NAME_plays_SPORT.super.saveQuestionsInDB();
 			}

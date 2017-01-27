@@ -29,27 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class UserInterests extends AppCompatActivity {
     FirebaseRecyclerAdapter firebaseAdapter;
 
-    //holder for user interest list cells
-    public static class ViewHolder  extends RecyclerView.ViewHolder {
-        private final TextView label;
-        private final TextView description;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            label = (TextView) itemView.findViewById(R.id.user_interests_list_item_label);
-            description = (TextView) itemView.findViewById(R.id.user_interests_list_item_description);
-        }
-
-        public void setLabel(String label) {
-            this.label.setText(label);
-        }
-
-        public void setDescription(String description) {
-            this.description.setText(description);
-        }
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,17 +47,7 @@ public class UserInterests extends AppCompatActivity {
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference("userInterests/"+userID);
-        /*firebaseAdapter = new FirebaseRecyclerAdapter<WikiDataEntryData, ViewHolder>(
-                WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
-                ViewHolder.class, ref
-        ) {
-            @Override
-            public void populateViewHolder(ViewHolder holder, WikiDataEntryData data, int position) {
-                holder.setLabel(data.getLabel());
-                holder.setDescription(data.getDescription());
-                System.out.println("Called populate view...");
-            }
-        };*/
+
         firebaseAdapter = new UserInterestAdapter(
                 WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
                 UserInterestViewHolder.class, ref

@@ -91,17 +91,6 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 		return query;
 	}
 
-	protected void populateResults(Set<String> wikidataIDs) throws Exception{
-		for (String entityID : wikidataIDs){
-			String query = super.addEntityToQuery(entityID);
-			Document resultDOM = connector.fetchDOMFromGetRequest(query);
-			//reorder based on popularity and get top few
-			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
-				break;
-			}
-		}
-	}
 	
 	protected void processResultsIntoClassWrappers() {
 		Document document = super.documentOfTopics;
@@ -121,6 +110,13 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 					person2EN, person2Foreign,
 					schoolEN, schoolForeign);
 			queryResults.add(qr);
+		}
+	}
+
+	@Override
+	protected void saveResultTopics(){
+		for (QueryResult qr : queryResults){
+			addTopic(qr.personForeign);
 		}
 	}
 	

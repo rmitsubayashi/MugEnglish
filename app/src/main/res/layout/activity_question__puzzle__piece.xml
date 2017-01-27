@@ -32,9 +32,8 @@
         />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="end"
         android:text="@string/question_puzzle_piece_submit"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:background="@color/lblue500"

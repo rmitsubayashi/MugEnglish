@@ -1,4 +1,4 @@
-package com.example.ryomi.myenglish.gui;
+package com.example.ryomi.myenglish.gui.widgets;
 
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 

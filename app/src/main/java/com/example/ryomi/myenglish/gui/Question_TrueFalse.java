@@ -12,14 +12,24 @@ import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.myenglish.questionmanager.QuestionManager;
 
-public class Question_TrueFalse extends AppCompatActivity {
+public class Question_TrueFalse extends Question_General {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question_true_false);
+        QuestionManager.getInstance().setCurrentContext(this);
         populateQuestion();
         setButtonActionListeners();
+    }
+
+    @Override
+    protected int getLayoutResourceID(){
+        return R.layout.activity_question_true_false;
+    }
+
+    @Override
+    protected String getResponse(View clickedView){
+        return (String)clickedView.getTag();
     }
 
     private void populateQuestion(){
@@ -36,27 +46,11 @@ public class Question_TrueFalse extends AppCompatActivity {
 
         Button trueButton = (Button) findViewById(R.id.question_true_false_true);
         Button falseButton = (Button) findViewById(R.id.question_true_false_false);
+        trueButton.setTag(QuestionUtils.TRUE_FALSE_QUESTION_TRUE);
+        falseButton.setTag(QuestionUtils.TRUE_FALSE_QUESTION_FALSE);
 
-        View.OnClickListener correctListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                QuestionManager.getInstance().nextQuestion();
-            }
-        };
+        trueButton.setOnClickListener(getResponseListener());
+        falseButton.setOnClickListener(getResponseListener());
 
-        View.OnClickListener incorrectListener = new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(Question_TrueFalse.this, ((Button)view).getText().toString(),Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        if (answer.equals(QuestionUtils.TRUE_FALSE_QUESTION_TRUE)) {
-            trueButton.setOnClickListener(correctListener);
-            falseButton.setOnClickListener(incorrectListener);
-        } else {
-            trueButton.setOnClickListener(incorrectListener);
-            falseButton.setOnClickListener(correctListener);
-        }
     }
 }

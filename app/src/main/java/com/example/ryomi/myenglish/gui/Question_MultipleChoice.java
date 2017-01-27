@@ -17,14 +17,24 @@ import com.example.ryomi.myenglish.questionmanager.QuestionManager;
 
 import java.util.List;
 
-public class Question_MultipleChoice extends AppCompatActivity {
+public class Question_MultipleChoice extends Question_General {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question__multiple_choice);
+        QuestionManager.getInstance().setCurrentContext(this);
         populateQuestion();
         populateButtons();
+    }
+
+    @Override
+    protected int getLayoutResourceID(){
+        return R.layout.activity_question__multiple_choice;
+    }
+
+    @Override
+    protected String getResponse(View clickedView){
+        return (String)clickedView.getTag();
     }
 
     private void populateQuestion(){
@@ -43,40 +53,23 @@ public class Question_MultipleChoice extends AppCompatActivity {
         QuestionData data = manager.getQuestionData();
         List<String> choices = data.getChoices();
         QuestionUtils.shuffle(choices);
-        String answer = data.getAnswer();
 
         LinearLayout choicesLayout = (LinearLayout) findViewById(R.id.question_multiple_choice_choices_layout);
-
-        View.OnClickListener correctListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                QuestionManager.getInstance().nextQuestion();
-            }
-        };
-
-        View.OnClickListener incorrectListener = new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(Question_MultipleChoice.this, ((Button)view).getText().toString(),Toast.LENGTH_SHORT).show();
-            }
-        };
 
         for (String choice : choices){
             Button choiceButton =
                     (Button)getLayoutInflater().inflate(R.layout.inflatable_question_multiple_choice_button, null);
             choiceButton.setText(choice);
+            //for checking answer
+            choiceButton.setTag(choice);
 
-            if (choice.equals(answer)){
-                choiceButton.setOnClickListener(correctListener);
-            } else {
-                choiceButton.setOnClickListener(incorrectListener);
-            }
+
+            choiceButton.setOnClickListener(getResponseListener());
 
             choiceButton.setBackgroundColor(ContextCompat.getColor(this,R.color.lblue500));
 
             choicesLayout.addView(choiceButton);
 
         }
-
     }
 }

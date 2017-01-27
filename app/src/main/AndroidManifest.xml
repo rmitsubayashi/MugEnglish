@@ -39,6 +39,8 @@
         </activity>
         <activity android:name=".gui.Question_Puzzle_Piece">
         </activity>
+        <activity android:name=".gui.Results">
+        </activity>
     </application>
 
 </manifest>

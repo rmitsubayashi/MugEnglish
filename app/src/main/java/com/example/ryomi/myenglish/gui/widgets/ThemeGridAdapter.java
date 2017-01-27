@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
-import com.example.ryomi.myenglish.gui.ThemeCellData;
 
 import java.util.ArrayList;
 import java.util.List;

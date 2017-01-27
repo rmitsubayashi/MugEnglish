@@ -9,6 +9,8 @@
     <string name="theme_details_lastPlayed">Last Played</string>
     <string name="theme_details_bestScore">Best Score</string>
     <string name="theme_details_playButton">GO</string>
+    <string name="theme_details_newInstance">新規</string>
+    <string name="theme_details_oldInstance">復習</string>
 
     <!--user interests list-->
     <string name="user_interests_add">追加</string>

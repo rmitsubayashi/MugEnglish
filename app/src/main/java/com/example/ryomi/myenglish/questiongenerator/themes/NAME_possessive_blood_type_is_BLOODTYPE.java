@@ -2,7 +2,6 @@ package com.example.ryomi.myenglish.questiongenerator.themes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -80,17 +79,6 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		return query;
 	}
 	
-	protected void populateResults(Set<String> wikidataIDs) throws Exception{
-		for (String entityID : wikidataIDs){
-			String query = super.addEntityToQuery(entityID);
-			Document resultDOM = connector.fetchDOMFromGetRequest(query);
-			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
-				break;
-			}
-		}
-	}
-	
 	protected void processResultsIntoClassWrappers() {
 		Document document = super.documentOfTopics;
 		NodeList allResults = document.getElementsByTagName("result");
@@ -107,6 +95,14 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 			queryResults.add(qr);
 		}
 	}
+
+	@Override
+	protected void saveResultTopics(){
+		for (QueryResult qr : queryResults){
+			addTopic(qr.personNameForeign);
+		}
+	}
+
 	
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
