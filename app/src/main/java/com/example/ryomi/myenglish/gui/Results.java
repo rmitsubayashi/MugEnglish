@@ -1,7 +1,7 @@
 package com.example.ryomi.myenglish.gui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
 import com.example.ryomi.myenglish.R;

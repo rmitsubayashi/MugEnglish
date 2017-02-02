@@ -1,37 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.example.ryomi.myenglish.gui.widgets.DynamicPaddedCell
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:minHeight="72dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:orientation="horizontal"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="right">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/themeGrid_star1"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/themeGrid_star2"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/themeGrid_star3"/>
 
-    </LinearLayout>
-    <com.example.ryomi.myenglish.gui.widgets.ThemeCellImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        android:id="@+id/themeGrid_mainImage"/>
-    <TextView
+        android:layout_marginRight="16dp"
+        android:layout_gravity="center"
+        android:id="@+id/theme_list_item_icon"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+        <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:layout_gravity="center"
-        android:id="@+id/themeGrid_text"/>
-</com.example.ryomi.myenglish.gui.widgets.DynamicPaddedCell>
+        android:textSize="17dp"
+        android:id="@+id/theme_list_item_text"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="end">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/theme_list_item_star1"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/theme_list_item_star2"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/theme_list_item_star3"/>
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

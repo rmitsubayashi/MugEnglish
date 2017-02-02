@@ -9,16 +9,26 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".gui.Test">
+        <activity
+            android:name=".gui.Splash"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".gui.ThemeList">
+        <activity
+            android:name=".gui.ThemeList"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_theme_list"/>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
         </activity>
         <activity
             android:name=".gui.SearchInterests"
@@ -29,7 +39,7 @@
 
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"/>
+                android:resource="@xml/searchable_search_interests"/>
         </activity>
         <activity android:name=".gui.ThemeDetails"/>
         <activity android:name=".gui.UserProfile"/>
@@ -40,6 +50,8 @@
         <activity android:name=".gui.Question_Puzzle_Piece">
         </activity>
         <activity android:name=".gui.Results">
+        </activity>
+        <activity android:name=".gui.FacebookInterests">
         </activity>
     </application>
 

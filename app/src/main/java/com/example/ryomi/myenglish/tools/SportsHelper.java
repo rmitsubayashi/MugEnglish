@@ -1,18 +1,18 @@
 package com.example.ryomi.myenglish.tools;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
+import com.example.ryomi.myenglish.connectors.WikipediaConnector;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
-import com.example.ryomi.myenglish.connectors.WikipediaConnector;
-import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Wikipedia のページを探索して、

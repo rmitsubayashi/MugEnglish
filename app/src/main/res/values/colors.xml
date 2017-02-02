@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--from google material.io-->
+    <color name="lblue100">#BBDEFB</color>
     <color name="lblue300">#4FC3F7</color>
     <color name="lblue500">#03A9F4</color>
     <color name="lblue600">#039BE5</color>
@@ -10,6 +11,7 @@
     <color name="green500">#4CAF50</color>
     <color name="red500">#F44336</color>
     <color name="white">#FFFFFF</color>
+    <color name="gray50">#ECEFF1</color>
     <color name="flatButtonFontColor">#19B5FE</color>
     <color name="subtextFontColor">#9E9E9E</color>
     <color name="transparent">#00ffffff</color>

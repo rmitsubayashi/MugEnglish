@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
+import com.example.ryomi.myenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionAttempt;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
-import com.example.ryomi.myenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
 import com.example.ryomi.myenglish.gui.Question_MultipleChoice;
 import com.example.ryomi.myenglish.gui.Question_Puzzle_Piece;
@@ -23,7 +23,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 //manages the execution of questions.
 //this means that any new instances will be generated before calling this class
@@ -36,6 +35,8 @@ public class QuestionManager{
 	private static QuestionManager singleton;
 	private Boolean started = false;
 	private Context currentContext = null;
+	//so we don't remove the theme details page
+	private boolean canRemovePreviousActivity = false;
 	private ThemeInstanceData instanceData = null;
 	//we will fetch the question data on initialization
 	private List<QuestionData> questionData = new ArrayList<>();
@@ -68,20 +69,22 @@ public class QuestionManager{
 			this.currentContext = startingActivity;
 			this.instanceData = data;
 			initializeQuestions();
-		} else {
-			System.out.println("Already started an instance");
 		}
 	}
 
-	//called from each new question activity
+	//called from each new question activity.
+	//we need this to delete each activity after the user moves on
+	//to prevent going back to that question
 	public void setCurrentContext(Activity newActivity){
 		this.currentContext = newActivity;
 	}
 
+	//used by each question activity to get question data
 	public QuestionData getQuestionData(){
 		return questionData.get(questionMkr);
 	}
 
+	//gets the singleton
 	public ResultsManager getResultsManager(){
 		return this.resultsManager;
 	}
@@ -101,8 +104,11 @@ public class QuestionManager{
 
 		//start activity
 		Intent intent = findQuestionIntent(getQuestionData().getQuestionType());
-		//close previous activity
-		((Activity)currentContext).finish();
+		//close previous activity only after first question
+		if (canRemovePreviousActivity)
+			((Activity)currentContext).finish();
+		else
+			canRemovePreviousActivity = true;
 		currentContext.startActivity(intent);
 
 	}
@@ -187,6 +193,7 @@ public class QuestionManager{
 		currentContext = null;
 		instanceData = null;
 		instanceRecord = null;
+		canRemovePreviousActivity = false;
 		questionData.clear();
 	}
 

@@ -1,8 +1,6 @@
 package com.example.ryomi.myenglish.tools;
 
 
-import android.provider.ContactsContract;
-
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

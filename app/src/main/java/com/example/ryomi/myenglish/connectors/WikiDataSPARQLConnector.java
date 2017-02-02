@@ -1,5 +1,7 @@
 package com.example.ryomi.myenglish.connectors;
 
+import org.w3c.dom.Document;
+
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -15,7 +17,12 @@ public class WikiDataSPARQLConnector extends WikiBaseEndpointConnector {
 	public WikiDataSPARQLConnector(String language){
 		super(language);
 	}
-	
+
+	public static int countResults(Document doc){
+		return doc.getElementsByTagName("result").getLength();
+
+	}
+
 	protected String formatURL(String... parameterValue) throws Exception{
 		String languageInsertedQuery = super.formatRequestLanguage(parameterValue[0]);
 		String url = "https://query.wikidata.org/sparql?query=";

@@ -1,20 +1,18 @@
 package com.example.ryomi.myenglish.questiongenerator.themes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
+import com.example.ryomi.myenglish.questiongenerator.Theme;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.example.ryomi.myenglish.connectors.EndpointConnector;
-import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
-import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
-import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
-import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
-import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
-import com.example.ryomi.myenglish.questiongenerator.Theme;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	
@@ -50,7 +48,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 		}
 	}
 	
-	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnector connector, ThemeData data){
+	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnectorReturnsXML connector, ThemeData data){
 		super(connector, data);
 		super.themeTopicCount = 3;
 		super.questionsLeftToPopulate = 3;
@@ -96,7 +94,6 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 		Document document = super.documentOfTopics;
 		NodeList allResults = document.getElementsByTagName("result");
 		int resultLength = allResults.getLength();
-		System.out.println(resultLength);
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
 			String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, personENPH);
@@ -121,7 +118,6 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	}
 	
 	protected void createQuestionsFromResults(){
-		System.out.println("called");
 		for (QueryResult qr : queryResults){
 			String statement = this.NAME_went_to_SCHOOL_So_did_NAME2_EN_correct(qr);
 			System.out.println(statement);

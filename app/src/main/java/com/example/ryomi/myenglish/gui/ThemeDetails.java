@@ -1,12 +1,13 @@
 package com.example.ryomi.myenglish.gui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Build;
-import android.provider.MediaStore;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Html;
 import android.view.Display;
 import android.view.View;
@@ -85,6 +86,7 @@ public class ThemeDetails extends AppCompatActivity {
                 } else {
                     descriptionTextView.setText((Html.fromHtml(themeData.getDescription())));
                 }
+
             }
 
             @Override
@@ -100,7 +102,7 @@ public class ThemeDetails extends AppCompatActivity {
             String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             final LinearLayout instanceList = (LinearLayout) findViewById(R.id.theme_details_instanceList);
             DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("themeInstances/"+userID+"/"+themeID);
-            ValueEventListener getThemeInstanceData = new ValueEventListener() {
+            ValueEventListener getThemeInstancesData = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     for (DataSnapshot child : dataSnapshot.getChildren()){
@@ -148,7 +150,7 @@ public class ThemeDetails extends AppCompatActivity {
                 }
             };
 
-            ref2.addListenerForSingleValueEvent(getThemeInstanceData);
+            ref2.addValueEventListener(getThemeInstancesData);
 
         }
     }
@@ -177,7 +179,7 @@ public class ThemeDetails extends AppCompatActivity {
 
         //top horizontal layout that has info and the image next to it.
         //we have to extend the width so we can make a cool
-        //'part-of-the-image-is-cut' effect
+        //'part-of-the-image-is-cut-off' effect
         LinearLayout outOfScreenLayout = (LinearLayout) findViewById(R.id.theme_details_outOfScreenLayout);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -197,6 +199,17 @@ public class ThemeDetails extends AppCompatActivity {
 
         outOfScreenLayout.setPadding(ooslPaddingLeft, ooslPaddingTop,
                 ooslPaddingRight, ooslPaddingBottom);
+
+        //only show description if the user has enabled it (default is enabled)
+
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(ThemeDetails.this.getApplicationContext());
+        boolean showDescription = sharedPreferences.getBoolean
+                (getString(R.string.preferences_questions_descriptionBeforeQuestions_key), true);
+        if (!showDescription) {
+            TextView descriptionTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_description);
+            descriptionTextView.setVisibility(View.GONE);
+        }
     }
 
     private void addActionListeners(){
@@ -270,7 +283,7 @@ public class ThemeDetails extends AppCompatActivity {
         //this also calls QuestionManager and starts the questions.
         //we should ideally return a instance and then pass that in to the question manager
         //but I gave up after a few hours working with stupid asynchronous data
-        theme.initiateQuestions(this);
+        theme.createQuestions();
     }
 
     private void startOldQuestions(){

@@ -1,15 +1,15 @@
 package com.example.ryomi.myenglish.userinterestcontrols;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.example.ryomi.myenglish.connectors.EndpointConnector;
-import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntitySearcher {
 	/*
@@ -18,9 +18,9 @@ public class EntitySearcher {
 	* so we have to make another request to the WikiData API to get the
 	* Japanese description
 	* */
-	private EndpointConnector searchConnector;
+	private EndpointConnectorReturnsXML searchConnector;
 
-	public EntitySearcher(EndpointConnector searchConnector){
+	public EntitySearcher(EndpointConnectorReturnsXML searchConnector){
 		this.searchConnector = searchConnector;
 	}
 	

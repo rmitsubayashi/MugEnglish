@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Wraps info needed for each cell in gui
- * has the theme info + alpha
+ * has the theme info + color to apply + stars (if user is logged in)
  */
 
 public class ThemeCellData {

@@ -1,5 +1,7 @@
 package com.example.ryomi.myenglish.connectors;
 
+import org.w3c.dom.Document;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,9 +11,7 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
-
-public abstract class WikiBaseEndpointConnector implements EndpointConnector{
+public abstract class WikiBaseEndpointConnector implements EndpointConnectorReturnsXML {
 
 	/*
 	 * WikiDataのデータはjsonとxml形式、どっちかを選べる。
@@ -26,7 +26,10 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnector{
 	 * https://www.w3.org/TR/sparql11-results-json/
 	 * と
 	 * https://www.w3.org/TR/rdf-sparql-XMLres/
-	 * 両方とも見にくい
+	 * 両方とも見にくい..
+	 *
+	 * 追記
+	 * FB APIはjsonだから統一するべき？
 	 */
 	
 	//クエリーの言語設定
@@ -79,7 +82,8 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnector{
 	private InputStream fetchHttpConnectionResponse(HttpURLConnection conn) throws Exception{
 		return conn.getInputStream();
 	}
-	
+
+	//debugging
 	public String getWikiDataAsString(String parameterValue) throws Exception{
 		HttpURLConnection conn = formatHttpConnection(parameterValue);
 		BufferedReader in = new BufferedReader(
@@ -91,7 +95,6 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnector{
 		while ((inputLine = in.readLine()) != null) {
 			response.append(inputLine);
 			response.append("\n");
-			//System.out.println(inputLine);
 		}
 		in.close();
 		

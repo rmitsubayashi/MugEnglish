@@ -1,11 +1,9 @@
 package com.example.ryomi.myenglish.gui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
@@ -17,7 +15,6 @@ public class Question_TrueFalse extends Question_General {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        QuestionManager.getInstance().setCurrentContext(this);
         populateQuestion();
         setButtonActionListeners();
     }
@@ -30,6 +27,19 @@ public class Question_TrueFalse extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return (String)clickedView.getTag();
+    }
+
+    @Override
+    protected int getMaxPossibleAttempts(){
+        //it's either true or false..
+        return 1;
+    }
+
+    @Override
+    protected boolean disableChoiceAfterWrongAnswer(){
+        //technically it's true but it doesn't matter because we only need one attempt
+        //before showing the answer
+        return true;
     }
 
     private void populateQuestion(){

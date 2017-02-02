@@ -36,12 +36,15 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="0.2">
+        <!--temporarily setting the visibility to none until we get further notice about
+        whether to enable or disable the button-->
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@color/flatButtonFontColor"
             android:text="@string/user_interests_add"
+            android:visibility="gone"
             android:id="@+id/search_interests_result_add_button"/>
     </LinearLayout>
 

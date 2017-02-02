@@ -1,15 +1,10 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/lblue500</item>
         <item name="colorPrimaryDark">@color/lblue700</item>
         <item name="colorAccent">@color/orange500</item>
 
-    </style>
-
-    <style name="theme_grid_extraInfo">
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">16sp</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -20,6 +15,26 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="theme_grid_extraInfo">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="bottom_navigation_view">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="itemBackground">?attr/colorPrimary</item>
+        <item name="itemIconTint">@drawable/bottom_navigation_view_icon_color</item>
+        <item name="itemTextColor">@drawable/bottom_navigation_view_text_color</item>
+        <item name="menu">@menu/bottom_navigation_menu</item>
+    </style>
+
+    <!--setting a window background is apparantly the best way to go with splash screens-->
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
 
 
 </resources>

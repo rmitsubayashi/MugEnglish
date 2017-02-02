@@ -2,13 +2,10 @@ package com.example.ryomi.myenglish.gui;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
@@ -22,19 +19,32 @@ public class Question_MultipleChoice extends Question_General {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        QuestionManager.getInstance().setCurrentContext(this);
         populateQuestion();
         populateButtons();
     }
 
     @Override
     protected int getLayoutResourceID(){
-        return R.layout.activity_question__multiple_choice;
+        return R.layout.activity_question_multiple_choice;
     }
 
     @Override
     protected String getResponse(View clickedView){
         return (String)clickedView.getTag();
+    }
+
+    @Override
+    protected int getMaxPossibleAttempts(){
+        //it should be the number of choices - 1 (the last one is obvious)
+        QuestionManager manager = QuestionManager.getInstance();
+        QuestionData data = manager.getQuestionData();
+        int choiceCt = data.getChoices().size();
+        return (choiceCt - 1);
+    }
+
+    @Override
+    protected boolean disableChoiceAfterWrongAnswer(){
+        return true;
     }
 
     private void populateQuestion(){

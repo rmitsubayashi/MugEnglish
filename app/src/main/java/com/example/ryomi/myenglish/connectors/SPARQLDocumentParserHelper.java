@@ -16,6 +16,9 @@ public class SPARQLDocumentParserHelper {
 		public static String findValueByNodeName(Node headNode, String name){
 			//"name"が固定なのはSPARQLクエリーすべてに対して
 			Node resultNode = findNodeByNameOfAttribute(headNode, "name", name);
+			//なかった場合
+			if (resultNode == null)
+				return "";
 			//なぜか<literal>タグの周りに二つtextタグが付いてる。
 			//だからitem(0) ではなくてitem(1)をとる
 			return resultNode.getChildNodes().item(1).getTextContent();

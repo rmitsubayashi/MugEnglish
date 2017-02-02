@@ -1,11 +1,9 @@
 package com.example.ryomi.myenglish.gui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
@@ -22,7 +20,6 @@ public class Question_Puzzle_Piece extends Question_General {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        QuestionManager.getInstance().setCurrentContext(this);
         populateQuestion();
         createChoiceButtons();
         setSubmitButtonListener();
@@ -30,7 +27,7 @@ public class Question_Puzzle_Piece extends Question_General {
 
     @Override
     protected int getLayoutResourceID(){
-        return R.layout.activity_question__puzzle__piece;
+        return R.layout.activity_question_puzzle_piece;
     }
 
     //for the puzzles the clicked view is a submit button
@@ -51,6 +48,17 @@ public class Question_Puzzle_Piece extends Question_General {
         }
 
         return answer;
+    }
+
+    @Override
+    protected int getMaxPossibleAttempts(){
+        //technically not unlimited but it doesn't matter too much
+        return Question_General.UNLIMITED_ATTEMPTS;
+    }
+
+    @Override
+    protected boolean disableChoiceAfterWrongAnswer(){
+        return false;
     }
 
     private void populateQuestion(){

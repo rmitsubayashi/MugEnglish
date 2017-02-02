@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_theme_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.ryomi.myenglish.gui.ThemeList">
 
-    <GridView
-        android:id="@+id/grid"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/theme_list_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/lblue500"
+        app:titleTextColor="@color/white"
+        android:elevation="4dp"/>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/theme_list_bottom_navigation_view"
+        style="@style/bottom_navigation_view"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/theme_list_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="2"/>
+        android:paddingTop="8dp"
+        android:layout_below="@id/theme_list_tool_bar"
+        android:layout_above="@id/theme_list_bottom_navigation_view"/>
+
 </RelativeLayout>

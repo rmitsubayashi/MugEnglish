@@ -1,15 +1,8 @@
 package com.example.ryomi.myenglish.questiongenerator.themes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.example.ryomi.myenglish.connectors.EndpointConnector;
-import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
@@ -17,6 +10,13 @@ import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.myenglish.questiongenerator.QGUtils;
 import com.example.ryomi.myenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	//placeholders
@@ -45,7 +45,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		}
 	}
 	
-	public NAME_possessive_blood_type_is_BLOODTYPE(EndpointConnector connector, ThemeData data){
+	public NAME_possessive_blood_type_is_BLOODTYPE(EndpointConnectorReturnsXML connector, ThemeData data){
 		super(connector, data);
 		super.themeTopicCount = 3;
 		super.questionsLeftToPopulate = 6;

@@ -1,19 +1,13 @@
 package com.example.ryomi.myenglish.questiongenerator;
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.example.ryomi.myenglish.connectors.EndpointConnector;
+import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
-import com.example.ryomi.myenglish.questionmanager.QuestionManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,12 +15,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.List;
-import java.util.Set;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.List;
+import java.util.Set;
 
 //this class (inherited classes) will create the questions for the theme
 //the first time around.
@@ -38,18 +34,18 @@ public abstract class Theme {
 	//a full list of question IDs we will save into the theme instance data.
 	//any existing questions we are putting into the instance will be put in here
 	//directly as the ID instead of having to query again to get the question data
-	protected List<String> questionIDs = new ArrayList<>();
+	private List<String> questionIDs = new ArrayList<>();
 	//これが出題される問題のトピック
 	protected Document documentOfTopics = null;
 	//interests to search for more relevant topics
-	protected final Set<WikiDataEntryData> userInterests = new HashSet<>();
+	private final Set<WikiDataEntryData> userInterests = new HashSet<>();
 			//makes sure we are not giving the same question
-	protected final Set<String> userQuestionHistory = new HashSet<>();
+	private final Set<String> userQuestionHistory = new HashSet<>();
 	//save topics in the instance as unique identifiers
 	// for when we display a list of instances to the user.
 	//We can't serialize sets, but we don't want duplicates.
 	//to make it act like a set call setTopic(topic)
-	protected final List<String> topics = new ArrayList<>();
+	private final List<String> topics = new ArrayList<>();
 	//how many questions we have
 	protected int questionsLeftToPopulate;
 	//MAXIMUM number of theme topics we need.
@@ -57,21 +53,18 @@ public abstract class Theme {
 	//may create more than one question
 	protected int themeTopicCount;
 
-	protected EndpointConnector connector = null;
-	private Activity activity;
+	private EndpointConnectorReturnsXML connector = null;
 	
 	
-	public Theme(EndpointConnector connector, ThemeData data){
+	public Theme(EndpointConnectorReturnsXML connector, ThemeData data){
 		this.themeData = data;
 		this.connector = connector;
 	}
 
 	//check if a question for this theme with the matching topics already exists
 	//in the database. Then, fill the rest of the topics
-	//then instantiate the question manager and start*
-	//*we should ideally return the instance data and start the question manager in the activity..
-	public void initiateQuestions(Activity activity) {
-		this.activity = activity;
+	//then save in the DB
+	public void createQuestions() {
 		startFlow();
 	}
 
@@ -163,7 +156,7 @@ public abstract class Theme {
 			public void onDataChange(DataSnapshot topicsForTheme) {
 				//remove user interest if we can pre-populate the question
 
-				List<String> toRemove = new ArrayList<>();
+				List<WikiDataEntryData> toRemove = new ArrayList<>();
 				for (WikiDataEntryData data : userInterests){
 					String interestID = data.getWikiDataID();
 					if (topicsForTheme.hasChild(interestID)){
@@ -183,13 +176,13 @@ public abstract class Theme {
 						//no matter if the questions are new(we will add them to the question list)
 						// or previously done (we do not add it to our question list),
 						//we will not need to search for the interest again
-						toRemove.add(interestID);
+						toRemove.add(data);
 
 						if (questionsLeftToPopulate == 0) break;
 					}
 				}
 				//remove matched user interests
-				for (String removeID : toRemove){
+				for (WikiDataEntryData removeID : toRemove){
 					userInterests.remove(removeID);
 				}
 
@@ -239,13 +232,13 @@ public abstract class Theme {
 	//UNIONしてまとめて検索してもいいけど時間が異常にかかる
 	protected abstract String getSPARQLQuery();
 	//一つ一つのクエリーを送って、まとめる
-	protected void populateResults() throws Exception {
+	private void populateResults() throws Exception {
 		for (WikiDataEntryData interest : userInterests){
 			String entityID = interest.getWikiDataID();
 			String query = addEntityToQuery(entityID);
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
 			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= questionsLeftToPopulate){
+			if (WikiDataSPARQLConnector.countResults(documentOfTopics) >= questionsLeftToPopulate){
 				break;
 			}
 		}
@@ -342,21 +335,12 @@ public abstract class Theme {
 		DatabaseReference ref2 = db.getReference("themeInstances/"+userID+"/"+themeData.getId()+"/"+key);
 		ref2.setValue(data);
 
-		startInstance(data);
+		//end of flow
 	}
 
-	private void startInstance(ThemeInstanceData data){
-		QuestionManager manager = QuestionManager.getInstance();
-		manager.startQuestions(data, activity);
-	}
-		
-	
-	protected int countResults(Document doc){
-		return doc.getElementsByTagName("result").getLength();
-		
-	}
-	
-	protected void addResultsToMainDocument(Document newDocument){
+	//when we populate results, we want to combine each DOM for each query
+	// into one single DOM
+	private void addResultsToMainDocument(Document newDocument){
 		if (this.documentOfTopics == null){
 			this.documentOfTopics = newDocument;
 			return;
@@ -364,7 +348,7 @@ public abstract class Theme {
 		
 		//<results>タグは一つしかない前提
 		Node documentOfTopicsHead = documentOfTopics.getElementsByTagName("results").item(0);
-		int dotResultsCount = this.countResults(documentOfTopics);
+		int dotResultsCount = WikiDataSPARQLConnector.countResults(documentOfTopics);
 		NodeList newDocumentResults = newDocument.getElementsByTagName("result");
 		int newDocumentResultsCount = newDocumentResults.getLength();
 		
@@ -382,7 +366,7 @@ public abstract class Theme {
 	}
 
 	//ひとつのクエリーで複数のエンティティを入れる必要があるかも？？
-	protected String addEntityToQuery(String entity){
+	private String addEntityToQuery(String entity){
 		String query = this.getSPARQLQuery();
 		return String.format(query, entity);
 	}

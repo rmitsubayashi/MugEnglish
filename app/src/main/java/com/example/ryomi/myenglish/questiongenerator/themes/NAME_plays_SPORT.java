@@ -1,16 +1,9 @@
 package com.example.ryomi.myenglish.questiongenerator.themes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.example.ryomi.myenglish.connectors.EndpointConnector;
+import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
-import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.questiongenerator.QGUtils;
@@ -22,6 +15,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NAME_plays_SPORT extends Theme{
 	private final String personNamePH = "personName";
@@ -54,7 +54,7 @@ public class NAME_plays_SPORT extends Theme{
 		}
 	}
 	
-	public NAME_plays_SPORT(EndpointConnector connector, ThemeData data){
+	public NAME_plays_SPORT(EndpointConnectorReturnsXML connector, ThemeData data){
 		super(connector, data);
 		super.themeTopicCount = 3;
 		super.questionsLeftToPopulate = 3;

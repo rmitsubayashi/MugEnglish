@@ -1,15 +1,13 @@
 package com.example.ryomi.myenglish.gui;
 
-import android.animation.LayoutTransition;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
@@ -18,11 +16,16 @@ import android.widget.SearchView;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
-import com.example.ryomi.myenglish.connectors.WikiDataAPIGetConnector;
 import com.example.ryomi.myenglish.connectors.WikiDataAPISearchConnector;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.example.ryomi.myenglish.gui.widgets.SearchResultsAdapter;
 import com.example.ryomi.myenglish.userinterestcontrols.EntitySearcher;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +33,7 @@ import java.util.List;
 public class SearchInterests extends AppCompatActivity {
     private EntitySearcher searcher;
     //initital row count of search results
-    private final int defaultRowCt = 20;
+    private final int defaultRowCt = 10;
     //we can do continue=# to get the results from that number of results
     //increment when we want more rows
     private Integer currentRowCt = defaultRowCt;
@@ -55,7 +58,7 @@ public class SearchInterests extends AppCompatActivity {
         //because we want this to be a header view of the listview
         //but we can't replicate that relation in the xml file.
         LinearLayout searchWrapper = (LinearLayout)getLayoutInflater().inflate(R.layout.inflatable_search_interests_search_bar, null);
-        SearchView searchView = (SearchView)searchWrapper.findViewById(R.id.search_interests_search_bar_view);
+        final SearchView searchView = (SearchView)searchWrapper.findViewById(R.id.search_interests_search_bar_view);
         //font
         int searchSrcTextId = getResources().getIdentifier("android:id/search_src_text", null, null);
         EditText searchEditText = (EditText) searchView.findViewById(searchSrcTextId);
@@ -74,16 +77,45 @@ public class SearchInterests extends AppCompatActivity {
         //we want the submit button
         searchView.setSubmitButtonEnabled(true);
 
-        /*
-        * Still need to work on a nice way to do search bar animation
-        * */
-        int searchBarId = searchView.getContext().getResources().getIdentifier("android:id/search_bar", null, null);
-        LinearLayout searchBar = (LinearLayout) searchView.findViewById(searchBarId);
-        searchBar.setLayoutTransition(new LayoutTransition());
-        //end transition
+        //making sure buttons for search results the user already has are disabled
+        String userID = "temp";
+        if (FirebaseAuth.getInstance().getCurrentUser() != null)
+            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        ListView list = (ListView) findViewById(R.id.search_results_result_list);
-        list.setAdapter(new SearchResultsAdapter(this));
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference ref = db.getReference("userInterests/"+userID);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<WikiDataEntryData> userInterests = new ArrayList<>();
+                for (DataSnapshot child : dataSnapshot.getChildren()){
+                    WikiDataEntryData data = child.getValue(WikiDataEntryData.class);
+                    userInterests.add(data);
+                }
+
+                ListView list = (ListView) findViewById(R.id.search_results_result_list);
+                list.setAdapter(new SearchResultsAdapter(SearchInterests.this, userInterests));
+
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        if (s.length() > 1)
+                            populateResults(s);
+                        return true;
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
         //dynamic padding
@@ -96,6 +128,7 @@ public class SearchInterests extends AppCompatActivity {
         searchWrapper.setPadding(paddingHorizontal,paddingTop,
                 paddingHorizontal,paddingBottom);
 
+        ListView list = (ListView) findViewById(R.id.search_results_result_list);
         list.addHeaderView(searchWrapper);
     }
 
@@ -111,17 +144,25 @@ public class SearchInterests extends AppCompatActivity {
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            ListView testOutput = (ListView) findViewById(R.id.search_results_result_list);
-            try {
-                SearchConnection conn = new SearchConnection();
-                String[] queryList = {query, currentRowCt.toString()};
-                List<WikiDataEntryData> results = conn.execute(queryList).get();
-                HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)(testOutput.getAdapter());
-                SearchResultsAdapter mainAdapter = (SearchResultsAdapter) (headerAdapter.getWrappedAdapter());
+            populateResults(query);
+        }
+    }
+
+    private void populateResults(String query){
+        ListView resultList = (ListView) findViewById(R.id.search_results_result_list);
+        try {
+            SearchConnection conn = new SearchConnection();
+            String[] queryList = {query, currentRowCt.toString()};
+            List<WikiDataEntryData> results = conn.execute(queryList).get();
+            HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)(resultList.getAdapter());
+            //the adapter might not be loaded yet
+            if (headerAdapter.getWrappedAdapter() != null){
+                SearchResultsAdapter mainAdapter =
+                        (SearchResultsAdapter) (headerAdapter.getWrappedAdapter());
                 mainAdapter.updateEntries(results);
-            } catch (Exception e){
-                e.printStackTrace();
             }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
