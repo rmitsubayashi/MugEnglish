@@ -68,7 +68,7 @@ public class NAME_plays_SPORT extends Theme{
 
 	@Override
 	protected String getSPARQLQuery(){
-		String query = 
+		return
 				"SELECT ?" + personNamePH + " ?" + personNameENPH + " ?" + personNameForeignPH + 
 				" ?" + sportIDPH + " ?" + sportNameForeignPH +  " " +
 				"		WHERE " +
@@ -87,8 +87,6 @@ public class NAME_plays_SPORT extends Theme{
 				"           BIND (wd:%s as ?" + personNamePH + ") " +
 				"		}" +
 				"       LIMIT " + themeTopicCount;
-		
-		return query;
 	}
 
 	@Override

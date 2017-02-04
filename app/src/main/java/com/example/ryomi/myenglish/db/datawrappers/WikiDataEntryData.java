@@ -4,14 +4,16 @@ public class WikiDataEntryData{
 	private String label;
 	private String wikiDataID;
 	private String description;
+	private String pronunciation;
 	
 	public WikiDataEntryData(){
 	}
 
-	public WikiDataEntryData(String label, String description, String wikiDataID){
+	public WikiDataEntryData(String label, String description, String wikiDataID, String pronunciation){
 		this.label = label;
 		this.description = description;
 		this.wikiDataID = wikiDataID;
+		this.pronunciation = pronunciation;
 	}
 
 	public void setLabel(String label){
@@ -35,6 +37,14 @@ public class WikiDataEntryData{
 	}
 
 	public String getDescription() {return this.description; }
+
+	public String getPronunciation() {
+		return pronunciation;
+	}
+
+	public void setPronunciation(String pronunciation) {
+		this.pronunciation = pronunciation;
+	}
 
 	@Override
 	public boolean equals(Object object){

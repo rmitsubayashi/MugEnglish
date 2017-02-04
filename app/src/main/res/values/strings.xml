@@ -114,6 +114,7 @@
 
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>
+    <string name="search_interests_add">追加</string>
 
     <!--Theme Details Page-->
     <string name="theme_details_lastPlayed">Last Played</string>
@@ -123,7 +124,8 @@
     <string name="theme_details_oldInstance">復習</string>
 
     <!--user interests list-->
-    <string name="user_interests_add">追加</string>
+    <string name="user_interests_app_bar_title">お気に入り</string>
+    <string name="user_interests_search_hint">検索</string>
     <string name="title_activity_fab">fab</string>
 
     <!--user profile-->

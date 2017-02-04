@@ -1,5 +1,7 @@
 package com.example.ryomi.myenglish.gui;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,7 +9,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
@@ -37,25 +44,102 @@ public class UserInterests extends AppCompatActivity {
         GUIUtils.prepareBottomNavigationView(this, nav);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            setListListeners();
-            populateFABs();
+            loadUser();
         }
+    }
+
+    private void loadUser(){
+        Toolbar appBar = (Toolbar)findViewById(R.id.user_interests_tool_bar);
+        appBar.setTitle(R.string.user_interests_app_bar_title);
+        setSupportActionBar(appBar);
+
+        setListListeners();
+        populateFABs();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.user_interests_app_bar_menu, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.user_interests_app_bar_search).getActionView();
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                updateAdapter(s);
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            updateAdapter(query);
+        }
+    }
+
+    private void updateAdapter(String query){
+        //clear adapter
+        if (firebaseAdapter != null)
+            firebaseAdapter.cleanup();
+
+        RecyclerView listView = (RecyclerView)findViewById(R.id.user_interests_list);
+        //update the list as necessary
+
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("userInterests/"+userID);
+        if (query.equals("")){
+            //since firebase doesn't support multiple ordering,
+            //we can't search for the characters typed i.e. "長友~"
+            //and sort by the pronunciation "ながとも"
+            //which is stupid, but until then, just sort by pronunciation
+            //only when the user doesn't have anything typed.
+            //shouldn't be too much of a bother once the user has searched for something...
+            firebaseAdapter = new UserInterestAdapter(
+                    WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
+                    UserInterestViewHolder.class, ref.orderByChild("pronunciation")
+            );
+        } else {
+            //ends at string + (high unicode character)
+            // which means all Japanese characters are included
+            firebaseAdapter = new UserInterestAdapter(
+                    WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
+                    UserInterestViewHolder.class, ref.orderByChild("label").startAt(query).endAt(query + "\uFFFF")
+            );
+        }
+
+
+        listView.setAdapter(firebaseAdapter);
     }
 
     private void setListListeners(){
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.user_interests_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("userInterests/"+userID);
-
-        firebaseAdapter = new UserInterestAdapter(
-                WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
-                UserInterestViewHolder.class, ref
-        );
-
-        recyclerView.setAdapter(firebaseAdapter);
+        updateAdapter("");
 
 
 

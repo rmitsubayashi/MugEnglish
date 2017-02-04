@@ -84,7 +84,7 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	}
 
 	//debugging
-	public String getWikiDataAsString(String parameterValue) throws Exception{
+	public String getDOMAsString(String parameterValue) throws Exception{
 		HttpURLConnection conn = formatHttpConnection(parameterValue);
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(conn.getInputStream())

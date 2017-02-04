@@ -1,6 +1,7 @@
 package com.example.ryomi.myenglish.gui.widgets;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.ryomi.myenglish.R;
+import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
+import com.example.ryomi.myenglish.userinterestcontrols.PronunciationSearcher;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -23,10 +26,11 @@ import static android.view.View.GONE;
 
 public class SearchResultsAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
+    private PronunciationSearcher pronunciationSearcher = new PronunciationSearcher();
     private List<WikiDataEntryData> results = new ArrayList<>();
     private Set<String> userInterestIDs;
 
-    static class ViewHolder {
+    private static class ViewHolder {
         TextView name;
         TextView description;
         Button addButton;
@@ -59,7 +63,7 @@ public class SearchResultsAdapter extends BaseAdapter {
 
         if (convertView == null){
             holder = new ViewHolder();
-            convertView = layoutInflater.inflate(R.layout.inflatable_search_interests_result_item, null);
+            convertView = layoutInflater.inflate(R.layout.inflatable_search_interests_result_item, parent, false);
 
             holder.name = (TextView)convertView.findViewById(R.id.search_interests_result_label);
             holder.description = (TextView)convertView.findViewById(R.id.search_interests_result_description);
@@ -83,26 +87,11 @@ public class SearchResultsAdapter extends BaseAdapter {
             holder.addButton.setVisibility(GONE);
         } else {
             holder.addButton.setVisibility(View.VISIBLE);
-            final WikiDataEntryData finalData = data;
+            final WikiDataEntryData fData = data;
             holder.addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
-                    if (auth.getCurrentUser() != null) {
-                        FirebaseDatabase db = FirebaseDatabase.getInstance();
-                        String userID = auth.getCurrentUser().getUid();
-                        DatabaseReference ref = db.getReference("userInterests/" + userID + "/" + finalData.getWikiDataID());
-                        //just to make sure.
-                        //handled when displaying the view
-                        if (ref != null) {
-                            ref.setValue(finalData);
-
-                            //hide button and add interest to the list of user interests
-                            userInterestIDs.add(finalData.getWikiDataID());
-                            v.setVisibility(GONE);
-                            v.invalidate();
-                        }
-                    }
+                    addInterest(fData, v);
                 }
             });
         }
@@ -113,6 +102,65 @@ public class SearchResultsAdapter extends BaseAdapter {
     public void updateEntries(List<WikiDataEntryData> newList){
         results = new ArrayList<>(newList);
         notifyDataSetChanged();
+    }
+
+    private void addInterest(WikiDataEntryData dataToAdd, View viewToHide){
+        //hide button and add interest to the list of user interests
+        userInterestIDs.add(dataToAdd.getWikiDataID());
+        viewToHide.setVisibility(GONE);
+        viewToHide.invalidate();
+
+        //disable button first for better ux (less lag).
+        //then search for pronunciation
+        //and add the wikiData entry
+        try {
+            PronunciationSearcherThread conn = new PronunciationSearcherThread();
+            conn.execute(dataToAdd);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    private class PronunciationSearcherThread extends AsyncTask<WikiDataEntryData, Integer, String>{
+        private WikiDataEntryData dataToAdd;
+
+        @Override
+        protected String doInBackground(WikiDataEntryData... dataList){
+            dataToAdd = dataList[0];
+            String pronunciation = "";
+            try {
+                pronunciation = pronunciationSearcher.getPronunciationFromWikiBase(dataToAdd.getWikiDataID());
+            } catch (Exception e){
+                e.printStackTrace();
+                pronunciation =  pronunciationSearcher.zenkakuKatakanaToZenkakuHiragana(dataToAdd.getLabel());
+            }
+
+            if (pronunciationSearcher.containsKanji(pronunciation)){
+                try {
+                    return pronunciationSearcher.getPronunciationFromMecap(pronunciation);
+                } catch (Exception e){
+                    e.printStackTrace();
+                    return pronunciation;
+                }
+            } else {
+                return pronunciation;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String pronunciation){
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if (auth.getCurrentUser() != null) {
+                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                String userID = auth.getCurrentUser().getUid();
+                DatabaseReference ref = db.getReference("userInterests/" + userID + "/" + dataToAdd.getWikiDataID());
+                //just to make sure.
+                //handled when displaying the view
+                if (ref != null) {
+                    dataToAdd.setPronunciation(pronunciation);
+                    ref.setValue(dataToAdd);
+                }
+            }
+        }
     }
 
 }

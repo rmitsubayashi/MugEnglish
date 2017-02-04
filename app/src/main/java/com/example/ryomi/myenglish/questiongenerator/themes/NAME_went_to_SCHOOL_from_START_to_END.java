@@ -75,7 +75,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		
 		//find the education institution, start and end date of one individual
 		//ex ビル・ゲーツ | ハーバード・カレッジ | Bill Gates | Harvard College | 1973-01-01T00:00:00Z | 1975-01-01T00:00:00Z
-		String query = 	"SELECT ?" + personNamePH + " ?" + personNameForeignPH +  " ?" + personNameENPH +
+		return 	"SELECT ?" + personNamePH + " ?" + personNameForeignPH +  " ?" + personNameENPH +
 				" ?" + educationInstitutionNameForeignPH + " ?" + educationInstitutionNameENPH +
 				" ?" + startDatePH + " ?" + endDatePH + " " +
 				"WHERE" +
@@ -109,8 +109,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		//   EX: Univ. of Pennsylvania School of Arts and Sciences
 		//     ->教科科学大学院
 		// 4. The ISO 8601 date format allows only year, but WikiData returns 1/1/year 0:00:00
-		
-		return query;
+
 	}
 	
 	protected void processResultsIntoClassWrappers(){

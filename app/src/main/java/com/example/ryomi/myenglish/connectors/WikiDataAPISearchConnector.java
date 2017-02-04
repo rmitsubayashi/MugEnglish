@@ -5,7 +5,9 @@ import java.nio.charset.StandardCharsets;
 
 public class WikiDataAPISearchConnector extends WikiBaseEndpointConnector {
 	/*
-	 * WikiDataのAPIエンドポイントに接続
+	 * 日本語用
+	 * name in kana を利用して、お気に入りを見る時に
+	 * できるだけ、あいうえお順になるようにする
 	 */
 	
 	public WikiDataAPISearchConnector(){

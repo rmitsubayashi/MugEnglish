@@ -1,6 +1,9 @@
 package com.example.ryomi.myenglish.userinterestcontrols;
 
+import android.app.IntentService;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.example.ryomi.myenglish.connectors.FacebookAPIConnector;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
@@ -23,9 +26,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class FacebookInterestFinder {
+public class FacebookInterestFinder extends IntentService{
     public static final int SHALLOW_SEARCH = 1;
     public static final int DEEP_SEARCH = 2;
+
+    public static final String BROADCAST_FACEBOOKINTERESTFINDER_WORD = "FacebookInterestFinder WORD";
+    //the string to display where we are searching (ie education, likes)
+    public static final String BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_STRING = "FacebookInterestFinder PROGRESS STRING";
+    //progress to show on the progress bar
+    public static final String BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT = "FacebookInterestFinder PROGRESS PERCENT";
 
     private final static String FACEBOOK_GENERAL_SEARCH = "P2013";
     private final static String FACEBOOK_LOCATION_SEARCH = "P1997";
@@ -44,11 +53,21 @@ public class FacebookInterestFinder {
 
     private int searchDepth;
 
-    public FacebookInterestFinder(Context context){
-        FacebookSdk.sdkInitialize(context);
+    public FacebookInterestFinder(){
+        super("FacebookInterestFinder Service");
     }
 
-    public Set<WikiDataEntryData> findUserInterests(int depth) throws Exception{
+    @Override
+    protected void onHandleIntent(Intent workIntent){
+        int depth = workIntent.getIntExtra("depth",SHALLOW_SEARCH);
+        try {
+            Set<WikiDataEntryData> result = findUserInterests(depth);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private Set<WikiDataEntryData> findUserInterests(int depth) throws Exception{
         searchDepth = depth;
 
         Set<WikiDataEntryData> results = new HashSet<>();
@@ -60,8 +79,11 @@ public class FacebookInterestFinder {
         String[] paramsForUserInfo = {accessToken, pageID, fieldsForUserInfo};
 
         JSONObject userInfo = facebookConnector.fetchJSONObjectFromGetRequest(paramsForUserInfo);
+
+        sendProgressStringToUI("学歴を検索中...");
         Set educationResult = searchEducation(userInfo);
         results.addAll(educationResult);
+        sendProgressStringToUI("出身地を検索中...");
         Set hometownResult = searchHometown(userInfo);
         results.addAll(hometownResult);
 
@@ -70,6 +92,25 @@ public class FacebookInterestFinder {
         }
 
         return results;
+    }
+
+    //for loading screen
+    private void sendProgressStringToUI(String str){
+        Intent intent = new Intent(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_STRING);
+        intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_STRING, str);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendProgressPercentToUI(double percent){
+        Intent intent = new Intent(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT);
+        intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT, percent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendWordToUI(String word){
+        Intent intent = new Intent(BROADCAST_FACEBOOKINTERESTFINDER_WORD);
+        intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_WORD, word);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     /* first check the facebook url
@@ -92,9 +133,9 @@ public class FacebookInterestFinder {
         String facebookIDQuery = searchByFacebookIDQuery(facebookID, facebookQueryType);
         Document facebookIDResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(facebookIDQuery);
         Set<WikiDataEntryData> facebookIDEntry = getEntriesFromSPARQL(facebookIDResults, "entry");
-        for (WikiDataEntryData data : facebookIDEntry){
+        if (facebookIDEntry.size() != 0){
             //return first (and only) data if it exists
-            return data;
+            return facebookIDEntry.iterator().next();
         }
 
         String facebookURL = pageInfo.getString("link");
@@ -102,9 +143,9 @@ public class FacebookInterestFinder {
         String facebookURLQuery = searchByFacebookIDQuery(facebookURL, facebookQueryType);
         Document facebookURLResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(facebookURLQuery);
         Set<WikiDataEntryData> facebookURLEntry = getEntriesFromSPARQL(facebookURLResults, "entry");
-        for (WikiDataEntryData data : facebookURLEntry){
+        if (facebookURLEntry.size() != 0){
             //return first (and only) data if it exists
-            return data;
+            return facebookURLEntry.iterator().next();
         }
 
 
@@ -114,8 +155,8 @@ public class FacebookInterestFinder {
             String officialSiteQuery = searchByOfficialSiteQuery(officialSiteURL);
             Document officialSiteResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(officialSiteQuery);
             Set<WikiDataEntryData> officialSiteEntry = getEntriesFromSPARQL(officialSiteResults, "entry");
-            for (WikiDataEntryData data : officialSiteEntry){
-                return data;
+            if (officialSiteEntry.size() != 0){
+                return officialSiteEntry.iterator().next();
             }
             //we can also search for www.website.com/
             //because wikidata is pretty inconsistent with this
@@ -128,8 +169,8 @@ public class FacebookInterestFinder {
             String alternateOfficialSiteQuery = searchByOfficialSiteQuery(alternateOfficialSiteURL);
             Document alternateOfficialSiteResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(alternateOfficialSiteQuery);
             Set<WikiDataEntryData> alternateOfficialSiteEntry = getEntriesFromSPARQL(alternateOfficialSiteResults, "entry");
-            for (WikiDataEntryData data : alternateOfficialSiteEntry){
-                return data;
+            if (alternateOfficialSiteEntry.size() != 0){
+                return alternateOfficialSiteEntry.iterator().next();
             }
         }
 
@@ -149,7 +190,7 @@ public class FacebookInterestFinder {
 
     //for shallow search to match the facebook item to an entity
     private String searchByFacebookIDQuery(String facebookID, String type){
-        String query =
+        return
             "SELECT ?entry ?entryLabel ?entryDescription " +
             "WHERE " +
             "{" +
@@ -159,13 +200,11 @@ public class FacebookInterestFinder {
             WikiBaseEndpointConnector.ENGLISH + "' } . " +
             "} " +
             "LIMIT 1 "; //should only return 1 result but just to make sure
-
-        return query;
     }
 
     //for shallow search to match the facebook item to an entity
     private String searchByOfficialSiteQuery(String officialSite){
-        String query =
+        return
                 "SELECT ?entry ?entryLabel ?entryDescription " +
                 "WHERE " +
                 "{" +
@@ -175,8 +214,6 @@ public class FacebookInterestFinder {
                 WikiBaseEndpointConnector.ENGLISH + "' } . " +
                 "}" +
                 "LIMIT 1 "; //should only return 1 result but just to make sure
-
-        return query;
     }
 
     private String stripOfficialSite(String officialSite) {
@@ -212,7 +249,7 @@ public class FacebookInterestFinder {
                     description = e.getAttribute("description");
                 }
 
-                return new WikiDataEntryData(label, description, wikiDataID);
+                return new WikiDataEntryData(label, description, wikiDataID, label);
             }
         }
 
@@ -234,7 +271,7 @@ public class FacebookInterestFinder {
             String id = SPARQLDocumentParserHelper.findValueByNodeName(head, identifier);
             id = QGUtils.stripWikidataID(id);
 
-            WikiDataEntryData data = new WikiDataEntryData(label, description, id);
+            WikiDataEntryData data = new WikiDataEntryData(label, description, id, label);
             result.add(data);
         }
 
@@ -252,8 +289,10 @@ public class FacebookInterestFinder {
                 String schoolName = schoolGeneralInfo.getString("name");
                 String schoolID = schoolGeneralInfo.getString("id");
                 WikiDataEntryData data = findWikiDataEntry(schoolName, schoolID, FACEBOOK_GENERAL_SEARCH);
-                if (data != null)
+                if (data != null) {
                     result.add(data);
+                    sendWordToUI(data.getLabel());
+                }
             }
 
             //deep search
@@ -330,8 +369,10 @@ public class FacebookInterestFinder {
             String[] hometownNameParts = hometownName.split(", ");
             String hometownCity = hometownNameParts[0];
             WikiDataEntryData data = findWikiDataEntry(hometownCity, hometownID, FACEBOOK_LOCATION_SEARCH);
-            if (data != null)
+            if (data != null) {
                 result.add(data);
+                sendWordToUI(data.getLabel());
+            }
 
             if (searchDepth == DEEP_SEARCH) {
                 if (result.size() == 1) {

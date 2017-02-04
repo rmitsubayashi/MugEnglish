@@ -6,6 +6,7 @@ import android.view.View;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 
 public class UserInterestAdapter
         extends FirebaseRecyclerAdapter<WikiDataEntryData, UserInterestViewHolder> {
@@ -13,6 +14,11 @@ public class UserInterestAdapter
     public UserInterestAdapter(Class<WikiDataEntryData> dataClass, int layoutID,
                                Class<UserInterestViewHolder> viewHolderClass, DatabaseReference ref){
         super(dataClass, layoutID, viewHolderClass, ref);
+    }
+
+    public UserInterestAdapter(Class<WikiDataEntryData> dataClass, int layoutID,
+                               Class<UserInterestViewHolder> viewHolderClass, Query query){
+        super(dataClass, layoutID, viewHolderClass, query);
     }
 
     @Override

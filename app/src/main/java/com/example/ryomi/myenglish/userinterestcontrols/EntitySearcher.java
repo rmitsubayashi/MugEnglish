@@ -52,7 +52,9 @@ public class EntitySearcher {
 					description = e.getAttribute("description");
 				}
 
-				searchResults.add(new WikiDataEntryData(label, description, wikiDataID));
+				//set pronunciation to label for now.
+				//if there is a pronunciation field, use that
+				searchResults.add(new WikiDataEntryData(label, description, wikiDataID, label));
 			}
 
 		}

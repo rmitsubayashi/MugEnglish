@@ -43,7 +43,15 @@
         </activity>
         <activity android:name=".gui.ThemeDetails"/>
         <activity android:name=".gui.UserProfile"/>
-        <activity android:name=".gui.UserInterests"/>
+        <activity android:name=".gui.UserInterests"
+                  android:launchMode="singleTop">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_user_interests"/>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".gui.Question_TrueFalse"/>
         <activity android:name=".gui.Question_MultipleChoice">
         </activity>
@@ -53,6 +61,9 @@
         </activity>
         <activity android:name=".gui.FacebookInterests">
         </activity>
+
+        <service android:name=".userinterestcontrols.FacebookInterestFinder"
+            android:exported="false"/>
     </application>
 
 </manifest>

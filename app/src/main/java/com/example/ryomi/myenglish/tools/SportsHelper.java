@@ -107,7 +107,7 @@ public class SportsHelper {
 			//decide verb
 			//get # of the word 'played' in the Wikipedia page
 			//to see if the sport should use 'play' as the verb
-			String text = wikipediaConn.getWikiDataAsString(url);
+			String text = wikipediaConn.getDOMAsString(url);
 			//6 = played.length()
 			int playedCt = ( text.length() - text.replace("played", "").length() ) / 6;
 			

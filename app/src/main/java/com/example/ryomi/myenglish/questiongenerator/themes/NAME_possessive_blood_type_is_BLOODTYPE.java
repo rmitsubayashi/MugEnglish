@@ -58,7 +58,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	
 	protected String getSPARQLQuery(){
 		//find person name and blood type
-		String query = "SELECT ?" + personNamePH + " ?" + personNameForeignPH + " ?" + personNameENPH +
+		return "SELECT ?" + personNamePH + " ?" + personNameForeignPH + " ?" + personNameENPH +
 				" ?" + bloodTypePH + "Label " +
 				"WHERE " +
 				"{" +
@@ -75,8 +75,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 				"    BIND (wd:%s as ?" + personNamePH + ") . " + //binding the ID of entity as ?person
 				"} " +
 				"LIMIT " + super.themeTopicCount;
-		
-		return query;
+
 	}
 	
 	protected void processResultsIntoClassWrappers() {
@@ -130,8 +129,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	}
 	
 	private String formatSentenceForeign(QueryResult qr){
-		String sentence = qr.personNameForeign + "の血液型は" + qr.bloodType + "型です。";
-		return sentence;
+		return qr.personNameForeign + "の血液型は" + qr.bloodType + "型です。";
 	}
 	
 	//puzzle pieces for sentence puzzle question
@@ -154,8 +152,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	//because that's impossible...
 	private String multipleChoiceQuestion(QueryResult qr){
 		String possessiveName = GrammarRules.possessiveCaseOfSingularNoun(qr.personNameEN);
-		String question = "What is " + possessiveName + " blood type?";
-		return question;
+		return "What is " + possessiveName + " blood type?";
 	}
 	
 	private String multipleChoiceAnswer(QueryResult qr){
@@ -169,7 +166,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		return wrongAnswers;
 	}
 
-	QuestionData createSentencePuzzleQuestion(QueryResult qr){
+	private QuestionData createSentencePuzzleQuestion(QueryResult qr){
 		String question = this.formatSentenceForeign(qr);
 		List<String> choices = this.puzzlePieces(qr);
 		String answer = puzzlePiecesAnswer(qr);
@@ -187,7 +184,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		return data;
 	}
 
-	QuestionData createMultipleChoiceQuestion(QueryResult qr){
+	private QuestionData createMultipleChoiceQuestion(QueryResult qr){
 		String question = this.multipleChoiceQuestion(qr);
 		String answer = this.multipleChoiceAnswer(qr);
 		List<String> choices = this.multipleChoiceWrongAnswers();

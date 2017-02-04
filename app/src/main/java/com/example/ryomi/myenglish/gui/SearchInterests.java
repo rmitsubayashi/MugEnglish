@@ -32,7 +32,7 @@ import java.util.List;
 
 public class SearchInterests extends AppCompatActivity {
     private EntitySearcher searcher;
-    //initital row count of search results
+    //initial row count of search results
     private final int defaultRowCt = 10;
     //we can do continue=# to get the results from that number of results
     //increment when we want more rows
@@ -64,7 +64,7 @@ public class SearchInterests extends AppCompatActivity {
         EditText searchEditText = (EditText) searchView.findViewById(searchSrcTextId);
         searchEditText.setTextColor(Color.parseColor("#737373"));
 
-        //make it so the user can search without having to tap the search box
+        //make it so the user can search without having to tap the search box (UX)
         searchView.setIconified(false);
         searchView.setFocusable(true);
         searchView.requestFocusFromTouch();
@@ -96,6 +96,7 @@ public class SearchInterests extends AppCompatActivity {
                 ListView list = (ListView) findViewById(R.id.search_results_result_list);
                 list.setAdapter(new SearchResultsAdapter(SearchInterests.this, userInterests));
 
+                //only want to attach the listener after user info is initially loaded
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String s) {

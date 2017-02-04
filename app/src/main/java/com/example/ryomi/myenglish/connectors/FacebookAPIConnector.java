@@ -43,7 +43,6 @@ public class FacebookAPIConnector implements EndpointConnectorReturnsJSON {
         String pageID = params[1];
         String fields = params[2];
 
-        String url = "https://graph.facebook.com/"+pageID+"?fields="+fields+"&access_token="+accessToken;
-        return url;
+        return "https://graph.facebook.com/"+pageID+"?fields="+fields+"&access_token="+accessToken;
     }
 }
