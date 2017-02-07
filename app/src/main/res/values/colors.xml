@@ -8,10 +8,12 @@
     <color name="lblue700">#0288D1</color>
     <color name="lblue900">#01579B</color>
     <color name="orange500">#FF9800</color>
+    <color name="orange600">#FB8C00</color>
     <color name="green500">#4CAF50</color>
     <color name="red500">#F44336</color>
     <color name="white">#FFFFFF</color>
     <color name="gray50">#ECEFF1</color>
+    <!--other colors-->
     <color name="flatButtonFontColor">#19B5FE</color>
     <color name="subtextFontColor">#9E9E9E</color>
     <color name="transparent">#00ffffff</color>

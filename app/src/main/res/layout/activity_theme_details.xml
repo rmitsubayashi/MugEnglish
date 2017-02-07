@@ -1,145 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/activity_theme_details"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="com.example.ryomi.myenglish.gui.ThemeDetails">
-    <LinearLayout
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--background color will be overwritten-->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/theme_details_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:animateLayoutChanges="true">
-        <LinearLayout
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/lblue500"
+        app:titleTextColor="@color/white"
+        android:elevation="4dp"
+        />
+    <ScrollView
+        android:id="@+id/activity_theme_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/theme_details_outOfScreenLayout"
-        android:weightSum="1.1">
-        <!--info about the theme-->
-        <!--bottom padding on the linear layout and clipToPadding
-         necessary for the button's shadow-->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="0.6"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:id="@+id/theme_details_title"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/theme_grid_extraInfo"
-                    android:text="@string/theme_details_lastPlayed"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/theme_grid_extraInfo"
-                    android:layout_gravity="right"
-                    android:id="@+id/theme_details_lastPlayed"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/theme_grid_extraInfo"
-                    android:text="@string/theme_details_bestScore"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/theme_grid_extraInfo"
-                    android:layout_gravity="right"
-                    android:id="@+id/theme_details_bestScore"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/theme_details_star1"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/theme_details_star2"/>
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/theme_details_star3"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:id="@+id/theme_details_mainImage"
-                android:layout_weight="0.5"
-                />
-
-        </LinearLayout>
-
-        <info.hoang8f.android.segmented.SegmentedGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            android:id="@+id/theme_details_chooseInstanceControl"
-            >
-
-            <RadioButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/theme_details_newInstance"
-                android:checked="true"
-                android:textSize="17dp"
-                style="@style/RadioButton"
-                android:id="@+id/theme_details_newInstance"/>
-
-            <RadioButton
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/theme_details_oldInstance"
-                android:textSize="17dp"
-                style="@style/RadioButton"
-                android:id="@+id/theme_details_oldInstance"/>
-        </info.hoang8f.android.segmented.SegmentedGroup>
-
+        android:layout_height="match_parent"
+        android:layout_below="@id/theme_details_tool_bar"
+        tools:context="com.example.ryomi.myenglish.gui.ThemeDetails">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_margin="24dp"
-            android:visibility="gone"
-            android:id="@+id/theme_details_instanceList"/>
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:animateLayoutChanges="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitStart"
+                    android:layout_marginRight="8dp"
+                    android:id="@+id/theme_details_icon"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="21sp"
+                    android:id="@+id/theme_details_title"/>
+            </LinearLayout>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/lblue900"
-            android:text="@string/theme_details_playButton"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:elevation="5dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:textColor="@color/white"
-            android:textSize="24dp"
-            android:id="@+id/theme_details_playButton"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/orange_button_color"
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:layout_margin="24dp"
-            android:id="@+id/theme_details_description"/>
-    </LinearLayout>
-</ScrollView>
+                android:text="@string/theme_details_playButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:elevation="5dp"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:layout_marginTop="20dp"
+                android:id="@+id/theme_details_playButton"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:id="@+id/theme_details_instanceList"/>
+
+            <!--show progress bar when creating new instance-->
+            <ProgressBar
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"
+                android:indeterminate="true"
+                android:visibility="gone"
+                android:id="@+id/theme_details_loading_spinner"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:background="@drawable/orange_button_color"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/theme_details_newInstance"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:elevation="5dp"
+                android:id="@+id/theme_details_newInstance"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginBottom="24dp"
+                android:id="@+id/theme_details_description"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

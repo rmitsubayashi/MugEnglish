@@ -113,7 +113,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	@Override
 	protected void saveResultTopics(){
 		for (QueryResult qr : queryResults){
-			addTopic(qr.personForeign);
+			topics.add(qr.personForeign);
 		}
 	}
 	

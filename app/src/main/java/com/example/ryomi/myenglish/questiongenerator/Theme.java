@@ -1,5 +1,9 @@
 package com.example.ryomi.myenglish.questiongenerator;
 
+import android.app.Activity;
+import android.app.Application;
+import android.app.IntentService;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
@@ -20,6 +24,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,15 +42,14 @@ public abstract class Theme {
 	private List<String> questionIDs = new ArrayList<>();
 	//これが出題される問題のトピック
 	protected Document documentOfTopics = null;
-	//interests to search for more relevant topics
+	//interests to search
 	private final Set<WikiDataEntryData> userInterests = new HashSet<>();
-			//makes sure we are not giving the same question
+	//makes sure we are not giving duplicate question
+	// from previous instances of the user
 	private final Set<String> userQuestionHistory = new HashSet<>();
 	//save topics in the instance as unique identifiers
 	// for when we display a list of instances to the user.
-	//We can't serialize sets, but we don't want duplicates.
-	//to make it act like a set call setTopic(topic)
-	private final List<String> topics = new ArrayList<>();
+	protected final Set<String> topics = new HashSet<>();
 	//how many questions we have
 	protected int questionsLeftToPopulate;
 	//MAXIMUM number of theme topics we need.
@@ -61,10 +65,10 @@ public abstract class Theme {
 		this.connector = connector;
 	}
 
-	//check if a question for this theme with the matching topics already exists
-	//in the database. Then, fill the rest of the topics
-	//then save in the DB
-	public void createQuestions() {
+	// 1. check if a question with matching topics already exists in the database
+	// 2. fill the rest of the topics
+	// 3. save in the DB
+	public void createInstance() {
 		startFlow();
 	}
 
@@ -73,7 +77,6 @@ public abstract class Theme {
 	//asynchronous methods act synchronously
 	private void startFlow(){
 		populateUserInterests();
-		System.out.println("Called end of startFlow");
 		//populate user interests
 		//populate existing questions
 		//populateResults, processResultsIntoClassWrappers, createQuestionsFromResults
@@ -82,6 +85,9 @@ public abstract class Theme {
 	}
 
 	private  void populateUserInterests(){
+		//user can be empty.
+		//we allow non-registered users to play.
+		//just not save progress
 		if (FirebaseAuth.getInstance().getCurrentUser() != null){
 			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 			FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -93,7 +99,6 @@ public abstract class Theme {
 						WikiDataEntryData data = child.getValue(WikiDataEntryData.class);
 						userInterests.add(data);
 					}
-					System.out.println("Finish populating user interests");
 					populateUserQuestionHistory();
 				}
 
@@ -105,7 +110,7 @@ public abstract class Theme {
 		}
 	}
 
-	//we need to skip over questions the user has already covered
+	//we need to skip over questions the user has already solved
 	private void populateUserQuestionHistory(){
 		if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -124,7 +129,6 @@ public abstract class Theme {
 
 					}
 
-					System.out.println("previous question ct: " + userQuestionHistory.size());
 					populateExistingQuestions();
 				}
 
@@ -144,6 +148,7 @@ public abstract class Theme {
 	//the db is organized like
 	//questions
 	// +--theme id
+	//   +--optional category
 	//     +--wikidata id
 	//        +--question1
 	//        +--question2
@@ -154,11 +159,14 @@ public abstract class Theme {
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot topicsForTheme) {
-				//remove user interest if we can pre-populate the question
-
-				List<WikiDataEntryData> toRemove = new ArrayList<>();
-				for (WikiDataEntryData data : userInterests){
-					String interestID = data.getWikiDataID();
+				//prevent the same user interests popping up over and over.
+				//this is not a concern about repeated instances of a single theme.
+				//but more of a problem when the user starts 10 themes and 9 of them include
+				//Leonardo Dicaprio because he is first on the list in the database
+				List<WikiDataEntryData> userInterestList = new ArrayList<>(userInterests);
+				Collections.shuffle(userInterestList);
+				for (WikiDataEntryData userInterest : userInterestList){
+					String interestID = userInterest.getWikiDataID();
 					if (topicsForTheme.hasChild(interestID)){
 						//there most likely will be more than one question per topic
 						DataSnapshot questionSet = topicsForTheme.child(interestID);
@@ -166,7 +174,7 @@ public abstract class Theme {
 							String questionID = (String)question.getValue();
 							if (!userQuestionHistory.contains(questionID)) {
 								questionIDs.add(questionID);
-								addTopic(data.getLabel());
+								topics.add(userInterest.getLabel());
 								questionsLeftToPopulate--;
 							}
 
@@ -176,20 +184,16 @@ public abstract class Theme {
 						//no matter if the questions are new(we will add them to the question list)
 						// or previously done (we do not add it to our question list),
 						//we will not need to search for the interest again
-						toRemove.add(data);
+						userInterests.remove(userInterest);
 
 						if (questionsLeftToPopulate == 0) break;
 					}
-				}
-				//remove matched user interests
-				for (WikiDataEntryData removeID : toRemove){
-					userInterests.remove(removeID);
 				}
 
 				//we don't need to create new questions
 				if (questionsLeftToPopulate == 0){
 					//skip creating questions
-					//and saving them in the db
+					//and save them in the db
 					saveInstance();
 				} else {
 					//we have to do this in a separate thread because the
@@ -206,7 +210,8 @@ public abstract class Theme {
 		});
 	}
 
-	//Firebase onChange works on the main UI Thread so we have to make a separate thread
+	//Firebase onChange() works on the main UI Thread (even if it's called from another service
+	// so we have to make a separate thread
 	private class CreateQuestionHelper extends AsyncTask<Void, Integer, Boolean>{
 		@Override
 		protected Boolean doInBackground(Void... params){
@@ -216,7 +221,7 @@ public abstract class Theme {
 
 				//from here the methods are not (might not be) synchronous
 				//more methods embedded in this.
-				//create quesitons
+				//create questions
 				//save in db
 				accessDBWhenCreatingQuestions();
 				return true;
@@ -226,6 +231,7 @@ public abstract class Theme {
 			return false;
 		}
 	}
+
 
 	
 	//検索するのは特定のentityひとつに対するクエリー
@@ -252,12 +258,7 @@ public abstract class Theme {
 	protected abstract void processResultsIntoClassWrappers();
 	//save topic data
 	protected abstract void saveResultTopics();
-	//helper
-	protected void addTopic(String topic){
-		if(!topics.contains(topic)){
-			topics.add(topic);
-		}
-	}
+
 	//問題を作ってリストに保存する
 	protected abstract void createQuestionsFromResults();
 
@@ -330,8 +331,11 @@ public abstract class Theme {
 		for (QuestionData q : newQuestions){
 			questionIDs.add(q.getId());
 		}
+
+		//we can't save collections
+		List<String> topicList = new ArrayList<>(topics);
 		ThemeInstanceData data = new ThemeInstanceData(key, themeData.getId(),
-				userID, questionIDs, topics, System.currentTimeMillis(),0);
+				userID, questionIDs, topicList, System.currentTimeMillis(),0);
 		DatabaseReference ref2 = db.getReference("themeInstances/"+userID+"/"+themeData.getId()+"/"+key);
 		ref2.setValue(data);
 

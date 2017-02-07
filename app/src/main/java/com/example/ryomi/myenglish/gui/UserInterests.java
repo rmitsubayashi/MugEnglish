@@ -10,8 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -35,6 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 * */
 public class UserInterests extends AppCompatActivity {
     FirebaseRecyclerAdapter firebaseAdapter = null;
+    ActionMode actionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +53,6 @@ public class UserInterests extends AppCompatActivity {
 
     private void loadUser(){
         Toolbar appBar = (Toolbar)findViewById(R.id.user_interests_tool_bar);
-        appBar.setTitle(R.string.user_interests_app_bar_title);
         setSupportActionBar(appBar);
 
         setListListeners();
@@ -85,14 +87,45 @@ public class UserInterests extends AppCompatActivity {
 
         return true;
     }
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
+        // Called when the action mode is created; startActionMode() was called
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.theme_details_item_menu, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        // Called when the user selects a contextual menu item
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return true;
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            actionMode = null;
+        }
+    };
+
+    //for search
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         handleIntent(intent);
     }
 
-
+    //for search
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -137,8 +170,22 @@ public class UserInterests extends AppCompatActivity {
 
     private void setListListeners(){
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.user_interests_list);
+        //needed for the firebase adapter
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (actionMode != null) {
+                    return false;
+                }
 
+                // Start the CAB using the ActionMode.Callback defined above
+                actionMode = UserInterests.this.startActionMode(mActionModeCallback);
+                view.setSelected(true);
+                return true;
+            }
+        });
+        //updating the list with an empty query (default)
         updateAdapter("");
 
 

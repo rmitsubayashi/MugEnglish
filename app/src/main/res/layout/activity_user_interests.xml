@@ -20,11 +20,14 @@
         android:id="@+id/user_interests_bottom_navigation_view"
         style="@style/bottom_navigation_view"/>
 
+    <!--padding & clipToPadding so fab doesn't cover up last item's delete button -->
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/user_interests_bottom_navigation_view"
         android:layout_below="@id/user_interests_tool_bar"
+        android:paddingBottom="60dp"
+        android:clipToPadding="false"
         android:id="@+id/user_interests_list"/>
 
     <!--make sure this comes after the list so this is clickable -->

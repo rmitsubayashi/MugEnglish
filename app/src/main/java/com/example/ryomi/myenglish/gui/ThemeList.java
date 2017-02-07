@@ -49,7 +49,6 @@ public class ThemeList extends AppCompatActivity {
         listView.setAdapter(firebaseAdapter);
 
         Toolbar appBar = (Toolbar)findViewById(R.id.theme_list_tool_bar);
-        appBar.setTitle(R.string.theme_list_app_bar_title);
         setSupportActionBar(appBar);
 
         BottomNavigationView nav = (BottomNavigationView)findViewById(R.id.theme_list_bottom_navigation_view);

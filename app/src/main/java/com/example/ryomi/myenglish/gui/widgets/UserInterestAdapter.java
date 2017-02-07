@@ -2,6 +2,7 @@ package com.example.ryomi.myenglish.gui.widgets;
 
 
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -11,11 +12,7 @@ import com.google.firebase.database.Query;
 public class UserInterestAdapter
         extends FirebaseRecyclerAdapter<WikiDataEntryData, UserInterestViewHolder> {
 
-    public UserInterestAdapter(Class<WikiDataEntryData> dataClass, int layoutID,
-                               Class<UserInterestViewHolder> viewHolderClass, DatabaseReference ref){
-        super(dataClass, layoutID, viewHolderClass, ref);
-    }
-
+    //Query instead of reference so we can order the data alphabetically
     public UserInterestAdapter(Class<WikiDataEntryData> dataClass, int layoutID,
                                Class<UserInterestViewHolder> viewHolderClass, Query query){
         super(dataClass, layoutID, viewHolderClass, query);
@@ -29,10 +26,10 @@ public class UserInterestAdapter
 
 
     @Override
-    public void onBindViewHolder(UserInterestViewHolder holder, final int position){
+    public void onBindViewHolder(UserInterestViewHolder holder, int position){
         super.onBindViewHolder(holder, position);
         final DatabaseReference ref = getRef(position);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.setButtonListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ref.removeValue();

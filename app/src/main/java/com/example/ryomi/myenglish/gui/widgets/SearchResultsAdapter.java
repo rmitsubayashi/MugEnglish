@@ -81,6 +81,9 @@ public class SearchResultsAdapter extends BaseAdapter {
             description = "説明なし";
         }
         holder.description.setText(description);
+        //this might be a disabled check button
+        holder.addButton.setText(R.string.search_interests_add);
+        holder.addButton.setEnabled(true);
 
         //hide the button if the user interest exists already
         if (userInterestIDs.contains(data.getWikiDataID())){
@@ -104,11 +107,15 @@ public class SearchResultsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    private void addInterest(WikiDataEntryData dataToAdd, View viewToHide){
-        //hide button and add interest to the list of user interests
+    private void addInterest(WikiDataEntryData dataToAdd, View viewToDisable){
+        //disable button and add interest to the list of user interests
         userInterestIDs.add(dataToAdd.getWikiDataID());
-        viewToHide.setVisibility(GONE);
-        viewToHide.invalidate();
+        viewToDisable.setEnabled(false);
+        //check mark
+        ((Button)viewToDisable).setText("\u2713");
+        //the button is disabled now but if the user searches again
+        //it should be gone
+        viewToDisable.invalidate();
 
         //disable button first for better ux (less lag).
         //then search for pronunciation

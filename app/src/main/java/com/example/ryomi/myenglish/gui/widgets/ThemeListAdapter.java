@@ -61,7 +61,7 @@ public class ThemeListAdapter
                 String idString = data.getId();
                 int color = blueShades[fPosition%4];
                 Intent intent = new Intent(fContext, ThemeDetails.class);
-                intent.putExtra("id",idString);
+                intent.putExtra("themeData",data);
                 intent.putExtra("backgroundColor",color);
                 fContext.startActivity(intent);
             }

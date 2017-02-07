@@ -146,7 +146,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	@Override
 	protected void saveResultTopics(){
 		for (QueryResult qr : queryResults){
-			addTopic(qr.personNameForeign);
+			topics.add(qr.personNameForeign);
 		}
 	}
 	

@@ -7,9 +7,27 @@
     android:layout_height="match_parent"
     tools:context="com.example.ryomi.myenglish.gui.FacebookInterests">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/facebook_interests_progress_string"/>
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/facebook_interests_progress_string"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/facebook_interests_progress_word"/>
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="false"
+            android:max="100"
+            android:id="@+id/facebook_interests_progress_percent"
+        />
+    </LinearLayout>
+
 
 </RelativeLayout>

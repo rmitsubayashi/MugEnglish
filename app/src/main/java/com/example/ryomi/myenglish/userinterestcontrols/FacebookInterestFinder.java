@@ -24,13 +24,15 @@ import org.w3c.dom.NodeList;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class FacebookInterestFinder extends IntentService{
     public static final int SHALLOW_SEARCH = 1;
     public static final int DEEP_SEARCH = 2;
 
-    public static final String BROADCAST_FACEBOOKINTERESTFINDER_WORD = "FacebookInterestFinder WORD";
+    public static final String BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_WORD = "FacebookInterestFinder WORD";
     //the string to display where we are searching (ie education, likes)
     public static final String BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_STRING = "FacebookInterestFinder PROGRESS STRING";
     //progress to show on the progress bar
@@ -52,6 +54,9 @@ public class FacebookInterestFinder extends IntentService{
     private FacebookAPIConnector facebookConnector = new FacebookAPIConnector();
 
     private int searchDepth;
+    private int facebookEntityCt;
+    //0~1. adjust when sending to the progress bar
+    private double currentPercent = 0;
 
     public FacebookInterestFinder(){
         super("FacebookInterestFinder Service");
@@ -64,6 +69,8 @@ public class FacebookInterestFinder extends IntentService{
             Set<WikiDataEntryData> result = findUserInterests(depth);
         } catch (Exception e){
             e.printStackTrace();
+        } finally {
+            sendProgressPercentToUI(1);
         }
     }
 
@@ -79,6 +86,7 @@ public class FacebookInterestFinder extends IntentService{
         String[] paramsForUserInfo = {accessToken, pageID, fieldsForUserInfo};
 
         JSONObject userInfo = facebookConnector.fetchJSONObjectFromGetRequest(paramsForUserInfo);
+        facebookEntityCt = countEntities(userInfo);
 
         sendProgressStringToUI("学歴を検索中...");
         Set educationResult = searchEducation(userInfo);
@@ -102,15 +110,29 @@ public class FacebookInterestFinder extends IntentService{
     }
 
     private void sendProgressPercentToUI(double percent){
+        int adjustedPercent = (int)(percent * 100);
+        System.out.println(adjustedPercent);
         Intent intent = new Intent(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT);
-        intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT, percent);
+        intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT, adjustedPercent);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private void sendWordToUI(String word){
-        Intent intent = new Intent(BROADCAST_FACEBOOKINTERESTFINDER_WORD);
-        intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_WORD, word);
+        Intent intent = new Intent(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_WORD);
+        intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_WORD, word);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private int countEntities(JSONObject facebookObject){
+        String facebookString = facebookObject.toString();
+        Pattern namePattern = Pattern.compile("\"name\":");
+        Matcher matcher = namePattern.matcher(facebookString);
+        int ct = 0;
+        while (matcher.find()){
+            ct++;
+        }
+
+        return ct;
     }
 
     /* first check the facebook url
@@ -118,8 +140,8 @@ public class FacebookInterestFinder extends IntentService{
      * not sure about the order of the last two, but we should do the facebook url first
      * since it has the most guaranteed match rate
      * */
-    //facebook query type is for when we query wikidata.
-    //wikidata divides up the facebook ids into peoples/organizations and location id
+    //facebook query type is for when we query wikiData.
+    //wikiData divides up the facebook ids into peoples/organizations and location id
     private WikiDataEntryData findWikiDataEntry(String name, String facebookID, String facebookQueryType) throws Exception{
         //search facebook url first
         AccessToken.refreshCurrentAccessTokenAsync();
@@ -127,7 +149,7 @@ public class FacebookInterestFinder extends IntentService{
         String[] paramsForPageInfo = {accessToken, facebookID, fieldsForPageInfo};
         JSONObject pageInfo = facebookConnector.fetchJSONObjectFromGetRequest(paramsForPageInfo);
 
-        //the facebook id on the wikidata db can either be the actual id
+        //the facebook id on the wikiData db can either be the actual id
         // or a url to the facebook page
         //so check both
         String facebookIDQuery = searchByFacebookIDQuery(facebookID, facebookQueryType);
@@ -282,8 +304,11 @@ public class FacebookInterestFinder extends IntentService{
         Set<WikiDataEntryData> result = new HashSet<>();
         if (jsonObject.has("education")) {
             JSONArray allSchools = jsonObject.getJSONArray("education");
-            int arrayLength = allSchools.length();
-            for (int i = 0; i < arrayLength; i++) {
+            int schoolCt = allSchools.length();
+            double incrementBy = 1.0 / facebookEntityCt;
+            if (searchDepth == DEEP_SEARCH)
+                incrementBy /= 2;
+            for (int i = 0; i < schoolCt; i++) {
                 JSONObject school = allSchools.getJSONObject(i);
                 JSONObject schoolGeneralInfo = school.getJSONObject("school");
                 String schoolName = schoolGeneralInfo.getString("name");
@@ -293,17 +318,30 @@ public class FacebookInterestFinder extends IntentService{
                     result.add(data);
                     sendWordToUI(data.getLabel());
                 }
+                currentPercent += incrementBy;
+                sendProgressPercentToUI(currentPercent);
             }
 
             //deep search
             if (searchDepth == DEEP_SEARCH){
                 //search again just for the entities we found matches for.
-                //prevent concurrent modification
-                Set<WikiDataEntryData> tempResults = new HashSet<>(result);
-                for (WikiDataEntryData school : tempResults){
-                    String schoolID = school.getWikiDataID();
-                    Set<WikiDataEntryData> deepResult = educationDeepSearch(schoolID);
-                    result.addAll(deepResult);
+                int remainingResultCt = result.size();
+                //we might have lost some so recalculate increment by
+                double totalIncrement =  1.0 * schoolCt / facebookEntityCt / 2.0 ;
+                if (remainingResultCt == 0){
+                    currentPercent += totalIncrement;
+                    sendProgressPercentToUI(currentPercent);
+                } else {
+                    incrementBy = totalIncrement / remainingResultCt;
+                    //prevent concurrent modification
+                    Set<WikiDataEntryData> tempResults = new HashSet<>(result);
+                    for (WikiDataEntryData school : tempResults) {
+                        String schoolID = school.getWikiDataID();
+                        Set<WikiDataEntryData> deepResult = educationDeepSearch(schoolID);
+                        result.addAll(deepResult);
+                        currentPercent += incrementBy;
+                        sendProgressPercentToUI(currentPercent);
+                    }
                 }
             }
         }
@@ -373,12 +411,19 @@ public class FacebookInterestFinder extends IntentService{
                 result.add(data);
                 sendWordToUI(data.getLabel());
             }
+            double incrementBy = 1.0 / facebookEntityCt;
+            if (searchDepth == DEEP_SEARCH)
+                incrementBy /= 2;
+            currentPercent += incrementBy;
+            sendProgressPercentToUI(currentPercent);
 
             if (searchDepth == DEEP_SEARCH) {
                 if (result.size() == 1) {
                     Set<WikiDataEntryData> deepData = hometownDeepSearch(hometownID);
                     result.addAll(deepData);
                 }
+                currentPercent += incrementBy;
+                sendProgressPercentToUI(currentPercent);
             }
         }
 

@@ -1,28 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="20dp"
     android:paddingBottom="20dp"
-    android:minHeight="72dp">
-    <!--padding bottom 5dp not part of material guidelines-->
-    <TextView
+    android:minHeight="72dp"
+    android:weightSum="1">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="0.8">
+        <!--padding bottom 5dp not part of material guidelines-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:paddingBottom="5dp"
+            android:id="@+id/user_interests_list_item_label"/>
+        <!--so is the padding left-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
+            android:textColor="@color/subtextFontColor"
+            android:id="@+id/user_interests_list_item_description"/>
+    </LinearLayout>
+    <!--ideally we will remove this button and allow long click listener-->
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
-        android:paddingBottom="5dp"
-        android:id="@+id/user_interests_list_item_label"/>
-    <!--so is the padding left-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:paddingLeft="5dp"
-        android:paddingStart="5dp"
-        android:textColor="@color/subtextFontColor"
-        android:id="@+id/user_interests_list_item_description"/>
+        style="?android:attr/borderlessButtonStyle"
+        android:textColor="@color/orange500"
+        android:text="@string/user_interests_list_item_delete"
+        android:layout_weight="0.2"
+        android:id="@+id/user_interests_list_item_delete"/>
 
 </LinearLayout>

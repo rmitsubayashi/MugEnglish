@@ -46,6 +46,8 @@ public class WikiDataEntryData{
 		this.pronunciation = pronunciation;
 	}
 
+	//we technically only need to check the wikiData id
+	//but we might implement ore languages in the future
 	@Override
 	public boolean equals(Object object){
 		if (object == null)

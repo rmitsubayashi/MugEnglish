@@ -49,15 +49,15 @@
     <!-- Idp/Email welcome back -->
     <string name="title_welcome_back_idp_prompt">@string/sign_in_default</string>
     <string name="title_welcome_back_password_prompt">@string/sign_in_default</string>
-    <string name="welcome_back_idp_header">You already have an account</string>
+    <string name="welcome_back_idp_header">すでにアカウントが登録されています</string>
     <string name="welcome_back_email_header">ようこそ!</string>
     <string name="welcome_back_idp_prompt">
-        You\'ve already used <xliff:g id="email_addr" example="jane.doe@example.com">%1$s</xliff:g>.
-        Sign in with <xliff:g id="provider_name" example="Google">%2$s</xliff:g> to continue.
+        <xliff:g id="email_addr" example="jane.doe@example.com">%1$s</xliff:g>は登録されています。
+        <xliff:g id="provider_name" example="Google">%2$s</xliff:g>でサインインしてください。
     </string>
     <string name="welcome_back_password_prompt_body">
-        You\'ve already used <xliff:g id="email_addr" example="jane.doe@example.com">%1$s</xliff:g>
-        to sign in. Enter your password for that account.
+        <xliff:g id="email_addr" example="jane.doe@example.com">%1$s</xliff:g>は登録されています。
+        そのアカウントのパスワードでサインインしてください。
     </string>
     <string name="progress_dialog_signing_in">サインイン中…</string>
     <string name="trouble_signing_in">サインインできませんか?</string>
@@ -68,7 +68,7 @@
     <string name="password_recovery_body">Get instructions sent to this email that explain how to
         reset your password.</string>
     <string name="button_text_send">送信</string>
-    <string name="confirm_recovery_body">Follow the instructions sent to %1$s to recover your password.</string>
+    <string name="confirm_recovery_body">%1$sに送られた指示に従ってパスワードを復元してください。</string>
     <string name="progress_dialog_sending">送信中…</string>
     <string name="error_email_does_not_exist">アカウントのメールアドレスと一致しません</string>
 
@@ -86,7 +86,7 @@
         問題
     </string>
     <string name="preferences_category_questions_key">
-        prefereces:questions
+        preferences:questions
     </string>
     <string name="preferences_questions_descriptionBeforeQuestions_key">
         preferences:description before question
@@ -117,16 +117,21 @@
     <string name="search_interests_add">追加</string>
 
     <!--Theme Details Page-->
-    <string name="theme_details_lastPlayed">Last Played</string>
+    <string name="theme_details_lastPlayed">最終プレイ</string>
+    <string name="theme_details_created">作成日</string>
     <string name="theme_details_bestScore">Best Score</string>
     <string name="theme_details_playButton">スタート</string>
     <string name="theme_details_newInstance">新規</string>
-    <string name="theme_details_oldInstance">復習</string>
+    <string name="theme_details_app_bar_title">問題を選択</string>
+    <string name="theme_details_did_not_choose_instance">問題を選択してください</string>
+    <string name="theme_details_item_menu_more_info">詳細</string>
+    <string name="theme_details_item_menu_delete">消去</string>
 
     <!--user interests list-->
     <string name="user_interests_app_bar_title">お気に入り</string>
     <string name="user_interests_search_hint">検索</string>
     <string name="title_activity_fab">fab</string>
+    <string name="user_interests_list_item_delete">消去</string>
 
     <!--user profile-->
     <string name="user_profile_logout">ログアウト</string>

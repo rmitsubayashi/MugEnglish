@@ -117,7 +117,7 @@ public class NAME_plays_SPORT extends Theme{
 	@Override
 	protected void saveResultTopics(){
 		for (QueryResult qr : queryResults){
-			addTopic(qr.personNameForeign);
+			topics.add(qr.personNameForeign);
 		}
 	}
 

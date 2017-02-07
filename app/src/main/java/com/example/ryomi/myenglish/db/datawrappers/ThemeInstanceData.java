@@ -83,4 +83,24 @@ public class ThemeInstanceData {
     public void setId(String id) {
         this.id = id;
     }
+
+    //the id is the only value we need to check
+    @Override
+    public boolean equals(Object object){
+        if (object == null)
+            return false;
+
+        if (!(object instanceof ThemeInstanceData))
+            return false;
+
+        ThemeInstanceData data = (ThemeInstanceData) object;
+        return  (data.getId().equals(this.id));
+    }
+
+    @Override
+    public int hashCode(){
+        int result = 17;
+        result = 31 * result + id.hashCode();
+        return result;
+    }
 }

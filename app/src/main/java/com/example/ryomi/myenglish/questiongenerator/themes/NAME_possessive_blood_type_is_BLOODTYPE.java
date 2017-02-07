@@ -98,7 +98,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	@Override
 	protected void saveResultTopics(){
 		for (QueryResult qr : queryResults){
-			addTopic(qr.personNameForeign);
+			topics.add(qr.personNameForeign);
 		}
 	}
 

@@ -2,19 +2,24 @@ package com.example.ryomi.myenglish.gui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.view.Display;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -34,25 +39,36 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-
-import info.hoang8f.android.segmented.SegmentedGroup;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class ThemeDetails extends AppCompatActivity {
     private ThemeData themeData;
     private View selectedInstanceLayout = null;
     private int themeColor;
+    private LinearLayout instanceList;
+    private Toolbar appBar;
+    private ProgressBar loadingSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme_details);
-
         Intent intent = getIntent();
-        if (intent.hasExtra("id") && intent.hasExtra("backgroundColor")){
+        if (intent.hasExtra("themeData") && intent.hasExtra("backgroundColor")){
             //get data
-            String id = intent.getStringExtra("id");
-            populateData(id);
+            themeData = (ThemeData)intent.getSerializableExtra("themeData");
+            appBar = (Toolbar)findViewById(R.id.theme_details_tool_bar);
+            setSupportActionBar(appBar);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+            populateData();
             int color = intent.getIntExtra("backgroundColor",0);
             setThemeColor(color);
             adjustLayout();
@@ -61,86 +77,73 @@ public class ThemeDetails extends AppCompatActivity {
         }
     }
 
-    private void populateData(String themeID){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("themes/"+themeID);
-        ValueEventListener getThemeData = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                themeData = dataSnapshot.getValue(ThemeData.class);
-                ImageView imageView = (ImageView) ThemeDetails.this.findViewById(R.id.theme_details_mainImage);
-                int imageID = GUIUtils.stringToDrawableID(themeData.getImage(), ThemeDetails.this);
-                imageView.setImageResource(imageID);
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.theme_details_item_menu, menu);
+        ((AdapterView.AdapterContextMenuInfo) menuInfo).targetView = v;
+    }
 
-                TextView titleTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_title);
-                titleTextView.setText(themeData.getCategory());
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        item.
+        ThemeInstanceData data = (ThemeInstanceData)view.getTag();
+        switch (item.getItemId()) {
+            case R.id.theme_details_item_menu_more_info:
+                Toast.makeText(this, data.getTopics().get(0), Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.theme_details_item_menu_delete:
+                //deleteInstance(info.id);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
 
-                TextView lastPlayedTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_lastPlayed);
-                lastPlayedTextView.setText("1/14/16");
+    private void populateData(){
+        TextView titleTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_title);
+        titleTextView.setText(themeData.getTitle());
+        ImageView imageView = (ImageView) findViewById(R.id.theme_details_icon);
+        int imageID = GUIUtils.stringToDrawableID(themeData.getImage(),this);
+        imageView.setImageResource(imageID);
 
-                TextView bestScoreTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_bestScore);
-                bestScoreTextView.setText("10/10");
+        TextView descriptionTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_description);
+        if (Build.VERSION.SDK_INT >= 24) {
+            descriptionTextView.setText(Html.fromHtml(themeData.getDescription(), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            descriptionTextView.setText((Html.fromHtml(themeData.getDescription())));
+        }
 
-                TextView descriptionTextView = (TextView) ThemeDetails.this.findViewById(R.id.theme_details_description);
-                if (Build.VERSION.SDK_INT >= 24) {
-                    descriptionTextView.setText(Html.fromHtml(themeData.getDescription(), Html.FROM_HTML_MODE_COMPACT));
-                } else {
-                    descriptionTextView.setText((Html.fromHtml(themeData.getDescription())));
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-
-        ref.addListenerForSingleValueEvent(getThemeData);
-
-
-        //list of instances
+        loadingSpinner = (ProgressBar) findViewById(R.id.theme_details_loading_spinner);
+        //grab list of instances
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            final LinearLayout instanceList = (LinearLayout) findViewById(R.id.theme_details_instanceList);
-            DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("themeInstances/"+userID+"/"+themeID);
+            instanceList = (LinearLayout) findViewById(R.id.theme_details_instanceList);
+            DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("themeInstances/"+userID+"/"+themeData.getId());
             ValueEventListener getThemeInstancesData = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot child : dataSnapshot.getChildren()){
-                        ThemeInstanceData data = child.getValue(ThemeInstanceData.class);
-                        String date = new Date(data.getCreatedTimestamp()).toString();
-                        RelativeLayout row = (RelativeLayout) ThemeDetails.this.getLayoutInflater().inflate(
-                                R.layout.inflatable_theme_details_instance_list_item, null
-                        );
-
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.MATCH_PARENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                        );
-                        params.setMargins(0,0,0,30);
-                        row.setLayoutParams(params);
-
-                        TextView topicsTextView = (TextView)row.findViewById(R.id.theme_details_item_topics);
-                        String topics = "";
-                        for (String topic : data.getTopics()){
-                            topics += topic + " + ";
+                    loadingSpinner.setVisibility(View.GONE);
+                    long newRowCt = dataSnapshot.getChildrenCount();
+                    int currentRowCt = instanceList.getChildCount();
+                    List<ThemeInstanceData> newRows = new ArrayList<>();
+                    //save list first
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        newRows.add(child.getValue(ThemeInstanceData.class));
+                    }
+                    //first row
+                    if (currentRowCt == 0) {
+                        for (ThemeInstanceData data : newRows){
+                            RelativeLayout row = createInstanceItem(data);
+                            instanceList.addView(row);
                         }
-                        topics = topics.substring(0,topics.length()-3);
-                        topicsTextView.setText(topics);
+                    }
 
-                        TextView dateCreatedTextView = (TextView)row.findViewById(R.id.theme_details_item_date_created);
-                        dateCreatedTextView.setText(date);
-                        dateCreatedTextView.setTextColor(themeColor);
-                        //save data in the row so we can retrieve it later
-                        row.setTag(data);
-                        //the row acts like a button group
-
-                        row.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                activateRow(view);
-                            }
-                        });
-                        instanceList.addView(row);
+                    //adding row
+                    else if (newRowCt > currentRowCt){
+                        addRows(newRows);
                     }
                 }
 
@@ -150,55 +153,85 @@ public class ThemeDetails extends AppCompatActivity {
                 }
             };
 
-            ref2.addValueEventListener(getThemeInstancesData);
+            ref2.orderByChild("createdTimestamp").addValueEventListener(getThemeInstancesData);
 
+        } else //not user
+        {
+            loadingSpinner.setVisibility(View.GONE);
         }
     }
+
+    private void addRows(List<ThemeInstanceData> newData){
+        //expensive?
+        Set<ThemeInstanceData> childData = new HashSet<>();
+        int childCt = instanceList.getChildCount();
+        for (int i=0; i<childCt; i++){
+            ThemeInstanceData data = (ThemeInstanceData)instanceList.getChildAt(i).getTag();
+            childData.add(data);
+        }
+
+        for (ThemeInstanceData data : newData){
+            if (!childData.contains(data)){
+                instanceList.addView(createInstanceItem(data));
+            }
+        }
+
+    }
+
+    private RelativeLayout createInstanceItem(ThemeInstanceData data){
+        RelativeLayout row = (RelativeLayout) ThemeDetails.this.getLayoutInflater().inflate(
+                R.layout.inflatable_theme_details_instance_list_item, instanceList, false
+        );
+
+        TextView topicsTextView = (TextView)row.findViewById(R.id.theme_details_item_topics);
+        String topics = "";
+        for (String topic : data.getTopics()){
+            topics += topic + " + ";
+        }
+        topics = topics.substring(0,topics.length()-3);
+        topicsTextView.setText(topics);
+
+        DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, Locale.JAPAN);
+        String dateString = dateFormat.format(new Date(data.getCreatedTimestamp()));
+        TextView dateCreatedTextView = (TextView)row.findViewById(R.id.theme_details_item_date_created);
+        String createdLabel = getResources().getString(R.string.theme_details_created);
+        dateCreatedTextView.setText(createdLabel + ": " + dateString);
+        dateCreatedTextView.setTextColor(themeColor);
+        //save data in the row so we can retrieve it later
+        row.setTag(data);
+        //the row acts like a button group
+
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activateRow(view);
+            }
+        });
+
+        registerForContextMenu(row);
+
+        return row;
+    }
+
 
     private void setThemeColor(int color){
         themeColor = color;
         //background for whole activity
         ScrollView activity = (ScrollView) findViewById(R.id.activity_theme_details);
         activity.setBackgroundColor(color);
+        //status bar (post-lollipop)
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(color);
+        }
+        //action bar
+        appBar.setBackgroundColor(color);
 
-        //text colors for white background
-        // (excluding description which will be black)
-
-        int white = ContextCompat.getColor(this, R.color.white);
-        SegmentedGroup segmentedControl = (SegmentedGroup)
-                findViewById(R.id.theme_details_chooseInstanceControl);
-        segmentedControl.setTintColor(white, themeColor);
     }
 
     private void adjustLayout(){
-        //this is the padding for the 'whole activity'
-        //if we set the padding for the activity
-        //then the main image will be covered up by the padding
-        //so set padding for individual layouts
-        double paddingPercent = 0.1;
-
-        //top horizontal layout that has info and the image next to it.
-        //we have to extend the width so we can make a cool
-        //'part-of-the-image-is-cut-off' effect
-        LinearLayout outOfScreenLayout = (LinearLayout) findViewById(R.id.theme_details_outOfScreenLayout);
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-
-        int newWidth = (int)(width * 1.1);
-        LinearLayout.LayoutParams ooslParams = new LinearLayout.LayoutParams(
-                newWidth, LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        outOfScreenLayout.setLayoutParams(ooslParams);
-        int ooslPaddingLeft = (int)(width * paddingPercent);
-        int ooslPaddingTop = (int)(height * paddingPercent);
-        int ooslPaddingBottom =ooslPaddingTop;
-        int ooslPaddingRight = 0;
-
-        outOfScreenLayout.setPadding(ooslPaddingLeft, ooslPaddingTop,
-                ooslPaddingRight, ooslPaddingBottom);
 
         //only show description if the user has enabled it (default is enabled)
 
@@ -213,6 +246,7 @@ public class ThemeDetails extends AppCompatActivity {
     }
 
     private void addActionListeners(){
+
         Button playButton = (Button) findViewById(R.id.theme_details_playButton);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,23 +255,14 @@ public class ThemeDetails extends AppCompatActivity {
             }
         });
 
-        RadioButton newInstanceButton = (RadioButton) findViewById(R.id.theme_details_newInstance);
-        newInstanceButton.setOnClickListener(new View.OnClickListener() {
+        Button createButton = (Button) findViewById(R.id.theme_details_newInstance);
+        createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LinearLayout hideLayout = (LinearLayout) findViewById(R.id.theme_details_instanceList);
-                hideLayout.setVisibility(View.GONE);
+                createNewInstance();
             }
         });
 
-        RadioButton oldInstanceButton = (RadioButton) findViewById(R.id.theme_details_oldInstance);
-        oldInstanceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LinearLayout showLayout = (LinearLayout) findViewById(R.id.theme_details_instanceList);
-                showLayout.setVisibility(View.VISIBLE);
-            }
-        });
 
     }
 
@@ -251,6 +276,9 @@ public class ThemeDetails extends AppCompatActivity {
 
         deactivateSelectedRow();
         activateView.setBackgroundColor(themeColor);
+        int white = ContextCompat.getColor(this, R.color.white);
+        TextView createdTV = (TextView)activateView.findViewById(R.id.theme_details_item_date_created);
+        createdTV.setTextColor(white);
         selectedInstanceLayout = activateView;
     }
 
@@ -261,39 +289,32 @@ public class ThemeDetails extends AppCompatActivity {
 
         int white = ContextCompat.getColor(this, R.color.white);
         selectedInstanceLayout.setBackgroundColor(white);
+        TextView createdTV = (TextView)selectedInstanceLayout.findViewById(R.id.theme_details_item_date_created);
+        createdTV.setTextColor(themeColor);
 
         selectedInstanceLayout = null;
     }
 
     private void startQuestions(){
-        RadioButton newInstanceButton = (RadioButton) findViewById(R.id.theme_details_newInstance);
-        if (newInstanceButton.isChecked()){
-            createNewQuestions();
-        } else {
-            //if it's not checked the old instance button has to be checked
-            if (selectedInstanceLayout != null)
-                startOldQuestions();
-            else
-                Toast.makeText(this,"Please select an instance",Toast.LENGTH_SHORT).show();
+        //if it's not checked the old instance button has to be checked
+        if (selectedInstanceLayout != null){
+            ThemeInstanceData data = (ThemeInstanceData)selectedInstanceLayout.getTag();
+            QuestionManager manager = QuestionManager.getInstance();
+            manager.startQuestions(data, this);
+        }
+        else {
+            Toast.makeText(this,R.string.theme_details_did_not_choose_instance,Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void createNewQuestions(){
+    private void createNewInstance(){
+        loadingSpinner.setVisibility(View.VISIBLE);
         Theme theme = ThemeFactory.createTheme(themeData);
-        //this also calls QuestionManager and starts the questions.
-        //we should ideally return a instance and then pass that in to the question manager
-        //but I gave up after a few hours working with stupid asynchronous data
-        theme.createQuestions();
+        //first part connects to Firebase
+        // thus running on the main UI thread.
+        //the second part (connecting to wikidata)
+        // runs on an async task
+        theme.createInstance();
     }
 
-    private void startOldQuestions(){
-        //the user hasn't selected an instance
-        if (selectedInstanceLayout == null){
-            return;
-        }
-
-        ThemeInstanceData data = (ThemeInstanceData)selectedInstanceLayout.getTag();
-        QuestionManager manager = QuestionManager.getInstance();
-        manager.startQuestions(data, this);
-    }
 }
