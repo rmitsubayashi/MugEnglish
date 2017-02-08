@@ -3,7 +3,6 @@ package com.example.ryomi.myenglish.gui;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
@@ -24,8 +22,7 @@ import com.example.ryomi.myenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.myenglish.gui.widgets.UserInterestAdapter;
 import com.example.ryomi.myenglish.gui.widgets.UserInterestViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -193,15 +190,8 @@ public class UserInterests extends AppCompatActivity {
     }
 
     private void populateFABs(){
-        FloatingActionsMenu menu = (FloatingActionsMenu) findViewById(R.id.user_interests_fab_menu);
-        FloatingActionButton twitterButton = new FloatingActionButton(this);
-        twitterButton.setIcon(R.drawable.twitter);
-        twitterButton.setColorNormal(Color.parseColor("#1da1f2"));
-        menu.addButton(twitterButton);
 
-        FloatingActionButton facebookButton = new FloatingActionButton(this);
-        facebookButton.setIcon(R.drawable.facebook);
-        facebookButton.setColorNormal(Color.parseColor("#3b5998"));
+        FloatingActionButton facebookButton = (FloatingActionButton) findViewById(R.id.user_interests_fab_facebook);
         facebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -209,10 +199,8 @@ public class UserInterests extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        menu.addButton(facebookButton);
 
-        FloatingActionButton searchButton = new FloatingActionButton(this);
-        searchButton.setIcon(R.drawable.ic_search);
+        FloatingActionButton searchButton = (FloatingActionButton) findViewById(R.id.user_interests_fab_search);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -220,8 +208,6 @@ public class UserInterests extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        menu.addButton(searchButton);
 
     }
 

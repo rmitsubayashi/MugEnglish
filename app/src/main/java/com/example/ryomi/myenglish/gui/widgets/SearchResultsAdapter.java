@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.ryomi.myenglish.R;
-import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.example.ryomi.myenglish.userinterestcontrols.PronunciationSearcher;
 import com.google.firebase.auth.FirebaseAuth;

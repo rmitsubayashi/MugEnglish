@@ -126,6 +126,7 @@
     <string name="theme_details_did_not_choose_instance">問題を選択してください</string>
     <string name="theme_details_item_menu_more_info">詳細</string>
     <string name="theme_details_item_menu_delete">消去</string>
+    <string name="theme_details_no_items">該当なし</string>
 
     <!--user interests list-->
     <string name="user_interests_app_bar_title">お気に入り</string>

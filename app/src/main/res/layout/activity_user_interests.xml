@@ -31,7 +31,7 @@
         android:id="@+id/user_interests_list"/>
 
     <!--make sure this comes after the list so this is clickable -->
-    <com.getbase.floatingactionbutton.FloatingActionsMenu
+    <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/user_interests_fab_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,10 +39,33 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        app:menu_colorNormal="?attr/colorPrimaryDark"
+        app:menu_colorPressed="?attr/colorPrimaryDark"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_above="@id/user_interests_bottom_navigation_view"
-        />
+        >
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/facebook"
+            app:fab_colorNormal="@color/facebook"
+            app:fab_colorPressed="@color/facebook"
+            android:id="@+id/user_interests_fab_facebook"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/twitter"
+            app:fab_colorNormal="@color/twitter"
+            app:fab_colorPressed="@color/twitter"
+            android:id="@+id/user_interests_fab_twitter"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_search"
+            android:id="@+id/user_interests_fab_search"/>
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 
 </RelativeLayout>

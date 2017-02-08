@@ -63,10 +63,9 @@ public class QuestionManager{
 		return singleton;
 	}
 
-	public void startQuestions(ThemeInstanceData data, Activity startingActivity){
-		if(!started) {
+	public void startQuestions(ThemeInstanceData data){
+		if(!started && currentContext != null) {
 			started = true;
-			this.currentContext = startingActivity;
 			this.instanceData = data;
 			initializeQuestions();
 		}

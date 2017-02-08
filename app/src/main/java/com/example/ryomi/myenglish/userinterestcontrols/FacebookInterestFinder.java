@@ -1,7 +1,6 @@
 package com.example.ryomi.myenglish.userinterestcontrols;
 
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -13,7 +12,6 @@ import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.example.ryomi.myenglish.questiongenerator.QGUtils;
 import com.facebook.AccessToken;
-import com.facebook.FacebookSdk;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

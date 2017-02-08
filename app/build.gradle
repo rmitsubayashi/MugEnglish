@@ -37,7 +37,7 @@ dependencies {
 
 dependencies {
     //for adding interest
-    compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile 'com.github.clans:fab:1.6.4'
     //for puzzle piece question
     compile 'org.apmem.tools:layouts:1.10@aar'
 }

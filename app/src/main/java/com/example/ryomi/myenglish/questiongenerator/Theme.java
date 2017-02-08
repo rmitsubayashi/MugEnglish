@@ -1,9 +1,5 @@
 package com.example.ryomi.myenglish.questiongenerator;
 
-import android.app.Activity;
-import android.app.Application;
-import android.app.IntentService;
-import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;

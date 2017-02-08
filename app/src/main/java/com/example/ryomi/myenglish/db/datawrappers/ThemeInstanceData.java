@@ -1,8 +1,9 @@
 package com.example.ryomi.myenglish.db.datawrappers;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ThemeInstanceData {
+public class ThemeInstanceData implements Serializable{
     private String id;
     private String themeId;
     private String userId; //can be blank

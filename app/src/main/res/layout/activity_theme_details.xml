@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/activity_theme_details"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.ryomi.myenglish.gui.ThemeDetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!--background color will be overwritten-->
@@ -14,91 +16,44 @@
         app:titleTextColor="@color/white"
         android:elevation="4dp"
         />
-    <ScrollView
-        android:id="@+id/activity_theme_details"
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:textSize="21dp"
+        android:text="@string/theme_details_no_items"
+        android:visibility="gone"
+        android:id="@+id/theme_details_no_items"/>
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="50dp"
+        android:clipToPadding="false"
         android:layout_below="@id/theme_details_tool_bar"
-        tools:context="com.example.ryomi.myenglish.gui.ThemeDetails">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:animateLayoutChanges="true">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitStart"
-                    android:layout_marginRight="8dp"
-                    android:id="@+id/theme_details_icon"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:textSize="21sp"
-                    android:id="@+id/theme_details_title"/>
-            </LinearLayout>
+        android:id="@+id/theme_details_instanceList"/>
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/orange_button_color"
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/theme_details_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/fab_add"
+        app:fab_colorNormal="?attr/colorAccent"
+        app:fab_colorPressed="?attr/colorAccent"
+        app:fab_progress_color="?attr/colorAccent"
+        app:fab_progress_indeterminate="false"
+        app:fab_progress_showBackground="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
 
-                android:text="@string/theme_details_playButton"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:elevation="5dp"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:layout_marginTop="20dp"
-                android:id="@+id/theme_details_playButton"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp"
-                android:id="@+id/theme_details_instanceList"/>
-
-            <!--show progress bar when creating new instance-->
-            <ProgressBar
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:indeterminate="true"
-                android:visibility="gone"
-                android:id="@+id/theme_details_loading_spinner"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:background="@drawable/orange_button_color"
-                android:textColor="@color/white"
-                android:textSize="17sp"
-                android:layout_marginBottom="10dp"
-                android:text="@string/theme_details_newInstance"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:elevation="5dp"
-                android:id="@+id/theme_details_newInstance"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:layout_marginBottom="24dp"
-                android:id="@+id/theme_details_description"/>
-        </LinearLayout>
-    </ScrollView>
 </RelativeLayout>

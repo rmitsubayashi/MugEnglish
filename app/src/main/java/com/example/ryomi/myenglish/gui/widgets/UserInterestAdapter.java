@@ -2,7 +2,6 @@ package com.example.ryomi.myenglish.gui.widgets;
 
 
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;

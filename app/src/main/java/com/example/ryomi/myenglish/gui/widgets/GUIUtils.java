@@ -3,10 +3,13 @@ package com.example.ryomi.myenglish.gui.widgets;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.example.ryomi.myenglish.R;
@@ -33,7 +36,7 @@ public class GUIUtils {
         return imageID;
     }
 
-    public static void populateStars(List<ImageView> imageViews, AchievementStars achievementStars){
+    public static void populateStarsImageView(List<ImageView> imageViews, AchievementStars achievementStars){
         int starCt = imageViews.size();
         List<Boolean> starsEnabled = new ArrayList<>();
         starsEnabled.add(achievementStars.getFirstInstance());
@@ -50,6 +53,37 @@ public class GUIUtils {
                 imageView.setImageResource(R.drawable.star);
             } else {
                 imageView.setImageResource(R.drawable.star_disabled);
+            }
+        }
+    }
+
+    //with the menu we are only updating one set of stars.
+    //to make it visually pleasing, add a delay between each star update.
+    //this creates a flow? kinda effect
+    public static void populateStarsMenu(List<MenuItem> menuItems, AchievementStars achievementStars, final Activity activity){
+        int starCt = menuItems.size();
+        List<Boolean> starsEnabled = new ArrayList<>();
+        starsEnabled.add(achievementStars.getFirstInstance());
+        starsEnabled.add(achievementStars.getRepeatInstance());
+        starsEnabled.add(achievementStars.getSecondInstance());
+
+        int delayMultiplier = 1;
+        for(int i=0; i<starCt; i++){
+            final MenuItem item = menuItems.get(i);
+            Boolean starEnabled = starsEnabled.get(i);
+            //default icon is disabled
+            //so just change if necessary
+            if (starEnabled) {
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
+                        ImageView iv = (ImageView)activity.getLayoutInflater().inflate(R.layout.inflatable_star, null);
+                        Animation rotation = AnimationUtils.loadAnimation(activity, R.anim.star_rotation);
+                        iv.startAnimation(rotation);
+                        item.setActionView(iv);
+                    }
+                },300 * delayMultiplier);
+                delayMultiplier++;
             }
         }
     }

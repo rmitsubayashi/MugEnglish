@@ -31,7 +31,7 @@ public class Results extends AppCompatActivity {
         stars.add(star1);
         stars.add(star2);
         stars.add(star3);
-        GUIUtils.populateStars(stars,oldStars);
+        GUIUtils.populateStarsImageView(stars,oldStars);
         
     }
 
@@ -43,6 +43,6 @@ public class Results extends AppCompatActivity {
         stars.add(star4);
         stars.add(star5);
         stars.add(star6);
-        GUIUtils.populateStars(stars,newStars);
+        GUIUtils.populateStarsImageView(stars,newStars);
     }
 }

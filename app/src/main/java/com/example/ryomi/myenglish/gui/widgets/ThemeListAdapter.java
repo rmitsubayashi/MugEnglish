@@ -42,7 +42,7 @@ public class ThemeListAdapter
         String imageString = data.getImage();
         int imageID = GUIUtils.stringToDrawableID(imageString, fContext);
         holder.setIcon(imageID);
-        holder.setIconColor(blueShades[position%4]);
+        //holder.setIconColor(blueShades[position%4]);
 
         String userID = "";
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
@@ -89,7 +89,7 @@ public class ThemeListAdapter
             result.setFirstInstance(false);
             result.setRepeatInstance(false);
             result.setSecondInstance(false);
-            GUIUtils.populateStars(starList,result);
+            GUIUtils.populateStarsImageView(starList,result);
             return;
         }
 
@@ -113,7 +113,7 @@ public class ThemeListAdapter
                     result.setSecondInstance(false);
                 }
 
-                GUIUtils.populateStars(starList,result);
+                GUIUtils.populateStarsImageView(starList,result);
             }
 
             @Override
@@ -121,7 +121,7 @@ public class ThemeListAdapter
                 result.setFirstInstance(false);
                 result.setRepeatInstance(false);
                 result.setSecondInstance(false);
-                GUIUtils.populateStars(starList,result);
+                GUIUtils.populateStarsImageView(starList,result);
             }
         });
     }

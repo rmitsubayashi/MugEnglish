@@ -17,4 +17,6 @@
     <color name="flatButtonFontColor">#19B5FE</color>
     <color name="subtextFontColor">#9E9E9E</color>
     <color name="transparent">#00ffffff</color>
+    <color name="twitter">#1da1f2</color>
+    <color name="facebook">#3b5998</color>
 </resources>
