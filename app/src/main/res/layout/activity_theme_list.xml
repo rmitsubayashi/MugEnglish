@@ -12,19 +12,28 @@
         android:id="@+id/theme_list_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/lblue500"
+        android:background="?attr/colorPrimary"
         app:titleTextColor="@color/white"
-        android:elevation="4dp"/>
+        android:elevation="4dp"
+        style="@style/Base.ThemeOverlay.AppCompat.Dark"/>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/theme_list_bottom_navigation_view"
         style="@style/bottom_navigation_view"
         />
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true"
+        android:id="@+id/theme_list_loading"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/theme_list_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         android:paddingTop="8dp"
         android:layout_below="@id/theme_list_tool_bar"
         android:layout_above="@id/theme_list_bottom_navigation_view"/>

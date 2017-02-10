@@ -42,11 +42,12 @@ public class QuestionManager{
 	private List<QuestionData> questionData = new ArrayList<>();
 	//-1 so first call of nextQuestion() would be 0
 	private int questionMkr = -1;
-
 	//store information about this instance of the instance(?)
 	//each topic has multiple instances which have different topics.
 	//each of these instances can be run multiple times
 	private InstanceRecord instanceRecord;
+	//stores results.
+	//this is needed to save data since we reset the question manager once the questions are finished
 	private ResultsManager resultsManager = null;
 	//temp variables for each question attempt
 	private long startTimestamp;
@@ -83,7 +84,6 @@ public class QuestionManager{
 		return questionData.get(questionMkr);
 	}
 
-	//gets the singleton
 	public ResultsManager getResultsManager(){
 		return this.resultsManager;
 	}
@@ -94,6 +94,7 @@ public class QuestionManager{
 
 		if (questionMkr == questionData.size()){
 			instanceRecord.setCompleted(true);
+			setResultsManager();
 			goToResults();
 			//note this does not reset the results manager
 			//because the results manager is still needed in the new activity
@@ -183,6 +184,15 @@ public class QuestionManager{
 		//not sure if we can instantiate in the question attempt class?
 		instanceRecord.setAttempts(new ArrayList<QuestionAttempt>());
 		startTimestamp = System.currentTimeMillis();
+		//this is done asynchronously but it shouldn't matter tpp much
+		if (FirebaseAuth.getInstance().getCurrentUser() != null){
+			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+			FirebaseDatabase db = FirebaseDatabase.getInstance();
+			DatabaseReference ref = db.getReference("instanceRecords/"+userID+"/"+instanceData.getThemeId() +
+					"/"+instanceRecord.getInstanceId());
+			String key = ref.push().getKey();
+			instanceRecord.setId(key);
+		}
 	}
 
 
@@ -208,8 +218,11 @@ public class QuestionManager{
 		return intent;
 	}
 
+	private void setResultsManager(){
+		this.resultsManager = new ResultsManager(instanceRecord, questionData, instanceData.getThemeId());
+	}
+
 	private void goToResults(){
-		resultsManager = new ResultsManager(instanceRecord, instanceData.getThemeId());
 		if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 			Intent intent = new Intent(currentContext, Results.class);
 			((Activity) currentContext).finish();

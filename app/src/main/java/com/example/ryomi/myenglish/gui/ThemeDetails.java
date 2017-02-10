@@ -53,7 +53,7 @@ public class ThemeDetails extends AppCompatActivity {
     private RecyclerView list;
     private FloatingActionButton createButton;
     private TextView noItemTextView;
-    private boolean noItemVisible = false;
+    private ProgressBar loading;
 
     private FirebaseRecyclerAdapter firebaseAdapter;
 
@@ -69,8 +69,10 @@ public class ThemeDetails extends AppCompatActivity {
             setSupportActionBar(appBar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+
             list = (RecyclerView) findViewById(R.id.theme_details_instanceList);
             noItemTextView = (TextView) findViewById(R.id.theme_details_no_items);
+            loading = (ProgressBar) findViewById(R.id.theme_details_loading);
 
             addActionListeners();
             populateData();
@@ -183,7 +185,7 @@ public class ThemeDetails extends AppCompatActivity {
             String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
             DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("themeInstances/"+userID+"/"+themeData.getId());
             list.setLayoutManager(new LinearLayoutManager(this));
-            firebaseAdapter = new ThemeDetailsAdapter(ref2, noItemTextView);
+            firebaseAdapter = new ThemeDetailsAdapter(ref2, noItemTextView, loading);
             //when we create a new instance, remove the progress spinner
             firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override

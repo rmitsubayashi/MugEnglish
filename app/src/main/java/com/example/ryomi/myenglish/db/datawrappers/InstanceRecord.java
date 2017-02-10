@@ -41,4 +41,21 @@ public class InstanceRecord {
     public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
+
+    @Override
+    public boolean equals(Object object){
+        if (object == null)
+            return false;
+
+        if (!(object instanceof InstanceRecord))
+            return false;
+
+        InstanceRecord record = (InstanceRecord) object;
+        return  ((record.getId()).equals(this.id));
+    }
+
+    @Override
+    public int hashCode(){
+        return 17 * 31 + this.id.hashCode();
+    }
 }

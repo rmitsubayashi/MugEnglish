@@ -7,7 +7,10 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.EditText;
 import android.widget.HeaderViewListAdapter;
 import android.widget.LinearLayout;
@@ -32,6 +35,7 @@ import java.util.List;
 
 public class SearchInterests extends AppCompatActivity {
     private EntitySearcher searcher;
+    private SearchResultsAdapter adapter = null;
     //initial row count of search results
     private final int defaultRowCt = 10;
     //we can do continue=# to get the results from that number of results
@@ -43,39 +47,47 @@ public class SearchInterests extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_interests);
 
+        //the only thing we need on the app bar
+        Toolbar appBar = (Toolbar)findViewById(R.id.search_interests_tool_bar);
+        setSupportActionBar(appBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         searcher = new EntitySearcher(
                 new WikiDataAPISearchConnector(
                         WikiBaseEndpointConnector.JAPANESE)
         );
 
-        createGUI();
-
 
     }
 
-    private void createGUI(){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_interests_app_bar_menu, menu);
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search_interests_app_bar_search).getActionView();
+        searchView.setSubmitButtonEnabled(true);
+        //make it so the user can search without having to tap the search box (UX)
+        searchView.setIconified(false);
+        searchView.setIconifiedByDefault(false);
+        searchView.setFocusable(true);
+        searchView.requestFocusFromTouch();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
+        addSearchFunctionality(searchView);
+
+        return true;
+    }
+
+    private void addSearchFunctionality(final SearchView searchView){
         //we have to instantiate this in the java file instead of the xml file
         //because we want this to be a header view of the listview
         //but we can't replicate that relation in the xml file.
-        LinearLayout searchWrapper = (LinearLayout)getLayoutInflater().inflate(R.layout.inflatable_search_interests_search_bar, null);
-        final SearchView searchView = (SearchView)searchWrapper.findViewById(R.id.search_interests_search_bar_view);
-        //font
-        int searchSrcTextId = getResources().getIdentifier("android:id/search_src_text", null, null);
-        EditText searchEditText = (EditText) searchView.findViewById(searchSrcTextId);
-        searchEditText.setTextColor(Color.parseColor("#737373"));
-
-        //make it so the user can search without having to tap the search box (UX)
-        searchView.setIconified(false);
-        searchView.setFocusable(true);
-        searchView.requestFocusFromTouch();
-
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
-        //attaches the manager to the search view
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        //we want the submit button
-        searchView.setSubmitButtonEnabled(true);
+        final ListView list = (ListView) findViewById(R.id.search_results_result_list);
 
         //making sure buttons for search results the user already has are disabled
         String userID = "temp";
@@ -93,8 +105,8 @@ public class SearchInterests extends AppCompatActivity {
                     userInterests.add(data);
                 }
 
-                ListView list = (ListView) findViewById(R.id.search_results_result_list);
-                list.setAdapter(new SearchResultsAdapter(SearchInterests.this, userInterests));
+                adapter = new SearchResultsAdapter(SearchInterests.this, userInterests);
+                list.setAdapter(adapter);
 
                 //only want to attach the listener after user info is initially loaded
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -117,25 +129,8 @@ public class SearchInterests extends AppCompatActivity {
 
             }
         });
-
-
-        //dynamic padding
-        DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
-        int width = displayMetrics.widthPixels;
-        int height = displayMetrics.heightPixels;
-        int paddingHorizontal = (int)(width * 0.1);
-        int paddingTop = (int)(height * 0.1);
-        int paddingBottom = (int)(height * 0.05);
-        searchWrapper.setPadding(paddingHorizontal,paddingTop,
-                paddingHorizontal,paddingBottom);
-
-        ListView list = (ListView) findViewById(R.id.search_results_result_list);
-        list.addHeaderView(searchWrapper);
     }
 
-    //we don't need to handle the intent in the
-    //onCreate constructor because we will never call this from an
-    //outside activity?
     @Override
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
@@ -155,12 +150,9 @@ public class SearchInterests extends AppCompatActivity {
             SearchConnection conn = new SearchConnection();
             String[] queryList = {query, currentRowCt.toString()};
             List<WikiDataEntryData> results = conn.execute(queryList).get();
-            HeaderViewListAdapter headerAdapter = (HeaderViewListAdapter)(resultList.getAdapter());
             //the adapter might not be loaded yet
-            if (headerAdapter.getWrappedAdapter() != null){
-                SearchResultsAdapter mainAdapter =
-                        (SearchResultsAdapter) (headerAdapter.getWrappedAdapter());
-                mainAdapter.updateEntries(results);
+            if (adapter != null){
+                adapter.updateEntries(results);
             }
         } catch (Exception e){
             e.printStackTrace();

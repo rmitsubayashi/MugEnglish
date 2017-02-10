@@ -4,8 +4,6 @@
         <item name="colorPrimary">@color/lblue500</item>
         <item name="colorPrimaryDark">@color/lblue700</item>
         <item name="colorAccent">@color/orange500</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_up</item>
-
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -13,10 +11,9 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
     <style name="theme_grid_extraInfo">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">16sp</item>

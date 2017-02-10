@@ -47,7 +47,8 @@
                   android:parentActivityName=".gui.ThemeDetails">
         </activity>
         <activity android:name=".gui.Results"
-                  android:parentActivityName=".gui.ThemeDetails">
+                  android:parentActivityName=".gui.ThemeDetails"
+                  android:label="@string/results_app_bar_title">
         </activity>
 
         <!-- all activities from the parent activity user profile -->
@@ -77,7 +78,8 @@
                 android:resource="@xml/searchable_search_interests"/>
         </activity>
         <activity android:name=".gui.FacebookInterests"
-            android:parentActivityName=".gui.UserInterests">
+            android:parentActivityName=".gui.UserInterests"
+            android:label="@string/facebook_interests_app_bar_title">
         </activity>
         <service android:name=".userinterestcontrols.FacebookInterestFinder"
             android:exported="false"/>

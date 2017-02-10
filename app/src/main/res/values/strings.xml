@@ -112,9 +112,15 @@
     <string name="theme_list_app_bar_title">テーマを選択</string>
     <string name="theme_list_search_hint">テーマを検索</string>
 
+    <!--results-->
+    <string name="results_app_bar_title">結果</string>
+
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>
     <string name="search_interests_add">追加</string>
+
+    <!--Facebook interests-->
+    <string name="facebook_interests_app_bar_title">Facebookで検索</string>
 
     <!--Theme Details Page-->
     <string name="theme_details_lastPlayed">最終プレイ</string>

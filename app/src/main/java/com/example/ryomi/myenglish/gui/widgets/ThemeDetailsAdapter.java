@@ -2,6 +2,7 @@ package com.example.ryomi.myenglish.gui.widgets;
 
 
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.ryomi.myenglish.R;
@@ -20,13 +21,16 @@ public class ThemeDetailsAdapter
 
     //context menu doesn't work for recyclerviews
     ThemeInstanceData longClickData;
+    //hide loading view once data is initially loaded
+    ProgressBar loading;
     //update GUI if the list is empty
     TextView noItems;
 
-    public ThemeDetailsAdapter(DatabaseReference ref, TextView noItems){
+    public ThemeDetailsAdapter(DatabaseReference ref, TextView noItems, ProgressBar loading){
         super(ThemeInstanceData.class, R.layout.inflatable_theme_details_instance_list_item,
                 ThemeDetailsViewHolder.class, ref);
         this.noItems = noItems;
+        this.loading = loading;
     }
 
     public ThemeInstanceData getLongClickPosition(){
@@ -70,6 +74,7 @@ public class ThemeDetailsAdapter
     @Override
     public void onDataChanged(){
         noItems.setVisibility(this.getItemCount() == 0 ? View.VISIBLE : View.INVISIBLE);
+        loading.setVisibility(View.INVISIBLE);
     }
 
 

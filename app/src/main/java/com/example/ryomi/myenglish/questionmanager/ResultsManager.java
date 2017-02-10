@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.example.ryomi.myenglish.db.datawrappers.AchievementStars;
 import com.example.ryomi.myenglish.db.datawrappers.InstanceRecord;
+import com.example.ryomi.myenglish.db.datawrappers.QuestionAttempt;
+import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.gui.Results;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -12,26 +14,40 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 //this manages the results displayed to the user
 public class ResultsManager {
     private Context context;
     private InstanceRecord instanceRecord;
+    private List<QuestionData> questions;
     //we can find this from the instance ID of instance record
-    //but that's one more connection we will have to worry about
+    //(instanceID -> instance -> themeID)
+    //but that's one more connection we will have to send
     private String themeID;
 
-    public ResultsManager(InstanceRecord instanceRecord, String themeID){
+    public ResultsManager(InstanceRecord instanceRecord, List<QuestionData> questions, String themeID){
         this.instanceRecord = instanceRecord;
+        this.questions = new ArrayList<>(questions);
         this.themeID = themeID;
     }
 
     //save and display results
     public void displayResults(Context context){
         this.context = context;
-        startFlow();
+        saveInstanceRecord();
+        identifyAchievements();
+        showQuestionRecord();
     }
 
-    private void startFlow(){
+    //since we need to do this synchronously
+    //the calls to firebase are nested.
+    //1. look at the achievements for the user
+    //2. look at past instance records to identify what new stars should be added
+    private void identifyAchievements(){
         identifyExistingAchievements();
     }
 
@@ -50,8 +66,7 @@ public class ResultsManager {
                     existingAchievements.setRepeatInstance(false);
                 }
 
-                ((Results)context).populateExistingStars(existingAchievements);
-
+                //((Results)context).populateExistingStars(existingAchievements);
 
                 identifyNewAchievements(existingAchievements);
             }
@@ -63,6 +78,8 @@ public class ResultsManager {
         });
     }
 
+    //we are only passing the existing achievements so we can compare the old and new set of achievements.
+    //identification should not be different whether this instance record is updated prior or after
     private void identifyNewAchievements(AchievementStars existingAchievements){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -72,41 +89,42 @@ public class ResultsManager {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 AchievementStars newAchievements = new AchievementStars();
-                newAchievements.setFirstInstance(false);
+                //since we are updating this instance the first instance has to be true
+                newAchievements.setFirstInstance(true);
                 newAchievements.setSecondInstance(false);
                 newAchievements.setRepeatInstance(false);
-                boolean shouldSend = false;
-                //first check if this is the first instance.
-                //we do this first to avoid calling get children on a null snapshot
-                if (dataSnapshot.getValue() == null){
-                    //there are no values so this has to be th first instance
-                    newAchievements.setFirstInstance(true);
-                    shouldSend = true;
-                } else {
+                //the reference might be empty if this is the first instance and
+                // this instance still hasn't been updated
+                if (dataSnapshot.getValue() != null){
                     //check if this is a repeat of the same instance
-                    DataSnapshot sameInstance = dataSnapshot.child(instanceRecord.getInstanceId());
-                    if (sameInstance.getChildrenCount() == 1){
-                        //one record with the same instance exists
-                        newAchievements.setRepeatInstance(true);
-                        shouldSend = true;
-                    } else if (sameInstance.getChildrenCount() == 0){
-                        //repeat and second (new) instance are mutually exclusive.
-                        if (dataSnapshot.getChildrenCount() == 1){
+                    DataSnapshot sameInstanceRecords = dataSnapshot.child(instanceRecord.getInstanceId());
+                    for (DataSnapshot snapshot : sameInstanceRecords.getChildren()){
+                        InstanceRecord record = snapshot.getValue(InstanceRecord.class);
+
+                        //there exists a record that is not this current one
+                        if (!record.equals(instanceRecord)){
+                            newAchievements.setRepeatInstance(true);
+                        }
+                    }
+                    //check if there is another instance
+                    if (dataSnapshot.getChildrenCount() > 1){
+                        newAchievements.setSecondInstance(true);
+                    }
+                    //this shouldn't be called because this would return null?
+                    else if (dataSnapshot.getChildrenCount() == 0) {
+                        newAchievements.setSecondInstance(false);
+                    } else { // children count = 1
+                        if ( !dataSnapshot.hasChild(instanceRecord.getInstanceId()) ){
                             newAchievements.setSecondInstance(true);
-                            shouldSend = true;
                         }
                     }
                 }
 
-                if (shouldSend){
+                if (shouldUpdateStars(finalExistingAchievements, newAchievements)){
                     ((Results)context).populateNewStars(newAchievements);
                     updateAchievements(finalExistingAchievements, newAchievements);
                 }
 
-                //we should save the new instance record after all this so it doesn't
-                // interfere with identifying achievements.
-                //note this doesn't have to be synchronous with updateAchievements()
-                saveInstanceRecord();
             }
 
             @Override
@@ -114,6 +132,19 @@ public class ResultsManager {
 
             }
         });
+    }
+
+    private boolean shouldUpdateStars(AchievementStars existingAchievements, AchievementStars newAchievements){
+        //basically check if old = false and new = true
+        if (!existingAchievements.getFirstInstance() && newAchievements.getFirstInstance())
+            return true;
+        if (!existingAchievements.getSecondInstance() && newAchievements.getSecondInstance())
+            return true;
+        if (!existingAchievements.getRepeatInstance() && newAchievements.getRepeatInstance())
+            return true;
+
+        //no need to update
+        return false;
     }
 
     private void updateAchievements(AchievementStars existingAchievements, AchievementStars newAchievements){
@@ -148,13 +179,27 @@ public class ResultsManager {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = db.getReference(
-                "instanceRecords/"+userID+"/"+themeID+"/"+instanceRecord.getInstanceId());
-        String key = ref.push().getKey();
-        instanceRecord.setId(key);
-        DatabaseReference ref2 = db.getReference(
-                "instanceRecords/"+userID+"/"+themeID+"/"+instanceRecord.getInstanceId()+
-                "/"+key);
-        ref2.setValue(instanceRecord);
+                "instanceRecords/"+userID+"/"+themeID+"/"+instanceRecord.getInstanceId()+"/"+instanceRecord.getId());
+        ref.setValue(instanceRecord);
+    }
+
+    private void showQuestionRecord(){
+        //organize question data into a map for easier retrieval
+        Map<String, QuestionData> questionMap = new HashMap<>();
+        for (QuestionData data : questions){
+            questionMap.put(data.getId(), data);
+        }
+
+        List<QuestionAttempt> attempts = instanceRecord.getAttempts();
+        for (QuestionAttempt attempt : attempts){
+            QuestionData questionData = questionMap.get(attempt.getQuestionID());
+            //shouldn't happen
+            if (questionData == null){
+                continue;
+            }
+            ((Results)context).addQuestion(questionData.getQuestion());
+            ((Results)context).addResponse(attempt.getResponse(),attempt.getCorrect());
+        }
     }
 
 }

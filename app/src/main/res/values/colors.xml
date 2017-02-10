@@ -10,9 +10,11 @@
     <color name="orange500">#FF9800</color>
     <color name="orange600">#FB8C00</color>
     <color name="green500">#4CAF50</color>
+    <color name="lgreen500">#8BC34A</color>
     <color name="red500">#F44336</color>
     <color name="white">#FFFFFF</color>
     <color name="gray50">#ECEFF1</color>
+    <color name="gray500">#9E9E9E</color>
     <!--other colors-->
     <color name="flatButtonFontColor">#19B5FE</color>
     <color name="subtextFontColor">#9E9E9E</color>

@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -43,8 +44,8 @@ public class ThemeList extends AppCompatActivity {
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference("themes");
-        firebaseAdapter = new ThemeListAdapter(ThemeData.class, R.layout.inflatable_theme_list_list_item,
-                ThemeListViewHolder.class, ref);
+        ProgressBar loading = (ProgressBar) findViewById(R.id.theme_list_loading);
+        firebaseAdapter = new ThemeListAdapter(ref, loading);
 
         listView.setAdapter(firebaseAdapter);
 

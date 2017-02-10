@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.AchievementStars;
@@ -24,9 +25,12 @@ import java.util.List;
 public class ThemeListAdapter
         extends FirebaseRecyclerAdapter<ThemeData, ThemeListViewHolder> {
 
-    public ThemeListAdapter(Class<ThemeData> dataClass, int layoutID,
-                               Class<ThemeListViewHolder> viewHolderClass, DatabaseReference ref){
-        super(dataClass, layoutID, viewHolderClass, ref);
+    private ProgressBar loading;
+
+    public ThemeListAdapter(DatabaseReference ref, ProgressBar loading){
+        super(ThemeData.class, R.layout.inflatable_theme_list_list_item,
+                ThemeListViewHolder.class, ref);
+        this.loading = loading;
     }
 
     @Override
@@ -81,6 +85,12 @@ public class ThemeListAdapter
         });
 
     }*/
+
+    @Override
+    public void onDataChanged(){
+        loading.setVisibility(View.INVISIBLE);
+
+    }
 
     private void populateStars(String themeID, String userID, final List<ImageView> starList){
         final AchievementStars result = new AchievementStars();
