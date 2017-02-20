@@ -1,18 +1,25 @@
 package com.example.ryomi.myenglish.questiongenerator;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.connectors.WikiDataAPIGetConnector;
 import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
+import com.example.ryomi.myenglish.questiongenerator.themes.QuestionDataWrapper;
+import com.example.ryomi.myenglish.userinterestcontrols.EntityGetter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Document;
@@ -29,29 +36,39 @@ import java.util.Set;
 //the first time around.
 //from the second time on, we can just read the questions in from the db
 public abstract class Theme {
+	private static final String TAG = "theme";
 	protected ThemeData themeData;
 	//where we will populate new questions for this instance
-	protected List<QuestionData> newQuestions = new ArrayList<>();
+	protected List<QuestionDataWrapper> newQuestions = new ArrayList<>();
 	//a full list of question IDs we will save into the theme instance data.
 	//any existing questions we are putting into the instance will be put in here
 	//directly as the ID instead of having to query again to get the question data
-	private List<String> questionIDs = new ArrayList<>();
+	private List<List<String>> questionSets = new ArrayList<>();
 	//これが出題される問題のトピック
 	protected Document documentOfTopics = null;
 	//interests to search
 	private final Set<WikiDataEntryData> userInterests = new HashSet<>();
 	//makes sure we are not giving duplicate question
 	// from previous instances of the user
-	private final Set<String> userQuestionHistory = new HashSet<>();
+	private final List<List<String>> userQuestionHistory = new ArrayList<>();
 	//save topics in the instance as unique identifiers
 	// for when we display a list of instances to the user.
 	protected final Set<String> topics = new HashSet<>();
-	//how many questions we have
-	protected int questionsLeftToPopulate;
+	//how many question sets we should have
+	protected int questionSetsLeftToPopulate;
+	//save this so we don't have to fetch same data again
+	private DataSnapshot allTopics = null;
+	//for getting wikiData entries from wikiData IDs in topics
+	private EntityGetter getter;
+
+	/*
 	//MAXIMUM number of theme topics we need.
 	//not directly related to the number of topics since one topic
 	//may create more than one question
 	protected int themeTopicCount;
+	we don't want this now since with the ordering of fetching questions that we have,
+	if we limit the query results, the rest of the results will never be called.
+	*/
 
 	private EndpointConnectorReturnsXML connector = null;
 	
@@ -59,6 +76,9 @@ public abstract class Theme {
 	public Theme(EndpointConnectorReturnsXML connector, ThemeData data){
 		this.themeData = data;
 		this.connector = connector;
+		WikiDataAPIGetConnector getConnector = new WikiDataAPIGetConnector(
+				WikiBaseEndpointConnector.JAPANESE);
+		getter = new EntityGetter(getConnector);
 	}
 
 	// 1. check if a question with matching topics already exists in the database
@@ -87,7 +107,8 @@ public abstract class Theme {
 		if (FirebaseAuth.getInstance().getCurrentUser() != null){
 			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 			FirebaseDatabase db = FirebaseDatabase.getInstance();
-			DatabaseReference ref = db.getReference("userInterests/"+userID);
+			DatabaseReference ref = db.getReference(
+					FirebaseDBHeaders.USER_INTERESTS + "/" + userID);
 			ref.addListenerForSingleValueEvent(new ValueEventListener() {
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot) {
@@ -111,21 +132,23 @@ public abstract class Theme {
 		if (FirebaseAuth.getInstance().getCurrentUser() != null) {
 			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 			FirebaseDatabase db = FirebaseDatabase.getInstance();
-			DatabaseReference ref = db.getReference("themeInstances/" + userID + "/" + themeData.getId());
+			//this fetches all questions done by the user already
+			DatabaseReference ref = db.getReference(
+					FirebaseDBHeaders.THEME_INSTANCES + "/" + userID + "/" + themeData.getId());
 			ref.addListenerForSingleValueEvent(new ValueEventListener() {
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot) {
 					for (DataSnapshot child : dataSnapshot.getChildren()) {
 						ThemeInstanceData data = child.getValue(ThemeInstanceData.class);
-						List<String> questionIDs = data.getQuestionIds();
+						List<List<String>> dataQuestionSets = data.getQuestionSets();
 						//shouldn't be null?
 						//mainly for debug purposes
-						if (questionIDs != null)
-							userQuestionHistory.addAll(questionIDs);
+						if (dataQuestionSets != null)
+							userQuestionHistory.addAll(dataQuestionSets);
 
 					}
 
-					populateExistingQuestions();
+					populateExistingNewQuestions(new HashSet<>(userInterests));
 				}
 
 				@Override
@@ -137,8 +160,8 @@ public abstract class Theme {
 	}
 
 
-	//we are fetching all topics for questions of that thee.
-	//if any match the user & the user has not had that question yet,
+	//we are fetching already created questions (from firebase).
+	//if any match the user's interests & the user has not had that question yet,
 	//add it to the list of questions
 
 	//the db is organized like
@@ -149,45 +172,57 @@ public abstract class Theme {
 	//        +--question1
 	//        +--question2
 	//        +-- ...
-	private void populateExistingQuestions(){
+	private void populateExistingNewQuestions(final Set<WikiDataEntryData> interests){
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		DatabaseReference ref = db.getReference("questionTopics/"+themeData.getId());
+		//this gets us a list of question sets indexed by the wikiData ID
+		DatabaseReference ref = db.getReference(
+				FirebaseDBHeaders.QUESTION_TOPICS + "/" + themeData.getId());
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot topicsForTheme) {
+				//save this as a class variable since we will need the same exact data again.
+				//(one less connection)
+				allTopics = topicsForTheme;
+
 				//prevent the same user interests popping up over and over.
 				//this is not a concern about repeated instances of a single theme.
 				//but more of a problem when the user starts 10 themes and 9 of them include
-				//Leonardo Dicaprio because he is first on the list in the database
-				List<WikiDataEntryData> userInterestList = new ArrayList<>(userInterests);
+				//Leonardo Dicaprio because he is first on the list in the database.
+				//set -> list
+				List<WikiDataEntryData> userInterestList = new ArrayList<>(interests);
 				Collections.shuffle(userInterestList);
 				for (WikiDataEntryData userInterest : userInterestList){
 					String interestID = userInterest.getWikiDataID();
 					if (topicsForTheme.hasChild(interestID)){
-						//there most likely will be more than one question per topic
-						DataSnapshot questionSet = topicsForTheme.child(interestID);
-						for (DataSnapshot question : questionSet.getChildren()){
-							String questionID = (String)question.getValue();
-							if (!userQuestionHistory.contains(questionID)) {
-								questionIDs.add(questionID);
+						//there can be more than one question sets per topic
+						//ex: Manny Pacquiao plays both basketball and boxing professionally
+						DataSnapshot questionSetsSnapshot = topicsForTheme.child(interestID);
+						for (DataSnapshot questionSet : questionSetsSnapshot.getChildren()){
+							GenericTypeIndicator<List<String>> type =
+									new GenericTypeIndicator<List<String>>() {};
+							List<String> set = questionSet.getValue(type);
+							//only check the first question.
+							//if the first question exists, the rest of the questions have to also exist
+							// (for now).
+							if (!questionExists(set.get(0))) {
+								questionSets.add(set);
 								topics.add(userInterest.getLabel());
-								questionsLeftToPopulate--;
+								questionSetsLeftToPopulate--;
+								if (questionSetsLeftToPopulate == 0) break;
 							}
-
-							if (questionsLeftToPopulate == 0) break;
 						}
 						//if the user's interest exists for the theme,
 						//no matter if the questions are new(we will add them to the question list)
 						// or previously done (we do not add it to our question list),
 						//we will not need to search for the interest again
-						userInterests.remove(userInterest);
+						interests.remove(userInterest);
 
-						if (questionsLeftToPopulate == 0) break;
+						if (questionSetsLeftToPopulate == 0) break;
 					}
 				}
 
 				//we don't need to create new questions
-				if (questionsLeftToPopulate == 0){
+				if (questionSetsLeftToPopulate == 0){
 					//skip creating questions
 					//and save them in the db
 					saveInstance();
@@ -195,7 +230,8 @@ public abstract class Theme {
 					//we have to do this in a separate thread because the
 					//onDataChange method runs on the UI thread
 					CreateQuestionHelper helper = new CreateQuestionHelper();
-					helper.execute();
+					//we can ignore the warning on Android Studio
+					helper.execute(interests);
 				}
 			}
 
@@ -206,15 +242,26 @@ public abstract class Theme {
 		});
 	}
 
+	//checks if the user already has completed the question
+	private boolean questionExists(String questionID){
+		for (List<String> questionSet : userQuestionHistory){
+			if (questionSet.contains(questionID))
+				return true;
+		}
+
+		return false;
+	}
+
 	//Firebase onChange() works on the main UI Thread (even if it's called from another service
 	// so we have to make a separate thread
-	private class CreateQuestionHelper extends AsyncTask<Void, Integer, Boolean>{
+	private class CreateQuestionHelper extends AsyncTask<Set<WikiDataEntryData>, Integer, Boolean>{
 		@Override
-		protected Boolean doInBackground(Void... params){
+		protected Boolean doInBackground(Set<WikiDataEntryData>... params){
 			try {
-				populateResults();
-				processResultsIntoClassWrappers();
-
+				Set<WikiDataEntryData> interests = params[0];
+				populateResults(interests);
+				if (documentOfTopics != null)
+					processResultsIntoClassWrappers();
 				//from here the methods are not (might not be) synchronous
 				//more methods embedded in this.
 				//create questions
@@ -234,20 +281,17 @@ public abstract class Theme {
 	//UNIONしてまとめて検索してもいいけど時間が異常にかかる
 	protected abstract String getSPARQLQuery();
 	//一つ一つのクエリーを送って、まとめる
-	private void populateResults() throws Exception {
-		for (WikiDataEntryData interest : userInterests){
+	private void populateResults(Set<WikiDataEntryData> interests) throws Exception {
+		for (WikiDataEntryData interest : interests){
 			String entityID = interest.getWikiDataID();
 			String query = addEntityToQuery(entityID);
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
 			this.addResultsToMainDocument(resultDOM);
-			if (WikiDataSPARQLConnector.countResults(documentOfTopics) >= questionsLeftToPopulate){
+			//there can be more results than we need
+			if (WikiDataSPARQLConnector.countResults(documentOfTopics) >= questionSetsLeftToPopulate){
 				break;
 			}
 		}
-
-		//TODO recommendation algorithm when creating questions
-
-		//if we can't populate results with user interests, fetch random questions from the db
 
 	}
 	//ドキュメントのデータを、わかりやすいクラスに入れる
@@ -272,44 +316,199 @@ public abstract class Theme {
 		//so we should save the topics after potentially removing questions
 		saveResultTopics();
 		createQuestionsFromResults();
-		saveQuestionsInDB();
+		saveNewQuestions();
 	}
 
+	//saves the newly made questions in the database
+	// and the question ID list we have for this instance.
 	//called after QuestionData is populated
-	//where the question ID is set as an empty string
-	protected void saveQuestionsInDB(){
+	//where the question ID is set as an empty string (will be set here).
+	//we may create more questions than the user will be getting,
+	//but this is so all questions possible for one theme are created.
+	//if we only create questions for the user, all the rest of the questions
+	//will never be created
+	protected void saveNewQuestions(){
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		for (QuestionData data : newQuestions){
-			//if the question already has an ID,
-			//that means it is a question we read from
-			//the database and not a question we just generated
-			if (!data.getId().equals("")){
-				continue;
+		for (QuestionDataWrapper dataList : newQuestions){
+			//we are storing an array of IDs, not the actual questions
+			List<String> questionIDs = new ArrayList<>();
+			//save each question in the database
+			for (QuestionData data : dataList.getQuestionSet()) {
+				DatabaseReference ref = db.getReference(FirebaseDBHeaders.QUESTIONS);
+				String key = ref.push().getKey();
+				//set ID in data
+				data.setId(key);
+				//save in db
+				DatabaseReference ref2 = db.getReference(
+						FirebaseDBHeaders.QUESTIONS + "/" + key);
+				ref2.setValue(data);
+				//just so we can store the data in question topics
+				questionIDs.add(key);
 			}
-			String topicID = data.getTopicId();
-			DatabaseReference ref = db.getReference("questions");
-			String key = ref.push().getKey();
-			//set ID in data
-			data.setId(key);
-			//save in db
-			DatabaseReference ref2 = db.getReference("questions/"+key);
-			ref2.setValue(data);
+
+			String topicID = dataList.getWikiDataID();
 
 			//now save a reference for the question topics
 			//so we can easily detect if a topic for a theme exists
 			//and grab the question id
-			DatabaseReference ref3 = db.getReference("questionTopics/"+themeData.getId()+
-				"/"+data.getTopicId());
+			DatabaseReference ref3 = db.getReference(FirebaseDBHeaders.QUESTION_TOPICS + "/" +
+					themeData.getId() + "/" + topicID);
 			String key2 = ref3.push().getKey();
-			DatabaseReference ref4 = db.getReference("questionTopics/"+themeData.getId()+
-				"/"+data.getTopicId()+"/"+key2);
-			ref4.setValue(data.getId());
+			DatabaseReference ref4 = db.getReference(FirebaseDBHeaders.QUESTION_TOPICS + "/" +
+					themeData.getId() + "/" + topicID + "/" + key2);
+			ref4.setValue(questionIDs);
+
+			//only save the data in the user's current set of questions if
+			//less than the topic count.
+			if (questionSetsLeftToPopulate != 0) {
+				//all question ids for this theme
+				this.questionSets.add(questionIDs);
+				questionSetsLeftToPopulate--;
+			}
 		}
 
-		System.out.println("Finished saving into db");
+		Log.d(TAG,"Finished saving new questions into the database");
 
-		saveInstance();
+		if (questionSetsLeftToPopulate != 0)
+			fillRemainingQuestions(); //calls saveInstance() once this is finished
+		else
+			saveInstance();
 
+	}
+
+	//this is for if we can't populate the questions with just the user interests
+	// (and sub-interests once we implement that).
+	//first, we check any questions in the db non-related to the user.
+	//if that doesn't work, then repeat the user's existing questions
+	private void fillRemainingQuestions(){
+		//the topics in the db only store wikiData IDs
+		//so we will need to fetch the label from wikiData and update
+
+		//if we don't shuffle, the user will get lower WikiData ID topics first
+		List<DataSnapshot> shuffledTopics = new ArrayList<>();
+		//allTopics reference =
+		//FirebaseDBHeaders.QUESTION_TOPICS + "/" + themeData.getId()
+		for (DataSnapshot topic : allTopics.getChildren()) {
+			shuffledTopics.add(topic);
+		}
+		Collections.shuffle(shuffledTopics);
+
+		//list of wikiData IDs. we will fetch the rest of the data later
+		final List<String> topicsToGet = new ArrayList<>();
+		for (DataSnapshot topic : shuffledTopics){
+			String wikiDataID = topic.getKey();
+			//this condition will cover both existing questions and newly created questions.
+			//need to make sure we add recommended interests to userInterests as well
+			if (!hasWikiDataID(userInterests,wikiDataID)){
+				for (DataSnapshot questionSet : topic.getChildren()) {
+					GenericTypeIndicator<List<String>> type =
+							new GenericTypeIndicator<List<String>>() {
+							};
+					List<String> questionIDSet = questionSet.getValue(type);
+					questionSets.add(questionIDSet);
+					//we need the label, not the ID
+					//we can either save the label as well in the firebase entry,
+					//but that seems like too much extra data added?
+					//so fetch the name from wikiData
+					topicsToGet.add(wikiDataID);
+					questionSetsLeftToPopulate--;
+
+					if (questionSetsLeftToPopulate == 0)
+						break;
+				}
+			}
+
+			if (questionSetsLeftToPopulate == 0)
+				break;
+		}
+
+		String[] topicArray = topicsToGet.toArray(new String[topicsToGet.size()]);
+
+		//last resort, use the user's previous questions.
+		//question history only has a reference to the question,
+		// and the question only has reference to the wikiData ID.
+		List<String> questionIDsToSearach = new ArrayList<>();
+		if (questionSetsLeftToPopulate != 0){
+			Collections.shuffle(userQuestionHistory);
+			//no need to check if the user's question history is more than the remaining topics
+			//because it is guaranteed to be at least equal
+			for (int i=0; i<questionSetsLeftToPopulate; i++){
+				List<String> questionSet = userQuestionHistory.get(i);
+				this.questionSets.add(questionSet);
+				questionIDsToSearach.addAll(questionSet);
+			}
+
+			//connect to firebase to get the questions' topics
+			fetchTopicsFromFirebase(questionIDsToSearach,0,topicArray);
+
+		} else {
+			//no need to connect to fireBase.
+			fetchTopics(topicArray);
+		}
+	}
+
+	//helper to check if user interests contains a wikiData ID
+	private boolean hasWikiDataID(Set<WikiDataEntryData> set, String id){
+		for (WikiDataEntryData data : set){
+			if (data.getWikiDataID().equals(id))
+				return true;
+		}
+		return false;
+	}
+
+	//recursively (and therefore synchronously) fetch particular questions.
+	//thought this is better than getting the whole list of questions
+	private void fetchTopicsFromFirebase(final List<String> questionIDsToSearch, final int index, final String[] topicArray){
+		if (index == questionIDsToSearch.size()){
+			fetchTopics(topicArray);
+			return;
+		}
+
+		String questionID = questionIDsToSearch.get(index);
+		DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
+				FirebaseDBHeaders.QUESTIONS + "/" + questionID
+		);
+		ref.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				QuestionData data = dataSnapshot.getValue(QuestionData.class);
+				topics.add(data.getTopic());
+				fetchTopicsFromFirebase(questionIDsToSearch,(index + 1),topicArray);
+			}
+
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+				fetchTopics(topicArray);
+			}
+		});
+	}
+
+	private void fetchTopics(String[] topicArray){
+		try {
+			GetWikiDataHelper conn = new GetWikiDataHelper();
+			//saves instance after this is called
+			conn.execute(topicArray);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	//fetch all wikiData entities in one query to reduce overhead
+	private class GetWikiDataHelper extends AsyncTask<String, Integer, Boolean>{
+		@Override
+		protected Boolean doInBackground(String... topicArray){
+			try {
+				List<WikiDataEntryData> topicsData = getter.get(topicArray);
+				for (WikiDataEntryData topic : topicsData){
+					topics.add(topic.getLabel());
+				}
+				saveInstance();
+				return true;
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			return false;
+		}
 	}
 
 	private void saveInstance(){
@@ -320,20 +519,18 @@ public abstract class Theme {
 			userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 		}
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		DatabaseReference ref = db.getReference("themeInstances/"+userID+"/"+themeData.getId());
+		DatabaseReference ref = db.getReference(
+				FirebaseDBHeaders.THEME_INSTANCES + "/" + userID + "/" +themeData.getId());
 		String key = ref.push().getKey();
 
-		//create instance
-		for (QuestionData q : newQuestions){
-			questionIDs.add(q.getId());
-		}
-
-		//we can't save collections
+		//set->list (can't save sets)
 		List<String> topicList = new ArrayList<>(topics);
 		ThemeInstanceData data = new ThemeInstanceData(key, themeData.getId(),
-				userID, questionIDs, topicList, System.currentTimeMillis(),0);
-		DatabaseReference ref2 = db.getReference("themeInstances/"+userID+"/"+themeData.getId()+"/"+key);
+				userID, questionSets, topicList, System.currentTimeMillis(),0);
+		DatabaseReference ref2 = db.getReference(
+				FirebaseDBHeaders.THEME_INSTANCES + "/" + userID + "/" + themeData.getId() + "/" +key);
 		ref2.setValue(data);
+		Log.d(TAG,"Finished saving instance into the database");
 
 		//end of flow
 	}
@@ -347,20 +544,24 @@ public abstract class Theme {
 		}
 		
 		//<results>タグは一つしかない前提
-		Node documentOfTopicsHead = documentOfTopics.getElementsByTagName("results").item(0);
-		int dotResultsCount = WikiDataSPARQLConnector.countResults(documentOfTopics);
-		NodeList newDocumentResults = newDocument.getElementsByTagName("result");
+		Node documentOfTopicsHead = documentOfTopics.
+				getElementsByTagName(WikiDataSPARQLConnector.ALL_RESULTS_TAG).item(0);
+		//int dotResultsCount = WikiDataSPARQLConnector.countResults(documentOfTopics);
+		//fetch all results
+		NodeList newDocumentResults = newDocument.getElementsByTagName(
+				WikiDataSPARQLConnector.RESULT_TAG
+		);
 		int newDocumentResultsCount = newDocumentResults.getLength();
-		
+		//add the node to the main document DOM
 		for (int i=0; i<newDocumentResultsCount; i++){
-			if (dotResultsCount >= themeTopicCount) return;
+			//if (dotResultsCount >= themeTopicCount) return;
 			
 			Node nextNode = newDocumentResults.item(i);
 			//we need to import from new document to main document
 			//importNode(Node, deep) where deep = copy children as well
 			Node importedNextNode = documentOfTopics.importNode(nextNode, true);
 			documentOfTopicsHead.appendChild(importedNextNode);
-			dotResultsCount ++;
+			//dotResultsCount ++;
 		}
 		
 	}

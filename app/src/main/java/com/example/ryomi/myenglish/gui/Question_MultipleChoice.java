@@ -3,6 +3,7 @@ package com.example.ryomi.myenglish.gui;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,6 +48,16 @@ public class Question_MultipleChoice extends Question_General {
         return true;
     }
 
+    @Override
+    protected ViewGroup getParentViewForFeedback(){
+        return (ViewGroup)findViewById(R.id.activity_question_multiple_choice);
+    }
+
+    @Override
+    protected ViewGroup getSiblingViewForFeedback(){
+        return (ViewGroup)findViewById(R.id.question_multiple_choice_main_layout);
+    }
+
     private void populateQuestion(){
         QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();
@@ -67,8 +78,8 @@ public class Question_MultipleChoice extends Question_General {
         LinearLayout choicesLayout = (LinearLayout) findViewById(R.id.question_multiple_choice_choices_layout);
 
         for (String choice : choices){
-            Button choiceButton =
-                    (Button)getLayoutInflater().inflate(R.layout.inflatable_question_multiple_choice_button, null);
+            Button choiceButton = (Button)getLayoutInflater().
+                    inflate(R.layout.inflatable_question_multiple_choice_button, choicesLayout, false);
             choiceButton.setText(choice);
             //for checking answer
             choiceButton.setTag(choice);

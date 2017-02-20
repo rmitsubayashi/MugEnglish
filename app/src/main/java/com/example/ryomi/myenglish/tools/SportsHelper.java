@@ -1,8 +1,11 @@
 package com.example.ryomi.myenglish.tools;
 
+import android.util.Log;
+
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.myenglish.connectors.WikipediaConnector;
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -53,6 +56,7 @@ import java.util.List;
  */
 
 public class SportsHelper {
+	private static String TAG = "sportsHelper";
 	private WikiDataSPARQLConnector sparqlConn;
 	private WikipediaConnector wikipediaConn;
 	
@@ -83,13 +87,15 @@ public class SportsHelper {
 		}
 		return inflectedVerb + objectPart;
 	}
-	
+
+	//to generate all pairs
 	public void run() throws Exception{
 		Document doc = fetchSports();
-		NodeList list = doc.getElementsByTagName("result");
+		NodeList list = doc.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
 		for (int i=0; i<list.getLength(); i++){
 			Node n =list.item(i);
 			String name = SPARQLDocumentParserHelper.findValueByNodeName(n, "sportLabel");
+			Log.d(TAG,name);
 			String url = SPARQLDocumentParserHelper.findValueByNodeName(n, "sitelink");
 			int lastIndexURL = url.lastIndexOf('/');
 			url = url.substring(lastIndexURL+1);
@@ -103,6 +109,9 @@ public class SportsHelper {
 			//not dancesport
 			if(name.length() > 5 && (name.substring(name.length()-6)).equals(" sport") )
 				name += "s";
+			//other exceptions
+			if (name.equals("association football"))
+				name = "soccer";
 			
 			//decide verb
 			//get # of the word 'played' in the Wikipedia page
@@ -112,7 +121,7 @@ public class SportsHelper {
 			int playedCt = ( text.length() - text.replace("played", "").length() ) / 6;
 			
 			String verb = "";
-			List<String> ingExceptions = new ArrayList<String>();
+			List<String> ingExceptions = new ArrayList<>();
 			ingExceptions.add("Q213711");//hurling
 			ingExceptions.add("Q20898537");//women's curling
 			ingExceptions.add("Q1148620");//finswimming
@@ -123,11 +132,12 @@ public class SportsHelper {
 			ingExceptions.add("Q136851");//curling
 			ingExceptions.add("Q1741178");//Kiiking?
 			ingExceptions.add("Q1637219");//speedcubing
+			ingExceptions.add("Q895138");//powerbocking
 			if	(name.length() > 2 && 
 			(name.substring(name.length()-3)).equals("ing") &&
 			!ingExceptions.contains(id)){
 				//for '~ing' we should trim the end
-				//ie skiing -> skii
+				//ie skiing -> ski
 				//but we shouldn't if it's a multiple worded sport
 				//ie Greco-Roman wrestling
 				//we did Greco-Roman wresling
@@ -146,11 +156,12 @@ public class SportsHelper {
 						verb += "e";
 					
 					
-					//we don't need a name
+					//we don't need a sport name
 					//we ski
 					//not we ski ski
 					name = "";
 				}
+			//if played was used in the wikipedia page, it most likely uses 'play', not 'do'
 			} else if (playedCt > 2 || name.equals("tennis") || name.equals("Goalball")){
 				verb = "play";
 			} else {
@@ -164,16 +175,19 @@ public class SportsHelper {
 			if (auth.getCurrentUser() != null) {
 				FirebaseDatabase db = FirebaseDatabase.getInstance();
 				String userID = auth.getCurrentUser().getUid();
-				DatabaseReference ref = db.getReference("utils/sportsVerbMapping");
+				DatabaseReference ref = db.getReference(
+						FirebaseDBHeaders.UTILS + "/sportsVerbMapping");
 				if (ref != null){
 					ref.child(id).child("name").setValue(name);
 					ref.child(id).child("verb").setValue(verb);
+
+					Log.d(TAG, "Added " + name + " --- " + verb);
 				}
 			}
 		}
 	}
 	
-	private static String inflectVerb(String verb, String tense){
+	public static String inflectVerb(String verb, String tense){
 		switch (tense){
 		case PAST :
 			if (verb.equals("do"))
@@ -227,14 +241,16 @@ public class SportsHelper {
 				"WHERE " + 
 				"{ " +
 				"    {?sport wdt:P279 ?sportTypes} UNION " +
-				"	 {?sport wdt:P31 wd:Q31629} . " +
+				"	 {?sport wdt:P31 wd:Q31629} UNION " +
+				"    {?sport wdt:P31 wd:Q349} . " +
 				"    Values ?sportTypes {wd:Q7128792 wd:Q201965 wd:Q212434 wd:Q216048 wd:Q1188693 wd:Q2755547 } . " +
 				"    ?sitelink schema:about ?sport . " +
 				"    ?sitelink schema:inLanguage 'en' . " +
 				"    ?sitelink schema:isPartOf <https://en.wikipedia.org/> . " +
 				"    FILTER NOT EXISTS {?sport wdt:P31 wd:Q4167836} . " +
 			    "    FILTER NOT EXISTS {?sport wdt:P31 wd:Q7082029} . " +
-				"	SERVICE wikibase:label { bd:serviceParam wikibase:language 'en' }" +
+				"	 SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
+						WikiDataSPARQLConnector.ENGLISH + "' }" +
 				"}";
 		
 		return sparqlConn.fetchDOMFromGetRequest(query);

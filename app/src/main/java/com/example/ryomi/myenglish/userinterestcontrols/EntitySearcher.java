@@ -1,6 +1,7 @@
 package com.example.ryomi.myenglish.userinterestcontrols;
 
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.myenglish.connectors.WikiDataAPISearchConnector;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -20,7 +21,7 @@ public class EntitySearcher {
 	* */
 	private EndpointConnectorReturnsXML searchConnector;
 
-	public EntitySearcher(EndpointConnectorReturnsXML searchConnector){
+	public EntitySearcher(WikiDataAPISearchConnector searchConnector){
 		this.searchConnector = searchConnector;
 	}
 	
@@ -29,7 +30,7 @@ public class EntitySearcher {
 		List<WikiDataEntryData> searchResults = new ArrayList<>();
 		String[] queryWrapper = {query, searchLimit.toString()};
 		Document resultDOM = searchConnector.fetchDOMFromGetRequest(queryWrapper);
-		NodeList resultNodes = resultDOM.getElementsByTagName("entity");
+		NodeList resultNodes = resultDOM.getElementsByTagName(WikiDataAPISearchConnector.ENTITY_TAG);
 
 		int nodeCt = resultNodes.getLength();
 		for (int i=0; i<nodeCt; i++){

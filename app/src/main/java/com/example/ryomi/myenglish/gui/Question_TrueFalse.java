@@ -2,6 +2,7 @@ package com.example.ryomi.myenglish.gui;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -40,6 +41,16 @@ public class Question_TrueFalse extends Question_General {
         //technically it's true but it doesn't matter because we only need one attempt
         //before showing the answer
         return true;
+    }
+
+    @Override
+    protected ViewGroup getParentViewForFeedback(){
+        return (ViewGroup)findViewById(R.id.activity_question_true_false);
+    }
+
+    @Override
+    protected ViewGroup getSiblingViewForFeedback(){
+        return (ViewGroup)findViewById(R.id.question_true_false_main_layout);
     }
 
     private void populateQuestion(){

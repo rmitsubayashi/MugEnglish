@@ -3,6 +3,8 @@ package com.example.ryomi.myenglish.questiongenerator.themes;
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
@@ -56,8 +58,7 @@ public class NAME_plays_SPORT extends Theme{
 	
 	public NAME_plays_SPORT(EndpointConnectorReturnsXML connector, ThemeData data){
 		super(connector, data);
-		super.themeTopicCount = 3;
-		super.questionsLeftToPopulate = 3;
+		super.questionSetsLeftToPopulate = 3;
 		/*
 		super.backupIDsOfTopics.add("Q10520");//Beckham
 		super.backupIDsOfTopics.add("Q486359");//Pacquiao
@@ -85,14 +86,15 @@ public class NAME_plays_SPORT extends Theme{
 				"				?" + personNamePH + " rdfs:label ?" + personNameForeignPH + " . " +
 				"				?" + sportIDPH + " rdfs:label ?" + sportNameForeignPH + " } . " +
 				"           BIND (wd:%s as ?" + personNamePH + ") " +
-				"		}" +
-				"       LIMIT " + themeTopicCount;
+				"		}";
 	}
 
 	@Override
 	protected void processResultsIntoClassWrappers() {
 		Document document = super.documentOfTopics;
-		NodeList allResults = document.getElementsByTagName("result");
+		NodeList allResults = document.getElementsByTagName(
+				WikiDataSPARQLConnector.RESULT_TAG
+		);
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
@@ -124,11 +126,14 @@ public class NAME_plays_SPORT extends Theme{
 	@Override
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
+			List<QuestionData> questionSet = new ArrayList<>();
 			QuestionData trueFalseQuestion = createTrueFalseQuestion(qr);
-			super.newQuestions.add(trueFalseQuestion);
+			questionSet.add(trueFalseQuestion);
 
 			QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-			super.newQuestions.add(sentencePuzzleQuestion);
+			questionSet.add(sentencePuzzleQuestion);
+
+			super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID));
 
 		}
 	}
@@ -137,7 +142,7 @@ public class NAME_plays_SPORT extends Theme{
 	@Override
 	protected void accessDBWhenCreatingQuestions(){
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		DatabaseReference ref = db.getReference("utils/sportsVerbMapping");
+		DatabaseReference ref = db.getReference(FirebaseDBHeaders.UTILS + "/sportsVerbMapping");
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
@@ -148,7 +153,10 @@ public class NAME_plays_SPORT extends Theme{
 						String verb = (String)dataSnapshot.child(id).child("verb").getValue();
 						String object = (String)dataSnapshot.child(id).child("name").getValue();
 						qr.verb = verb;
-						qr.object = object;
+						if (object != null)
+							qr.object = object;
+						else
+							qr.object = "";
 					} else {
 						//for now just remove the question
 						toRemove.add(qr);
@@ -162,7 +170,7 @@ public class NAME_plays_SPORT extends Theme{
 
 				NAME_plays_SPORT.this.saveResultTopics();
 				NAME_plays_SPORT.this.createQuestionsFromResults();
-				NAME_plays_SPORT.super.saveQuestionsInDB();
+				NAME_plays_SPORT.super.saveNewQuestions();
 			}
 
 			@Override
@@ -174,24 +182,20 @@ public class NAME_plays_SPORT extends Theme{
 	
 	private String NAME_plays_SPORT_EN_correct(QueryResult qr){
 		String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
-		String sentence = qr.personNameEN + " " + verbObject + ".";
-		return sentence;
+		return qr.personNameEN + " " + verbObject + ".";
 	}
 	
 	private String formatSentenceForeign(QueryResult qr){
-		String sentence = qr.personNameForeign + "は" + qr.sportNameForeign + "をします。";
-		return sentence;
+		return qr.personNameForeign + "は" + qr.sportNameForeign + "をします。";
 	}
 
 	private List<String> puzzlePieces(QueryResult qr){
 		List<String> pieces = new ArrayList<>();
 		pieces.add(qr.personNameEN);
-		String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
-		//fyi this can either be one or two words
-		String[] splitVerbObject = verbObject.split(" ");
-		for (String word : splitVerbObject){
-			pieces.add(word);
-		}
+		String verb = SportsHelper.inflectVerb(qr.verb, SportsHelper.PRESENT3RD);
+		pieces.add(verb);
+		if (!qr.object.equals(""))
+			pieces.add(qr.object);
 
 		return pieces;
 	}
@@ -205,7 +209,7 @@ public class NAME_plays_SPORT extends Theme{
 		QuestionData data = new QuestionData();
 		data.setId("");
 		data.setThemeId(super.themeData.getId());
-		data.setTopicId(qr.personID);
+		data.setTopic(qr.personNameForeign);
 		data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
 		data.setQuestion(question);
 		data.setChoices(null);
@@ -223,7 +227,7 @@ public class NAME_plays_SPORT extends Theme{
 		QuestionData data = new QuestionData();
 		data.setId("");
 		data.setThemeId(super.themeData.getId());
-		data.setTopicId(qr.personID);
+		data.setTopic(qr.personNameForeign);
 		data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
 		data.setQuestion(question);
 		data.setChoices(choices);

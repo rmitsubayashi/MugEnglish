@@ -13,9 +13,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.ryomi.myenglish.R;
+import com.example.ryomi.myenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.myenglish.userinterestcontrols.FacebookInterestFinder;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class FacebookInterests extends AppCompatActivity {
+    private static final String TAG = "FacebookInterests";
     private TextView progressStringTV;
     private TextView progressWordTV;
     private ProgressBar progressBar;
@@ -24,6 +27,20 @@ public class FacebookInterests extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_interests);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null){
+            startActivityForResult(
+                    GUIUtils.getSignInIntent(GUIUtils.SIGN_IN_PROVIDER_FACEBOOK),
+                    GUIUtils.REQUEST_CODE_SIGN_IN
+            );
+        } else {
+            if (!GUIUtils.loggedInWithFacebook()){
+                startActivityForResult(
+                        GUIUtils.getSignInIntent(GUIUtils.SIGN_IN_PROVIDER_FACEBOOK),
+                        GUIUtils.REQUEST_CODE_SIGN_IN
+                );
+            }
+        }
 
         setButtonActionListener();
 

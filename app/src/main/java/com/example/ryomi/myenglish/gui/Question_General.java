@@ -3,8 +3,13 @@ package com.example.ryomi.myenglish.gui;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ryomi.myenglish.R;
@@ -17,6 +22,8 @@ public abstract class Question_General extends AppCompatActivity {
     protected int maxNumberOfAttempts;
     protected int attemptCt = 0;
     protected boolean disableChoiceAfterWrongAnswer;
+    private NestedScrollView feedback;
+    private BottomSheetBehavior behavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -25,6 +32,7 @@ public abstract class Question_General extends AppCompatActivity {
         QuestionManager.getInstance().setCurrentContext(this);
         setMaxNumberOfAttempts();
         disableChoiceAfterWrongAnswer = disableChoiceAfterWrongAnswer();
+        inflateFeedback();
     }
 
     //to instantiate the activity
@@ -36,13 +44,17 @@ public abstract class Question_General extends AppCompatActivity {
     //whether to disable choice after answer when you have multiple attempts.
     //this will be user friendly?
     protected abstract boolean disableChoiceAfterWrongAnswer();
+    //inflate feedback layout
+    protected abstract ViewGroup getParentViewForFeedback();
+    //disable this view when the feedback pops up
+    protected abstract ViewGroup getSiblingViewForFeedback();
 
     private void setMaxNumberOfAttempts(){
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //the preference is still stored as a string
         String preferencesMaxAttemptsString = sharedPreferences.getString
-                (getString(R.string.preference_questions_numberOfAttemptsPerQuestion_key), "1");
+                (getString(R.string.preferences_questions_numberOfAttemptsPerQuestion_key), "1");
         int preferencesMaxAttempts = Integer.parseInt(preferencesMaxAttemptsString);
         int maxPossibleAttempts = getMaxPossibleAttempts();
         if (maxPossibleAttempts == UNLIMITED_ATTEMPTS){
@@ -67,10 +79,7 @@ public abstract class Question_General extends AppCompatActivity {
         QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();
         String answer = data.getAnswer();
-        if(response.equals(answer))
-            return true;
-        else
-            return false;
+        return response.equals(answer);
     }
 
     @Override
@@ -81,19 +90,19 @@ public abstract class Question_General extends AppCompatActivity {
     }
 
     protected View.OnClickListener getResponseListener(){
-        View.OnClickListener responseListener = new View.OnClickListener() {
+        return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptCt++;
                 String answer = getResponse(view);
                 if (checkAnswer(answer)){
                     QuestionManager.getInstance().recordResponse(answer, true);
-                    QuestionManager.getInstance().nextQuestion();
+                    openFeedback(true);
                 } else {
                     QuestionManager.getInstance().recordResponse(answer, false);
                     if (attemptCt == maxNumberOfAttempts){
                         //the user used up all his attempts
-                        QuestionManager.getInstance().nextQuestion();
+                        openFeedback(false);
                     } else {
                         Toast.makeText(Question_General.this, answer, Toast.LENGTH_SHORT).show();
                         if (disableChoiceAfterWrongAnswer)
@@ -102,9 +111,55 @@ public abstract class Question_General extends AppCompatActivity {
                 }
             }
         };
-
-        return responseListener;
     }
+
+    private void inflateFeedback(){
+        ViewGroup parentView = getParentViewForFeedback();
+        feedback = (NestedScrollView) getLayoutInflater()
+                .inflate(R.layout.inflatable_question_feedback, parentView, false);
+        behavior = BottomSheetBehavior.from(feedback);
+        Button nextButton = (Button)feedback.findViewById(R.id.question_feedback_next);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                QuestionManager.getInstance().nextQuestion();
+            }
+        });
+        behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        getParentViewForFeedback().addView(feedback);
+    }
+
+    private void openFeedback(boolean correct){
+        //when we first display the question the bottom sheet is hideable & hidden
+        //whether the answer was correct or not,
+        //we don't want the user to be able to hide the view
+        behavior.setHideable(false);
+
+        TextView feedbackTitle = (TextView)findViewById(R.id.question_feedback_title);
+        if (correct){
+            feedbackTitle.setText(R.string.question_feedback_correct);
+            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            feedbackTitle.setText(R.string.question_feedback_incorrect);
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+
+
+        disableBackground(getSiblingViewForFeedback());
+        getSiblingViewForFeedback().setAlpha(0.5f);
+    }
+
+    private void disableBackground(View view) {
+        view.setClickable(false);
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                disableBackground(child);
+            }
+        }
+    }
+
 
 
 

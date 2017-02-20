@@ -22,7 +22,7 @@ public class PronunciationSearcher {
         String query = getQuery(wikiDataID);
         Document resultDOM = connector.fetchDOMFromGetRequest(query);
 
-        NodeList nodeList = resultDOM.getElementsByTagName("result");
+        NodeList nodeList = resultDOM.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
         int nodeCt = nodeList.getLength();
         //this should not happen since we are asking for the label of a given id
         // but just in case

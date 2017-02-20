@@ -9,6 +9,8 @@ public class WikiDataSPARQLConnector extends WikiBaseEndpointConnector {
 	/*
 	 * WikiDataのSPARQLエンドポイントに接続
 	 */
+	public static String ALL_RESULTS_TAG = "results";
+	public static String RESULT_TAG = "result";
 	
 	public WikiDataSPARQLConnector(){
 		super();
@@ -19,7 +21,7 @@ public class WikiDataSPARQLConnector extends WikiBaseEndpointConnector {
 	}
 
 	public static int countResults(Document doc){
-		return doc.getElementsByTagName("result").getLength();
+		return doc.getElementsByTagName(RESULT_TAG).getLength();
 
 	}
 

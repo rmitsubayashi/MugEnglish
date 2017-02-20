@@ -3,6 +3,7 @@ package com.example.ryomi.myenglish.questiongenerator.themes;
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
@@ -47,8 +48,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	
 	public NAME_possessive_blood_type_is_BLOODTYPE(EndpointConnectorReturnsXML connector, ThemeData data){
 		super(connector, data);
-		super.themeTopicCount = 3;
-		super.questionsLeftToPopulate = 6;
+		super.questionSetsLeftToPopulate = 2;
 		/*
 		super.backupIDsOfTopics.add("Q211553"); //Ken Watanabe
 		super.backupIDsOfTopics.add("Q22686"); //Donald Trump
@@ -73,14 +73,15 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 				"    SERVICE wikibase:label { bd:serviceParam wikibase:language '" + WikiBaseEndpointConnector.ENGLISH + "'} . " + //everything else is in English
 				  
 				"    BIND (wd:%s as ?" + personNamePH + ") . " + //binding the ID of entity as ?person
-				"} " +
-				"LIMIT " + super.themeTopicCount;
+				"} ";
 
 	}
 	
 	protected void processResultsIntoClassWrappers() {
 		Document document = super.documentOfTopics;
-		NodeList allResults = document.getElementsByTagName("result");
+		NodeList allResults = document.getElementsByTagName(
+				WikiDataSPARQLConnector.RESULT_TAG
+		);
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
@@ -105,11 +106,14 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
+			List<QuestionData> questionSet = new ArrayList<>();
 			QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-			super.newQuestions.add(sentencePuzzleQuestion);
+			questionSet.add(sentencePuzzleQuestion);
 
 			QuestionData multipleChoiceQuestion = createMultipleChoiceQuestion(qr);
-			super.newQuestions.add(multipleChoiceQuestion);
+			questionSet.add(multipleChoiceQuestion);
+
+			super.newQuestions.add(new QuestionDataWrapper(questionSet,qr.personID));
 		}
 		
 	}
@@ -173,7 +177,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		QuestionData data = new QuestionData();
 		data.setId("");
 		data.setThemeId(super.themeData.getId());
-		data.setTopicId(qr.personID);
+		data.setTopic(qr.personNameForeign);
 		data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
 		data.setQuestion(question);
 		data.setChoices(choices);
@@ -194,7 +198,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		QuestionData data = new QuestionData();
 		data.setId("");
 		data.setThemeId(super.themeData.getId());
-		data.setTopicId(qr.personID);
+		data.setTopic(qr.personNameForeign);
 		data.setQuestionType(QuestionTypeMappings.MULTIPLE_CHOICE);
 		data.setQuestion(question);
 		data.setChoices(choices);

@@ -12,27 +12,28 @@
         android:id="@+id/user_profile_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/lblue500"
+        android:background="?attr/colorPrimary"
         app:titleTextColor="@color/white"
-        android:elevation="4dp"/>
+        />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/user_profile_bottom_navigation_view"
         style="@style/bottom_navigation_view"/>
 
-    <LinearLayout
+    <android.support.design.widget.TabLayout
+        android:id="@+id/user_profile_tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/user_profile_tool_bar"
-        android:layout_above="@id/user_profile_bottom_navigation_view">
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
-        <Button
-            android:id="@+id/user_profile_logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/user_profile_logout"
-            style="@style/Widget.AppCompat.Button.Borderless"/>
-
-    </LinearLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/user_profile_pager"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/user_profile_tab_layout"
+        android:layout_above="@id/user_profile_bottom_navigation_view"/>
 
 </RelativeLayout>

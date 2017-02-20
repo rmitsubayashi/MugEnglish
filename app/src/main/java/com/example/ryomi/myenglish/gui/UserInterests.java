@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.example.ryomi.myenglish.R;
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.example.ryomi.myenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.myenglish.gui.widgets.UserInterestAdapter;
@@ -140,7 +141,7 @@ public class UserInterests extends AppCompatActivity {
 
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance()
-                .getReference("userInterests/"+userID);
+                .getReference(FirebaseDBHeaders.USER_INTERESTS + "/"+userID);
         if (query.equals("")){
             //since firebase doesn't support multiple ordering,
             //we can't search for the characters typed i.e. "長友~"

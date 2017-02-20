@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.Animation;
@@ -19,6 +20,8 @@ import com.example.ryomi.myenglish.gui.UserInterests;
 import com.example.ryomi.myenglish.gui.UserProfile;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.BuildConfig;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,12 @@ import java.util.List;
 public class GUIUtils {
     //request code for firebase sign in
     public static int REQUEST_CODE_SIGN_IN = 190;
+    //which sign in methods to display to the user
+    public static int SIGN_IN_PROVIDER_ALL = 0;
+    //these are for searching via facebook or twitter
+    public static int SIGN_IN_PROVIDER_FACEBOOK = 1;
+    public static int SIGN_IN_PROVIDER_TWITTER = 2;
+
     //to save navigation bar state across activities
     private static int BOTTOM_NAVIGATION_BAR_STATE = 0;
 
@@ -34,6 +43,12 @@ public class GUIUtils {
         int imageID = context.getResources().getIdentifier(imageString, "drawable",
                 context.getApplicationInfo().packageName);
         return imageID;
+    }
+
+    public static int getDp(int num, Context context){
+        return (int)(TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, num, context.getResources().getDisplayMetrics()));
+
     }
 
     public static void populateStarsImageView(List<ImageView> imageViews, AchievementStars achievementStars){
@@ -120,37 +135,70 @@ public class GUIUtils {
 
                         fActivity.startActivity(intent);
                         fActivity.finish();
-                        fActivity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         return true;
                     }
                 });
     }
 
-    public static Intent getSignInIntent(){
+    public static Intent getSignInIntent(int provider){
         return AuthUI.getInstance().createSignInIntentBuilder()
-                .setProviders(getSelectedProviders())
+                .setProviders(getSelectedProviders(provider))
                 .setIsSmartLockEnabled(!BuildConfig.DEBUG)
                 .build();
     }
 
-    private static List<AuthUI.IdpConfig> getSelectedProviders() {
+    private static List<AuthUI.IdpConfig> getSelectedProviders(int provider) {
         List<AuthUI.IdpConfig> selectedProviders = new ArrayList<>();
 
-        selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
-
-
-        selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
-
-        selectedProviders.add(
-                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
-                        .setPermissions(getFacebookPermissions())
-                        .build());
-
-        /*selectedProviders.add(
+        if (provider == SIGN_IN_PROVIDER_FACEBOOK){
+            selectedProviders.add(
+                    new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                            .setPermissions(getFacebookPermissions())
+                            .build());
+        } else if (provider == SIGN_IN_PROVIDER_TWITTER){
+            selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
+        } else if (provider == SIGN_IN_PROVIDER_ALL){
+            selectedProviders.add(
+                    new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER)
+                            .setPermissions(getFacebookPermissions())
+                            .build());
+            selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
+            selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
+            /*selectedProviders.add(
                 new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
                         .setPermissions(getGooglePermissions())
                         .build());*/
+        }
+
         return selectedProviders;
+    }
+
+    public static boolean loggedInWithFacebook(){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null){
+            return false;
+        } else {
+            for (UserInfo info : FirebaseAuth.getInstance().getCurrentUser().getProviderData()){
+                if (info.getProviderId().equals("facebook.com"))
+                    return true;
+
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean loggedInWithTwitter(){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null){
+            return false;
+        } else {
+            for (UserInfo info : FirebaseAuth.getInstance().getCurrentUser().getProviderData()){
+                if (info.getProviderId().equals("twitter.com"))
+                    return true;
+
+            }
+        }
+
+        return false;
     }
 
     private static List<String> getFacebookPermissions(){

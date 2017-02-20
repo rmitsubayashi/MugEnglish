@@ -2,6 +2,7 @@ package com.example.ryomi.myenglish.questionmanager;
 
 import android.content.Context;
 
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.datawrappers.AchievementStars;
 import com.example.ryomi.myenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionAttempt;
@@ -179,7 +180,8 @@ public class ResultsManager {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = db.getReference(
-                "instanceRecords/"+userID+"/"+themeID+"/"+instanceRecord.getInstanceId()+"/"+instanceRecord.getId());
+                FirebaseDBHeaders.INSTANCE_RECORDS + "/" + userID + "/" +
+                themeID + "/" + instanceRecord.getInstanceId() +"/" + instanceRecord.getId());
         ref.setValue(instanceRecord);
     }
 

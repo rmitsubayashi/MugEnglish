@@ -3,23 +3,19 @@ package com.example.ryomi.myenglish.gui;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.EditText;
-import android.widget.HeaderViewListAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.myenglish.connectors.WikiDataAPISearchConnector;
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.datawrappers.WikiDataEntryData;
 import com.example.ryomi.myenglish.gui.widgets.SearchResultsAdapter;
 import com.example.ryomi.myenglish.userinterestcontrols.EntitySearcher;
@@ -95,7 +91,7 @@ public class SearchInterests extends AppCompatActivity {
             userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("userInterests/"+userID);
+        DatabaseReference ref = db.getReference(FirebaseDBHeaders.USER_INTERESTS+"/"+userID);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -145,22 +141,16 @@ public class SearchInterests extends AppCompatActivity {
     }
 
     private void populateResults(String query){
-        ListView resultList = (ListView) findViewById(R.id.search_results_result_list);
         try {
             SearchConnection conn = new SearchConnection();
             String[] queryList = {query, currentRowCt.toString()};
-            List<WikiDataEntryData> results = conn.execute(queryList).get();
-            //the adapter might not be loaded yet
-            if (adapter != null){
-                adapter.updateEntries(results);
-            }
+            conn.execute(queryList);
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
     private class SearchConnection extends AsyncTask< String[], Integer, List<WikiDataEntryData> > {
-
         @Override
         protected List<WikiDataEntryData> doInBackground(String[]... queryList){
             String[] query = queryList[0];
@@ -172,6 +162,14 @@ public class SearchInterests extends AppCompatActivity {
             }
 
             return result;
+        }
+
+        @Override
+        protected void onPostExecute(List<WikiDataEntryData> result){
+            //the adapter might not be loaded yet
+            if (adapter != null){
+                adapter.updateEntries(result);
+            }
         }
     }
 }

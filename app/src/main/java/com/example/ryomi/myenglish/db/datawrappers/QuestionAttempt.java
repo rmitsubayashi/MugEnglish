@@ -1,6 +1,8 @@
 package com.example.ryomi.myenglish.db.datawrappers;
 
-public class QuestionAttempt {
+import java.io.Serializable;
+
+public class QuestionAttempt implements Serializable {
     private int attemptNumber;
     private String questionID;
     private String response;

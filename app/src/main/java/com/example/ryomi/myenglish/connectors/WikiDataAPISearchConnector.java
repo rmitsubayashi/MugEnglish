@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class WikiDataAPISearchConnector extends WikiBaseEndpointConnector {
+	public static String ENTITY_TAG = "entity";
 	/*
 	 * 日本語用
 	 * name in kana を利用して、お気に入りを見る時に

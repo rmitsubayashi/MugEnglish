@@ -6,8 +6,9 @@ import java.util.List;
 public class ThemeInstanceData implements Serializable{
     private String id;
     private String themeId;
-    private String userId; //can be blank
-    private List<String> questionIds;
+    private String userId; //can be blank?
+    //list of the question ids of a set
+    private List<List<String>> questionSets;
     //basically for displaying the instances to the users
     private List<String> topics; //actual name, not ID
     private long createdTimestamp;
@@ -34,12 +35,12 @@ public class ThemeInstanceData implements Serializable{
     }
 
     public ThemeInstanceData(String id, String themeId,
-                             String userId, List<String> questionIds, List<String> topics,
+                             String userId, List<List<String>> questionSets, List<String> topics,
                              long createdTimestamp, long lastPlayed) {
         this.id = id;
         this.themeId = themeId;
         this.userId = userId;
-        this.questionIds = questionIds;
+        this.questionSets = questionSets;
         this.topics = topics;
         this.createdTimestamp = createdTimestamp;
         this.lastPlayed = lastPlayed;
@@ -61,12 +62,12 @@ public class ThemeInstanceData implements Serializable{
         this.userId = userId;
     }
 
-    public List<String> getQuestionIds() {
-        return questionIds;
+    public List<List<String>> getQuestionSets() {
+        return questionSets;
     }
 
-    public void setQuestionIds(List<String> questionIds) {
-        this.questionIds = questionIds;
+    public void setQuestionSets(List<List<String>> questionSets) {
+        this.questionSets = questionSets;
     }
 
     public long getCreatedTimestamp() {

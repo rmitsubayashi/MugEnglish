@@ -1,10 +1,12 @@
 package com.example.ryomi.myenglish.db.datawrappers;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class InstanceRecord {
+public class InstanceRecord implements Serializable{
     private String id;
     private String instanceId;
+    private String themeId;
     private List<QuestionAttempt> attempts;
     private Boolean completed;
 
@@ -24,6 +26,14 @@ public class InstanceRecord {
 
     public void setInstanceId(String instanceId) {
         this.instanceId = instanceId;
+    }
+
+    public String getThemeId() {
+        return themeId;
+    }
+
+    public void setThemeId(String themeId) {
+        this.themeId = themeId;
     }
 
     public List<QuestionAttempt> getAttempts() {

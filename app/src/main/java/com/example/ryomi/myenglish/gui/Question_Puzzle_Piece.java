@@ -2,6 +2,7 @@ package com.example.ryomi.myenglish.gui;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -67,12 +68,23 @@ public class Question_Puzzle_Piece extends Question_General {
         return false;
     }
 
+    @Override
+    protected ViewGroup getParentViewForFeedback(){
+        return (ViewGroup)findViewById(R.id.activity_question_puzzle_piece);
+    }
+
+    @Override
+    protected ViewGroup getSiblingViewForFeedback(){
+        return (ViewGroup)findViewById(R.id.question_puzzle_piece_main_layout);
+    }
+
     private void populateQuestion(){
         QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();
         TextView questionTextView = (TextView) findViewById(R.id.question_puzzle_piece_question);
         questionTextView.setText(data.getQuestion());
     }
+
 
     private void createChoiceButtons(){
         QuestionManager manager = QuestionManager.getInstance();
@@ -87,9 +99,9 @@ public class Question_Puzzle_Piece extends Question_General {
         final FlowLayout answerLayout =
                 (FlowLayout) findViewById(R.id.question_puzzle_piece_answer);
         final ScrollView scrollView = (ScrollView)findViewById(R.id.question_puzzle_piece_answer_scroll);
-        final RelativeLayout grandparentLayout = (RelativeLayout)findViewById(R.id.activity_question_puzzle_piece);
+        final RelativeLayout grandparentLayout = (RelativeLayout)findViewById(R.id.question_puzzle_piece_main_layout);
         for (String choice : choices){
-            Button choiceButton = (Button)getLayoutInflater().inflate(R.layout.inflatable_puzzle_piece_choice, choicesLayout, false);
+            Button choiceButton = (Button)getLayoutInflater().inflate(R.layout.inflatable_question_puzzle_piece_choice, choicesLayout, false);
             choiceButton.setText(choice);
 
             choiceButton.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +111,7 @@ public class Question_Puzzle_Piece extends Question_General {
                     view.setEnabled(false);
                     final View finalView = view;
                     final Button answerButton =
-                            (Button)getLayoutInflater().inflate(R.layout.inflatable_puzzle_piece_choice, answerLayout, false);
+                            (Button)getLayoutInflater().inflate(R.layout.inflatable_question_puzzle_piece_choice, answerLayout, false);
                     answerButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -119,7 +131,7 @@ public class Question_Puzzle_Piece extends Question_General {
                             new ViewTreeObserver.OnPreDrawListener() {
                                 @Override
                                 public boolean onPreDraw() {
-                                    if ((boolean)answerButton.getTag() == false)
+                                    if (!(boolean)answerButton.getTag())
                                         return true;
                                     int[] from = new int[2];
                                     finalView.getLocationOnScreen(from);

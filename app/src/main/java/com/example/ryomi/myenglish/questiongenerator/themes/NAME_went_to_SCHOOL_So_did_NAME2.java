@@ -3,6 +3,7 @@ package com.example.ryomi.myenglish.questiongenerator.themes;
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.myenglish.questiongenerator.Theme;
@@ -50,8 +51,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	
 	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnectorReturnsXML connector, ThemeData data){
 		super(connector, data);
-		super.themeTopicCount = 3;
-		super.questionsLeftToPopulate = 3;
+		super.questionSetsLeftToPopulate = 3;
 		/*
 		super.backupIDsOfTopics.add("Q281734");//Nagatomo
 		super.backupIDsOfTopics.add("Q37876");//Natalie Portman
@@ -83,8 +83,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 				  
 				"    BIND (wd:%s as ?" + personPH + ") " +
 				  
-				" } " +
-				"LIMIT " + super.themeTopicCount;
+				" } ";
 		
 		return query;
 	}
@@ -92,7 +91,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	
 	protected void processResultsIntoClassWrappers() {
 		Document document = super.documentOfTopics;
-		NodeList allResults = document.getElementsByTagName("result");
+		NodeList allResults = document.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
@@ -127,7 +126,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	
 	private String NAME_went_to_SCHOOL_So_did_NAME2_EN_correct(QueryResult qr){
 		String schoolName = GrammarRules.definiteArticleBeforeSchoolName(qr.schoolEN);
-		String sentence = qr.personEN + " went to " + schoolName + ". So did " + qr.person2EN + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+		String sentence = qr.personEN + " went to " + schoolName + ". So did " + qr.person2EN + ".";
 		return sentence;
 	}
 }

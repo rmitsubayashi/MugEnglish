@@ -5,7 +5,7 @@ import java.util.List;
 public class QuestionData {
     private String id;
     private String themeId;
-    private String topicId;
+    private String topic;
     private Integer questionType;
     private String question;
     private List<String> choices;
@@ -16,13 +16,13 @@ public class QuestionData {
     public QuestionData(){}
 
     public QuestionData(String id, String themeId,
-                        String topicId, Integer questionType,
+                        String topic, Integer questionType,
                         String question, List<String> choices,
                         String answer, List<String> acceptableAnswers,
                         List<String> vocabulary) {
         this.id = id;
         this.themeId = themeId;
-        this.topicId = topicId;
+        this.topic = topic;
         this.questionType = questionType;
         this.question = question;
         this.choices = choices;
@@ -47,12 +47,12 @@ public class QuestionData {
         this.themeId = themeId;
     }
 
-    public String getTopicId() {
-        return topicId;
+    public String getTopic() {
+        return topic;
     }
 
-    public void setTopicId(String topicId) {
-        this.topicId = topicId;
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 
     public Integer getQuestionType() {

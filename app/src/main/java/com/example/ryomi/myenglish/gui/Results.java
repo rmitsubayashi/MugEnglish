@@ -12,8 +12,6 @@ import com.example.ryomi.myenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.myenglish.questionmanager.QuestionManager;
 import com.example.ryomi.myenglish.questionmanager.ResultsManager;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.myenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionAttempt;
@@ -22,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 //manages the execution of questions.
@@ -152,9 +154,16 @@ public class QuestionManager{
 	//note that this calls nextQuestion() to guarantee that the questions are populated
 	//before nextQuestion() is called
 	private void initializeQuestions(){
-		final List<String> questionIDs = instanceData.getQuestionIds();
+		List<List<String>> questionSets = instanceData.getQuestionSets();
+		//randomize questions (just the topics. for each topic, the questions are in order)
+		Collections.shuffle(questionSets);
+		//get the sets and store them in a linear list
+		final List<String> questionIDs = new ArrayList<>();
+		for (List<String> questionSet : questionSets){
+			questionIDs.addAll(questionSet);
+		}
 		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		DatabaseReference ref = db.getReference("questions");
+		DatabaseReference ref = db.getReference(FirebaseDBHeaders.QUESTIONS);
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
@@ -181,15 +190,18 @@ public class QuestionManager{
 		instanceRecord = new InstanceRecord();
 		instanceRecord.setCompleted(false);
 		instanceRecord.setInstanceId(instanceData.getId());
+		instanceRecord.setThemeId(instanceData.getThemeId());
 		//not sure if we can instantiate in the question attempt class?
 		instanceRecord.setAttempts(new ArrayList<QuestionAttempt>());
 		startTimestamp = System.currentTimeMillis();
-		//this is done asynchronously but it shouldn't matter tpp much
+		//creaate a unique key for the instance record
+		//this is done asynchronously but it shouldn't matter too much
 		if (FirebaseAuth.getInstance().getCurrentUser() != null){
 			String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 			FirebaseDatabase db = FirebaseDatabase.getInstance();
-			DatabaseReference ref = db.getReference("instanceRecords/"+userID+"/"+instanceData.getThemeId() +
-					"/"+instanceRecord.getInstanceId());
+			DatabaseReference ref = db.getReference(
+					FirebaseDBHeaders.INSTANCE_RECORDS + "/" + userID + "/" +
+					instanceData.getThemeId() + "/" + instanceRecord.getInstanceId());
 			String key = ref.push().getKey();
 			instanceRecord.setId(key);
 		}

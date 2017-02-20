@@ -3,7 +3,9 @@ package com.example.ryomi.myenglish.userinterestcontrols;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
+import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.connectors.FacebookAPIConnector;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
@@ -27,6 +29,7 @@ import java.util.regex.Pattern;
 
 
 public class FacebookInterestFinder extends IntentService{
+    private static String TAG = "FacebookInterestFinder";
     public static final int SHALLOW_SEARCH = 1;
     public static final int DEEP_SEARCH = 2;
 
@@ -86,15 +89,20 @@ public class FacebookInterestFinder extends IntentService{
         JSONObject userInfo = facebookConnector.fetchJSONObjectFromGetRequest(paramsForUserInfo);
         facebookEntityCt = countEntities(userInfo);
 
-        sendProgressStringToUI("学歴を検索中...");
+        sendProgressStringToUI(getResources().getString(R.string.facebook_interests_search_schools));
         Set educationResult = searchEducation(userInfo);
         results.addAll(educationResult);
-        sendProgressStringToUI("出身地を検索中...");
+        //do multiple queries while displaying this string
+        sendProgressStringToUI(getResources().getString(R.string.facebook_interests_search_locations));
         Set hometownResult = searchHometown(userInfo);
         results.addAll(hometownResult);
+        sendProgressStringToUI("");
+        Set locationResult = searchLocation(userInfo);
+        results.addAll(locationResult);
+        //also checked-in places
 
         for (WikiDataEntryData result : results){
-            System.out.println(result.getLabel());
+            Log.d(TAG,result.getLabel());
         }
 
         return results;
@@ -109,7 +117,6 @@ public class FacebookInterestFinder extends IntentService{
 
     private void sendProgressPercentToUI(double percent){
         int adjustedPercent = (int)(percent * 100);
-        System.out.println(adjustedPercent);
         Intent intent = new Intent(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT);
         intent.putExtra(BROADCAST_FACEBOOKINTERESTFINDER_PROGRESS_PERCENT, adjustedPercent);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
@@ -279,7 +286,7 @@ public class FacebookInterestFinder extends IntentService{
 
     private Set<WikiDataEntryData> getEntriesFromSPARQL(Document document, String identifier){
         Set<WikiDataEntryData> result = new HashSet<>();
-        NodeList resultNodes = document.getElementsByTagName("result");
+        NodeList resultNodes = document.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
         int nodeCt = resultNodes.getLength();
         for (int i=0; i<nodeCt; i++){
             Node head = resultNodes.item(i);
@@ -417,7 +424,7 @@ public class FacebookInterestFinder extends IntentService{
 
             if (searchDepth == DEEP_SEARCH) {
                 if (result.size() == 1) {
-                    Set<WikiDataEntryData> deepData = hometownDeepSearch(hometownID);
+                    Set<WikiDataEntryData> deepData = cityDeepSearch(hometownID);
                     result.addAll(deepData);
                 }
                 currentPercent += incrementBy;
@@ -429,7 +436,8 @@ public class FacebookInterestFinder extends IntentService{
 
     }
 
-    private Set<WikiDataEntryData> hometownDeepSearch(String wikiDataID) throws Exception{
+    //used for all queries regarding cities
+    private Set<WikiDataEntryData> cityDeepSearch(String wikiDataID) throws Exception{
         Set<WikiDataEntryData> result = new HashSet<>();
 
         String query =
@@ -453,6 +461,47 @@ public class FacebookInterestFinder extends IntentService{
 
         result.addAll(sharesBorderWith);
         result.addAll(in);
+        return result;
+    }
+
+    //looks like there is only one location??
+    //the main current location can be fetched but not the past visited locations
+    private Set<WikiDataEntryData> searchLocation(JSONObject jsonObject) throws Exception{
+        //only one hometown allowed on fb
+        Set<WikiDataEntryData> result = new HashSet<>();
+        if (jsonObject.has("location")) {
+            JSONObject location = jsonObject.getJSONObject("location");
+            String locationName = location.getString("name");
+            String locationID = location.getString("id");
+
+            //the names are always in English
+            //it seems to be city, state(country)
+            //ie Kuwana, Mie
+            //   Manchester, United Kingdom
+            String[] locationNameParts = locationName.split(", ");
+            String locationCity = locationNameParts[0];
+            WikiDataEntryData data = findWikiDataEntry(locationCity, locationID, FACEBOOK_LOCATION_SEARCH);
+            if (data != null) {
+                result.add(data);
+                sendWordToUI(data.getLabel());
+            }
+
+            double incrementBy = 1.0 / facebookEntityCt;
+            if (searchDepth == DEEP_SEARCH)
+                incrementBy /= 2;
+            currentPercent += incrementBy;
+            sendProgressPercentToUI(currentPercent);
+
+            if (searchDepth == DEEP_SEARCH) {
+                if (result.size() == 1) {
+                    Set<WikiDataEntryData> deepData = cityDeepSearch(locationID);
+                    result.addAll(deepData);
+                }
+                currentPercent += incrementBy;
+                sendProgressPercentToUI(currentPercent);
+            }
+        }
+
         return result;
     }
 

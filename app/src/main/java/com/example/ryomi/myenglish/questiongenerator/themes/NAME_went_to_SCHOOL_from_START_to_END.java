@@ -3,6 +3,7 @@ package com.example.ryomi.myenglish.questiongenerator.themes;
 import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
 import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.myenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
@@ -65,8 +66,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	
 	public NAME_went_to_SCHOOL_from_START_to_END(EndpointConnectorReturnsXML connector, ThemeData data){
 		super(connector, data);
-		super.themeTopicCount = 2;
-		super.questionsLeftToPopulate = 4;/*
+		super.questionSetsLeftToPopulate = 4;/*
 		super.backupIDsOfTopics.add("Q5284");//Bill Gates
 		super.backupIDsOfTopics.add("Q8027");//Elon Musk*/
 	}
@@ -98,8 +98,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 				"    BIND (wd:%s as ?" + personNamePH + ") . " + //binding the ID of entity as ?person
 				"    FILTER (?" + startDatePH + " != ?" + endDatePH + ") . " + //so we can prevent from 2000 to 2000
 				//still allows 2000/1/1 ~ 2000/1/2 but I haven't seen one entry with date + year
-				"} " + 
-				"LIMIT " + super.themeTopicCount + " "; //we only need enough results for the topic";
+				"} ";
 		
 		//Problems with this query that may need to be handled
 		// 1.This will not pick up any people still in college (do not have an end date)
@@ -114,7 +113,9 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	
 	protected void processResultsIntoClassWrappers(){
 		Document document = super.documentOfTopics;
-		NodeList allResults = document.getElementsByTagName("result");
+		NodeList allResults = document.getElementsByTagName(
+				WikiDataSPARQLConnector.RESULT_TAG
+		);
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
@@ -152,13 +153,14 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 	
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
+			List<QuestionData> questionSet = new ArrayList<>();
 			QuestionData trueFalseQuestion = createTrueFalseQuestion(qr);
-			super.newQuestions.add(trueFalseQuestion);
+			questionSet.add(trueFalseQuestion);
 
 			QuestionData puzzlePiecesQuestion = createPuzzlePiecesQuestion(qr);
-			super.newQuestions.add(puzzlePiecesQuestion);
-			
-			
+			questionSet.add(puzzlePiecesQuestion);
+
+			super.newQuestions.add(new QuestionDataWrapper(questionSet,qr.personID));
 		}
 	}
 	
@@ -240,7 +242,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		QuestionData data = new QuestionData();
 		data.setId("");
 		data.setThemeId(super.themeData.getId());
-		data.setTopicId(qr.personID);
+		data.setTopic(qr.personNameForeign);
 		data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
 		data.setQuestion(question);
 		data.setChoices(null);
@@ -260,7 +262,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		QuestionData data = new QuestionData();
 		data.setId("");
 		data.setThemeId(super.themeData.getId());
-		data.setTopicId(qr.personID);
+		data.setTopic(qr.personNameForeign);
 		data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
 		data.setQuestion(question);
 		data.setChoices(puzzlePieces);

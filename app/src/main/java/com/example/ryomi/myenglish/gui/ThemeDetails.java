@@ -1,6 +1,5 @@
 package com.example.ryomi.myenglish.gui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -10,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,15 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ryomi.myenglish.R;
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.datawrappers.AchievementStars;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
@@ -114,7 +108,8 @@ public class ThemeDetails extends AppCompatActivity {
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("achievements/" + userID + "/" + themeData.getId());
+        DatabaseReference ref = db.getReference(FirebaseDBHeaders.ACHIEVEMENTS + "/"
+                + userID + "/" + themeData.getId());
         //want to update it when we've completed an achievement
         //so listen continuously
         ref.addValueEventListener(new ValueEventListener() {
@@ -183,7 +178,8 @@ public class ThemeDetails extends AppCompatActivity {
         //grab list of instances
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference("themeInstances/"+userID+"/"+themeData.getId());
+            DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference(
+                    FirebaseDBHeaders.THEME_INSTANCES + "/"+userID+"/"+themeData.getId());
             list.setLayoutManager(new LinearLayoutManager(this));
             firebaseAdapter = new ThemeDetailsAdapter(ref2, noItemTextView, loading);
             //when we create a new instance, remove the progress spinner
@@ -264,15 +260,16 @@ public class ThemeDetails extends AppCompatActivity {
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = db.getReference("themeInstances/" + userID + "/" +
-                data.getThemeId() + "/" + data.getId());
+        DatabaseReference ref = db.getReference(FirebaseDBHeaders.THEME_INSTANCES + "/" +
+                userID + "/" + data.getThemeId() + "/" + data.getId());
         ref.removeValue();
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        firebaseAdapter.cleanup();
+        if (firebaseAdapter != null)
+            firebaseAdapter.cleanup();
     }
 
 }
