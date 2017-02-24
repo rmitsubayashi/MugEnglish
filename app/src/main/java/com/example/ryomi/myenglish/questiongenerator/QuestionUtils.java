@@ -8,7 +8,8 @@ import java.util.Random;
 public class QuestionUtils {
     public static String TRUE_FALSE_QUESTION_TRUE = "true";
     public static String TRUE_FALSE_QUESTION_FALSE = "false";
-    public static String BLANK_MARKER = "@blank@";
+    public static String FILL_IN_BLANK_TEXT = "@blankText@";
+    public  static String FILL_IN_BLANK_NUMBER = "@blankNumber@";
 
     public static void shuffle(List<String> choices){
         Collections.shuffle(choices, new Random(System.currentTimeMillis()));
@@ -24,5 +25,4 @@ public class QuestionUtils {
 
         return answer;
     }
-
 }

@@ -4,6 +4,7 @@ public class FirebaseDBHeaders {
     //top most headers
     public static String USER_INTERESTS = "userInterests";
     public static String THEMES = "themes";
+    public static String THEMES_category = "category";
     public static String THEME_INSTANCES = "themeInstances";
     public static String THEME_CATEGORIES = "themeCategories";
     public static String QUESTIONS = "questions";

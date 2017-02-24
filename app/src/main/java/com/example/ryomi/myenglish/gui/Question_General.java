@@ -16,6 +16,9 @@ import com.example.ryomi.myenglish.R;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.questionmanager.QuestionManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //sets methods common for all question guis
 public abstract class Question_General extends AppCompatActivity {
     public static int UNLIMITED_ATTEMPTS = -1;
@@ -78,8 +81,12 @@ public abstract class Question_General extends AppCompatActivity {
     protected boolean checkAnswer(String response){
         QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();
-        String answer = data.getAnswer();
-        return response.equals(answer);
+        List<String> allAnswers = new ArrayList<>();
+        allAnswers.add(data.getAnswer());
+        if (data.getAcceptableAnswers() != null){
+            allAnswers.addAll(data.getAcceptableAnswers());
+        }
+        return allAnswers.contains(response);
     }
 
     @Override
@@ -109,6 +116,8 @@ public abstract class Question_General extends AppCompatActivity {
                             view.setEnabled(false);
                     }
                 }
+
+                doSomethingAfterResponse();
             }
         };
     }
@@ -158,6 +167,12 @@ public abstract class Question_General extends AppCompatActivity {
                 disableBackground(child);
             }
         }
+    }
+
+    //for example clearing a response, hiding the keyboard, etc.
+    //should be overridden if using
+    protected void doSomethingAfterResponse(){
+
     }
 
 

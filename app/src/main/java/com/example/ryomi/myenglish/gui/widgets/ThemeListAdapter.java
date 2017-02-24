@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.ryomi.myenglish.R;
+import com.example.ryomi.myenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.myenglish.db.datawrappers.AchievementStars;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.myenglish.gui.ThemeDetails;
@@ -18,6 +19,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
@@ -27,9 +29,9 @@ public class ThemeListAdapter
 
     private ProgressBar loading;
 
-    public ThemeListAdapter(DatabaseReference ref, ProgressBar loading){
+    public ThemeListAdapter(Query query, ProgressBar loading){
         super(ThemeData.class, R.layout.inflatable_theme_list_list_item,
-                ThemeListViewHolder.class, ref);
+                ThemeListViewHolder.class, query);
         this.loading = loading;
     }
 
@@ -104,7 +106,7 @@ public class ThemeListAdapter
         }
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference("achievements/"+userID+"/"+themeID);
+        DatabaseReference ref = db.getReference(FirebaseDBHeaders.ACHIEVEMENTS+"/"+userID+"/"+themeID);
         //want to update it when we've completed an achievement
         //so listen continuously
         ref.addValueEventListener(new ValueEventListener() {

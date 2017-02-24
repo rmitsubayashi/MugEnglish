@@ -11,6 +11,7 @@ import com.example.ryomi.myenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionAttempt;
 import com.example.ryomi.myenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.myenglish.db.datawrappers.ThemeInstanceData;
+import com.example.ryomi.myenglish.gui.Question_Fill_in_Blank;
 import com.example.ryomi.myenglish.gui.Question_MultipleChoice;
 import com.example.ryomi.myenglish.gui.Question_Puzzle_Piece;
 import com.example.ryomi.myenglish.gui.Question_TrueFalse;
@@ -226,6 +227,8 @@ public class QuestionManager{
 			intent = new Intent(currentContext, Question_TrueFalse.class);
 		else if (questionType == QuestionTypeMappings.SENTENCE_PUZZLE)
 			intent = new Intent(currentContext, Question_Puzzle_Piece.class);
+		else if (questionType == QuestionTypeMappings.FILL_IN_BLANK)
+			intent = new Intent(currentContext, Question_Fill_in_Blank.class);
 
 		return intent;
 	}

@@ -162,5 +162,7 @@
     <string name="question_true_false_true">本当</string>
     <string name="question_true_false_false">嘘</string>
     <string name="question_puzzle_piece_submit">確定</string>
+    <string name="question_fill_in_blank_submit">決定</string>
+    <string name="question_fill_in_blank_hint">答え</string>
 
 </resources>
