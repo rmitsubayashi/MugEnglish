@@ -159,10 +159,15 @@
     <string name="question_feedback_correct">正解</string>
     <string name="question_feedback_incorrect">不正解</string>
     <string name="question_feedback_next">次へ</string>
+    <string name="question_true_false_instructions">本当ですか？</string>
     <string name="question_true_false_true">本当</string>
     <string name="question_true_false_false">嘘</string>
+    <string name="question_puzzle_piece_instructions">組み立ててください</string>
     <string name="question_puzzle_piece_submit">確定</string>
-    <string name="question_fill_in_blank_submit">決定</string>
-    <string name="question_fill_in_blank_hint">答え</string>
+    <string name="question_fill_in_blank_input_instructions">空欄に入る答えを記入してください</string>
+    <string name="question_fill_in_blank_input_submit">決定</string>
+    <string name="question_fill_in_blank_input_hint">答え</string>
+    <string name="question_fill_in_blank_multiple_choice_instructions">空欄に入る解答を選択してください</string>
+    <string name="question_multiple_choice_instructions">正しい解答を選択してください</string>
 
 </resources>

@@ -218,4 +218,14 @@ public class GUIUtils {
         result.add("user_actions.books");
         return result;
     }
+
+    public static String createBlank(String answer){
+        //just slightly bigger than the answer
+        int length = answer.length() + 1;
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<length; i++){
+            builder.append("_");
+        }
+        return builder.toString();
+    }
 }

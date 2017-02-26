@@ -2,7 +2,6 @@ package com.example.ryomi.mugenglish.questionmanager;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 import com.example.ryomi.mugenglish.db.FirebaseDBHeaders;
@@ -11,7 +10,8 @@ import com.example.ryomi.mugenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionAttempt;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeInstanceData;
-import com.example.ryomi.mugenglish.gui.Question_Fill_in_Blank;
+import com.example.ryomi.mugenglish.gui.Question_FillInBlank_Input;
+import com.example.ryomi.mugenglish.gui.Question_FillInBlank_MultipleChoice;
 import com.example.ryomi.mugenglish.gui.Question_MultipleChoice;
 import com.example.ryomi.mugenglish.gui.Question_Puzzle_Piece;
 import com.example.ryomi.mugenglish.gui.Question_TrueFalse;
@@ -37,7 +37,6 @@ import java.util.List;
 public class QuestionManager{
 	private static QuestionManager singleton;
 	private Boolean started = false;
-	private Context currentContext = null;
 	//so we don't remove the theme details page
 	private boolean canRemovePreviousActivity = false;
 	private ThemeInstanceData instanceData = null;
@@ -67,19 +66,12 @@ public class QuestionManager{
 		return singleton;
 	}
 
-	public void startQuestions(ThemeInstanceData data){
-		if(!started && currentContext != null) {
+	public void startQuestions(ThemeInstanceData data, Activity startingActivity){
+		if(!started) {
 			started = true;
 			this.instanceData = data;
-			initializeQuestions();
+			initializeQuestions(startingActivity);
 		}
-	}
-
-	//called from each new question activity.
-	//we need this to delete each activity after the user moves on
-	//to prevent going back to that question
-	public void setCurrentContext(Activity newActivity){
-		this.currentContext = newActivity;
 	}
 
 	//used by each question activity to get question data
@@ -91,14 +83,14 @@ public class QuestionManager{
 		return this.resultsManager;
 	}
 
-	public void nextQuestion(){
+	public void nextQuestion(Activity currentActivity){
 		if(!started)return;
 		questionMkr ++;
 
 		if (questionMkr == questionData.size()){
 			instanceRecord.setCompleted(true);
 			setResultsManager();
-			goToResults();
+			goToResults(currentActivity);
 			//note this does not reset the results manager
 			//because the results manager is still needed in the new activity
 			resetManager();
@@ -106,13 +98,13 @@ public class QuestionManager{
 		}
 
 		//start activity
-		Intent intent = findQuestionIntent(getQuestionData().getQuestionType());
+		Intent intent = findQuestionIntent(getQuestionData().getQuestionType(), currentActivity);
 		//close previous activity only after first question
 		if (canRemovePreviousActivity)
-			((Activity)currentContext).finish();
+			currentActivity.finish();
 		else
 			canRemovePreviousActivity = true;
-		currentContext.startActivity(intent);
+		currentActivity.startActivity(intent);
 
 	}
 
@@ -154,7 +146,7 @@ public class QuestionManager{
 
 	//note that this calls nextQuestion() to guarantee that the questions are populated
 	//before nextQuestion() is called
-	private void initializeQuestions(){
+	private void initializeQuestions(final Activity startingActivity){
 		List<List<String>> questionSets = instanceData.getQuestionSets();
 		//randomize questions (just the topics. for each topic, the questions are in order)
 		Collections.shuffle(questionSets);
@@ -177,7 +169,7 @@ public class QuestionManager{
 
 				startNewInstanceRecord();
 				//do this only after every question is populated
-				nextQuestion();
+				nextQuestion(startingActivity);
 			}
 
 			@Override
@@ -212,24 +204,24 @@ public class QuestionManager{
 	public void resetManager(){
 		started = false;
 		questionMkr = -1;
-		currentContext = null;
 		instanceData = null;
 		instanceRecord = null;
 		canRemovePreviousActivity = false;
 		questionData.clear();
 	}
 
-	private Intent findQuestionIntent(int questionType){
+	private Intent findQuestionIntent(int questionType, Activity currentActivity){
 		Intent intent = null;
 		if (questionType == QuestionTypeMappings.MULTIPLE_CHOICE)
-			intent = new Intent(currentContext, Question_MultipleChoice.class);
+			intent = new Intent(currentActivity, Question_MultipleChoice.class);
 		else if (questionType == QuestionTypeMappings.TRUE_FALSE)
-			intent = new Intent(currentContext, Question_TrueFalse.class);
+			intent = new Intent(currentActivity, Question_TrueFalse.class);
 		else if (questionType == QuestionTypeMappings.SENTENCE_PUZZLE)
-			intent = new Intent(currentContext, Question_Puzzle_Piece.class);
-		else if (questionType == QuestionTypeMappings.FILL_IN_BLANK)
-			intent = new Intent(currentContext, Question_Fill_in_Blank.class);
-
+			intent = new Intent(currentActivity, Question_Puzzle_Piece.class);
+		else if (questionType == QuestionTypeMappings.FILL_IN_BLANK_INPUT)
+			intent = new Intent(currentActivity, Question_FillInBlank_Input.class);
+		else if (questionType == QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE)
+			intent = new Intent(currentActivity, Question_FillInBlank_MultipleChoice.class);
 		return intent;
 	}
 
@@ -237,11 +229,11 @@ public class QuestionManager{
 		this.resultsManager = new ResultsManager(instanceRecord, questionData, instanceData.getThemeId());
 	}
 
-	private void goToResults(){
+	private void goToResults(Activity lastActivity){
 		if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-			Intent intent = new Intent(currentContext, Results.class);
-			((Activity) currentContext).finish();
-			currentContext.startActivity(intent);
+			Intent intent = new Intent(lastActivity, Results.class);
+			lastActivity.finish();
+			lastActivity.startActivity(intent);
 		} else {
 			//ask user to sign up to save results
 		}

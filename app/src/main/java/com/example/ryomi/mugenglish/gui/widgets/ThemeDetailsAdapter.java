@@ -1,6 +1,7 @@
 package com.example.ryomi.mugenglish.gui.widgets;
 
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -57,7 +58,7 @@ public class ThemeDetailsAdapter
             @Override
             public void onClick(View view) {
                 QuestionManager manager = QuestionManager.getInstance();
-                manager.startQuestions(data);
+                manager.startQuestions(data, (Activity)view.getContext());
             }
         });
 

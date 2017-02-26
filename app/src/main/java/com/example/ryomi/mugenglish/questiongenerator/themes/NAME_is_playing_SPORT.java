@@ -30,6 +30,7 @@ public class NAME_is_playing_SPORT extends Theme{
     private final String personNameForeignPH = "personNameForeign";
     private final String personNameENPH = "personNameEN";
     private final String sportIDPH = "sportID";
+    private final String sportNameENPH = "sportNameEN";
     private final String sportNameForeignPH = "sportNameForeign";
 
     private List<QueryResult> queryResults = new ArrayList<>();
@@ -47,12 +48,15 @@ public class NAME_is_playing_SPORT extends Theme{
 
         private QueryResult( String personID,
                              String personNameEN, String personNameForeign,
-                             String sportID, String sportNameForeign){
+                             String sportID, String sportNameEN, String sportNameForeign){
             this.personID = personID;
             this.personNameEN = personNameEN;
             this.personNameForeign = personNameForeign;
             this.sportID = sportID;
             this.sportNameForeign = sportNameForeign;
+            //temporary. will replace if possible
+            this.verb = "play";
+            this.object = sportNameEN;
         }
     }
 
@@ -71,7 +75,7 @@ public class NAME_is_playing_SPORT extends Theme{
     protected String getSPARQLQuery(){
         return
                 "SELECT ?" + personNamePH + " ?" + personNameENPH + " ?" + personNameForeignPH +
-                        " ?" + sportIDPH + " ?" + sportNameForeignPH +  " " +
+                        " ?" + sportIDPH + " ?" + sportNameENPH + " ?" + sportNameForeignPH +  " " +
                         "		WHERE " +
                         "		{ " +
                         "		    ?" + personNamePH + " wdt:P31 wd:Q5 . " +
@@ -79,7 +83,8 @@ public class NAME_is_playing_SPORT extends Theme{
                         "		    FILTER NOT EXISTS { ?" + personNamePH + " wdt:P570 ?dateDeath } . " +//死んでいない（played ではなくてplays）
                         "		  	SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                         WikiBaseEndpointConnector.ENGLISH + "' . " +
-                        "				?" + personNamePH + " rdfs:label ?" + personNameENPH + " } . " +
+                        "				?" + personNamePH + " rdfs:label ?" + personNameENPH + " . " +
+                        "               ?" + sportIDPH + " rdfs:label ?" + sportNameENPH + " } . " +
                         "		  	SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                         WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
                         WikiBaseEndpointConnector.ENGLISH + "' . " +
@@ -106,10 +111,11 @@ public class NAME_is_playing_SPORT extends Theme{
             // ~entity/id になってるから削る
             sportID = QGUtils.stripWikidataID(sportID);
             String sportNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, sportNameForeignPH);
+            String sportNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, sportNameENPH);
 
             QueryResult qr = new QueryResult(personID,
                     personNameEN, personNameForeign,
-                    sportID, sportNameForeign);
+                    sportID, sportNameEN, sportNameForeign);
 
             queryResults.add(qr);
 
@@ -146,7 +152,6 @@ public class NAME_is_playing_SPORT extends Theme{
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<QueryResult> toRemove = new ArrayList<>();
                 for (QueryResult qr : queryResults){
                     String id = qr.sportID;
                     if (dataSnapshot.hasChild(id)){
@@ -157,15 +162,8 @@ public class NAME_is_playing_SPORT extends Theme{
                             qr.object = object;
                         else
                             qr.object = "";
-                    } else {
-                        //for now just remove the question
-                        toRemove.add(qr);
                     }
 
-                }
-                //remove all non-matches
-                for(QueryResult qr : toRemove){
-                    queryResults.remove(qr);
                 }
 
                 NAME_is_playing_SPORT.this.saveResultTopics();

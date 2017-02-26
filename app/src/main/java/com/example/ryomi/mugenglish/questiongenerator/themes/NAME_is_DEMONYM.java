@@ -17,7 +17,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,6 +150,9 @@ public class NAME_is_DEMONYM extends Theme{
             QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
+            QuestionData fillInBlankQuestion = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlankQuestion);
+
             super.newQuestions.add(new QuestionDataWrapper(questionSet,qr.personID));
         }
 
@@ -191,6 +196,55 @@ public class NAME_is_DEMONYM extends Theme{
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
         data.setVocabulary(new ArrayList<String>());
+
+        return data;
+    }
+
+    private String fillInBlankQuestion(QueryResult qr){
+        String sentence = qr.personNameEN + " is " + QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private String fillInBlankAnswer(QueryResult qr){
+        return qr.demonymEN;
+    }
+
+    private List<String> fillInBlankChoices(QueryResult qr){
+        List<String> choices = new ArrayList<>();
+        List<String> options = new ArrayList<>(5);
+        options.add("French");
+        options.add("Japanese");
+        options.add("American");
+        options.add("Korean");
+        options.add("Chinese");
+        options.add("German");
+        options.add("Russian");
+        options.add("British");
+        options.add("Vietnamese");
+        //remove if it is in the list so we don't choose it
+        options.remove(qr.demonymEN);
+        Collections.shuffle(options);
+        choices.add(options.get(0));
+        choices.add(options.get(1));
+        return choices;
+    }
+
+    private QuestionData createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankQuestion(qr);
+        String answer = fillInBlankAnswer(qr);
+        List<String> choices = fillInBlankChoices(qr);
+        choices.add(answer);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setThemeId(super.themeData.getId());
+        data.setTopic(qr.personNameForeign);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(null);
 
         return data;
     }

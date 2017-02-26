@@ -3,38 +3,39 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_question_multiple_choice"
+    android:id="@+id/activity_question_fill_in_blank_multiple_choice"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ryomi.mugenglish.gui.Question_MultipleChoice">
+    tools:context="com.example.ryomi.mugenglish.gui.Question_FillInBlank_MultipleChoice">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/question_multiple_choice_main_layout"
+        android:id="@+id/question_fill_in_blank_multiple_choice_main_layout"
         >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/questions_instructions"
-                android:text="@string/question_multiple_choice_instructions"/>
+                android:text="@string/question_fill_in_blank_multiple_choice_instructions"
+                style="@style/questions_instructions"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/questions_question"
-                android:id="@+id/question_multiple_choice_question"/>
+                android:id="@+id/question_fill_in_blank_multiple_choice_question"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/question_multiple_choice_choices_layout"/>
+                android:id="@+id/question_fill_in_blank_multiple_choice_choices_layout"/>
 
         </LinearLayout>
     </ScrollView>

@@ -56,10 +56,10 @@ public class ThemeDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme_details);
         Intent intent = getIntent();
-        if (intent.hasExtra("themeData") && intent.hasExtra("backgroundColor")){
+        if (intent.hasExtra("themeData") && intent.hasExtra("backgroundColor")) {
             //get data
-            themeData = (ThemeData)intent.getSerializableExtra("themeData");
-            appBar = (Toolbar)findViewById(R.id.theme_details_tool_bar);
+            themeData = (ThemeData) intent.getSerializableExtra("themeData");
+            appBar = (Toolbar) findViewById(R.id.theme_details_tool_bar);
             setSupportActionBar(appBar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -70,19 +70,11 @@ public class ThemeDetails extends AppCompatActivity {
 
             addActionListeners();
             populateData();
-            int color = intent.getIntExtra("backgroundColor",0);
+            int color = intent.getIntExtra("backgroundColor", 0);
             setThemeColor(color);
             adjustLayout();
 
         }
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        //if the user presses back from the questions,
-        //we want to populate the context
-        QuestionManager.getInstance().setCurrentContext(this);
     }
 
     @Override

@@ -260,7 +260,7 @@ public class NAME_will_be_AGE_in_X_months extends Theme {
         data.setId("");
         data.setThemeId(super.themeData.getId());
         data.setTopic(qr.personNameForeign);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);

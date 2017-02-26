@@ -30,6 +30,26 @@
         <item name="menu">@menu/bottom_navigation_menu</item>
     </style>
 
+    <!--standard style for all types of questions-->
+    <style name="questions_instructions">
+        <item name="android:layout_marginTop">40dp</item>
+        <item name="android:textColor">@color/gray500</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="questions_question">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+    <style name="questions_submit_button" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
     <!--setting a window background is apparantly the best way to go with splash screens-->
     <style name="SplashTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowBackground">@drawable/splash_background</item>

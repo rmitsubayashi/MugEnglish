@@ -16,29 +16,29 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/question_puzzle_piece_main_layout"
         >
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="16dp"
+            android:text="@string/question_puzzle_piece_instructions"
+            style="@style/questions_instructions"
             android:layout_alignParentTop="true"
+            android:id="@+id/question_puzzle_piece_instructions"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/question_puzzle_piece_instructions"
+            style="@style/questions_question"
             android:id="@+id/question_puzzle_piece_question"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/question_puzzle_piece_submit"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            android:background="@color/lblue500"
-            android:textColor="@color/white"
-            android:textSize="21sp"
+            style="@style/questions_submit_button"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="16dp"
-            android:elevation="4dp"
+
             android:id="@+id/question_puzzle_piece_submit"/>
 
         <!--all choices-->

@@ -50,9 +50,9 @@
             android:name=".gui.Question_Puzzle_Piece"
             android:parentActivityName=".gui.ThemeDetails">
         </activity>
-        <!--makes the keyboard pop up default-->
+        <!-- makes the keyboard pop up default -->
         <activity
-            android:name=".gui.Question_Fill_in_Blank"
+            android:name=".gui.Question_FillInBlank_Input"
             android:parentActivityName=".gui.ThemeDetails"
             android:windowSoftInputMode="stateVisible">
         </activity>
@@ -99,6 +99,9 @@
         <service
             android:name=".userinterestcontrols.FacebookInterestFinder"
             android:exported="false"/>
+
+        <activity android:name=".gui.Question_FillInBlank_MultipleChoice">
+        </activity>
     </application>
 
 </manifest>

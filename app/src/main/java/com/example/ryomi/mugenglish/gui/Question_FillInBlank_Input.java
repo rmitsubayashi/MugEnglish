@@ -17,13 +17,14 @@ import android.widget.TextView;
 
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
+import com.example.ryomi.mugenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.mugenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.mugenglish.questionmanager.QuestionManager;
 
 //we only have one blank per question
 //to make it easier for the user to solve
 
-public class Question_Fill_in_Blank extends Question_General {
+public class Question_FillInBlank_Input extends Question_General {
     EditText questionInput;
 
     @Override
@@ -34,7 +35,7 @@ public class Question_Fill_in_Blank extends Question_General {
 
     @Override
     protected int getLayoutResourceID(){
-        return R.layout.activity_question_fill_in_blank;
+        return R.layout.activity_question_fill_in_blank_input;
     }
 
     @Override
@@ -54,24 +55,24 @@ public class Question_Fill_in_Blank extends Question_General {
 
     @Override
     protected ViewGroup getParentViewForFeedback(){
-        return (ViewGroup)findViewById(R.id.activity_question_fill_in_blank);
+        return (ViewGroup)findViewById(R.id.activity_question_fill_in_blank_input);
     }
 
     @Override
     protected ViewGroup getSiblingViewForFeedback(){
-        return (ViewGroup)findViewById(R.id.question_fill_in_blank_main_layout);
+        return (ViewGroup)findViewById(R.id.question_fill_in_blank_input_main_layout);
     }
 
     private void createQuestionLayout(){
-        TextView questionTextView = (TextView) findViewById(R.id.question_fill_in_blank_question);
+        TextView questionTextView = (TextView) findViewById(R.id.question_fill_in_blank_input_question);
 
         QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();
         String question = data.getQuestion();
         String answer = data.getAnswer();
 
-        questionInput = (EditText) findViewById(R.id.question_fill_in_blank_input);
-        String blank = createBlank(answer);
+        questionInput = (EditText) findViewById(R.id.question_fill_in_blank_input_input);
+        String blank = GUIUtils.createBlank(answer);
 
         //the blanks can either be text or numbers, but only one blank
         if (question.contains(QuestionUtils.FILL_IN_BLANK_NUMBER)){
@@ -82,7 +83,7 @@ public class Question_Fill_in_Blank extends Question_General {
             question = question.replace(QuestionUtils.FILL_IN_BLANK_TEXT, blank);
         }
 
-        //st color to underlined content
+        //color underline
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(question);
         int startIndex = question.indexOf('_');//Emoji haha
         int endIndex = question.lastIndexOf('_') + 1;
@@ -101,18 +102,8 @@ public class Question_Fill_in_Blank extends Question_General {
         questionInput.invalidate();
 
         //set button
-        Button submitButton = (Button)findViewById(R.id.question_fill_in_blank_submit);
+        Button submitButton = (Button)findViewById(R.id.question_fill_in_blank_input_submit);
         submitButton.setOnClickListener(getResponseListener());
-    }
-
-    private String createBlank(String answer){
-        //just slightly bigger than the answer
-        int length = answer.length() + 1;
-        StringBuilder builder = new StringBuilder();
-        for (int i=0; i<length; i++){
-            builder.append("_");
-        }
-        return builder.toString();
     }
 
     //hide keyboard

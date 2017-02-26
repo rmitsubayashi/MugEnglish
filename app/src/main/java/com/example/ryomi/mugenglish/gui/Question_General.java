@@ -25,14 +25,12 @@ public abstract class Question_General extends AppCompatActivity {
     protected int maxNumberOfAttempts;
     protected int attemptCt = 0;
     protected boolean disableChoiceAfterWrongAnswer;
-    private NestedScrollView feedback;
     private BottomSheetBehavior behavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResourceID());
-        QuestionManager.getInstance().setCurrentContext(this);
         setMaxNumberOfAttempts();
         disableChoiceAfterWrongAnswer = disableChoiceAfterWrongAnswer();
         inflateFeedback();
@@ -124,14 +122,14 @@ public abstract class Question_General extends AppCompatActivity {
 
     private void inflateFeedback(){
         ViewGroup parentView = getParentViewForFeedback();
-        feedback = (NestedScrollView) getLayoutInflater()
+        NestedScrollView feedback = (NestedScrollView) getLayoutInflater()
                 .inflate(R.layout.inflatable_question_feedback, parentView, false);
         behavior = BottomSheetBehavior.from(feedback);
         Button nextButton = (Button)feedback.findViewById(R.id.question_feedback_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                QuestionManager.getInstance().nextQuestion();
+                QuestionManager.getInstance().nextQuestion(Question_General.this);
             }
         });
         behavior.setState(BottomSheetBehavior.STATE_HIDDEN);

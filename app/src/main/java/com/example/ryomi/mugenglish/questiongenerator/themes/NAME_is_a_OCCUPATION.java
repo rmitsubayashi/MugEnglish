@@ -112,6 +112,9 @@ public class NAME_is_a_OCCUPATION extends Theme{
             QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
+            QuestionData fillInBlankQuestion = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlankQuestion);
+
             super.newQuestions.add(new QuestionDataWrapper(questionSet,qr.personID));
         }
 
@@ -156,6 +159,50 @@ public class NAME_is_a_OCCUPATION extends Theme{
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
         data.setVocabulary(new ArrayList<String>());
+
+        return data;
+    }
+
+    //give a hint (first 1 or 2 characters, depending on length of word)
+    private int hintBorder = 7;
+    private String fillInBlankQuestion(QueryResult qr){
+        int hintCt = qr.occupationEN.length() > hintBorder ? 2 : 1;
+        String precedingHint = qr.occupationEN.substring(0,hintCt);
+        String followingHint = qr.occupationEN.substring(qr.occupationEN.length()-hintCt);
+        String indefiniteArticle = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
+
+        String sentence = qr.personNameEN + " is " + indefiniteArticle + " " +
+                precedingHint + QuestionUtils.FILL_IN_BLANK_TEXT + followingHint + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private String fillInBlankAnswer(QueryResult qr){
+        int hintCt = qr.occupationEN.length() > hintBorder ? 2 : 1;;
+        return qr.occupationEN.substring(hintCt, qr.occupationEN.length()-hintCt);
+    }
+
+    //in case the user types the whole thing in
+    private List<String> fillInBlankAlternateAnswers(QueryResult qr){
+        List<String> answers = new ArrayList<>(1);
+        answers.add(qr.occupationEN);
+        return answers;
+    }
+
+    private QuestionData createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankQuestion(qr);
+        String answer = fillInBlankAnswer(qr);
+        List<String> acceptableAnswers = fillInBlankAlternateAnswers(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setThemeId(super.themeData.getId());
+        data.setTopic(qr.personNameForeign);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+        data.setVocabulary(null);
 
         return data;
     }
