@@ -6,7 +6,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                tools:context="com.example.ryomi.myenglish.gui.UserProfile">
+                tools:context="com.example.ryomi.mugenglish.gui.UserProfile">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/user_profile_tool_bar"

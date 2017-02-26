@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.ryomi.myenglish.gui.ThemeDetails"
+    tools:context="com.example.ryomi.mugenglish.gui.ThemeDetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!--background color will be overwritten-->
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textColor="@color/white"
-        android:textSize="21dp"
+        android:textSize="21sp"
         android:gravity="center"
         android:text="@string/theme_details_no_items"
         android:visibility="gone"

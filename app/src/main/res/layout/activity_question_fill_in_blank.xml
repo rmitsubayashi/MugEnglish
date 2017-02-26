@@ -6,7 +6,7 @@
     android:id="@+id/activity_question_fill_in_blank"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ryomi.myenglish.gui.Question_Fill_in_Blank">
+    tools:context="com.example.ryomi.mugenglish.gui.Question_Fill_in_Blank">
 
     <LinearLayout
         android:layout_width="match_parent"

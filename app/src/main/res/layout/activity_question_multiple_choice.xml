@@ -6,7 +6,7 @@
     android:id="@+id/activity_question_multiple_choice"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ryomi.myenglish.gui.Question_MultipleChoice">
+    tools:context="com.example.ryomi.mugenglish.gui.Question_MultipleChoice">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

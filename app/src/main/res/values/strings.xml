@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">MyEnglish</string>
+    <string name="app_name">MugEnglish</string>
 
     <!--firebase UI-->
     <string name="facebook_application_id" translatable="false">159539307868031</string>
