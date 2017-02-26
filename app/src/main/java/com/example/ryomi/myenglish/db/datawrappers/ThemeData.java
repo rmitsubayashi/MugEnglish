@@ -1,6 +1,10 @@
 package com.example.ryomi.myenglish.db.datawrappers;
 
-public class ThemeData {
+import java.io.Serializable;
+
+//serializable so we can pass it from the theme list to
+// the theme details
+public class ThemeData implements Serializable{
     private String id;
     private String image;
     private String title;

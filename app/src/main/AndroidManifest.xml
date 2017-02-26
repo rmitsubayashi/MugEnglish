@@ -1,37 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ryomi.myenglish">
+          package="com.example.ryomi.myenglish">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- so we can connect to wikiData -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- right to left support tag needed for firebase ui -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".gui.Test" />
-        <activity android:name=".gui.ThemeList"></activity>
+        <activity
+            android:name=".gui.Splash"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- all activities from the parent theme list activity -->
+        <activity
+            android:name=".gui.ThemeList"
+            android:label="@string/theme_list_app_bar_title"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_theme_list"/>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".gui.ThemeDetails"
+            android:label="@string/theme_details_app_bar_title"
+            android:parentActivityName=".gui.ThemeList"/>
+        <activity
+            android:name=".gui.Question_TrueFalse"
+            android:parentActivityName=".gui.ThemeDetails"/>
+        <activity
+            android:name=".gui.Question_MultipleChoice"
+            android:parentActivityName=".gui.ThemeDetails">
+        </activity>
+        <activity
+            android:name=".gui.Question_Puzzle_Piece"
+            android:parentActivityName=".gui.ThemeDetails">
+        </activity>
+        <!--makes the keyboard pop up default-->
+        <activity
+            android:name=".gui.Question_Fill_in_Blank"
+            android:parentActivityName=".gui.ThemeDetails"
+            android:windowSoftInputMode="stateVisible">
+        </activity>
+        <activity
+            android:name=".gui.Results"
+            android:label="@string/results_app_bar_title"
+            android:parentActivityName=".gui.ThemeDetails">
+        </activity>
+
+        <!-- all activities from the parent activity user profile -->
+        <activity android:name=".gui.UserProfile"/>
+
+        <!-- all activities from the parent activity user interests -->
+        <activity
+            android:name=".gui.UserInterests"
+            android:label="@string/user_interests_app_bar_title"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_user_interests"/>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".gui.SearchInterests"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".gui.UserInterests">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                android:resource="@xml/searchable_search_interests"/>
         </activity>
-        <activity android:name=".gui.ThemeDetails" />
-        <activity android:name=".gui.UserProfile">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity
+            android:name=".gui.FacebookInterests"
+            android:label="@string/facebook_interests_app_bar_title"
+            android:parentActivityName=".gui.UserInterests">
+        </activity>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <service
+            android:name=".userinterestcontrols.FacebookInterestFinder"
+            android:exported="false"/>
     </application>
 
 </manifest>

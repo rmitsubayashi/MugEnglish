@@ -1,13 +1,168 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">MyEnglish</string>
-    <string name="searchField">検索</string>
+
+    <!--firebase UI-->
+    <string name="facebook_application_id" translatable="false">159539307868031</string>
+    <string name="twitter_consumer_key" translatable="false">AYlTVxRfSPi7tjlEH14aQOeAD</string>
+    <string name="twitter_consumer_secret" translatable="false">p4QlSmmog6Vm4Kq7bnqBFVOXcysMfvcB1rPeJ41S4b2sONGY3Y</string>
+    <!--override English text to Japanese-->
+    <!-- Common -->
+    <string name="default_toolbar_title">@string/app_name</string>
+    <string name="progress_dialog_loading">ロード中…</string>
+    <string name="sign_in_default">サインイン</string>
+    <string name="general_error">エラーが起こりました。</string>
+
+    <!-- Provider -->
+    <string name="idp_name_google">Google</string>
+    <string name="idp_name_facebook">Facebook</string>
+    <string name="idp_name_twitter">Twitter</string>
+
+    <!-- Auth method picker -->
+    <string name="sign_in_with_google">Googleでサインイン</string>
+    <string name="sign_in_with_facebook">Facebookでサインイン</string>
+    <string name="sign_in_with_twitter">Twitterでサインイン</string>
+    <string name="sign_in_with_email">メールでサインイン</string>
+
+    <!-- Email common-->
+    <string name="next_default">次へ</string>
+    <string name="email_hint">メールアドレス</string>
+    <string name="password_hint">パスワード</string>
+    <string name="required_field">You can\'t leave this empty.</string>
+    <string name="invalid_email_address">メールアドレスが間違っています</string>
+    <string name="missing_email_address">Enter your email address to continue</string>
+    <string name="progress_dialog_checking_accounts">既存アカウントを確認中…</string>
+
+    <!-- Email sign up -->
+    <string name="title_register_email">アカウント登録</string>
+    <string name="name_hint">First &amp; last name</string>
+    <string name="button_text_save">保存</string>
+    <string name="progress_dialog_signing_up">アカウント登録中…</string>
+    <plurals name="error_weak_password">
+        <item quantity="one">パスワードをもっと強くしましょう. %1$d文字以上、文字と数字両方を使用してください</item>
+        <item quantity="other">パスワードをもっと強くしましょう. %1$d文字以上、文字と数字両方を使用してください</item>
+    </plurals>
+    <string name="email_account_creation_error">アカウント登録に失敗しました</string>
+    <string name="error_user_collision">そのメールアドレスのアカウントはすでに存在します</string>
+    <string name="create_account_preamble">"By tapping SAVE you are indicating that you agree to the "</string>
+    <string name="terms_of_service">Terms of Service</string>
+
+    <!-- Idp/Email welcome back -->
+    <string name="title_welcome_back_idp_prompt">@string/sign_in_default</string>
+    <string name="title_welcome_back_password_prompt">@string/sign_in_default</string>
+    <string name="welcome_back_idp_header">すでにアカウントが登録されています</string>
+    <string name="welcome_back_email_header">ようこそ!</string>
+    <string name="welcome_back_idp_prompt">
+        <xliff:g example="jane.doe@example.com" id="email_addr">%1$s</xliff:g>は登録されています。
+        <xliff:g example="Google" id="provider_name">%2$s</xliff:g>でサインインしてください。
+    </string>
+    <string name="welcome_back_password_prompt_body">
+        <xliff:g example="jane.doe@example.com" id="email_addr">%1$s</xliff:g>は登録されています。
+        そのアカウントのパスワードでサインインしてください。
+    </string>
+    <string name="progress_dialog_signing_in">サインイン中…</string>
+    <string name="trouble_signing_in">サインインできませんか?</string>
+
+    <!-- Password recovery -->
+    <string name="title_recover_password_activity">パスワードを復旧</string>
+    <string name="title_confirm_recover_password">メールを確認してください</string>
+    <string name="password_recovery_body">Get instructions sent to this email that explain how to
+        reset your password.</string>
+    <string name="button_text_send">送信</string>
+    <string name="confirm_recovery_body">%1$sに送られた指示に従ってパスワードを復元してください。</string>
+    <string name="progress_dialog_sending">送信中…</string>
+    <string name="error_email_does_not_exist">アカウントのメールアドレスと一致しません</string>
+
+    <!-- accessibility -->
+    <string name="accessibility_logo">App logo</string>
+
+
+    <!--bottom navigation-->
+    <string name="bottom_navigation_study">べんきょう</string>
+    <string name="bottom_navigation_user_profile">じぶん</string>
+    <string name="bottom_navigation_favorites">お気に入り</string>
+
+    <!--preferences-->
+    <string name="preferences_category_questions_label">
+        問題
+    </string>
+    <string name="preferences_category_questions_key">
+        preferences:questions
+    </string>
+    <string name="preferences_questions_descriptionBeforeQuestions_key">
+        preferences:description before question
+    </string>
+    <string name="preferences_questions_descriptionBeforeQuestions_label">
+        問題選択画面に説明文を表示する
+    </string>
+    <string name="preferences_questions_descriptionBeforeQuestions_description">
+        説明文を読まずにいきなり問題を解いてみるのも正しい勉強法。\n
+        全問間違った場合も、結果的に勉強効率が上がることも証明されています。
+    </string>
+    <string name="preferences_questions_numberOfAttemptsPerQuestion_key">
+        preferences:number of question attempts
+    </string>
+    <string name="preferences_questions_numberOfAttemptsPerQuestion_label">
+        問題ごとの解答回数を記入してください
+    </string>
+    <string name="preferences_questions_numberOfAttemptsPerQuestion_description">
+        いろいろ調整してみて、気楽に勉強できる解答回数を探そう。
+    </string>
+    <string name="preferences_category_account_label">アカウント</string>
+    <string name="preferences_category_account_key">preferences:account</string>
+    <string name="preferences_account_logout_label">ログアウト</string>
+    <string name="preferences_account_logout_key">preferences:logout</string>
+
+    <!--Theme list page -->
+    <string name="theme_list_app_bar_title">テーマを選択</string>
+    <string name="theme_list_search_hint">テーマを検索</string>
+    <string name="theme_list_navigation_drawer_open">開く</string>
+    <string name="theme_list_navigation_drawer_close">閉じる</string>
+
+    <!--results-->
+    <string name="results_app_bar_title">結果</string>
+
+    <!--Search Interest page-->
+    <string name="search_interests_search_hint">検索</string>
+    <string name="search_interests_add">追加</string>
+
+    <!--Facebook interests-->
+    <string name="facebook_interests_app_bar_title">Facebookで検索</string>
+    <string name="facebook_interests_search_schools">学歴を検索中..</string>
+    <string name="facebook_interests_search_locations">行ったことがある場所を検索中</string>
 
     <!--Theme Details Page-->
-    <string name="theme_details_lastPlayed">Last Played</string>
+    <string name="theme_details_lastPlayed">最終プレイ</string>
+    <string name="theme_details_created">作成日</string>
     <string name="theme_details_bestScore">Best Score</string>
-    <string name="theme_details_playButton">GO</string>
+    <string name="theme_details_playButton">スタート</string>
+    <string name="theme_details_newInstance">新規</string>
+    <string name="theme_details_app_bar_title">問題を選択</string>
+    <string name="theme_details_did_not_choose_instance">問題を選択してください</string>
+    <string name="theme_details_item_menu_more_info">詳細</string>
+    <string name="theme_details_item_menu_delete">消去</string>
+    <string name="theme_details_no_items">該当なし\n\n
+    +ボタンを押して\n
+    追加してください</string>
 
     <!--user interests list-->
-    <string name="user_interests_add">追加</string>
+    <string name="user_interests_app_bar_title">お気に入り</string>
+    <string name="user_interests_search_hint">検索</string>
     <string name="title_activity_fab">fab</string>
+    <string name="user_interests_list_item_delete">消去</string>
+
+    <!--user profile-->
+    <string name="user_profile_tab_hours_studied">勉強時間</string>
+    <string name="user_profile_tab_report_card">成績</string>
+    <string name="user_profile_hours_studied_today">今日</string>
+
+    <!--questions-->
+    <string name="question_feedback_correct">正解</string>
+    <string name="question_feedback_incorrect">不正解</string>
+    <string name="question_feedback_next">次へ</string>
+    <string name="question_true_false_true">本当</string>
+    <string name="question_true_false_false">嘘</string>
+    <string name="question_puzzle_piece_submit">確定</string>
+    <string name="question_fill_in_blank_submit">決定</string>
+    <string name="question_fill_in_blank_hint">答え</string>
+
 </resources>

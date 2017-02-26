@@ -1,19 +1,19 @@
 package com.example.ryomi.myenglish.questiongenerator.themes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.example.ryomi.myenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
+import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
+import com.example.ryomi.myenglish.connectors.WikiDataSPARQLConnector;
+import com.example.ryomi.myenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
+import com.example.ryomi.myenglish.questiongenerator.Theme;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.example.ryomi.myenglish.connectors.EndpointConnector;
-import com.example.ryomi.myenglish.connectors.WikiBaseEndpointConnector;
-import com.example.ryomi.myenglish.db.database2classmappings.ThemeMappings;
-import com.example.ryomi.myenglish.connectors.SPARQLDocumentParserHelper;
-import com.example.ryomi.myenglish.questiongenerator.GrammarRules;
-import com.example.ryomi.myenglish.questiongenerator.Theme;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	
@@ -26,7 +26,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	private final String schoolENPH = "schoolEN";
 	private final String sitelinksPH = "sitelinks";
 	
-	private List<QueryResult> queryResults;
+	private List<QueryResult> queryResults = new ArrayList<>();
 	private class QueryResult {
 		private String personEN;
 		private String personForeign;
@@ -49,17 +49,13 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 		}
 	}
 	
-	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnector connector){
-		super(connector);
-		super.themeID = ThemeMappings.NAME_went_to_SCHOOL_So_did_NAME2;
-		super.name = "so did";
-		super.description = "So did を勉強しよう！";
-		super.themeTopicCount = 3;
-		super.wikiDataIDPH = this.personPH;
-		queryResults = new ArrayList<QueryResult>();
+	public NAME_went_to_SCHOOL_So_did_NAME2(EndpointConnectorReturnsXML connector, ThemeData data){
+		super(connector, data);
+		super.questionSetsLeftToPopulate = 3;
+		/*
 		super.backupIDsOfTopics.add("Q281734");//Nagatomo
 		super.backupIDsOfTopics.add("Q37876");//Natalie Portman
-		super.backupIDsOfTopics.add("Q175535");//Matt Damon
+		super.backupIDsOfTopics.add("Q175535");//Matt Damon*/
 	}
 	
 	protected String getSPARQLQuery(){
@@ -72,7 +68,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 				"{ " +
 				"    ?" + personPH + " wdt:P69 ?education . " +
 				"    ?person2 wdt:P69 ?education . " +
-				"    ?person2 wikibase:sitelinks ?" + sitelinksPH + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res " +
+				"    ?person2 wikibase:sitelinks ?" + sitelinksPH + " . " +
 				    
 				"	SERVICE wikibase:label { bd:serviceParam wikibase:language '" + 
 				                            WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "'," +
@@ -87,29 +83,16 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 				  
 				"    BIND (wd:%s as ?" + personPH + ") " +
 				  
-				" } " +
-				"LIMIT " + super.themeTopicCount;
+				" } ";
 		
 		return query;
 	}
 
-	protected void populateResults(Set<String> wikidataIDs) throws Exception{
-		for (String entityID : wikidataIDs){
-			String query = super.addEntityToQuery(entityID);
-			Document resultDOM = connector.fetchDOMFromGetRequest(query);
-			//reorder based on popularity and get top few
-			this.addResultsToMainDocument(resultDOM);
-			if (this.countResults(documentOfTopics) >= themeTopicCount){
-				break;
-			}
-		}
-	}
 	
 	protected void processResultsIntoClassWrappers() {
 		Document document = super.documentOfTopics;
-		NodeList allResults = document.getElementsByTagName("result");
+		NodeList allResults = document.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
 		int resultLength = allResults.getLength();
-		System.out.println(resultLength);
 		for (int i=0; i<resultLength; i++){
 			Node head = allResults.item(i);
 			String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, personENPH);
@@ -125,9 +108,15 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 			queryResults.add(qr);
 		}
 	}
+
+	@Override
+	protected void saveResultTopics(){
+		for (QueryResult qr : queryResults){
+			topics.add(qr.personForeign);
+		}
+	}
 	
 	protected void createQuestionsFromResults(){
-		System.out.println("called");
 		for (QueryResult qr : queryResults){
 			String statement = this.NAME_went_to_SCHOOL_So_did_NAME2_EN_correct(qr);
 			System.out.println(statement);
@@ -137,7 +126,7 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	
 	private String NAME_went_to_SCHOOL_So_did_NAME2_EN_correct(QueryResult qr){
 		String schoolName = GrammarRules.definiteArticleBeforeSchoolName(qr.schoolEN);
-		String sentence = qr.personEN + " went to " + schoolName + ". So did " + qr.person2EN + "build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/25.1.0/res";
+		String sentence = qr.personEN + " went to " + schoolName + ". So did " + qr.person2EN + ".";
 		return sentence;
 	}
 }
