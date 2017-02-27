@@ -120,6 +120,12 @@
 
     <!--results-->
     <string name="results_app_bar_title">結果</string>
+    <string name="results_correct_ct">正解数</string>
+    <string name="results_star_earned_notification">おめでとうございます！\n
+    スターをゲットしました！</string>
+    <string name="results_star_first_instance">初めての一回</string>
+    <string name="results_star_repeat_instance">復習も大事！</string>
+    <string name="results_star_second_instance">どんどん新しい問題を解いて！</string>
 
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>

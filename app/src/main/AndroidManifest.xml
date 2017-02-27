@@ -56,10 +56,13 @@
             android:parentActivityName=".gui.ThemeDetails"
             android:windowSoftInputMode="stateVisible">
         </activity>
+        <!--not sure if the theme list should be the parent,
+        but right now it is since I can't figure out how to press up
+        to go to the theme details page-->
         <activity
             android:name=".gui.Results"
             android:label="@string/results_app_bar_title"
-            android:parentActivityName=".gui.ThemeDetails">
+            android:parentActivityName=".gui.ThemeList">
         </activity>
 
         <!-- all activities from the parent activity user profile -->

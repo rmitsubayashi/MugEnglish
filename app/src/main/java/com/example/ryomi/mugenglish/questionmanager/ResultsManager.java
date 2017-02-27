@@ -41,7 +41,8 @@ public class ResultsManager {
         this.context = context;
         saveInstanceRecord();
         identifyAchievements();
-        showQuestionRecord();
+        //showQuestionRecord();
+        showQuestionsCorrect();
     }
 
     //since we need to do this synchronously
@@ -66,8 +67,6 @@ public class ResultsManager {
                     existingAchievements.setSecondInstance(false);
                     existingAchievements.setRepeatInstance(false);
                 }
-
-                //((Results)context).populateExistingStars(existingAchievements);
 
                 identifyNewAchievements(existingAchievements);
             }
@@ -122,7 +121,7 @@ public class ResultsManager {
                 }
 
                 if (shouldUpdateStars(finalExistingAchievements, newAchievements)){
-                    ((Results)context).populateNewStars(newAchievements);
+                    ((Results)context).populateNewStars(finalExistingAchievements, newAchievements);
                     updateAchievements(finalExistingAchievements, newAchievements);
                 }
 
@@ -185,6 +184,7 @@ public class ResultsManager {
         ref.setValue(instanceRecord);
     }
 
+    /*
     private void showQuestionRecord(){
         //organize question data into a map for easier retrieval
         Map<String, QuestionData> questionMap = new HashMap<>();
@@ -202,6 +202,24 @@ public class ResultsManager {
             ((Results)context).addQuestion(questionData.getQuestion());
             ((Results)context).addResponse(attempt.getResponse(),attempt.getCorrect());
         }
+    }*/
+
+    private void showQuestionsCorrect(){
+        List<QuestionAttempt> attempts = instanceRecord.getAttempts();
+        String tempQuestionID = "";
+        int totalQuestions = 0;
+        int correctQuestions = 0;
+        for (QuestionAttempt attempt : attempts){
+            String questionID = attempt.getQuestionID();
+            if (attempt.getCorrect())
+                correctQuestions++;
+            if (!tempQuestionID.equals(questionID)){
+                totalQuestions++;
+                tempQuestionID = questionID;
+            }
+        }
+
+        ((Results)context).populateCorrectCount(correctQuestions, totalQuestions);
     }
 
 }
