@@ -2,11 +2,13 @@ package com.example.ryomi.mugenglish.gui;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.db.datawrappers.InstanceRecord;
@@ -19,7 +21,6 @@ import java.util.List;
 
 public class User_Profile_Report_Card extends Fragment {
     private RecyclerView list;
-    private LayoutInflater inflater;
     public User_Profile_Report_Card() {
     }
 
@@ -27,7 +28,6 @@ public class User_Profile_Report_Card extends Fragment {
     @SuppressWarnings("unchecked")
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        this.inflater = inflater;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_profile_report_card, container, false);
         Bundle dataBundle = getArguments();
@@ -38,6 +38,12 @@ public class User_Profile_Report_Card extends Fragment {
         }
 
         list = (RecyclerView) view.findViewById(R.id.user_profile_report_card_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        list.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(list.getContext(),
+                layoutManager.getOrientation());
+        list.addItemDecoration(dividerItemDecoration);
+
 
         populateReportCard(records);
 
@@ -80,11 +86,7 @@ public class User_Profile_Report_Card extends Fragment {
         }
         //add the last row
         dataList.add(tempData);
-
-        list.setLayoutManager(new LinearLayoutManager(getContext()));
         list.setAdapter(new UserProfileReportCardAdapter(dataList, getContext()));
-
-
     }
 
 

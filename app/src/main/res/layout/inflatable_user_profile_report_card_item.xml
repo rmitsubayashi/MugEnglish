@@ -2,29 +2,36 @@
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:orientation="horizontal"
         android:weightSum="1"
-        android:padding="16dp">
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+    >
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.7"
+        android:layout_weight="0.6"
+        android:textSize="15sp"
         android:id="@+id/user_profile_report_card_item_theme"/>
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.1"
+        android:layout_weight="0.14"
+        android:textSize="15sp"
         android:id="@+id/user_profile_report_card_item_accuracy"/>
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.1"
+        android:layout_weight="0.13"
+        android:textSize="15sp"
         android:id="@+id/user_profile_report_card_item_number_instances"/>
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.1"
+        android:layout_weight="0.13"
+        android:textSize="15sp"
         android:id="@+id/user_profile_report_card_item_number_records"/>
 
 </LinearLayout>
