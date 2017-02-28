@@ -20,7 +20,9 @@ import com.example.ryomi.mugenglish.gui.UserInterests;
 import com.example.ryomi.mugenglish.gui.UserProfile;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.BuildConfig;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserInfo;
 
 import java.util.ArrayList;
@@ -177,7 +179,7 @@ public class GUIUtils {
             return false;
         } else {
             for (UserInfo info : FirebaseAuth.getInstance().getCurrentUser().getProviderData()){
-                if (info.getProviderId().equals("facebook.com"))
+                if (info.getProviderId().equals(FacebookAuthProvider.PROVIDER_ID))
                     return true;
 
             }
@@ -191,7 +193,7 @@ public class GUIUtils {
             return false;
         } else {
             for (UserInfo info : FirebaseAuth.getInstance().getCurrentUser().getProviderData()){
-                if (info.getProviderId().equals("twitter.com"))
+                if (info.getProviderId().equals(TwitterAuthProvider.PROVIDER_ID))
                     return true;
 
             }

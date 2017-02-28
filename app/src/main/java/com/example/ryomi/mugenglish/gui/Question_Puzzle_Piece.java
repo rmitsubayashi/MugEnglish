@@ -78,6 +78,16 @@ public class Question_Puzzle_Piece extends Question_General {
         return (ViewGroup)findViewById(R.id.question_puzzle_piece_main_layout);
     }
 
+    @Override
+    protected String getFeedback(){
+        QuestionManager manager = QuestionManager.getInstance();
+        QuestionData data = manager.getQuestionData();
+        String answer = data.getAnswer();
+        //double space to make it look more like puzzle pieces
+        answer = answer.replace("|", "  ");
+        return "正解: " + answer;
+    }
+
     private void populateQuestion(){
         QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();

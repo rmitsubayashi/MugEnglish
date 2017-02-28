@@ -53,6 +53,18 @@ public class Question_TrueFalse extends Question_General {
         return (ViewGroup)findViewById(R.id.question_true_false_main_layout);
     }
 
+    @Override
+    protected String getFeedback(){
+        QuestionManager manager = QuestionManager.getInstance();
+        QuestionData data = manager.getQuestionData();
+        String answer = data.getAnswer();
+        if (answer.equals(QuestionUtils.TRUE_FALSE_QUESTION_TRUE)){
+            return "正解: " + getResources().getString(R.string.question_true_false_true);
+        } else {
+            return "正解: " + getResources().getString(R.string.question_true_false_false);
+        }
+    }
+
     private void populateQuestion(){
         QuestionManager manager = QuestionManager.getInstance();
         QuestionData data = manager.getQuestionData();

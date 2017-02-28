@@ -8,6 +8,7 @@ import com.example.ryomi.mugenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.mugenglish.db.database2classmappings.QuestionTypeMappings;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.mugenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.mugenglish.questiongenerator.QGUtils;
 import com.example.ryomi.mugenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.mugenglish.questiongenerator.Theme;
@@ -63,12 +64,6 @@ public class NAME_is_playing_SPORT extends Theme{
     public NAME_is_playing_SPORT(EndpointConnectorReturnsXML connector, ThemeData data){
         super(connector, data);
         super.questionSetsLeftToPopulate = 3;
-		/*
-		super.backupIDsOfTopics.add("Q10520");//Beckham
-		super.backupIDsOfTopics.add("Q486359");//Pacquiao
-		super.backupIDsOfTopics.add("Q41421");//Michael Jordan
-		super.backupIDsOfTopics.add("Q39562");//Michael Phelps
-		super.backupIDsOfTopics.add("Q5799");//Allyson Felix*/
     }
 
     @Override
@@ -133,11 +128,12 @@ public class NAME_is_playing_SPORT extends Theme{
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<QuestionData> questionSet = new ArrayList<>();
-            QuestionData trueFalseQuestion = createTrueFalseQuestion(qr);
-            questionSet.add(trueFalseQuestion);
 
             QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
+
+            QuestionData fillInBlankQuestion = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlankQuestion);
 
             super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID));
 
@@ -203,22 +199,6 @@ public class NAME_is_playing_SPORT extends Theme{
         return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
     }
 
-    private QuestionData createTrueFalseQuestion(QueryResult qr){
-        String question = this.NAME_plays_SPORT_EN_correct(qr);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setThemeId(super.themeData.getId());
-        data.setTopic(qr.personNameForeign);
-        data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(QuestionUtils.TRUE_FALSE_QUESTION_TRUE);
-        data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
-
-        return data;
-    }
-
     private QuestionData createSentencePuzzleQuestion(QueryResult qr){
         String question = formatSentenceForeign(qr);
         List<String> choices = puzzlePieces(qr);
@@ -233,6 +213,36 @@ public class NAME_is_playing_SPORT extends Theme{
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
         data.setVocabulary(new ArrayList<String>());
+
+        return data;
+    }
+
+    private String fillInBlankInputQuestion(QueryResult qr){
+        String sentence1 = this.formatSentenceForeign(qr) + "\n";
+        String sentence2 = qr.personNameEN + " " + QuestionUtils.FILL_IN_BLANK_TEXT + ".";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + sentence2;
+    }
+
+    private String fillInBlankAnswer(QueryResult qr){
+        String verb = SportsHelper.inflectVerb(qr.verb, SportsHelper.PRESENTPARTICIPLE);
+        String object = qr.object.equals("") ? "" : " " + qr.object;
+        return "is " + verb + object;
+    }
+
+    private QuestionData createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankInputQuestion(qr);
+        String answer = fillInBlankAnswer(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setThemeId(super.themeData.getId());
+        data.setTopic(qr.personNameForeign);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(null);
 
         return data;
     }

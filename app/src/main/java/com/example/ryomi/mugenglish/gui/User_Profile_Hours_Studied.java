@@ -135,7 +135,6 @@ public class User_Profile_Hours_Studied extends Fragment {
             if (daysBetween < 7){
                 int indexToUpdate = 6 - daysBetween;
                 DateTime lastAttemptTime = new DateTime(attempts.get(attempts.size()-1).getEndTime());
-                Log.d("TAG", "DaysBetween Called"+lastAttemptTime.toString());
                 int instanceTimeInSeconds = Seconds.secondsBetween(firstAttemptTime, lastAttemptTime).getSeconds();
                 result[indexToUpdate] = result[indexToUpdate] + instanceTimeInSeconds;
             }

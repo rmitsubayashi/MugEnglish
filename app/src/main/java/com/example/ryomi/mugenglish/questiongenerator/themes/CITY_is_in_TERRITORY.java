@@ -17,7 +17,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class CITY_is_in_TERRITORY extends Theme{
     //placeholders
@@ -112,12 +114,29 @@ public class CITY_is_in_TERRITORY extends Theme{
             QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
+            QuestionData fillInBlankQuestion = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlankQuestion);
+
+            QuestionData fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
+            questionSet.add(fillInBlankInputQuestion);
+
+            QuestionData trueFalseQuestionTrue = createTrueFalseQuestion(qr, QuestionUtils.TRUE_FALSE_QUESTION_TRUE);
+            QuestionData trueFalseQuestionFalse = createTrueFalseQuestion(qr, QuestionUtils.TRUE_FALSE_QUESTION_FALSE);
+            int i = new Random().nextInt();
+            if (i%2 == 0) {
+                questionSet.add(trueFalseQuestionTrue);
+                questionSet.add(trueFalseQuestionFalse);
+            } else {
+                questionSet.add(trueFalseQuestionFalse);
+                questionSet.add(trueFalseQuestionTrue);
+            }
+
             super.newQuestions.add(new QuestionDataWrapper(questionSet,qr.cityID));
         }
 
     }
 
-    private String NAME_is_in_territory_EN_correct(QueryResult qr){
+    private String CITY_is_in_TERRITORY_EN_correct(QueryResult qr){
         String sentence = qr.cityNameEN + " is in " + qr.territoryEN + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
@@ -153,6 +172,108 @@ public class CITY_is_in_TERRITORY extends Theme{
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(new ArrayList<String>());
+
+        return data;
+    }
+
+    private String fillInBlankQuestion(QueryResult qr){
+        String sentence = qr.cityNameEN + " is " + QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " " + qr.territoryEN + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private List<String> fillInBlankChoices(){
+        List<String> prepositions = new ArrayList<>();
+        prepositions.add("on");
+        prepositions.add("at");
+        prepositions.add("from");
+        prepositions.add("around");
+        prepositions.add("by");
+        prepositions.add("for");
+        Collections.shuffle(prepositions);
+
+        List<String> choices = new ArrayList<>();
+        choices.add(prepositions.get(0));
+        choices.add(prepositions.get(1));
+
+        return choices;
+    }
+
+    private String fillInBlankAnswer(){
+        return "in";
+    }
+
+    private QuestionData createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankQuestion(qr);
+        String answer = fillInBlankAnswer();
+        List<String> choices = fillInBlankChoices();
+        choices.add(answer);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setThemeId(super.themeData.getId());
+        data.setTopic(qr.cityNameForeign);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(null);
+
+        return data;
+    }
+
+    private String fillInBlankInputQuestion(QueryResult qr){
+        String sentence = qr.cityNameEN + " is " + QuestionUtils.FILL_IN_BLANK_TEXT +
+                " " + qr.territoryEN + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private String fillInBlankInputAnswer(){
+        return "in";
+    }
+
+    private QuestionData createFillInBlankInputQuestion(QueryResult qr){
+        String question = this.fillInBlankInputQuestion(qr);
+        String answer = fillInBlankInputAnswer();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setThemeId(super.themeData.getId());
+        data.setTopic(qr.cityNameForeign);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(null);
+
+        return data;
+    }
+
+    private String CITY_is_in_TERRITORY_EN_incorrect(QueryResult qr){
+        String sentence = qr.territoryEN + " is in " + qr.cityNameEN + ".";
+        //no need since all names are capitalized?
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private QuestionData createTrueFalseQuestion(QueryResult qr, String answer){
+        String question;
+        if (answer.equals(QuestionUtils.TRUE_FALSE_QUESTION_TRUE))
+            question = CITY_is_in_TERRITORY_EN_correct(qr);
+        else
+            question = CITY_is_in_TERRITORY_EN_incorrect(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setThemeId(super.themeData.getId());
+        data.setTopic(qr.cityNameForeign);
+        data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
+        data.setQuestion(question);
+        data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
         data.setVocabulary(new ArrayList<String>());

@@ -26,6 +26,7 @@ public abstract class Question_General extends AppCompatActivity {
     protected int attemptCt = 0;
     protected boolean disableChoiceAfterWrongAnswer;
     private BottomSheetBehavior behavior;
+    private NestedScrollView feedback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -49,6 +50,18 @@ public abstract class Question_General extends AppCompatActivity {
     protected abstract ViewGroup getParentViewForFeedback();
     //disable this view when the feedback pops up
     protected abstract ViewGroup getSiblingViewForFeedback();
+    //for example clearing a response, hiding the keyboard, etc.
+    //should be overridden if using
+    protected void doSomethingAfterResponse(){
+
+    }
+    //formatting may be different for certain question types, but this should be the base
+    protected String getFeedback(){
+        QuestionManager manager = QuestionManager.getInstance();
+        QuestionData data = manager.getQuestionData();
+        String answer = data.getAnswer();
+        return "正解: " + answer;
+    }
 
     private void setMaxNumberOfAttempts(){
         SharedPreferences sharedPreferences =
@@ -122,7 +135,7 @@ public abstract class Question_General extends AppCompatActivity {
 
     private void inflateFeedback(){
         ViewGroup parentView = getParentViewForFeedback();
-        NestedScrollView feedback = (NestedScrollView) getLayoutInflater()
+        feedback = (NestedScrollView) getLayoutInflater()
                 .inflate(R.layout.inflatable_question_feedback, parentView, false);
         behavior = BottomSheetBehavior.from(feedback);
         Button nextButton = (Button)feedback.findViewById(R.id.question_feedback_next);
@@ -142,12 +155,15 @@ public abstract class Question_General extends AppCompatActivity {
         //we don't want the user to be able to hide the view
         behavior.setHideable(false);
 
-        TextView feedbackTitle = (TextView)findViewById(R.id.question_feedback_title);
+        TextView feedbackTitle = (TextView)feedback.findViewById(R.id.question_feedback_title);
         if (correct){
             feedbackTitle.setText(R.string.question_feedback_correct);
             behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             feedbackTitle.setText(R.string.question_feedback_incorrect);
+            TextView feedbackDescription =
+                    (TextView)feedback.findViewById(R.id.question_feedback_description);
+            feedbackDescription.setText(getFeedback());
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
 
@@ -165,12 +181,6 @@ public abstract class Question_General extends AppCompatActivity {
                 disableBackground(child);
             }
         }
-    }
-
-    //for example clearing a response, hiding the keyboard, etc.
-    //should be overridden if using
-    protected void doSomethingAfterResponse(){
-
     }
 
 
