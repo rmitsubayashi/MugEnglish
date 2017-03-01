@@ -12,7 +12,9 @@ import com.example.ryomi.mugenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionAttempt;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -50,6 +52,11 @@ public class User_Profile_Hours_Studied extends Fragment {
         final String[] daysOfTheWeek = getDaysOfTheWeek();
         float[] lastWeekMinutes = lastWeekMinutes(records);
         BarChart chart = (BarChart)view.findViewById(R.id.user_profile_hours_studied_chart);
+        //format chart
+        Description description = new Description();
+        description.setText("");
+        chart.setDescription(description);
+        chart.setScaleEnabled(false);
         //set x-axis label
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
             @Override
@@ -62,6 +69,20 @@ public class User_Profile_Hours_Studied extends Fragment {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+
+        //format y-axis
+        YAxis leftAxis = chart.getAxisLeft();
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setDrawZeroLine(true);
+        leftAxis.setDrawLabels(false);
+        YAxis rightAxis = chart.getAxisRight();
+        rightAxis.setDrawAxisLine(true);
+        rightAxis.setDrawGridLines(false);
+        rightAxis.setDrawZeroLine(true);
+        rightAxis.setDrawLabels(true);
 
 
         List<BarEntry> entries = new ArrayList<>();
@@ -69,7 +90,7 @@ public class User_Profile_Hours_Studied extends Fragment {
             entries.add(new BarEntry(i,lastWeekMinutes[i]));
         }
 
-        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarDataSet set = new BarDataSet(entries, getResources().getString(R.string.user_profile_hours_studied_bar_label));
         BarData data = new BarData(set);
         chart.setData(data);
         chart.setFitBars(true); // make the x-axis fit exactly all bars

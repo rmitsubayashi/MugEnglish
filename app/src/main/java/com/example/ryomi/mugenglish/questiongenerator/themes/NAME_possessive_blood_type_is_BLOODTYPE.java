@@ -17,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
@@ -150,25 +151,6 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 	private String puzzlePiecesAnswer(QueryResult qr){
 		return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
 	}
-	
-	//multiple choice question asks what the blood type of that person is
-	//but not something like A, B, or AB
-	//because that's impossible...
-	private String multipleChoiceQuestion(QueryResult qr){
-		String possessiveName = GrammarRules.possessiveCaseOfSingularNoun(qr.personNameEN);
-		return "What is " + possessiveName + " blood type?";
-	}
-	
-	private String multipleChoiceAnswer(QueryResult qr){
-		return qr.bloodType;
-	}
-	
-	private List<String> multipleChoiceWrongAnswers(){
-		List<String> wrongAnswers = new ArrayList<>();
-		wrongAnswers.add("blood");
-		wrongAnswers.add("red");
-		return wrongAnswers;
-	}
 
 	private QuestionData createSentencePuzzleQuestion(QueryResult qr){
 		String question = this.formatSentenceForeign(qr);
@@ -187,11 +169,38 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 
 		return data;
 	}
+	
+	//multiple choice question asks what the blood type of that person is.
+	//is this too hard??
+	private String multipleChoiceQuestion(QueryResult qr){
+		String possessiveName = GrammarRules.possessiveCaseOfSingularNoun(qr.personNameEN);
+		String sentence =  possessiveName + " blood type is what?";
+		sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+		return sentence;
+	}
+	
+	private String multipleChoiceAnswer(QueryResult qr){
+		return qr.bloodType;
+	}
+	
+	private List<String> multipleChoiceWrongAnswers(QueryResult qr){
+		List<String> bloodTypes = new ArrayList<>();
+		bloodTypes.add("A");
+		bloodTypes.add("B");
+		bloodTypes.add("AB");
+		bloodTypes.add("O");
+		bloodTypes.remove(qr.bloodType);
+		Collections.shuffle(bloodTypes);
+		List<String> wrongAnswers = new ArrayList<>();
+		wrongAnswers.add(bloodTypes.get(0));
+		wrongAnswers.add(bloodTypes.get(1));
+		return wrongAnswers;
+	}
 
 	private QuestionData createMultipleChoiceQuestion(QueryResult qr){
 		String question = this.multipleChoiceQuestion(qr);
 		String answer = this.multipleChoiceAnswer(qr);
-		List<String> choices = this.multipleChoiceWrongAnswers();
+		List<String> choices = this.multipleChoiceWrongAnswers(qr);
 		//add correct answer to list of wrong answers
 		choices.add(answer);
 

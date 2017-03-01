@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.ryomi.mugenglish.db.datawrappers.ThemeCategory;
+import com.example.ryomi.mugenglish.tools.AddThemeCategory;
 import com.facebook.FacebookSdk;
 import com.google.firebase.auth.FirebaseAuth;
 

@@ -39,9 +39,8 @@ public class ThemeListAdapter
     public void populateViewHolder(ThemeListViewHolder holder, ThemeData data, int position) {
         final Context fContext = holder.itemView.getContext();
         final int[] blueShades = {
-                ContextCompat.getColor(fContext, R.color.lblue100),
-                ContextCompat.getColor(fContext, R.color.lblue500),
                 ContextCompat.getColor(fContext, R.color.lblue300),
+                ContextCompat.getColor(fContext, R.color.lblue500),
                 ContextCompat.getColor(fContext, R.color.lblue700)};
 
         holder.setText(data.getTitle());
@@ -64,8 +63,8 @@ public class ThemeListAdapter
             @Override
             public void onClick(View view) {
                 ThemeData data = ThemeListAdapter.this.getItem(fPosition);
-                String idString = data.getId();
-                int color = blueShades[fPosition%4];
+                int colorPos = fPosition % (blueShades.length);
+                int color = blueShades[colorPos];
                 Intent intent = new Intent(fContext, ThemeDetails.class);
                 intent.putExtra("themeData",data);
                 intent.putExtra("backgroundColor",color);

@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.db.FirebaseDBHeaders;
@@ -196,8 +197,9 @@ public class UserInterests extends AppCompatActivity {
         facebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(UserInterests.this, FacebookInterests.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(UserInterests.this, FacebookInterests.class);
+                startActivity(intent);*/
+                Toast.makeText(UserInterests.this,"近日公開",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -207,6 +209,14 @@ public class UserInterests extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(UserInterests.this, SearchInterests.class);
                 startActivity(intent);
+            }
+        });
+
+        FloatingActionButton twitterButton = (FloatingActionButton) findViewById(R.id.user_interests_fab_twitter);
+        twitterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(UserInterests.this,"近日公開",Toast.LENGTH_SHORT).show();
             }
         });
 

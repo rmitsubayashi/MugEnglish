@@ -8,22 +8,21 @@ import com.google.firebase.database.FirebaseDatabase;
 public class AddThemeCategory {
     public static void run(){
 
-        addCategory("Copula","1.1.1");
-        addCategory("Present Progressive","1.2.1");
-        addCategory("Prepositions","1.2.2");
-        addCategory("Future","1.3.1");
-        addCategory("Possessive","1.3.2");
-        addCategory("Past Regular","1.4.1");
-        addCategory("Present + Past Auxiliary","1.4.2");
-        addCategory("Auxiliary Questions","1.5.1");
-        addCategory("Intro to WH Questions","1.5.2");
-        addCategory("Copula Questions","1.6.1");
-        addCategory("Past Irregular","1.7.1");
-        addCategory("Present Progressive Irregular","1.7.2");
-        addCategory("Present Verbs","1.8.1");
-        addCategory("Articles","1.8.2");
-        addCategory("Adjectives","1.9.1");
-        addCategory("Adverb","1.9.2");
+        addCategory("Be動詞","1.1.1");
+        addCategory("現在進行形","1.2.1");
+        addCategory("前置詞","1.2.2");
+        addCategory("未来系","1.3.1");
+        addCategory("所有格","1.3.2");
+        addCategory("過去形","1.4.1");
+        addCategory("助動詞","1.4.2");
+        addCategory("疑問文（助動詞）","1.5.1");
+        addCategory("疑問文（疑問詞）","1.5.2");
+        addCategory("疑問文（Be動詞）","1.6.1");
+        addCategory("過去形（不規則）","1.7.1");
+        addCategory("現在形","1.8.1");
+        addCategory("冠詞","1.8.2");
+        addCategory("形容詞","1.9.1");
+        addCategory("副詞","1.9.2");
     }
 
 
