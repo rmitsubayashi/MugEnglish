@@ -6,13 +6,11 @@ import android.util.Log;
 import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataAPIGetConnector;
-import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.mugenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeInstanceData;
 import com.example.ryomi.mugenglish.db.datawrappers.WikiDataEntryData;
-import com.example.ryomi.mugenglish.questiongenerator.themes.QuestionDataWrapper;
 import com.example.ryomi.mugenglish.userinterestcontrols.EntityGetter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -23,8 +21,6 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +41,7 @@ public abstract class Theme {
 	//directly as the ID instead of having to query again to get the question data
 	private List<List<String>> questionSets = new ArrayList<>();
 	//これが出題される問題のトピック
-	protected Document documentOfTopics = null;
+	//protected Document documentOfTopics = null;
 	//interests to search
 	private final Set<WikiDataEntryData> userInterests = new HashSet<>();
 	//makes sure we are not giving duplicate question
@@ -60,15 +56,6 @@ public abstract class Theme {
 	private DataSnapshot allTopics = null;
 	//for getting wikiData entries from wikiData IDs in topics
 	private EntityGetter getter;
-
-	/*
-	//MAXIMUM number of theme topics we need.
-	//not directly related to the number of topics since one topic
-	//may create more than one question
-	protected int themeTopicCount;
-	we don't want this now since with the ordering of fetching questions that we have,
-	if we limit the query results, the rest of the results will never be called.
-	*/
 
 	private EndpointConnectorReturnsXML connector = null;
 	
@@ -260,8 +247,7 @@ public abstract class Theme {
 			try {
 				Set<WikiDataEntryData> interests = params[0];
 				populateResults(interests);
-				if (documentOfTopics != null)
-					processResultsIntoClassWrappers();
+
 				//from here the methods are not (might not be) synchronous
 				//more methods embedded in this.
 				//create questions
@@ -286,16 +272,18 @@ public abstract class Theme {
 			String entityID = interest.getWikiDataID();
 			String query = addEntityToQuery(entityID);
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
-			this.addResultsToMainDocument(resultDOM);
+			this.processResultsIntoClassWrappers(resultDOM);
 			//there can be more results than we need
-			if (WikiDataSPARQLConnector.countResults(documentOfTopics) >= questionSetsLeftToPopulate){
+			if (getQueryResultCt() >= questionSetsLeftToPopulate){
 				break;
 			}
 		}
-
 	}
+
+	protected abstract int getQueryResultCt();
+
 	//ドキュメントのデータを、わかりやすいクラスに入れる
-	protected abstract void processResultsIntoClassWrappers();
+	protected abstract void processResultsIntoClassWrappers(Document document);
 	//save topic data
 	protected abstract void saveResultTopics();
 
@@ -535,6 +523,7 @@ public abstract class Theme {
 		//end of flow
 	}
 
+	/*
 	//when we populate results, we want to combine each DOM for each query
 	// into one single DOM
 	private void addResultsToMainDocument(Document newDocument){
@@ -564,7 +553,7 @@ public abstract class Theme {
 			//dotResultsCount ++;
 		}
 		
-	}
+	}*/
 
 	//ひとつのクエリーで複数のエンティティを入れる必要があるかも？？
 	private String addEntityToQuery(String entity){

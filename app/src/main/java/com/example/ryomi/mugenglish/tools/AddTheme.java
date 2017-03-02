@@ -40,6 +40,7 @@ public class AddTheme {
         run("国、県、市町村","1.2.2","desc","city");
         run("男性だってとっくに知ってるわ","1.1.1","desc","person");
         run("こんなに歳をとってるんだ","1.3.1","desc","person");
+        AddTheme.run("緊急時には110番","1.4.2","desc","health");
 
     }
 }

@@ -1,4 +1,4 @@
-package com.example.ryomi.mugenglish.questiongenerator.themes;
+package com.example.ryomi.mugenglish.questiongenerator;
 
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 

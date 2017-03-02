@@ -11,6 +11,7 @@ import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.mugenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.mugenglish.questiongenerator.QGUtils;
+import com.example.ryomi.mugenglish.questiongenerator.QuestionDataWrapper;
 import com.example.ryomi.mugenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.mugenglish.questiongenerator.Theme;
 
@@ -84,6 +85,7 @@ public class NAME_will_be_AGE_in_X_months extends Theme {
 
     }
 
+    @Override
     protected String getSPARQLQuery() {
         //find person name and blood type
         return "SELECT ?" + personNamePH + " ?" + personNameForeignPH + " ?" + personNameENPH +
@@ -107,8 +109,8 @@ public class NAME_will_be_AGE_in_X_months extends Theme {
 
     }
 
-    protected void processResultsIntoClassWrappers() {
-        Document document = super.documentOfTopics;
+    @Override
+    protected void processResultsIntoClassWrappers(Document document) {
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
         );
@@ -127,13 +129,16 @@ public class NAME_will_be_AGE_in_X_months extends Theme {
     }
 
     @Override
+    protected int getQueryResultCt(){ return queryResults.size(); }
+
+    @Override
     protected void saveResultTopics() {
         for (QueryResult qr : queryResults) {
             topics.add(qr.personNameForeign);
         }
     }
 
-
+    @Override
     protected void createQuestionsFromResults() {
         for (QueryResult qr : queryResults) {
             List<QuestionData> questionSet = new ArrayList<>();

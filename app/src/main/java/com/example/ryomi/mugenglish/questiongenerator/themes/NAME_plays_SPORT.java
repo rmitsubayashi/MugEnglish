@@ -9,6 +9,7 @@ import com.example.ryomi.mugenglish.db.database2classmappings.QuestionTypeMappin
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.mugenglish.questiongenerator.QGUtils;
+import com.example.ryomi.mugenglish.questiongenerator.QuestionDataWrapper;
 import com.example.ryomi.mugenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.mugenglish.questiongenerator.Theme;
 import com.example.ryomi.mugenglish.tools.SportsHelper;
@@ -90,8 +91,7 @@ public class NAME_plays_SPORT extends Theme{
 	}
 
 	@Override
-	protected void processResultsIntoClassWrappers() {
-		Document document = super.documentOfTopics;
+	protected void processResultsIntoClassWrappers(Document document) {
 		NodeList allResults = document.getElementsByTagName(
 				WikiDataSPARQLConnector.RESULT_TAG
 		);
@@ -116,6 +116,9 @@ public class NAME_plays_SPORT extends Theme{
 			
 		}
 	}
+
+	@Override
+	protected int getQueryResultCt(){ return queryResults.size(); }
 
 	@Override
 	protected void saveResultTopics(){

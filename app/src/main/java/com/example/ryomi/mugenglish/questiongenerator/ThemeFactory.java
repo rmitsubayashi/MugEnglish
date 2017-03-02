@@ -7,6 +7,7 @@ import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.mugenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.mugenglish.questiongenerator.themes.CITY_is_in_TERRITORY;
+import com.example.ryomi.mugenglish.questiongenerator.themes.I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_DEMONYM;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_GENDER;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_OCCUPATION;
@@ -59,6 +60,10 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.NAME_will_be_AGE_in_X_months :
                 return new NAME_will_be_AGE_in_X_months(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.I_should_call_EMERGENCY_PHONE_NUMBER :
+                return new I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:

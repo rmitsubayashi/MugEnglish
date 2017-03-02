@@ -1,5 +1,8 @@
 package com.example.ryomi.mugenglish.questiongenerator;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +26,52 @@ public class GrammarRules {
 		}
 		
 		return schoolName;
+	}
+
+	//a lot of exceptions
+	public static String definiteArticleBeforeCountry(String countryName){
+		//check if it already starts with the
+		if (countryName.substring(0,4).equals("The ") || countryName.substring(0,4).equals("the ")){
+			return countryName;
+		}
+
+		//on wikidata it's already the grenadines
+		if (countryName.equals("Saint Vincent and Grenadines")){
+			return "Saint Vincent and the Grenadines";
+		}
+
+		if (countryName.equals("Bahamas")){
+			//capital T
+			return "The Bahamas";
+		}
+
+		if (countryName.equals("Gambia")){
+			//also capital T
+			return "The Gambia";
+		}
+
+		Set<String> pluralExceptions = new HashSet<>();
+		pluralExceptions.add("Saint Kitts and Nevis");
+		pluralExceptions.add("Belarus");
+		pluralExceptions.add("Laos");
+		pluralExceptions.add("Honduras");
+		pluralExceptions.add("Cyprus");
+		pluralExceptions.add("Mauritius");
+		pluralExceptions.add("Barbados");
+
+		if (countryName.charAt(countryName.length()-1) == 's' && !pluralExceptions.contains(countryName)){
+			if (countryName.contains(" of ")){
+				//we have an exception with Seychelles and the Bahamas but it's not too relevant
+				countryName = countryName.replace(" of ", " of the ");
+			}
+			return "the " + countryName;
+		}
+
+		if (countryName.contains(" of ")){
+			return "the " + countryName;
+		}
+
+		return countryName;
 	}
 	
 	public static String possessiveCaseOfSingularNoun(String singularNoun){
@@ -110,5 +159,24 @@ public class GrammarRules {
 		}
 
 		return "a";
+	}
+
+	public static String commasInASeries(List<String> series, String conjunction){
+		if (series.size() == 0){
+			return "";
+		}
+		else if (series.size() == 1){
+			return series.get(0);
+		} else if (series.size() == 2){
+			return series.get(0) + " " + conjunction + " " + series.get(1);
+		} else {
+			String result = "";
+			for (int i=0; i<series.size()-2; i++){
+				result += series.get(i) + ", ";
+			}
+			result += conjunction + " " + series.get(series.size()-1);
+
+			return result;
+		}
 	}
 }

@@ -9,6 +9,7 @@ import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.mugenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.mugenglish.questiongenerator.QGUtils;
+import com.example.ryomi.mugenglish.questiongenerator.QuestionDataWrapper;
 import com.example.ryomi.mugenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.mugenglish.questiongenerator.Theme;
 
@@ -19,7 +20,6 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,6 +93,7 @@ public class NAME_is_DEMONYM extends Theme{
 
     }
 
+    @Override
     protected String getSPARQLQuery(){
         return "SELECT ?" + personNamePH + " ?" + personNameForeignPH + " ?" + personNameENPH +
                 " ?" + demonymENPH + " ?" + countryForeignPH + " " +
@@ -116,8 +117,8 @@ public class NAME_is_DEMONYM extends Theme{
 
     }
 
-    protected void processResultsIntoClassWrappers() {
-        Document document = super.documentOfTopics;
+    @Override
+    protected void processResultsIntoClassWrappers(Document document) {
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
         );
@@ -137,13 +138,16 @@ public class NAME_is_DEMONYM extends Theme{
     }
 
     @Override
+    protected int getQueryResultCt(){ return queryResults.size(); }
+
+    @Override
     protected void saveResultTopics(){
         for (QueryResult qr : queryResults){
             topics.add(qr.personNameForeign);
         }
     }
 
-
+    @Override
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<QuestionData> questionSet = new ArrayList<>();

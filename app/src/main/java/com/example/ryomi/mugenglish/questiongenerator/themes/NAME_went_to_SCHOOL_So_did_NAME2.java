@@ -57,7 +57,8 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 		super.backupIDsOfTopics.add("Q37876");//Natalie Portman
 		super.backupIDsOfTopics.add("Q175535");//Matt Damon*/
 	}
-	
+
+	@Override
 	protected String getSPARQLQuery(){
 		return
 				"SELECT ?" + personPH + " ?" + personENPH + " ?" + personForeignPH + 
@@ -86,9 +87,8 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 				" } ";
 	}
 
-	
-	protected void processResultsIntoClassWrappers() {
-		Document document = super.documentOfTopics;
+	@Override
+	protected void processResultsIntoClassWrappers(Document document) {
 		NodeList allResults = document.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
 		int resultLength = allResults.getLength();
 		for (int i=0; i<resultLength; i++){
@@ -108,12 +108,16 @@ public class NAME_went_to_SCHOOL_So_did_NAME2 extends Theme{
 	}
 
 	@Override
+	protected int getQueryResultCt(){ return queryResults.size(); }
+
+	@Override
 	protected void saveResultTopics(){
 		for (QueryResult qr : queryResults){
 			topics.add(qr.personForeign);
 		}
 	}
-	
+
+	@Override
 	protected void createQuestionsFromResults(){
 		for (QueryResult qr : queryResults){
 			String statement = this.NAME_went_to_SCHOOL_So_did_NAME2_EN_correct(qr);

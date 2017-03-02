@@ -9,6 +9,7 @@ import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.mugenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.mugenglish.questiongenerator.QGUtils;
+import com.example.ryomi.mugenglish.questiongenerator.QuestionDataWrapper;
 import com.example.ryomi.mugenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.mugenglish.questiongenerator.Theme;
 
@@ -58,6 +59,7 @@ public class CITY_is_in_TERRITORY extends Theme{
 
     }
 
+    @Override
     protected String getSPARQLQuery(){
         //find city name
         return "SELECT DISTINCT ?" + cityNamePH + " ?" + cityNameForeignPH + " ?" + cityNameENPH + //Kyoto returns 2 results? so use distinct
@@ -80,8 +82,8 @@ public class CITY_is_in_TERRITORY extends Theme{
 
     }
 
-    protected void processResultsIntoClassWrappers() {
-        Document document = super.documentOfTopics;
+    @Override
+    protected void processResultsIntoClassWrappers(Document document) {
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
         );
@@ -101,13 +103,16 @@ public class CITY_is_in_TERRITORY extends Theme{
     }
 
     @Override
+    protected int getQueryResultCt(){ return queryResults.size(); }
+
+    @Override
     protected void saveResultTopics(){
         for (QueryResult qr : queryResults){
             topics.add(qr.cityNameForeign);
         }
     }
 
-
+    @Override
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<QuestionData> questionSet = new ArrayList<>();

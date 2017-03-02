@@ -157,6 +157,7 @@
     <string name="user_interests_list_item_delete">消去</string>
 
     <!--user profile-->
+    <string name="user_profile_app_bar_title">データ</string>
     <string name="user_profile_tab_hours_studied">勉強時間</string>
     <string name="user_profile_tab_report_card">成績</string>
     <string name="user_profile_hours_studied_today">今日</string>

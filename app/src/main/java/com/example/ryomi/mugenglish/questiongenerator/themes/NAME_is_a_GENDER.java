@@ -9,6 +9,7 @@ import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
 import com.example.ryomi.mugenglish.questiongenerator.GrammarRules;
 import com.example.ryomi.mugenglish.questiongenerator.QGUtils;
+import com.example.ryomi.mugenglish.questiongenerator.QuestionDataWrapper;
 import com.example.ryomi.mugenglish.questiongenerator.QuestionUtils;
 import com.example.ryomi.mugenglish.questiongenerator.Theme;
 
@@ -69,6 +70,7 @@ public class NAME_is_a_GENDER extends Theme{
 
     }
 
+    @Override
     protected String getSPARQLQuery(){
         //find person name
         return "SELECT DISTINCT ?" + personNamePH + " ?" + personNameForeignPH + " ?" + personNameENPH + //Kyoto returns 2 results? so use distinct
@@ -89,8 +91,8 @@ public class NAME_is_a_GENDER extends Theme{
 
     }
 
-    protected void processResultsIntoClassWrappers() {
-        Document document = super.documentOfTopics;
+    @Override
+    protected void processResultsIntoClassWrappers(Document document) {
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
         );
@@ -108,6 +110,9 @@ public class NAME_is_a_GENDER extends Theme{
             queryResults.add(qr);
         }
     }
+
+    @Override
+    protected int getQueryResultCt(){ return queryResults.size(); }
 
     @Override
     protected void saveResultTopics(){
