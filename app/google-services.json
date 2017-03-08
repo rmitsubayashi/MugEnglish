@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:837341620782:android:2286a4d204921f93",
         "android_client_info": {
-          "package_name": "com.example.ryomi.mugenglish"
+          "package_name": "com.mugenglish"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "837341620782-70vskuckqf6k8k4nb6j5oms9gd4p243g.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.ryomi.myapplication",
+            "package_name": "com.mugenglish",
             "certificate_hash": "6A931C49D0E134C4A81DB0F07A0430C9F31A158D"
           }
         },

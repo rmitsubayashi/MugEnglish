@@ -48,9 +48,11 @@
             android:parentActivityName=".gui.ThemeDetails"
             android:windowSoftInputMode="stateVisible">
         </activity>
-        <!--not sure if the theme list should be the parent,
+        <!--
+        not sure if the theme list should be the parent,
         but right now it is since I can't figure out how to press up
-        to go to the theme details page-->
+        to go to the theme details page
+        -->
         <activity
             android:name=".gui.Results"
             android:label="@string/results_app_bar_title"
@@ -58,7 +60,8 @@
         </activity>
 
         <!-- all activities from the parent activity user profile -->
-        <activity android:name=".gui.UserProfile"
+        <activity
+            android:name=".gui.UserProfile"
             android:label="@string/user_profile_app_bar_title"/>
 
         <!-- all activities from the parent activity user interests -->
@@ -97,6 +100,11 @@
             android:exported="false"/>
 
         <activity android:name=".gui.Question_FillInBlank_MultipleChoice">
+        </activity>
+        <activity
+            android:name=".gui.Onboarding"
+            android:label="@string/title_activity_onboarding"
+            android:theme="@style/AppTheme">
         </activity>
     </application>
 

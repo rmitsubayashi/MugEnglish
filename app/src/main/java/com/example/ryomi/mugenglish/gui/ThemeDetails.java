@@ -28,7 +28,6 @@ import com.example.ryomi.mugenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.mugenglish.gui.widgets.ThemeDetailsAdapter;
 import com.example.ryomi.mugenglish.questiongenerator.Theme;
 import com.example.ryomi.mugenglish.questiongenerator.ThemeFactory;
-import com.example.ryomi.mugenglish.questionmanager.QuestionManager;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;

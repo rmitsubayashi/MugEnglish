@@ -111,6 +111,27 @@
     <string name="preferences_category_account_key">preferences:account</string>
     <string name="preferences_account_logout_label">ログアウト</string>
     <string name="preferences_account_logout_key">preferences:logout</string>
+    <string name="preferences_first_time_key">preferences:first time</string>
+
+    <!--onboarding pages-->
+    <string name="onboarding_skip">スキップ</string>
+    <string name="onboarding_next">次へ</string>
+    <string name="onboarding_finish">終了</string>
+    <string name="onboarding_introduction1_title">ようこそ！</string>
+    <string name="onboarding_introduction1_who_are_you">君だれ？</string>
+    <string name="onboarding_introduction1_introduction">Hello! My name is Casey!</string>
+    <string name="onboarding_introduction2_dialogue">Caseyなんて知らん！</string>
+    <string name="onboarding_introduction2_instructions">それよりウィキペディアにのってそうな有名人に案内してもらおう！</string>
+    <!--replace placeholder with person-->
+    <string name="onboarding_introduction3_introduction">Hello! My name is %1$s!</string>
+    <!--replace placeholder with gender-->
+    <string name="onboarding_introduction3_explanation">知ってる人だ！\n
+        しかも%1$sの画像だ！</string>
+    <string name="onboarding_introduction3_great">すごい！</string>
+    <string name="onboarding_introduction4_title">それがMugEnglish！</string>
+    <string name="onboarding_introduction4_description">好きな人や場所、本や映画で英語を楽しく勉強しよう！</string>
+    <string name="onboarding_introduction4_start">始める！</string>
+    <string name="onboarding_choose_interest_title">好みを選ぼう！</string>
 
     <!--Theme list page -->
     <string name="theme_list_app_bar_title">テーマを選択</string>
@@ -181,5 +202,8 @@
     <string name="question_fill_in_blank_input_hint">答え</string>
     <string name="question_fill_in_blank_multiple_choice_instructions">空欄に入る解答を選択してください</string>
     <string name="question_multiple_choice_instructions">正しい解答を選択してください</string>
+    <string name="title_activity_onboarding">Onboarding</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>

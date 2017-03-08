@@ -1,7 +1,6 @@
 package com.example.ryomi.mugenglish.gui.widgets;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +11,7 @@ import android.widget.TextView;
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.db.datawrappers.WikiDataEntryData;
 import com.example.ryomi.mugenglish.userinterestcontrols.PronunciationSearcher;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.ryomi.mugenglish.userinterestcontrols.UserInterestAdder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,9 +22,10 @@ import static android.view.View.GONE;
 
 public class SearchResultsAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
-    private PronunciationSearcher pronunciationSearcher = new PronunciationSearcher();
     private List<WikiDataEntryData> results = new ArrayList<>();
     private Set<String> userInterestIDs;
+    private UserInterestAdder conn = new UserInterestAdder();
+
 
     private static class ViewHolder {
         TextView name;
@@ -119,54 +117,8 @@ public class SearchResultsAdapter extends BaseAdapter {
         //disable button first for better ux (less lag).
         //then search for pronunciation
         //and add the wikiData entry
-        try {
-            PronunciationSearcherThread conn = new PronunciationSearcherThread();
-            conn.execute(dataToAdd);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    private class PronunciationSearcherThread extends AsyncTask<WikiDataEntryData, Integer, String>{
-        private WikiDataEntryData dataToAdd;
+        conn.execute(dataToAdd);
 
-        @Override
-        protected String doInBackground(WikiDataEntryData... dataList){
-            dataToAdd = dataList[0];
-            String pronunciation;
-            try {
-                pronunciation = pronunciationSearcher.getPronunciationFromWikiBase(dataToAdd.getWikiDataID());
-            } catch (Exception e){
-                e.printStackTrace();
-                pronunciation =  pronunciationSearcher.zenkakuKatakanaToZenkakuHiragana(dataToAdd.getLabel());
-            }
-
-            if (pronunciationSearcher.containsKanji(pronunciation)){
-                try {
-                    return pronunciationSearcher.getPronunciationFromMecap(pronunciation);
-                } catch (Exception e){
-                    e.printStackTrace();
-                    return pronunciation;
-                }
-            } else {
-                return pronunciation;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String pronunciation){
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            if (auth.getCurrentUser() != null) {
-                FirebaseDatabase db = FirebaseDatabase.getInstance();
-                String userID = auth.getCurrentUser().getUid();
-                DatabaseReference ref = db.getReference("userInterests/" + userID + "/" + dataToAdd.getWikiDataID());
-                //just to make sure.
-                //handled when displaying the view
-                if (ref != null) {
-                    dataToAdd.setPronunciation(pronunciation);
-                    ref.setValue(dataToAdd);
-                }
-            }
-        }
     }
 
 }

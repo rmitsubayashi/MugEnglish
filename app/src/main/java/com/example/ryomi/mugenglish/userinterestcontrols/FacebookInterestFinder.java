@@ -11,9 +11,17 @@ import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataAPISearchConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
+import com.example.ryomi.mugenglish.db.FirebaseDBHeaders;
 import com.example.ryomi.mugenglish.db.datawrappers.WikiDataEntryData;
 import com.example.ryomi.mugenglish.questiongenerator.QGUtils;
 import com.facebook.AccessToken;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -65,9 +73,12 @@ public class FacebookInterestFinder extends IntentService{
 
     @Override
     protected void onHandleIntent(Intent workIntent){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null)
+            return;
         int depth = workIntent.getIntExtra("depth",SHALLOW_SEARCH);
         try {
             Set<WikiDataEntryData> result = findUserInterests(depth);
+            addUserInterests(result);
         } catch (Exception e){
             e.printStackTrace();
         } finally {
@@ -106,6 +117,28 @@ public class FacebookInterestFinder extends IntentService{
         }
 
         return results;
+    }
+
+    private void addUserInterests(final Set<WikiDataEntryData> interests){
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.USER_INTERESTS + "/" + userID);
+        ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                for (WikiDataEntryData interest : interests) {
+                    //add
+                    UserInterestAdder conn = new UserInterestAdder();
+                    conn.execute(interest);
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
     }
 
     //for loading screen

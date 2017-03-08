@@ -20,6 +20,7 @@ public class EntitySearcher {
 	* Japanese description
 	* */
 	private EndpointConnectorReturnsXML searchConnector;
+	public static int LIMIT = 50;
 
 	public EntitySearcher(WikiDataAPISearchConnector searchConnector){
 		this.searchConnector = searchConnector;

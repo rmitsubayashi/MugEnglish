@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +19,6 @@ import com.example.ryomi.mugenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.mugenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.mugenglish.gui.widgets.UserProfilePagerAdapter;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.database.DataSnapshot;
@@ -118,6 +116,8 @@ public class UserProfile extends AppCompatActivity implements Preferences.Logout
     }
 
     private void populateUserData(){
+        if (FirebaseAuth.getInstance().getCurrentUser() == null)
+            return;
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         ref = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.INSTANCE_RECORDS + "/" + userID
