@@ -6,6 +6,7 @@ import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.mugenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.mugenglish.questiongenerator.themes.AUTHOR_wrote_BOOK;
 import com.example.ryomi.mugenglish.questiongenerator.themes.BOOK_was_published_by_PUBLISHER;
 import com.example.ryomi.mugenglish.questiongenerator.themes.CITY_is_in_TERRITORY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY;
@@ -72,8 +73,12 @@ public class ThemeFactory {
                 return new The_JIS_area_code_of_PLACE_is_NUMBER(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
-            case ThemeMappings.BOOK_was_published_by_PUBLIShER :
+            case ThemeMappings.BOOK_was_published_by_PUBLISHER :
                 return new BOOK_was_published_by_PUBLISHER(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.AUTHOR_wrote_BOOK :
+                return new AUTHOR_wrote_BOOK(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:

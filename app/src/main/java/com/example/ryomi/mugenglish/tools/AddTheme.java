@@ -43,5 +43,6 @@ public class AddTheme {
         run("緊急時には110番","1.4.2","desc","health");
         run("JIS地名コードって何?","1.2.1","desc","city");
         run("あの本の出版社","1.4.2","desc","book");
+        AddTheme.run("読書三到！","1.4.1","desc","book");
     }
 }
