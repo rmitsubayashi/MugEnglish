@@ -42,6 +42,6 @@ public class AddTheme {
         run("こんなに歳をとってるんだ","1.3.1","desc","person");
         run("緊急時には110番","1.4.2","desc","health");
         run("JIS地名コードって何?","1.2.1","desc","city");
-
+        run("あの本の出版社","1.4.2","desc","book");
     }
 }

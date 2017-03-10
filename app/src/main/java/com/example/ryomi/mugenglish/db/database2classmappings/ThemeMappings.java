@@ -13,5 +13,6 @@ public class ThemeMappings {
 	static public final String NAME_will_be_AGE_in_X_months = "-Kd_xCtqUsvhwg4_bVc5";
 	static public final String I_should_call_EMERGENCY_PHONE_NUMBER = "-KeC_9M0yp-9ANBgppr9";
 	static public final String The_JIS_area_code_of_PLACE_is_NUMBER = "-KernfT7mOfr1zNVuDyQ";
+	static public final String BOOK_was_published_by_PUBLIShER = "-Kes8ljZaU2y5-mkV_Yg";
 	
 }

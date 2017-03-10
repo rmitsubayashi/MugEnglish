@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.db.datawrappers.WikiDataEntryData;
-import com.example.ryomi.mugenglish.userinterestcontrols.PronunciationSearcher;
 import com.example.ryomi.mugenglish.userinterestcontrols.UserInterestAdder;
 
 import java.util.ArrayList;

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataAPISearchConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.mugenglish.db.datawrappers.WikiDataEntryData;
-import com.example.ryomi.mugenglish.gui.widgets.GUIUtils;
 import com.example.ryomi.mugenglish.gui.widgets.OnboardingIntroductionBundle;
 import com.example.ryomi.mugenglish.gui.widgets.OnboardingNextListener;
 import com.example.ryomi.mugenglish.userinterestcontrols.EntitySearcher;
@@ -33,7 +31,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

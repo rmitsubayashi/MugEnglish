@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.tools.AddTheme;
-import com.example.ryomi.mugenglish.tools.AddThemeCategory;
 import com.facebook.FacebookSdk;
 import com.google.firebase.auth.FirebaseAuth;
 

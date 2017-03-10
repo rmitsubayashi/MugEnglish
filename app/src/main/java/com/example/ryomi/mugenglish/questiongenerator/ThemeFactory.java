@@ -6,6 +6,7 @@ import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
 import com.example.ryomi.mugenglish.db.database2classmappings.ThemeMappings;
 import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.mugenglish.questiongenerator.themes.BOOK_was_published_by_PUBLISHER;
 import com.example.ryomi.mugenglish.questiongenerator.themes.CITY_is_in_TERRITORY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_DEMONYM;
@@ -69,6 +70,10 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.The_JIS_area_code_of_PLACE_is_NUMBER :
                 return new The_JIS_area_code_of_PLACE_is_NUMBER(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.BOOK_was_published_by_PUBLIShER :
+                return new BOOK_was_published_by_PUBLISHER(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:
