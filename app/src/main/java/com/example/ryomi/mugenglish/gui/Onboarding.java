@@ -2,10 +2,13 @@ package com.example.ryomi.mugenglish.gui;
 
 import android.animation.ArgbEvaluator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -46,9 +49,11 @@ public class Onboarding extends AppCompatActivity implements OnboardingNextListe
         ImageView indicator1 = (ImageView) findViewById(R.id.onboarding_indicator1);
         ImageView indicator2 = (ImageView) findViewById(R.id.onboarding_indicator2);
         ImageView indicator3 = (ImageView) findViewById(R.id.onboarding_indicator3);
+        ImageView indicator4 = (ImageView) findViewById(R.id.onboarding_indicator4);
         indicators.add(indicator1);
         indicators.add(indicator2);
         indicators.add(indicator3);
+        indicators.add(indicator4);
 
         setActionListeners();
 
@@ -111,17 +116,27 @@ public class Onboarding extends AppCompatActivity implements OnboardingNextListe
     public void nextScreen(){
         //if this is the last page, go on to the theme list page
         if (pageIndex == maxPageIndex){
-            Intent intent = new Intent(Onboarding.this, ThemeList.class);
-            startActivity(intent);
-            //set preference
-                /*SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(
-                        Onboarding.this.getApplicationContext());
-                SharedPreferences.Editor editor = preference.edit();
-                editor.putBoolean(getString(R.string.preferences_first_time_key), false);*/
-            Onboarding.this.finish();
+            nextPage();
             return;
         }
 
+        nextFragment();
+    }
+
+    //same but with an attachment and
+    //destroy next view so we can re-instantate it with the new bundle
+    @Override
+    public void nextScreen(Bundle bundle){
+        //if this is the last page, go on to the theme list page
+        if (pageIndex == maxPageIndex){
+            nextPage();
+            return;
+        }
+        adapter.updateBundle(bundle);
+        nextFragment();
+    }
+
+    private void nextFragment(){
         pageIndex = pageIndex + 1;
         adapter.updateMaxPageCount(pageIndex);
         //transition is too fast so slow it down
@@ -132,32 +147,16 @@ public class Onboarding extends AppCompatActivity implements OnboardingNextListe
         viewPager.setScrollDurationFactor(1);
     }
 
-    //same but with an attachment and
-    //destroy next view so we can re-instantate it with the new bundle
-    @Override
-    public void nextScreen(Bundle bundle){
-        //if this is the last page, go on to the theme list page
-        if (pageIndex == maxPageIndex){
-            Intent intent = new Intent(Onboarding.this, ThemeList.class);
-            startActivity(intent);
-            //set preference
-                /*SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(
-                        Onboarding.this.getApplicationContext());
-                SharedPreferences.Editor editor = preference.edit();
-                editor.putBoolean(getString(R.string.preferences_first_time_key), false);*/
-            Onboarding.this.finish();
-            return;
-        }
-        adapter.updateBundle(bundle);
-        pageIndex = pageIndex + 1;
-        adapter.updateMaxPageCount(pageIndex);
-        //transition is too fast so slow it down
-        viewPager.setScrollDurationFactor(5);
-        adapter.instantiateItem(viewPager, pageIndex);
-        viewPager.setCurrentItem(pageIndex);
-        //this also affects the speed of manual swipe (which is normal)
-        //so set it back to default
-        viewPager.setScrollDurationFactor(1);
+    private void nextPage(){
+        //set preference
+        SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(
+                Onboarding.this.getApplicationContext());
+        SharedPreferences.Editor editor = preference.edit();
+        editor.putBoolean(getResources().getString(R.string.preferences_first_time_key), false);
+        editor.apply();
+        Intent intent = new Intent(Onboarding.this, ThemeList.class);
+        startActivity(intent);
+        Onboarding.this.finish();
     }
 
 }

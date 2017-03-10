@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.ryomi.mugenglish.R;
+import com.example.ryomi.mugenglish.tools.AddTheme;
+import com.example.ryomi.mugenglish.tools.AddThemeCategory;
 import com.facebook.FacebookSdk;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -22,9 +24,10 @@ public class Splash extends AppCompatActivity{
         }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        boolean firstInstance = preferences.getBoolean(getString(R.string.preferences_first_time_key), true);
+        //if this is the user's first time opening the application, send him through a tutorial
+        boolean firstTime = preferences.getBoolean(getResources().getString(R.string.preferences_first_time_key), true);
         Intent intent;
-        if (firstInstance){
+        if (firstTime){
             intent = new Intent(this, Onboarding.class);
         } else {
             intent = new Intent(this, ThemeList.class);

@@ -24,8 +24,6 @@ public class SearchResultsAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
     private List<WikiDataEntryData> results = new ArrayList<>();
     private Set<String> userInterestIDs;
-    private UserInterestAdder conn = new UserInterestAdder();
-
 
     private static class ViewHolder {
         TextView name;
@@ -117,6 +115,7 @@ public class SearchResultsAdapter extends BaseAdapter {
         //disable button first for better ux (less lag).
         //then search for pronunciation
         //and add the wikiData entry
+        UserInterestAdder conn = new UserInterestAdder();
         conn.execute(dataToAdd);
 
     }

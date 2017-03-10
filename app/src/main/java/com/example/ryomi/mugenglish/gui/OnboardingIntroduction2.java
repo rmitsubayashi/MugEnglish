@@ -199,9 +199,7 @@ public class OnboardingIntroduction2 extends Fragment{
                         );
                         Node head = allResults.item(0);
                         String genderEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "genderLabel");
-                        Log.d(getClass().toString(), "gender is " + genderEN);
                         String englishNameLabel = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
-                        Log.d(getClass().toString(), "name is " + englishNameLabel);
                         OnboardingIntroductionBundle OnboardingIntroductionBundle = new OnboardingIntroductionBundle(data, genderEN, englishNameLabel);
                         result.add(OnboardingIntroductionBundle);
                     }
