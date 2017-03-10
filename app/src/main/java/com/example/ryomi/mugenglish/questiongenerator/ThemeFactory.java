@@ -17,6 +17,7 @@ import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_possessive_blo
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_So_did_NAME2;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_from_START_to_END;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_will_be_AGE_in_X_months;
+import com.example.ryomi.mugenglish.questiongenerator.themes.The_JIS_area_code_of_PLACE_is_NUMBER;
 
 public class ThemeFactory {
     public static Theme createTheme(ThemeData themeData){
@@ -64,6 +65,10 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.I_should_call_EMERGENCY_PHONE_NUMBER :
                 return new I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.The_JIS_area_code_of_PLACE_is_NUMBER :
+                return new The_JIS_area_code_of_PLACE_is_NUMBER(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:
