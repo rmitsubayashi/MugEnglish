@@ -1,6 +1,6 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -65,7 +65,7 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 		}
 	}
 	
-	public NAME_went_to_SCHOOL_from_START_to_END(EndpointConnectorReturnsXML connector, ThemeData data){
+	public NAME_went_to_SCHOOL_from_START_to_END(WikiBaseEndpointConnector connector, ThemeData data){
 		super(connector, data);
 		super.questionSetsLeftToPopulate = 4;/*
 		super.backupIDsOfTopics.add("Q5284");//Bill Gates

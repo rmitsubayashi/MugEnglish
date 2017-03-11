@@ -1,6 +1,5 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -18,75 +17,66 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class NAME_is_a_GENDER extends Theme{
+public class NAME_participated_in_WAR extends Theme {
     //placeholders
     private final String personNamePH = "personName";
     private final String personNameForeignPH = "personNameForeign";
     private final String personNameENPH = "personNameEN";
-    private final String genderPH = "territoryEN";
-    private final String femaleForeign = "女性";
-    private final String femaleEN = "female";
-    private final String maleForeign = "男性";
-    private final String maleEN = "male";
+    private final String warENPH = "warEN";
+    private final String warForeignPH = "warForeign";
 
     private List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private String personID;
         private String personNameEN;
         private String personNameForeign;
-        private String genderEN = "";
-        private String genderForeign = "";
+        private String warEN;
+        private String warForeign;
 
         private QueryResult(
                 String personID,
                 String personNameEN,
                 String personNameForeign,
-                String genderID)
+                String warEN,
+                String warForeign)
         {
             this.personID = personID;
             this.personNameEN = personNameEN;
             this.personNameForeign = personNameForeign;
-            setGender(genderID);
+            this.warEN = warEN;
+            this.warForeign = warForeign;
         }
-
-        private void setGender(String genderID){
-            if (genderID.equals("Q6581072")){
-                genderEN = femaleEN;
-                genderForeign = femaleForeign;
-            } else if (genderID.equals("Q6581097")){
-                genderEN = maleEN;
-                genderForeign = maleForeign;
-            }
-        }
-
     }
 
-    public NAME_is_a_GENDER(WikiBaseEndpointConnector connector, ThemeData data){
+    public NAME_participated_in_WAR(WikiBaseEndpointConnector connector, ThemeData data){
         super(connector, data);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsLeftToPopulate = 3;
 
     }
 
     @Override
     protected String getSPARQLQuery(){
-        //find person name
-        return "SELECT DISTINCT ?" + personNamePH + " ?" + personNameForeignPH + " ?" + personNameENPH + //Kyoto returns 2 results? so use distinct
-                " ?" + genderPH + " " +
+        return "SELECT ?" + personNamePH + " ?" + personNameForeignPH + " ?" + personNameENPH +
+                " ?" + warENPH + " ?" + warForeignPH + " " +
                 "WHERE " +
                 "{" +
-                "    ?" + personNamePH + " wdt:P31 wd:Q5 . " + //is a person
-                "    ?" + personNamePH + " wdt:P21 ?" + genderPH + " . " + //lgender
+                "    ?" + personNamePH + " wdt:P31 wd:Q5; " + //is a human (locations are also included in 'participated in war')
+                "                          wdt:P607 ?war . " + //participated in war
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //foreign label if possible
                 "    '" + WikiBaseEndpointConnector.ENGLISH + "' . " + //fallback language is English
-                "                           ?" + personNamePH + " rdfs:label ?" + personNameForeignPH + "  } . " +
-                "    SERVICE wikibase:label {bd:serviceParam wikibase:language '" + WikiBaseEndpointConnector.ENGLISH + "' . " +
+                "                           ?" + personNamePH + " rdfs:label ?" + personNameForeignPH + " . " +
+                "                           ?war rdfs:label ?" + warForeignPH + " } . " +
+                "    SERVICE wikibase:label {bd:serviceParam wikibase:language '" + WikiBaseEndpointConnector.ENGLISH + "'," +
+                "       '" + WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "' . " + //fallback language Japanese
                 "                           ?" + personNamePH + " rdfs:label ?" + personNameENPH + " . " +
-                "                           } . " + //English translation
-                "    BIND (wd:%s as ?" + personNamePH + ") . " + //binding the ID of entity as ?person
+                "                           ?war rdfs:label ?" + warENPH + " . " +
+                "                           } . " +
+                "    BIND (wd:%s as ?" + personNamePH + ") . " +
                 "} ";
 
     }
@@ -103,10 +93,10 @@ public class NAME_is_a_GENDER extends Theme{
             personID = QGUtils.stripWikidataID(personID);
             String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, personNameENPH);
             String personNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, personNameForeignPH);
-            String genderID = SPARQLDocumentParserHelper.findValueByNodeName(head, genderPH);
-            genderID = QGUtils.stripWikidataID(genderID);
+            String warEN = SPARQLDocumentParserHelper.findValueByNodeName(head, warENPH);
+            String warForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, warForeignPH);
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameForeign, genderID);
+            QueryResult qr = new QueryResult(personID, personNameEN, personNameForeign, warEN, warForeign);
             queryResults.add(qr);
         }
     }
@@ -121,59 +111,44 @@ public class NAME_is_a_GENDER extends Theme{
         }
     }
 
-
+    @Override
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<QuestionData> questionSet = new ArrayList<>();
             QuestionData sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
-            QuestionData trueFalseQuestionTrue = createTrueFalseQuestion(qr,QuestionUtils.TRUE_FALSE_QUESTION_TRUE);
-            QuestionData trueFalseQuestionFalse = createTrueFalseQuestion(qr,QuestionUtils.TRUE_FALSE_QUESTION_FALSE);
-            //random order of questions
-            int i = new Random().nextInt();
-            if (i%2 == 0) {
-                questionSet.add(trueFalseQuestionTrue);
-                questionSet.add(trueFalseQuestionFalse);
-            }else{
-                questionSet.add(trueFalseQuestionFalse);
-                questionSet.add(trueFalseQuestionTrue);
-            }
+            QuestionData fillInBlankQuestion = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlankQuestion);
+
+            QuestionData fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
+            questionSet.add(fillInBlankInputQuestion);
 
             super.newQuestions.add(new QuestionDataWrapper(questionSet,qr.personID));
         }
 
     }
 
-    private String NAME_is_a_GENDER_EN_correct(QueryResult qr){
-        String sentence = qr.personNameEN + " is a " + qr.genderEN + ".";
-        //no need since all names are capitalized?
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
-    }
-
-    private String NAME_is_a_GENDER_EN_incorrect(QueryResult qr){
-        String gender;
-        if (qr.genderEN.equals(maleEN))
-            gender = femaleEN;
-        else
-            gender = maleEN;
-        String sentence = qr.personNameEN + " is a " + gender + ".";
+    private String NAME_participated_in_WAR_EN_correct(QueryResult qr){
+        String warNameWithDefiniteArticle = GrammarRules.definiteArticleBeforeWar(qr.warEN);
+        String sentence = qr.personNameEN + " participated in " + warNameWithDefiniteArticle + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }
 
     private String formatSentenceForeign(QueryResult qr){
-        return qr.personNameForeign + "は" + qr.genderForeign + "です。";
+        return qr.personNameForeign + "は" + qr.warForeign + "に参加しました。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
+        String warNameWithDefiniteArticle = GrammarRules.definiteArticleBeforeWar(qr.warEN);
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personNameEN);
-        pieces.add("is");
-        pieces.add("a " + qr.genderEN);
+        pieces.add("participated");
+        pieces.add("in");
+        pieces.add(warNameWithDefiniteArticle);
         return pieces;
     }
 
@@ -199,22 +174,76 @@ public class NAME_is_a_GENDER extends Theme{
         return data;
     }
 
-    private QuestionData createTrueFalseQuestion(QueryResult qr, String answer){
-        String question;
-        if (answer.equals(QuestionUtils.TRUE_FALSE_QUESTION_TRUE))
-            question = this.NAME_is_a_GENDER_EN_correct(qr);
-        else
-            question = this.NAME_is_a_GENDER_EN_incorrect(qr);
+    private String fillInBlankQuestion(QueryResult qr){
+        String warNameWithDefiniteArticle = GrammarRules.definiteArticleBeforeWar(qr.warEN);
+        String sentence = qr.personNameEN + " " + QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " in " + warNameWithDefiniteArticle + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private List<String> fillInBlankChoices(){
+        List<String> inflections = new ArrayList<>();
+        inflections.add("participate");
+        inflections.add("participateed");
+        inflections.add("participatd");
+        Collections.shuffle(inflections);
+
+        List<String> choices = new ArrayList<>();
+        choices.add(inflections.get(0));
+        choices.add(inflections.get(1));
+
+        return choices;
+    }
+
+    private String fillInBlankAnswer(){
+        return "participated";
+    }
+
+    private QuestionData createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankQuestion(qr);
+        String answer = fillInBlankAnswer();
+        List<String> choices = fillInBlankChoices();
+        choices.add(answer);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setThemeId(super.themeData.getId());
         data.setTopic(qr.personNameForeign);
-        data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(null);
+
+        return data;
+    }
+
+    private String fillInBlankInputQuestion(QueryResult qr){
+        String warNameWithDefiniteArticle = GrammarRules.definiteArticleBeforeWar(qr.warEN);
+        String sentence = qr.personNameEN + " " + QuestionUtils.FILL_IN_BLANK_TEXT +
+                " in " + warNameWithDefiniteArticle + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private String fillInBlankInputAnswer(){
+        return "participated";
+    }
+
+    private QuestionData createFillInBlankInputQuestion(QueryResult qr){
+        String question = this.fillInBlankInputQuestion(qr);
+        String answer = fillInBlankInputAnswer();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setThemeId(super.themeData.getId());
+        data.setTopic(qr.personNameForeign);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+        data.setVocabulary(null);
 
         return data;
     }

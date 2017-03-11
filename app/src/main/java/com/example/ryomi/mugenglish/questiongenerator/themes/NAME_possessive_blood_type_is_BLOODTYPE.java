@@ -1,6 +1,6 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -48,7 +48,7 @@ public class NAME_possessive_blood_type_is_BLOODTYPE extends Theme{
 		}
 	}
 	
-	public NAME_possessive_blood_type_is_BLOODTYPE(EndpointConnectorReturnsXML connector, ThemeData data){
+	public NAME_possessive_blood_type_is_BLOODTYPE(WikiBaseEndpointConnector connector, ThemeData data){
 		super(connector, data);
 		super.questionSetsLeftToPopulate = 2;
 		/*

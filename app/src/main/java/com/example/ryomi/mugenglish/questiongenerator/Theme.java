@@ -57,10 +57,10 @@ public abstract class Theme {
 	//for getting wikiData entries from wikiData IDs in topics
 	private EntityGetter getter;
 
-	private EndpointConnectorReturnsXML connector = null;
+	private WikiBaseEndpointConnector connector = null;
 	
 	
-	public Theme(EndpointConnectorReturnsXML connector, ThemeData data){
+	public Theme(WikiBaseEndpointConnector connector, ThemeData data){
 		this.themeData = data;
 		this.connector = connector;
 		WikiDataAPIGetConnector getConnector = new WikiDataAPIGetConnector(

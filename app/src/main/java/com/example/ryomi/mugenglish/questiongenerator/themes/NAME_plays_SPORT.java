@@ -1,6 +1,6 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -62,7 +62,7 @@ public class NAME_plays_SPORT extends Theme{
 		}
 	}
 	
-	public NAME_plays_SPORT(EndpointConnectorReturnsXML connector, ThemeData data){
+	public NAME_plays_SPORT(WikiBaseEndpointConnector connector, ThemeData data){
 		super(connector, data);
 		super.questionSetsLeftToPopulate = 3;
 	}

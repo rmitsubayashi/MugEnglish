@@ -28,6 +28,19 @@ public class GrammarRules {
 		return schoolName;
 	}
 
+	//not sure if this is the rule
+	public static String definiteArticleBeforeWar(String warName){
+		if (warName.substring(0,4).equals("The ") || warName.substring(0,4).equals("the ")){
+			return warName;
+		}
+
+		if (warName.equals("World War II") || warName.equals("World War I") || warName.equals("WWI") || warName.equals("WWII")){
+			return warName;
+		}
+
+		return "the " + warName;
+	}
+
 	//a lot of exceptions
 	public static String definiteArticleBeforeCountry(String countryName){
 		//check if it already starts with the

@@ -15,5 +15,6 @@ public class ThemeMappings {
 	static public final String The_JIS_area_code_of_PLACE_is_NUMBER = "-KernfT7mOfr1zNVuDyQ";
 	static public final String BOOK_was_published_by_PUBLISHER = "-Kes8ljZaU2y5-mkV_Yg";
 	static public final String AUTHOR_wrote_BOOK = "-Ket4MnVjAIOVR9AUGWl";
-	
+	static public final String TAXON_is_named_after_ENTITY = "-KevM9lUNwWwW6QLGmQD";
+	static public final String NAME_participated_in_WAR = "-KewJKhvrbEnLxPQ_qtR";
 }

@@ -14,11 +14,13 @@ import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_DEMONYM;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_GENDER;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_OCCUPATION;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_playing_SPORT;
+import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_participated_in_WAR;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_plays_SPORT;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_possessive_blood_type_is_BLOODTYPE;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_So_did_NAME2;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_from_START_to_END;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_will_be_AGE_in_X_months;
+import com.example.ryomi.mugenglish.questiongenerator.themes.TAXON_is_named_after_ENTITY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.The_JIS_area_code_of_PLACE_is_NUMBER;
 
 public class ThemeFactory {
@@ -79,6 +81,14 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.AUTHOR_wrote_BOOK :
                 return new AUTHOR_wrote_BOOK(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.TAXON_is_named_after_ENTITY :
+                return new TAXON_is_named_after_ENTITY(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.NAME_participated_in_WAR :
+                return new NAME_participated_in_WAR(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:

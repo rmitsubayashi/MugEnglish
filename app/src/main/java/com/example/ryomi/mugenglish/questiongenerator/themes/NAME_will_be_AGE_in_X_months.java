@@ -2,7 +2,7 @@ package com.example.ryomi.mugenglish.questiongenerator.themes;
 
 import android.util.Log;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -79,7 +79,7 @@ public class NAME_will_be_AGE_in_X_months extends Theme {
         }
     }
 
-    public NAME_will_be_AGE_in_X_months(EndpointConnectorReturnsXML connector, ThemeData data) {
+    public NAME_will_be_AGE_in_X_months(WikiBaseEndpointConnector connector, ThemeData data) {
         super(connector, data);
         super.questionSetsLeftToPopulate = 2;
 

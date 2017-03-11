@@ -1,6 +1,6 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -49,7 +49,7 @@ public class I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY ext
         }
     }
 
-    public I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY(EndpointConnectorReturnsXML connector, ThemeData data){
+    public I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY(WikiBaseEndpointConnector connector, ThemeData data){
         super(connector, data);
         super.questionSetsLeftToPopulate = 2;
 

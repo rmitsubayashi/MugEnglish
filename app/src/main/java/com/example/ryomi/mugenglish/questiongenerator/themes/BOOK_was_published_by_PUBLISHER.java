@@ -1,6 +1,6 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -51,7 +51,7 @@ public class BOOK_was_published_by_PUBLISHER extends Theme{
         }
     }
 
-    public BOOK_was_published_by_PUBLISHER(EndpointConnectorReturnsXML connector, ThemeData data){
+    public BOOK_was_published_by_PUBLISHER(WikiBaseEndpointConnector connector, ThemeData data){
         super(connector, data);
         super.questionSetsLeftToPopulate = 2;
 

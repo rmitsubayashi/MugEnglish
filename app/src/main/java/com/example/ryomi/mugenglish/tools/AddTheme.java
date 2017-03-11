@@ -44,5 +44,7 @@ public class AddTheme {
         run("JIS地名コードって何?","1.2.1","desc","city");
         run("あの本の出版社","1.4.2","desc","book");
         AddTheme.run("読書三到！","1.4.1","desc","book");
+        AddTheme.run("学名は覚えなくていいよ","1.4.2","desc","animal");
+        AddTheme.run("戦争はよくない","1.4.1","desc","battle");
     }
 }

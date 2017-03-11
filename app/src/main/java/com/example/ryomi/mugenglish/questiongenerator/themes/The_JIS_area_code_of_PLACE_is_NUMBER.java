@@ -1,6 +1,6 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -47,7 +47,7 @@ public class The_JIS_area_code_of_PLACE_is_NUMBER extends Theme{
         }
     }
 
-    public The_JIS_area_code_of_PLACE_is_NUMBER(EndpointConnectorReturnsXML connector, ThemeData data){
+    public The_JIS_area_code_of_PLACE_is_NUMBER(WikiBaseEndpointConnector connector, ThemeData data){
         super(connector, data);
         super.questionSetsLeftToPopulate = 2;
 
@@ -173,7 +173,8 @@ public class The_JIS_area_code_of_PLACE_is_NUMBER extends Theme{
         String areaCodeWithoutCheckDigitWords = "";
         for (char c : areaCodeWithoutCheckDigit.toCharArray()){
             int num = Integer.parseInt(String.valueOf(c));
-            areaCodeWithoutCheckDigitWords += num + " ";
+            String numWord = QGUtils.convertIntToWord(num);
+            areaCodeWithoutCheckDigitWords += numWord + " ";
         }
         areaCodeWithoutCheckDigitWords =areaCodeWithoutCheckDigitWords.substring(0, areaCodeWithoutCheckDigitWords.length()-1);
         String sentence1 ="The area code of " + qr.placeNameEN + " without the check digit is " + areaCodeWithoutCheckDigitWords + ".\n";

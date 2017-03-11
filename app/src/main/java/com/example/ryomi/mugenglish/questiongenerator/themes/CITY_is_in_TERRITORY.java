@@ -1,6 +1,6 @@
 package com.example.ryomi.mugenglish.questiongenerator.themes;
 
-import com.example.ryomi.mugenglish.connectors.EndpointConnectorReturnsXML;
+import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.SPARQLDocumentParserHelper;
 import com.example.ryomi.mugenglish.connectors.WikiBaseEndpointConnector;
 import com.example.ryomi.mugenglish.connectors.WikiDataSPARQLConnector;
@@ -53,7 +53,7 @@ public class CITY_is_in_TERRITORY extends Theme{
         }
     }
 
-    public CITY_is_in_TERRITORY(EndpointConnectorReturnsXML connector, ThemeData data){
+    public CITY_is_in_TERRITORY(WikiBaseEndpointConnector connector, ThemeData data){
         super(connector, data);
         super.questionSetsLeftToPopulate = 2;
 
