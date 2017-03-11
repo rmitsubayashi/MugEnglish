@@ -43,10 +43,12 @@ public class AddTheme {
         run("緊急時には110番","1.4.2","desc","health");
         run("JIS地名コードって何?","1.2.1","desc","city");
         run("あの本の出版社","1.4.2","desc","book");
-        AddTheme.run("読書三到！","1.4.1","desc","book");
-        AddTheme.run("学名は覚えなくていいよ","1.4.2","desc","animal");
-        AddTheme.run("戦争はよくない","1.4.1","desc","battle");
-        AddTheme.run("あの映画、あの賞","1.4.2","desc","film");
-        AddTheme.run("映画の良し悪しは受賞歴でわかる","1.4.1","desc","film");
+        run("読書三到！","1.4.1","desc","book");
+        run("学名は覚えなくていいよ","1.4.2","desc","animal");
+        run("戦争はよくない","1.4.1","desc","battle");
+        run("あの映画、あの賞","1.4.2","desc","film");
+        run("映画の良し悪しは受賞歴でわかる","1.4.1","desc","film");
+        run("この映画のジャンルは何かな？","1.1.1","desc","film");
+        run("都道府県の位置覚えてるかな？","1.2.1","desc","city");
     }
 }

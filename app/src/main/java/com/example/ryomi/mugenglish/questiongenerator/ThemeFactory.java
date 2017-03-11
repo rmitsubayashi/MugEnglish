@@ -11,6 +11,7 @@ import com.example.ryomi.mugenglish.questiongenerator.themes.BOOK_was_published_
 import com.example.ryomi.mugenglish.questiongenerator.themes.CITY_is_in_TERRITORY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.MOVIE_has_won_AWARD;
+import com.example.ryomi.mugenglish.questiongenerator.themes.MOVIE_is_a_GENRE;
 import com.example.ryomi.mugenglish.questiongenerator.themes.MOVIE_won_AWARD_in_YEAR;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_DEMONYM;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_GENDER;
@@ -22,6 +23,7 @@ import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_possessive_blo
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_So_did_NAME2;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_from_START_to_END;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_will_be_AGE_in_X_months;
+import com.example.ryomi.mugenglish.questiongenerator.themes.PREFECTURE_is_next_to_PREFECTURE2;
 import com.example.ryomi.mugenglish.questiongenerator.themes.TAXON_is_named_after_ENTITY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.The_JIS_area_code_of_PLACE_is_NUMBER;
 
@@ -99,6 +101,14 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.MOVIE_won_AWARD_in_YEAR :
                 return new MOVIE_won_AWARD_in_YEAR(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.MOVIE_is_a_GENRE :
+                return new MOVIE_is_a_GENRE(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.PREFECTURE_is_next_to_PREFECTUE2 :
+                return new PREFECTURE_is_next_to_PREFECTURE2(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:

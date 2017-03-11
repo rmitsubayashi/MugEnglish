@@ -127,7 +127,7 @@ public class NAME_is_a_OCCUPATION extends Theme{
 
     private String NAME_is_OCCUPATION_EN_correct(QueryResult qr){
         String indefiniteArticle = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
-        String sentence = qr.personNameEN + " is " + indefiniteArticle + " " + qr.occupationEN + ".";
+        String sentence = qr.personNameEN + " is " + indefiniteArticle + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
@@ -142,7 +142,7 @@ public class NAME_is_a_OCCUPATION extends Theme{
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personNameEN);
         pieces.add("is");
-        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN) + " " + qr.occupationEN);
+        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN));
         return pieces;
     }
 
@@ -175,8 +175,14 @@ public class NAME_is_a_OCCUPATION extends Theme{
         String precedingHint = qr.occupationEN.substring(0,hintCt);
         String followingHint = qr.occupationEN.substring(qr.occupationEN.length()-hintCt);
         String indefiniteArticle = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
+        String article;
+        //remove article
+        if (indefiniteArticle.substring(0,2).equals("a "))
+            article = "a";
+        else
+            article = "an";
 
-        String sentence = qr.personNameEN + " is " + indefiniteArticle + " " +
+        String sentence = qr.personNameEN + " is " + article + " " +
                 precedingHint + QuestionUtils.FILL_IN_BLANK_TEXT + followingHint + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;

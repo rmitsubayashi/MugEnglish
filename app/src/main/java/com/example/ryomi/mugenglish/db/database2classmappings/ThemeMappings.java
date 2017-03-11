@@ -19,4 +19,6 @@ public class ThemeMappings {
 	static public final String NAME_participated_in_WAR = "-KewJKhvrbEnLxPQ_qtR";
 	static public final String MOVIE_has_won_AWARD = "-KexE5nA7QkTWRsg0IEl";
 	static public final String MOVIE_won_AWARD_in_YEAR = "-KexUEjjttdFRD1lYDYl";
+	static public final String MOVIE_is_a_GENRE = "-KexsWHFxOpSFCkCWlnF";
+	static public final String PREFECTURE_is_next_to_PREFECTUE2 = "-KeyLzm3-t_VF1ociEXY";
 }

@@ -97,4 +97,27 @@ public class QGUtils {
 
         return (prefix + current).trim();
     }
+
+    public static boolean containsJapanese(String str){
+        for(int i = 0 ; i < str.length() ; i++) {
+            char ch = str.charAt(i);
+            Character.UnicodeBlock unicodeBlock = Character.UnicodeBlock.of(ch);
+
+            if (Character.UnicodeBlock.HIRAGANA.equals(unicodeBlock))
+                return true;
+
+            if (Character.UnicodeBlock.KATAKANA.equals(unicodeBlock))
+                return true;
+
+            if (Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS.equals(unicodeBlock))
+                return true;
+
+            if (Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS.equals(unicodeBlock))
+                return true;
+
+            if (Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION.equals(unicodeBlock))
+                return true;
+        }
+        return false;
+    }
 }

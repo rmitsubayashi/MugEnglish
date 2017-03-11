@@ -108,7 +108,7 @@ public class GrammarRules {
 		String word, lowercaseWord;
 
 		if (phrase.length() == 0) {
-			return "a";
+			return "";
 		}
 
 		// Getting the first word
@@ -117,7 +117,7 @@ public class GrammarRules {
 		if(matcher.matches()) {
 			word = matcher.group(1);
 		} else {
-			return "an";
+			return "an " + phrase;
 		}
 
 		lowercaseWord = word.toLowerCase();
@@ -126,27 +126,27 @@ public class GrammarRules {
 		String [] altCases = { "euler", "heir", "honest", "hono" };
 		for (String altCase : altCases) {
 			if (lowercaseWord.startsWith(altCase)) {
-				return "an";
+				return "an " + phrase;
 			}
 		}
 
 		if (lowercaseWord.startsWith("hour") && !lowercaseWord.startsWith("houri")) {
-			return "an";
+			return "an " + phrase;
 		}
 
 
 		// Single letter word which should be preceded by 'an'
 		if (lowercaseWord.length() == 1) {
 			if ("aedhilmnorsx".contains(lowercaseWord)) {
-				return "an";
+				return "an " + phrase;
 			} else {
-				return "a";
+				return "a " + phrase;
 			}
 		}
 
 		// Capital words which should likely be preceded by 'an'
 		if (word.matches("(?!FJO|[HLMNS]Y.|RY[EO]|SQU|(F[LR]?|[HL]|MN?|N|RH?|S[CHKLMNPTVW]?|X(YL)?)[AEIOU])[FHLMNRSX][A-Z]")) {
-			return "an";
+			return "an " + phrase;
 		}
 
 		// Special cases where a word that begins with a vowel should be preceded by 'a'
@@ -154,32 +154,32 @@ public class GrammarRules {
 
 		for (String regex : regexes) {
 			if (lowercaseWord.matches(regex+".*")) {
-				return "a";
+				return "a " + phrase;
 			}
 		}
 
 		// Special capital words (UK, UN)
 		if (word.matches("^U[NK][AIEO].*")) {
-			return "a";
+			return "a " + phrase;
 		} else if (word.equals(word.toUpperCase())) {
 			if ("aedhilmnorsx".contains(lowercaseWord.substring(0, 1)) ) {
-				return "an";
+				return "an " + phrase;
 			} else {
-				return "a";
+				return "a " + phrase;
 			}
 		}
 
 		// Basic method of words that begin with a vowel being preceded by 'an'
 		if ("aeiou".contains(lowercaseWord.substring(0, 1))) {
-			return "an";
+			return "an " + phrase;
 		}
 
 		// Instances where y followed by specific letters is preceded by 'an'
 		if (lowercaseWord.matches("^y(b[lor]|cl[ea]|fere|gg|p[ios]|rou|tt).*")) {
-			return "an";
+			return "an " + phrase;
 		}
 
-		return "a";
+		return "a " + phrase;
 	}
 
 	public static String commasInASeries(List<String> series, String conjunction){
