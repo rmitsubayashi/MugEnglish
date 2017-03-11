@@ -124,11 +124,7 @@ public class MOVIE_has_won_AWARD extends Theme{
     }
 
     private String MOVIE_has_won_AWARD_EN_correct(QueryResult qr){
-        String awardName = qr.awardEN;
-        String startsWithThe = qr.awardEN.substring(0,4);
-        if (!startsWithThe.equals("The ") && !startsWithThe.equals("the ") )
-            awardName = "the " + awardName;
-
+        String awardName = GrammarRules.definiteArticleBeforeAward(qr.awardEN);
         String sentence = qr.movieNameEN + " has won " + awardName + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
@@ -140,11 +136,7 @@ public class MOVIE_has_won_AWARD extends Theme{
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
-        String awardName = qr.awardEN;
-        String startsWithThe = qr.awardEN.substring(0,4);
-        if (!startsWithThe.equals("The ") && !startsWithThe.equals("the ") )
-            awardName = "the " + awardName;
-
+        String awardName = GrammarRules.definiteArticleBeforeAward(qr.awardEN);
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.movieNameEN);
         pieces.add("has");

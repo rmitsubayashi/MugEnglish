@@ -46,5 +46,7 @@ public class AddTheme {
         AddTheme.run("読書三到！","1.4.1","desc","book");
         AddTheme.run("学名は覚えなくていいよ","1.4.2","desc","animal");
         AddTheme.run("戦争はよくない","1.4.1","desc","battle");
+        AddTheme.run("あの映画、あの賞","1.4.2","desc","film");
+        AddTheme.run("映画の良し悪しは受賞歴でわかる","1.4.1","desc","film");
     }
 }

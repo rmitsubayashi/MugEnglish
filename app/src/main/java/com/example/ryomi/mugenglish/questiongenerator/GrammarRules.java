@@ -41,6 +41,14 @@ public class GrammarRules {
 		return "the " + warName;
 	}
 
+	//I think it's guaranteed that awards should start with the?
+	public static String definiteArticleBeforeAward(String awardName){
+		String startsWithThe = awardName.substring(0,4);
+		if (!startsWithThe.equals("The ") && !startsWithThe.equals("the ") )
+			awardName = "the " + awardName;
+		return awardName;
+	}
+
 	//a lot of exceptions
 	public static String definiteArticleBeforeCountry(String countryName){
 		//check if it already starts with the

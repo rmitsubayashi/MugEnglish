@@ -11,6 +11,7 @@ import com.example.ryomi.mugenglish.questiongenerator.themes.BOOK_was_published_
 import com.example.ryomi.mugenglish.questiongenerator.themes.CITY_is_in_TERRITORY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.I_should_call_EMERGENCY_PHONE_NUMBER_in_an_emergency_in_COUNTRY;
 import com.example.ryomi.mugenglish.questiongenerator.themes.MOVIE_has_won_AWARD;
+import com.example.ryomi.mugenglish.questiongenerator.themes.MOVIE_won_AWARD_in_YEAR;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_DEMONYM;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_GENDER;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_OCCUPATION;
@@ -94,6 +95,10 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.MOVIE_has_won_AWARD :
                 return new MOVIE_has_won_AWARD(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.MOVIE_won_AWARD_in_YEAR :
+                return new MOVIE_won_AWARD_in_YEAR(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:
