@@ -98,18 +98,12 @@ public class NAME_went_to_SCHOOL_from_START_to_END extends Theme {
 				"    SERVICE wikibase:label { bd:serviceParam wikibase:language '" + WikiBaseEndpointConnector.ENGLISH + "'} " + //everything else is in English
 				  
 				"    BIND (wd:%s as ?" + personNamePH + ") . " + //binding the ID of entity as ?person
-				"    FILTER (?" + startDatePH + " != ?" + endDatePH + ") . " + //so we can prevent from 2000 to 2000
-				//still allows 2000/1/1 ~ 2000/1/2 but I haven't seen one entry with date + year
+				"    FILTER (YEAR(?" + startDatePH + ") != YEAR(?" + endDatePH + ") ) . " + //so we can prevent from 2000 to 2000
 				"} ";
-		
-		//Problems with this query that may need to be handled
-		// 1.This will not pick up any people still in college (do not have an end date)
-		// 2.This will return the ID of the institution if the Foreign label does not exist
-		//   instead of null or a blank string
-		// 3.Some of the institution translation are wrong
+
+		// Some of the institution translation are wrong
 		//   EX: Univ. of Pennsylvania School of Arts and Sciences
 		//     ->教科科学大学院
-		// 4. The ISO 8601 date format allows only year, but WikiData returns 1/1/year 0:00:00
 
 	}
 	

@@ -16,10 +16,12 @@ import com.example.ryomi.mugenglish.questiongenerator.themes.MOVIE_won_AWARD_in_
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_DEMONYM;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_GENDER;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_a_OCCUPATION;
+import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_around_HEIGHT_tall;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_is_playing_SPORT;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_participated_in_WAR;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_plays_SPORT;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_possessive_blood_type_is_BLOODTYPE;
+import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_was_POSITION_from_START_to_END;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_So_did_NAME2;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL_from_START_to_END;
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_will_be_AGE_in_X_months;
@@ -109,6 +111,14 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.PREFECTURE_is_next_to_PREFECTUE2 :
                 return new PREFECTURE_is_next_to_PREFECTURE2(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.NAME_is_around_HEIGHT_tall :
+                return new NAME_is_around_HEIGHT_tall(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.NAME_was_POSITION_from_START_to_END :
+                return new NAME_was_POSITION_from_START_to_END(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:

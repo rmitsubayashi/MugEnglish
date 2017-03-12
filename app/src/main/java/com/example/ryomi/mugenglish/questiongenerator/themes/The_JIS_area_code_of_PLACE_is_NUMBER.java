@@ -177,15 +177,16 @@ public class The_JIS_area_code_of_PLACE_is_NUMBER extends Theme{
             areaCodeWithoutCheckDigitWords += numWord + " ";
         }
         areaCodeWithoutCheckDigitWords =areaCodeWithoutCheckDigitWords.substring(0, areaCodeWithoutCheckDigitWords.length()-1);
-        String sentence1 ="The area code of " + qr.placeNameEN + " without the check digit is " + areaCodeWithoutCheckDigitWords + ".\n";
-        String sentence2 = "The check digit of the JIS area code of " + qr.placeNameEN + " is " + QuestionUtils.FILL_IN_BLANK_NUMBER + ".";
+        String sentence1 ="The JIS area code of " + qr.placeNameEN + " without the check digit is " + areaCodeWithoutCheckDigitWords + ".\n";
+        String sentence2 = "The JIS area code of " + qr.placeNameEN + " with the check digit is " + QuestionUtils.FILL_IN_BLANK_NUMBER + ".";
         return sentence1 + sentence2;
     }
 
     private String fillInBlankInputAnswer2(QueryResult qr){
+
         if (qr.areaCode.length() == 6){
-            return qr.areaCode.substring(qr.areaCode.length()-1);
-        } else {
+            return qr.areaCode;
+        } else { //5 digits
             Integer result = 0;
             int multiplyBy = 6;
             for (char c : qr.areaCode.toCharArray()){
@@ -195,8 +196,10 @@ public class The_JIS_area_code_of_PLACE_is_NUMBER extends Theme{
             }
             result = result % 11;
             result = 11 - result;
+            if (result == 10)
+                result = 0;
 
-            return result.toString();
+            return qr.areaCode + result.toString();
         }
     }
 

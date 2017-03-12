@@ -271,6 +271,7 @@ public abstract class Theme {
 		for (WikiDataEntryData interest : interests){
 			String entityID = interest.getWikiDataID();
 			String query = addEntityToQuery(entityID);
+			//Log.d(TAG,connector.getDOMAsString(query));
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
 			this.processResultsIntoClassWrappers(resultDOM);
 			//there can be more results than we need

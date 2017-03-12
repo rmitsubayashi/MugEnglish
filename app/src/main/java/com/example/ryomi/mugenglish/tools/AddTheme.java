@@ -50,5 +50,7 @@ public class AddTheme {
         run("映画の良し悪しは受賞歴でわかる","1.4.1","desc","film");
         run("この映画のジャンルは何かな？","1.1.1","desc","film");
         run("都道府県の位置覚えてるかな？","1.2.1","desc","city");
+        run("高～い高～い","1.2.1","desc","person");
+        run("公職多すぎ","1.2.1","desc","politics");
     }
 }

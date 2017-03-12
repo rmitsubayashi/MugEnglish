@@ -8,11 +8,27 @@ import java.util.regex.Pattern;
 
 public class GrammarRules {
 	
-	
 	public static String uppercaseFirstLetterOfSentence(String sentence){
 		char firstChar = sentence.charAt(0);
 		char uppercaseFirstChar = Character.toUpperCase(firstChar);
 		return uppercaseFirstChar + sentence.substring(1);
+	}
+
+	public static String articleBeforePosition(String positionName){
+		//official title so no need to add an article
+		if (Character.isUpperCase(positionName.charAt(0))){
+			return positionName;
+		}
+
+		if (positionName.startsWith("member ")){
+			return "a " + positionName;
+		}
+
+		if (positionName.startsWith("the ")){
+			return positionName;
+		}
+
+		return "the " + positionName;
 	}
 	
 	public static String definiteArticleBeforeSchoolName(String schoolName){
