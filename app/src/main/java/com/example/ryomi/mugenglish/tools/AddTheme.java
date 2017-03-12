@@ -52,5 +52,6 @@ public class AddTheme {
         run("都道府県の位置覚えてるかな？","1.2.1","desc","city");
         run("高～い高～い","1.2.1","desc","person");
         run("公職多すぎ","1.2.1","desc","politics");
+        AddTheme.run("一番多い国旗の色は白！","1.1.1","desc","country");
     }
 }

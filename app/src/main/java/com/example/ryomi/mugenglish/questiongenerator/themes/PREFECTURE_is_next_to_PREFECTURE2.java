@@ -225,11 +225,7 @@ public class PREFECTURE_is_next_to_PREFECTURE2 extends Theme {
         prefecturesCopy.remove(qr.prefecture1EN);
         Collections.shuffle(prefecturesCopy);
 
-        List<String> choices = new ArrayList<>();
-        choices.add(prefecturesCopy.get(0));
-        choices.add(prefecturesCopy.get(1));
-
-        return choices;
+        return prefecturesCopy.subList(0,2);
     }
 
     private String fillInBlankAnswer(QueryResult qr){

@@ -208,7 +208,7 @@ public class GrammarRules {
 			return series.get(0) + " " + conjunction + " " + series.get(1);
 		} else {
 			String result = "";
-			for (int i=0; i<series.size()-2; i++){
+			for (int i=0; i<series.size()-1; i++){
 				result += series.get(i) + ", ";
 			}
 			result += conjunction + " " + series.get(series.size()-1);

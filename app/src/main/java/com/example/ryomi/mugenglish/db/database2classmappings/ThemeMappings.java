@@ -23,5 +23,6 @@ public class ThemeMappings {
 	static public final String PREFECTURE_is_next_to_PREFECTUE2 = "-KeyLzm3-t_VF1ociEXY";
 	static public final String NAME_is_around_HEIGHT_tall = "-Kf-gqwfMhV75LZeFz8o";
 	static public final String NAME_was_POSITION_from_START_to_END = "-Kf15lI18ASKKx-j7-8x";
+	static public final String The_DEMONYM_flag_is_COLORS = "-Kf2JfsDOF3VG0fah3lw";
 
 }

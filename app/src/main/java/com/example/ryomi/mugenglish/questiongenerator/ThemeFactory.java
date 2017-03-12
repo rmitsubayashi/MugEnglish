@@ -27,6 +27,7 @@ import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_went_to_SCHOOL
 import com.example.ryomi.mugenglish.questiongenerator.themes.NAME_will_be_AGE_in_X_months;
 import com.example.ryomi.mugenglish.questiongenerator.themes.PREFECTURE_is_next_to_PREFECTURE2;
 import com.example.ryomi.mugenglish.questiongenerator.themes.TAXON_is_named_after_ENTITY;
+import com.example.ryomi.mugenglish.questiongenerator.themes.The_DEMONYM_flag_is_COLORS;
 import com.example.ryomi.mugenglish.questiongenerator.themes.The_JIS_area_code_of_PLACE_is_NUMBER;
 
 public class ThemeFactory {
@@ -119,6 +120,10 @@ public class ThemeFactory {
                         themeData);
             case ThemeMappings.NAME_was_POSITION_from_START_to_END :
                 return new NAME_was_POSITION_from_START_to_END(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        themeData);
+            case ThemeMappings.The_DEMONYM_flag_is_COLORS :
+                return new The_DEMONYM_flag_is_COLORS(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         themeData);
             default:
