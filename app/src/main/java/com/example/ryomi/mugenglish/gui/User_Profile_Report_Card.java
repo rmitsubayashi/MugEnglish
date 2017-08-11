@@ -55,17 +55,17 @@ public class User_Profile_Report_Card extends Fragment {
             return;
 
         List<UserProfileReportCardData> dataList = new ArrayList<>();
-        String tempThemeID = records.get(0).getThemeId();
+        String tempLessonID = records.get(0).getLessonId();
         String tempInstanceID = "";
         UserProfileReportCardData tempData = new UserProfileReportCardData();
-        tempData.setThemeID(tempThemeID);
+        tempData.setLessonId(tempLessonID);
         for (int i=0; i<records.size(); i++){
             InstanceRecord record = records.get(i);
-            if (!record.getThemeId().equals(tempThemeID)){
+            if (!record.getLessonId().equals(tempLessonID)){
                 dataList.add(tempData);
-                tempThemeID = record.getThemeId();
+                tempLessonID = record.getLessonId();
                 tempData = new UserProfileReportCardData();
-                tempData.setThemeID(tempThemeID);
+                tempData.setLessonId(tempLessonID);
             }
 
             tempData.incrementRecordCt();

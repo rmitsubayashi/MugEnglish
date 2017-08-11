@@ -6,7 +6,7 @@ import java.util.List;
 public class InstanceRecord implements Serializable{
     private String id;
     private String instanceId;
-    private String themeId;
+    private String lessonId;
     private List<QuestionAttempt> attempts;
     private Boolean completed;
 
@@ -28,12 +28,12 @@ public class InstanceRecord implements Serializable{
         this.instanceId = instanceId;
     }
 
-    public String getThemeId() {
-        return themeId;
+    public String getLessonId() {
+        return lessonId;
     }
 
-    public void setThemeId(String themeId) {
-        this.themeId = themeId;
+    public void setLessonId(String lessonId) {
+        this.lessonId = lessonId;
     }
 
     public List<QuestionAttempt> getAttempts() {

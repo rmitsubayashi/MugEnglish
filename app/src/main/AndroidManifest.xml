@@ -24,28 +24,28 @@
         </activity>
         <!-- all activities from the parent theme list activity -->
         <activity
-            android:name=".gui.ThemeList"
-            android:label="@string/theme_list_app_bar_title">
+            android:name=".gui.LessonList"
+            android:label="@string/lesson_list_app_bar_title">
         </activity>
         <activity
-            android:name=".gui.ThemeDetails"
-            android:label="@string/theme_details_app_bar_title"
-            android:parentActivityName=".gui.ThemeList"/>
+            android:name=".gui.LessonDetails"
+            android:label="@string/lesson_details_app_bar_title"
+            android:parentActivityName=".gui.LessonList"/>
         <activity
             android:name=".gui.Question_TrueFalse"
-            android:parentActivityName=".gui.ThemeDetails"/>
+            android:parentActivityName=".gui.LessonDetails"/>
         <activity
             android:name=".gui.Question_MultipleChoice"
-            android:parentActivityName=".gui.ThemeDetails">
+            android:parentActivityName=".gui.LessonDetails">
         </activity>
         <activity
             android:name=".gui.Question_Puzzle_Piece"
-            android:parentActivityName=".gui.ThemeDetails">
+            android:parentActivityName=".gui.LessonDetails">
         </activity>
         <!-- makes the keyboard pop up default -->
         <activity
             android:name=".gui.Question_FillInBlank_Input"
-            android:parentActivityName=".gui.ThemeDetails"
+            android:parentActivityName=".gui.LessonDetails"
             android:windowSoftInputMode="stateVisible">
         </activity>
         <!--
@@ -56,7 +56,7 @@
         <activity
             android:name=".gui.Results"
             android:label="@string/results_app_bar_title"
-            android:parentActivityName=".gui.ThemeList">
+            android:parentActivityName=".gui.LessonList">
         </activity>
 
         <!-- all activities from the parent activity user profile -->

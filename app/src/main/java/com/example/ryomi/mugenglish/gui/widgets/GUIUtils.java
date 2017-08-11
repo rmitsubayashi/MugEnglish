@@ -15,7 +15,7 @@ import android.widget.ImageView;
 
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.db.datawrappers.AchievementStars;
-import com.example.ryomi.mugenglish.gui.ThemeList;
+import com.example.ryomi.mugenglish.gui.LessonList;
 import com.example.ryomi.mugenglish.gui.UserInterests;
 import com.example.ryomi.mugenglish.gui.UserProfile;
 import com.firebase.ui.auth.AuthUI;
@@ -122,7 +122,7 @@ public class GUIUtils {
 
                             case R.id.bottom_navigation_study:
                                 BOTTOM_NAVIGATION_BAR_STATE = 0;
-                                intent = new Intent(fActivity, ThemeList.class);
+                                intent = new Intent(fActivity, LessonList.class);
                                 break;
                             case R.id.bottom_navigation_user_profile:
                                 BOTTOM_NAVIGATION_BAR_STATE = 1;

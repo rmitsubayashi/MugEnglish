@@ -9,7 +9,7 @@ import com.example.ryomi.mugenglish.db.database2classmappings.QuestionTypeMappin
 import com.example.ryomi.mugenglish.db.datawrappers.InstanceRecord;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionAttempt;
 import com.example.ryomi.mugenglish.db.datawrappers.QuestionData;
-import com.example.ryomi.mugenglish.db.datawrappers.ThemeInstanceData;
+import com.example.ryomi.mugenglish.db.datawrappers.LessonInstanceData;
 import com.example.ryomi.mugenglish.gui.Question_FillInBlank_Input;
 import com.example.ryomi.mugenglish.gui.Question_FillInBlank_MultipleChoice;
 import com.example.ryomi.mugenglish.gui.Question_MultipleChoice;
@@ -39,7 +39,7 @@ public class QuestionManager{
 	private Boolean started = false;
 	//so we don't remove the theme details page
 	private boolean canRemovePreviousActivity = false;
-	private ThemeInstanceData instanceData = null;
+	private LessonInstanceData instanceData = null;
 	//we will fetch the question data on initialization
 	private List<QuestionData> questionData = new ArrayList<>();
 	//-1 so first call of nextQuestion() would be 0
@@ -66,7 +66,7 @@ public class QuestionManager{
 		return singleton;
 	}
 
-	public void startQuestions(ThemeInstanceData data, Activity startingActivity){
+	public void startQuestions(LessonInstanceData data, Activity startingActivity){
 		if(!started) {
 			started = true;
 			this.instanceData = data;
@@ -183,7 +183,7 @@ public class QuestionManager{
 		instanceRecord = new InstanceRecord();
 		instanceRecord.setCompleted(false);
 		instanceRecord.setInstanceId(instanceData.getId());
-		instanceRecord.setThemeId(instanceData.getThemeId());
+		instanceRecord.setLessonId(instanceData.getThemeId());
 		//not sure if we can instantiate in the question attempt class?
 		instanceRecord.setAttempts(new ArrayList<QuestionAttempt>());
 		startTimestamp = System.currentTimeMillis();

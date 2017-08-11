@@ -192,7 +192,7 @@ public class UserProfile extends AppCompatActivity implements Preferences.Logout
         //remove this fragment
         getFragmentManager().popBackStack();
         //send user to main page(theme list)?
-        Intent intent =new Intent(this, ThemeList.class);
+        Intent intent =new Intent(this, LessonList.class);
         startActivity(intent);
         finish();
     }

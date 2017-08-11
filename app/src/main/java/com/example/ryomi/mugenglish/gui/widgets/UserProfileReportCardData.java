@@ -15,7 +15,7 @@ public class UserProfileReportCardData {
         return themeID;
     }
 
-    public void setThemeID(String themeID){
+    public void setLessonId(String themeID){
         this.themeID = themeID;
     }
 

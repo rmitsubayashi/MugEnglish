@@ -44,7 +44,6 @@
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@color/flatButtonFontColor"
             android:text="@string/search_interests_add"
-            android:visibility="gone"
             android:id="@+id/search_interests_result_add_button"/>
     </LinearLayout>
 

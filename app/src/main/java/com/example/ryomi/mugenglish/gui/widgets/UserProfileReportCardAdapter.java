@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.example.ryomi.mugenglish.R;
 import com.example.ryomi.mugenglish.db.FirebaseDBHeaders;
-import com.example.ryomi.mugenglish.db.datawrappers.ThemeData;
+import com.example.ryomi.mugenglish.db.datawrappers.LessonData;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,13 +34,13 @@ public class UserProfileReportCardAdapter extends RecyclerView.Adapter<UserProfi
         if (data.getThemeName().equals("")) {
             //fetch theme name
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
-                    FirebaseDBHeaders.THEMES + "/" + data.getThemeID()
+                    FirebaseDBHeaders.LESSONS + "/" + data.getThemeID()
             );
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    ThemeData themeData = dataSnapshot.getValue(ThemeData.class);
-                    holder.setTheme(themeData.getTitle());
+                    LessonData lessonData = dataSnapshot.getValue(LessonData.class);
+                    holder.setTheme(lessonData.getTitle());
                 }
 
                 @Override

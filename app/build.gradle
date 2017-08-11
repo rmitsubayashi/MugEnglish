@@ -28,7 +28,6 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.2.0'
     testCompile 'junit:junit:4.12'
 }
 
@@ -37,6 +36,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:10.0.1'
     compile 'com.firebaseui:firebase-ui-auth:1.1.1'
     compile 'com.firebaseui:firebase-ui-database:1.1.1'
+    compile 'com.google.firebase:firebase-crash:10.0.1'
 }
 
 dependencies {
@@ -44,8 +44,6 @@ dependencies {
     compile 'com.github.clans:fab:1.6.4'
     //for puzzle piece question
     compile 'org.apmem.tools:layouts:1.10@aar'
-    //for bottom sheet
-    compile 'com.android.support:design:25.2.0'
     //for user profile chart.
     //also needs dependency in the project gradle file
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
@@ -57,10 +55,6 @@ allprojects {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
     }
-}
-
-dependencies {
-    compile 'com.android.support:support-v4:25.2.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

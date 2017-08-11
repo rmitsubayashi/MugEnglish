@@ -93,7 +93,7 @@ public class UserInterests extends AppCompatActivity {
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             // Inflate a menu resource providing context menu items
             MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.theme_details_item_menu, menu);
+            inflater.inflate(R.menu.lesson_details_item_menu, menu);
             return true;
         }
 
@@ -152,14 +152,15 @@ public class UserInterests extends AppCompatActivity {
             //shouldn't be too much of a bother once the user has searched for something...
             firebaseAdapter = new UserInterestAdapter(
                     WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
-                    UserInterestViewHolder.class, ref.orderByChild("pronunciation")
+                    UserInterestViewHolder.class, ref.orderByChild("pronunciation"), userID
             );
         } else {
             //ends at string + (high unicode character)
             // which means all Japanese characters are included
             firebaseAdapter = new UserInterestAdapter(
                     WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
-                    UserInterestViewHolder.class, ref.orderByChild("label").startAt(query).endAt(query + "\uFFFF")
+                    UserInterestViewHolder.class, ref.orderByChild("label").startAt(query).endAt(query + "\uFFFF"),
+                    userID
             );
         }
 

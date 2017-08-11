@@ -6,9 +6,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.ryomi.mugenglish.R;
+import com.example.ryomi.mugenglish.db.datawrappers.WikiDataEntryData;
 
 //holder for user interest list cells
 public class UserInterestViewHolder  extends RecyclerView.ViewHolder {
+    private WikiDataEntryData wikiDataEntryData;
     private final TextView label;
     private final TextView description;
     /*
@@ -37,6 +39,14 @@ public class UserInterestViewHolder  extends RecyclerView.ViewHolder {
 
     public void setButtonListener(View.OnClickListener listener){
         deleteButton.setOnClickListener(listener);
+    }
+
+    public void setWikiDataEntryData(WikiDataEntryData data){
+        this.wikiDataEntryData = data;
+    }
+
+    public WikiDataEntryData getWikiDataEntryData(){
+        return this.wikiDataEntryData;
     }
 
 }

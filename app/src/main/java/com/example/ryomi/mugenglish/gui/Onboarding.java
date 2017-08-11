@@ -98,7 +98,7 @@ public class Onboarding extends AppCompatActivity implements OnboardingNextListe
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Onboarding.this, ThemeList.class);
+                Intent intent = new Intent(Onboarding.this, LessonList.class);
                 startActivity(intent);
                 //set preference
                 /*SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(
@@ -153,7 +153,7 @@ public class Onboarding extends AppCompatActivity implements OnboardingNextListe
         SharedPreferences.Editor editor = preference.edit();
         editor.putBoolean(getResources().getString(R.string.preferences_first_time_key), false);
         editor.apply();
-        Intent intent = new Intent(Onboarding.this, ThemeList.class);
+        Intent intent = new Intent(Onboarding.this, LessonList.class);
         startActivity(intent);
         Onboarding.this.finish();
     }

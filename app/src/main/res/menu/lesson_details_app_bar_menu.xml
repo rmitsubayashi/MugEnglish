@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/lesson_details_star1"
+        android:title="@string/app_name"
+        android:icon="@drawable/star_disabled"
+        android:enabled="false"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/lesson_details_star2"
+        android:title="@string/app_name"
+        android:icon="@drawable/star_disabled"
+        android:enabled="false"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/lesson_details_star3"
+        android:title="@string/app_name"
+        android:icon="@drawable/star_disabled"
+        android:enabled="false"
+        app:showAsAction="always"/>
+</menu>

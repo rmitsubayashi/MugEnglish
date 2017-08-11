@@ -133,11 +133,11 @@
     <string name="onboarding_introduction4_start">始める！</string>
     <string name="onboarding_choose_interest_title">好みを選ぼう！</string>
 
-    <!--Theme list page -->
-    <string name="theme_list_app_bar_title">テーマを選択</string>
-    <string name="theme_list_search_hint">テーマを検索</string>
-    <string name="theme_list_navigation_drawer_open">開く</string>
-    <string name="theme_list_navigation_drawer_close">閉じる</string>
+    <!--Lesson list page -->
+    <string name="lesson_list_app_bar_title">テーマを選択</string>
+    <string name="lesson_list_search_hint">テーマを検索</string>
+    <string name="lesson_list_navigation_drawer_open">開く</string>
+    <string name="lesson_list_navigation_drawer_close">閉じる</string>
 
     <!--results-->
     <string name="results_app_bar_title">結果</string>
@@ -151,23 +151,25 @@
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>
     <string name="search_interests_add">追加</string>
+    <string name="search_interests_recommendations_success">追加しました！</string>
+    <string name="search_interests_recommendations_title">%1$sを追加した人はこれも追加しています</string>
 
     <!--Facebook interests-->
     <string name="facebook_interests_app_bar_title">Facebookで検索</string>
     <string name="facebook_interests_search_schools">学歴を検索中..</string>
     <string name="facebook_interests_search_locations">行ったことがある場所を検索中</string>
 
-    <!--Theme Details Page-->
-    <string name="theme_details_lastPlayed">最終プレイ</string>
-    <string name="theme_details_created">作成日</string>
-    <string name="theme_details_bestScore">Best Score</string>
-    <string name="theme_details_playButton">スタート</string>
-    <string name="theme_details_newInstance">新規</string>
-    <string name="theme_details_app_bar_title">問題を選択</string>
-    <string name="theme_details_did_not_choose_instance">問題を選択してください</string>
-    <string name="theme_details_item_menu_more_info">詳細</string>
-    <string name="theme_details_item_menu_delete">消去</string>
-    <string name="theme_details_no_items">該当なし\n\n
+    <!--Lesson Details Page-->
+    <string name="lesson_details_lastPlayed">最終プレイ</string>
+    <string name="lesson_details_created">作成日</string>
+    <string name="lesson_details_bestScore">Best Score</string>
+    <string name="lesson_details_playButton">スタート</string>
+    <string name="lesson_details_newInstance">新規</string>
+    <string name="lesson_details_app_bar_title">問題を選択</string>
+    <string name="lesson_details_did_not_choose_instance">問題を選択してください</string>
+    <string name="lesson_details_item_menu_more_info">詳細</string>
+    <string name="lesson_details_item_menu_delete">消去</string>
+    <string name="lesson_details_no_items">該当なし\n\n
     +ボタンを押して\n
     追加してください</string>
 

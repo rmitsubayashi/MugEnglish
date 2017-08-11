@@ -46,8 +46,6 @@ public class WikiDataEntryData{
 		this.pronunciation = pronunciation;
 	}
 
-	//we technically only need to check the wikiData id
-	//but we might implement ore languages in the future
 	@Override
 	public boolean equals(Object object){
 		if (object == null)
@@ -57,18 +55,15 @@ public class WikiDataEntryData{
 			return false;
 
 		WikiDataEntryData data = (WikiDataEntryData)object;
-		return  (data.getWikiDataID().equals(this.wikiDataID) &&
-				data.getLabel().equals(this.label) &&
-				data.getDescription().equals(this.description)
-		);
+		//we only check the ID because the label and description might change
+		//if a user adds the entity data after it has been modified
+		return  (data.getWikiDataID().equals(this.wikiDataID));
 	}
 
 	@Override
 	public int hashCode(){
 		int result = 17;
-		result = 31 * result + label.hashCode();
 		result = 31 * result + wikiDataID.hashCode();
-		result = 31 * result + description.hashCode();
 		return result;
 	}
 }

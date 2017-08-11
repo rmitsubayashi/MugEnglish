@@ -4,7 +4,7 @@ import java.util.List;
 
 public class QuestionData {
     private String id;
-    private String themeId;
+    private String lessonId;
     private String topic;
     private Integer questionType;
     private String question;
@@ -21,7 +21,7 @@ public class QuestionData {
                         String answer, List<String> acceptableAnswers,
                         List<String> vocabulary) {
         this.id = id;
-        this.themeId = themeId;
+        this.lessonId = themeId;
         this.topic = topic;
         this.questionType = questionType;
         this.question = question;
@@ -39,12 +39,12 @@ public class QuestionData {
         this.id = id;
     }
 
-    public String getThemeId() {
-        return themeId;
+    public String getLessonId() {
+        return lessonId;
     }
 
-    public void setThemeId(String themeId) {
-        this.themeId = themeId;
+    public void setLessonId(String lessonId) {
+        this.lessonId = lessonId;
     }
 
     public String getTopic() {
