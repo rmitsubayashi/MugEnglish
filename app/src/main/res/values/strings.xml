@@ -113,6 +113,12 @@
     <string name="preferences_account_logout_key">preferences:logout</string>
     <string name="preferences_first_time_key">preferences:first time</string>
 
+    <string name="lesson_category_greetings">あいさつ</string>
+    <string name="lesson_category_family">家族</string>
+    <string name="lesson_category_work">職業</string>
+    <string name="lesson_category_body">体</string>
+    <string name="lesson_category_countries">国</string>
+
     <!--onboarding pages-->
     <string name="onboarding_skip">スキップ</string>
     <string name="onboarding_next">次へ</string>
@@ -132,6 +138,13 @@
     <string name="onboarding_introduction4_description">好きな人や場所、本や映画で英語を楽しく勉強しよう！</string>
     <string name="onboarding_introduction4_start">始める！</string>
     <string name="onboarding_choose_interest_title">好みを選ぼう！</string>
+
+    <!--navigation drawer items-->
+    <string name="main_navigation_drawer_interests">お気に入り</string>
+    <string name="main_navigation_drawer_data">データ</string>
+    <string name="main_navigation_drawer_settings">設定</string>
+
+    <string name="main_navigation_drawer_lesson_categories">レッスン</string>
 
     <!--Lesson list page -->
     <string name="lesson_list_app_bar_title">テーマを選択</string>

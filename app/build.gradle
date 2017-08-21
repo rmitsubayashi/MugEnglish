@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.mugenglish"
-        minSdkVersion 16
-        targetSdkVersion 25
+        minSdkVersion 20
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -37,18 +37,15 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-auth:1.1.1'
     compile 'com.firebaseui:firebase-ui-database:1.1.1'
     compile 'com.google.firebase:firebase-crash:10.0.1'
-}
 
-dependencies {
     //for adding interest
     compile 'com.github.clans:fab:1.6.4'
     //for puzzle piece question
     compile 'org.apmem.tools:layouts:1.10@aar'
-    //for user profile chart.
-    //also needs dependency in the project gradle file
-    compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     //for easier time manipulation
     compile 'joda-time:joda-time:2.9.7'
+
+    compile 'com.android.support:preference-v14:26.0.1'
 }
 
 allprojects {
@@ -56,5 +53,4 @@ allprojects {
         maven { url 'https://maven.fabric.io/public' }
     }
 }
-
 apply plugin: 'com.google.gms.google-services'

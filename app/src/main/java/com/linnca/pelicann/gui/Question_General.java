@@ -1,0 +1,211 @@
+package com.linnca.pelicann.gui;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.datawrappers.QuestionData;
+import com.linnca.pelicann.questionmanager.QuestionManager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//sets methods common for all question guis
+public abstract class Question_General extends Fragment {
+    private final String TAG = "Question_General";
+    public static int UNLIMITED_ATTEMPTS = -1;
+    public static String BUNDLE_QUESTION_DATA = "bundleQuestionData";
+
+    protected QuestionData questionData;
+
+    protected int maxNumberOfAttempts;
+    protected int attemptCt = 0;
+    protected boolean disableChoiceAfterWrongAnswer;
+    private BottomSheetBehavior behavior;
+    private NestedScrollView feedback;
+    protected ViewGroup parentViewGroupForFeedback;
+    protected ViewGroup siblingViewGroupForFeedback;
+
+    private QuestionListener questionListener;
+
+    interface QuestionListener {
+        void onNextQuestion();
+        void onRecordResponse(String response, boolean correct);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        questionData = (QuestionData)getArguments().getSerializable(BUNDLE_QUESTION_DATA);
+        setMaxNumberOfAttempts();
+        disableChoiceAfterWrongAnswer = disableChoiceAfterWrongAnswer();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        implementListeners(context);
+    }
+
+    //must implement to account for lower APIs
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        implementListeners(activity);
+    }
+
+    private void implementListeners(Context context){
+        try {
+            questionListener = (QuestionListener)context;
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
+    }
+
+    //need this to record response
+    protected abstract String getResponse(View clickedView);
+    //how many chances that are possibly allowed for each question type
+    // (t/f is only one, m/c can have more)
+    protected abstract int getMaxPossibleAttempts();
+    //whether to disable choice after answer when you have multiple attempts.
+    //this will be user friendly?
+    protected abstract boolean disableChoiceAfterWrongAnswer();
+    //for example clearing a response, hiding the keyboard, etc.
+    //should be overridden if using (not required)
+    protected void doSomethingAfterResponse(){
+
+    }
+    //formatting may be different for certain question types, but this should be the base
+    protected String getFeedback(){
+        String answer = questionData.getAnswer();
+        return "正解: " + answer;
+    }
+
+    private void setMaxNumberOfAttempts(){
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        //the preference is still stored as a string
+        String preferencesMaxAttemptsString = sharedPreferences.getString
+                (getString(R.string.preferences_questions_numberOfAttemptsPerQuestion_key), "1");
+        int preferencesMaxAttempts = Integer.parseInt(preferencesMaxAttemptsString);
+        int maxPossibleAttempts = getMaxPossibleAttempts();
+        if (maxPossibleAttempts == UNLIMITED_ATTEMPTS){
+            //the question allow unlimited attempts
+            //so restrict the user's attempts to the number set in the preferences
+            maxNumberOfAttempts = preferencesMaxAttempts;
+        } else {
+            if (preferencesMaxAttempts <= maxPossibleAttempts){
+                //the user has set a number of attempts less than the maximum possible attempts
+                //so only allow the user to attempt the number of times he set in the preferences
+                maxNumberOfAttempts = preferencesMaxAttempts;
+            } else {
+                //the max possible attempts is less than the number the user set in the preferences
+                //so only allow the max possible attempts
+                maxNumberOfAttempts = maxPossibleAttempts;
+            }
+        }
+    }
+
+    //might be different for different question types??
+    protected boolean checkAnswer(String response){
+        List<String> allAnswers = new ArrayList<>();
+        allAnswers.add(questionData.getAnswer());
+        if (questionData.getAcceptableAnswers() != null){
+            allAnswers.addAll(questionData.getAcceptableAnswers());
+        }
+        return allAnswers.contains(response);
+    }
+
+    protected View.OnClickListener getResponseListener(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptCt++;
+                String answer = getResponse(view);
+                if (checkAnswer(answer)){
+                    questionListener.onRecordResponse(answer, true);
+                    openFeedback(true);
+                } else {
+                    questionListener.onRecordResponse(answer, false);
+                    if (attemptCt == maxNumberOfAttempts){
+                        //the user used up all his attempts
+                        openFeedback(false);
+                    } else {
+                        //the user still has attempts remaining
+                        if (disableChoiceAfterWrongAnswer)
+                            view.setEnabled(false);
+                    }
+                }
+
+                doSomethingAfterResponse();
+            }
+        };
+    }
+
+    protected void inflateFeedback(LayoutInflater inflater){
+        feedback = (NestedScrollView) inflater
+                .inflate(R.layout.inflatable_question_feedback, parentViewGroupForFeedback, false);
+        behavior = BottomSheetBehavior.from(feedback);
+        Button nextButton = (Button)feedback.findViewById(R.id.question_feedback_next);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                questionListener.onNextQuestion();
+            }
+        });
+        behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        parentViewGroupForFeedback.addView(feedback);
+    }
+
+    private void openFeedback(boolean correct){
+        //when we first display the question the bottom sheet is hideable & hidden
+        //whether the answer was correct or not,
+        //we don't want the user to be able to hide the view
+        behavior.setHideable(false);
+
+        TextView feedbackTitle = (TextView)feedback.findViewById(R.id.question_feedback_title);
+        if (correct){
+            feedbackTitle.setText(R.string.question_feedback_correct);
+            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            feedbackTitle.setText(R.string.question_feedback_incorrect);
+            TextView feedbackDescription =
+                    (TextView)feedback.findViewById(R.id.question_feedback_description);
+            feedbackDescription.setText(getFeedback());
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
+
+
+        disableBackground(siblingViewGroupForFeedback);
+        siblingViewGroupForFeedback.setAlpha(0.5f);
+    }
+
+    private void disableBackground(View view) {
+        view.setClickable(false);
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                disableBackground(child);
+            }
+        }
+    }
+
+
+
+
+}

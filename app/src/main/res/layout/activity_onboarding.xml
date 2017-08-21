@@ -6,9 +6,9 @@
                                                  android:layout_width="match_parent"
                                                  android:layout_height="match_parent"
                                                  android:fitsSystemWindows="true"
-                                                 tools:context="com.example.ryomi.mugenglish.gui.Onboarding">
+                                                 tools:context="com.linnca.pelicann.gui.Onboarding">
 
-    <com.example.ryomi.mugenglish.gui.widgets.ViewPagerCustomDuration
+    <com.linnca.pelicann.gui.widgets.ViewPagerCustomDuration
         android:id="@+id/onboarding_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
