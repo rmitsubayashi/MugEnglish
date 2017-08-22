@@ -42,8 +42,7 @@ dependencies {
     compile 'com.github.clans:fab:1.6.4'
     //for puzzle piece question
     compile 'org.apmem.tools:layouts:1.10@aar'
-    //for easier time manipulation
-    compile 'joda-time:joda-time:2.9.7'
+
 
     compile 'com.android.support:preference-v14:26.0.1'
 }

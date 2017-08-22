@@ -22,88 +22,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <!-- all activities from the parent theme list activity -->
-        <activity
-            android:name="com.linnca.pelicann.gui.LessonList"
-            android:label="@string/lesson_list_app_bar_title">
-        </activity>
-        <activity
-            android:name="com.linnca.pelicann.gui.LessonDetails"
-            android:label="@string/lesson_details_app_bar_title"
-            android:parentActivityName="com.linnca.pelicann.gui.LessonList"/>
-        <activity
-            android:name="com.linnca.pelicann.gui.Question_TrueFalse"
-            android:parentActivityName="com.linnca.pelicann.gui.LessonDetails"/>
-        <activity
-            android:name="com.linnca.pelicann.gui.Question_MultipleChoice"
-            android:parentActivityName="com.linnca.pelicann.gui.LessonDetails">
-        </activity>
-        <activity
-            android:name="com.linnca.pelicann.gui.Question_Puzzle_Piece"
-            android:parentActivityName="com.linnca.pelicann.gui.LessonDetails">
-        </activity>
-        <!-- makes the keyboard pop up default -->
-        <activity
-            android:name="com.linnca.pelicann.gui.Question_FillInBlank_Input"
-            android:parentActivityName="com.linnca.pelicann.gui.LessonDetails"
-            android:windowSoftInputMode="stateVisible">
-        </activity>
-        <!--
-        not sure if the theme list should be the parent,
-        but right now it is since I can't figure out how to press up
-        to go to the theme details page
-        -->
-        <activity
-            android:name="com.linnca.pelicann.gui.Results"
-            android:label="@string/results_app_bar_title"
-            android:parentActivityName="com.linnca.pelicann.gui.LessonList">
-        </activity>
-
-        <!-- all activities from the parent activity user profile -->
-        <activity
-            android:name="com.linnca.pelicann.gui.UserProfile"
-            android:label="@string/user_profile_app_bar_title"/>
-
-        <!-- all activities from the parent activity user interests -->
-        <activity
-            android:name="com.linnca.pelicann.gui.UserInterests"
-            android:label="@string/user_interests_app_bar_title"
-            android:launchMode="singleTop">
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable_user_interests"/>
-
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.linnca.pelicann.gui.SearchInterests"
-            android:launchMode="singleTop"
-            android:parentActivityName="com.linnca.pelicann.gui.UserInterests">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH"/>
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable_search_interests"/>
-        </activity>
-        <activity
-            android:name="com.linnca.pelicann.gui.FacebookInterests"
-            android:label="@string/facebook_interests_app_bar_title"
-            android:parentActivityName="com.linnca.pelicann.gui.UserInterests">
-        </activity>
 
         <service
             android:name="com.linnca.pelicann.userinterestcontrols.FacebookInterestFinder"
             android:exported="false"/>
 
-        <activity android:name="com.linnca.pelicann.gui.Question_FillInBlank_MultipleChoice">
-        </activity>
         <activity
             android:name="com.linnca.pelicann.gui.Onboarding"
-            android:label="@string/title_activity_onboarding"
             android:theme="@style/AppTheme">
         </activity>
         <activity android:name="com.linnca.pelicann.gui.MainActivity">

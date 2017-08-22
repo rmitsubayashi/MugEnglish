@@ -112,6 +112,7 @@
     <string name="preferences_account_logout_label">ログアウト</string>
     <string name="preferences_account_logout_key">preferences:logout</string>
     <string name="preferences_first_time_key">preferences:first time</string>
+    <string name="preferences_last_selected_lesson_category">preferences: last selected lesson category</string>
 
     <string name="lesson_category_greetings">あいさつ</string>
     <string name="lesson_category_family">家族</string>
@@ -155,11 +156,16 @@
     <!--results-->
     <string name="results_app_bar_title">結果</string>
     <string name="results_correct_ct">正解数</string>
-    <string name="results_star_earned_notification">おめでとうございます！\n
-    スターをゲットしました！</string>
+    <string name="results_star_earned_template">「%1$s」を獲得しました</string>
     <string name="results_star_first_instance">初めての一回</string>
-    <string name="results_star_repeat_instance">復習も大事！</string>
-    <string name="results_star_second_instance">どんどん新しい問題を解いて！</string>
+    <string name="results_star_repeat_instance">復習も大事</string>
+    <string name="results_star_second_instance">新たな一面</string>
+    <string name="results_star_first_instance_explanation">レッスンを初めて完了するともらえます</string>
+    <string name="results_star_repeat_instance_explanation">同じレッスンをもう一度完了するともらえます</string>
+    <string name="results_star_second_instance_explanation">初めてのレッスンと違うレッスンを完了するともらえます</string>
+    <string name="results_review">復習する</string>
+    <string name="results_finish_review">このまま終了する</string>
+    <string name="results_finish_no_review">終了する</string>
 
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>
@@ -217,8 +223,5 @@
     <string name="question_fill_in_blank_input_hint">答え</string>
     <string name="question_fill_in_blank_multiple_choice_instructions">空欄に入る解答を選択してください</string>
     <string name="question_multiple_choice_instructions">正しい解答を選択してください</string>
-    <string name="title_activity_onboarding">Onboarding</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>

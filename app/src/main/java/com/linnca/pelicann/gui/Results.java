@@ -1,95 +1,189 @@
 package com.linnca.pelicann.gui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.AchievementStars;
-import com.linnca.pelicann.questionmanager.QuestionManager;
+import com.linnca.pelicann.db.datawrappers.InstanceRecord;
+import com.linnca.pelicann.db.datawrappers.QuestionAttempt;
 import com.linnca.pelicann.questionmanager.ResultsManager;
 
-public class Results extends AppCompatActivity {
-    private LinearLayout questionRecord;
+import java.util.List;
+
+//after we are finished with the questions,
+//we redirect to this fragment
+// and save everything in the database
+
+public class Results extends Fragment {
+    public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
+    private InstanceRecord instanceRecord;
+    private ResultsManager resultsManager;
+    private TextView correctCtTextView;
+    private LinearLayout newStarsLayout;
+    private Button finishButton;
+    private Button reviewButton;
+
+    private ResultsListener resultsListener;
+
+    interface ResultsListener {
+        void resultsToLessonCategories();
+        void resultsToReview(InstanceRecord instanceRecord);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_results);
+        instanceRecord = (InstanceRecord) getArguments().getSerializable(BUNDLE_INSTANCE_RECORD);
+        resultsManager = new ResultsManager(instanceRecord, new ResultsManager.ResultsManagerListener() {
+            @Override
+            public void onAchievementsSaved(AchievementStars existingAchievements, AchievementStars newAchievements) {
+                populateNewStars(existingAchievements, newAchievements);
+            }
+        });
+        //this won't affect when we check for new achievements
+        resultsManager.saveInstanceRecord();
 
-        Toolbar appBar = (Toolbar) findViewById(R.id.results_tool_bar);
-        setSupportActionBar(appBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //questionRecord = (LinearLayout)findViewById(R.id.results_question_record);
+    }
 
-        //ResultsManager resultsManager = QuestionManager.getInstance().getResultsManager();
-        //resultsManager.displayResults(this);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState){
+        View view = inflater.inflate(R.layout.fragment_results, container, false);
+        newStarsLayout = view.findViewById(R.id.results_new_star_layout);
+        correctCtTextView = view.findViewById(R.id.results_questions_correct);
+        reviewButton = view.findViewById(R.id.results_review);
+        finishButton = view.findViewById(R.id.results_finish);
+        //do this here because this updates the layout
+        resultsManager.identifyAchievements();
+        setLayout();
+        return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        implementListeners(context);
+    }
+
+    //must implement to account for lower APIs
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        implementListeners(activity);
+    }
+
+    private void implementListeners(Context context){
+        try {
+            resultsListener = (ResultsListener) context;
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
     }
 
     public void populateNewStars(AchievementStars existingAchievements, AchievementStars newAchievements){
         boolean show = false;
-        LinearLayout list = (LinearLayout)findViewById(R.id.results_new_star_earned);
         //basically check if old = false and new = true
         if (!existingAchievements.getFirstInstance() && newAchievements.getFirstInstance()) {
             show = true;
             LinearLayout listItem = (LinearLayout)getLayoutInflater()
-                    .inflate(R.layout.inflatable_results_achievement, list, false);
-            TextView listItemText = (TextView)listItem.findViewById(R.id.results_achievement_text);
-            listItemText.setText(R.string.results_star_first_instance);
-            list.addView(listItem);
+                    .inflate(R.layout.inflatable_results_achievement_bubble, newStarsLayout, false);
+            TextView listItemText = listItem.findViewById(R.id.results_achievement_text);
+            listItemText.setText(getString(R.string.results_star_earned_template, getString(R.string.results_star_first_instance)));
+            newStarsLayout.addView(listItem);
         }
         if (!existingAchievements.getSecondInstance() && newAchievements.getSecondInstance()) {
             show = true;
             LinearLayout listItem = (LinearLayout)getLayoutInflater()
-                    .inflate(R.layout.inflatable_results_achievement, list, false);
-            TextView listItemText = (TextView)listItem.findViewById(R.id.results_achievement_text);
-            listItemText.setText(R.string.results_star_second_instance);
-            list.addView(listItem);
+                    .inflate(R.layout.inflatable_results_achievement_bubble, newStarsLayout, false);
+            TextView listItemText = listItem.findViewById(R.id.results_achievement_text);
+            listItemText.setText(getString(R.string.results_star_earned_template, getString(R.string.results_star_second_instance)));
+            newStarsLayout.addView(listItem);
         }
         if (!existingAchievements.getRepeatInstance() && newAchievements.getRepeatInstance()) {
             show = true;
             LinearLayout listItem = (LinearLayout)getLayoutInflater()
-                    .inflate(R.layout.inflatable_results_achievement, list, false);
+                    .inflate(R.layout.inflatable_results_achievement_bubble, newStarsLayout, false);
             TextView listItemText = (TextView)listItem.findViewById(R.id.results_achievement_text);
-            listItemText.setText(R.string.results_star_repeat_instance);
-            list.addView(listItem);
+            listItemText.setText(getString(R.string.results_star_earned_template, getString(R.string.results_star_repeat_instance)));
+            newStarsLayout.addView(listItem);
         }
 
         if (show){
-            TextView notification = (TextView) findViewById(R.id.results_new_star_earned_notification);
-            notification.setVisibility(View.VISIBLE);
-            list.setVisibility(View.VISIBLE);
+            newStarsLayout.setVisibility(View.VISIBLE);
         }
 
     }
 
-    /*public void addQuestion(String question){
-        TextView view = (TextView)getLayoutInflater().inflate(R.layout.inflatable_results_question, questionRecord, false);
-        view.setText(question);
+    private void setLayout(){
+        populateCorrectCount();
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resultsListener.resultsToLessonCategories();
+            }
+        });
 
-        questionRecord.addView(view);
+        boolean needToReview = false;
+        for (QuestionAttempt attempt : instanceRecord.getAttempts()){
+            if (!attempt.getCorrect()){
+                needToReview = true;
+                break;
+            }
+        }
+        if (needToReview){
+            reviewButton.setVisibility(View.VISIBLE);
+            reviewButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    resultsListener.resultsToReview(instanceRecord);
+                }
+            });
+            //change the layout of the finish button to recommend review
+            // (make it borderless)
+            finishButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.transparent));
+            finishButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lblue500));
+            finishButton.setText(R.string.results_finish_review);
+            finishButton.setElevation(0);
+        }
     }
 
-    public void addResponse(String response, boolean correct){
-        TextView view = (TextView)getLayoutInflater().inflate(R.layout.inflatable_results_response, questionRecord, false);
-        view.setText(response);
-
-        questionRecord.addView(view);
-    }*/
-
-    public void populateCorrectCount(int correctCt, int totalCt){
+    private void populateCorrectCount(){
+        String tempQuestionID = "";
+        int correctCt = 0;
+        int totalCt = 0;
+        List<QuestionAttempt> attempts = instanceRecord.getAttempts();
+        for (QuestionAttempt attempt : attempts){
+            String questionID = attempt.getQuestionID();
+            //there can only be one correct answer per question.
+            // (there can be multiple incorrect answers)
+            if (attempt.getCorrect())
+                correctCt++;
+            if (!tempQuestionID.equals(questionID)){
+                totalCt++;
+                tempQuestionID = questionID;
+            }
+        }
         String displayText = Integer.toString(correctCt) + " / " + Integer.toString(totalCt);
-        TextView displayTextView = (TextView)findViewById(R.id.results_questions_correct);
-        displayTextView.setText(displayText);
+        correctCtTextView.setText(displayText);
+        //change text color based on accuracy (the user can edit border line??)
         double correctPercentage = (double)correctCt / (double)totalCt;
-        if (correctPercentage > 0.5){
-            displayTextView.setTextColor(ContextCompat.getColor(this, R.color.lgreen500));
+        if (correctPercentage > 0.7){
+            correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
+        } else if (correctPercentage > 0.5){
+            correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.orange500));
         } else {
-            displayTextView.setTextColor(ContextCompat.getColor(this, R.color.red500));
+            correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.red500));
         }
     }
 }

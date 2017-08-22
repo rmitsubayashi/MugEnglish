@@ -32,7 +32,7 @@ public class LessonList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
-        listView = (RecyclerView)view.findViewById(R.id.lesson_list_list);
+        listView = view.findViewById(R.id.lesson_list_list);
         int lessonCategoryID = getArguments().getInt(LESSON_CATEGORY_ID);
         populateLessonList(lessonCategoryID);
         return view;

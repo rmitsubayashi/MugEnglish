@@ -20,42 +20,36 @@ import java.util.List;
 
 //this manages the results displayed to the user
 public class ResultsManager {
-    private Context context;
+    private FirebaseDatabase db;
+    private String userID;
     private InstanceRecord instanceRecord;
-    private List<QuestionData> questions;
-    //we can find this from the instance ID of instance record
-    //(instanceID -> instance -> themeID)
-    //but that's one more connection we will have to send
-    private String themeID;
+    private ResultsManagerListener resultsManagerListener;
 
-    public ResultsManager(InstanceRecord instanceRecord, List<QuestionData> questions, String themeID){
-        this.instanceRecord = instanceRecord;
-        this.questions = new ArrayList<>(questions);
-        this.themeID = themeID;
+    public interface ResultsManagerListener {
+        void onAchievementsSaved(AchievementStars existingAchievements, AchievementStars newAchievements);
     }
 
-    //save and display results
-    public void displayResults(Context context){
-        this.context = context;
-        saveInstanceRecord();
-        identifyAchievements();
-        //showQuestionRecord();
-        showQuestionsCorrect();
+    public ResultsManager(InstanceRecord instanceRecord, ResultsManagerListener listener){
+        db = FirebaseDatabase.getInstance();
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        this.instanceRecord = instanceRecord;
+        this.resultsManagerListener = listener;
     }
 
     //since we need to do this synchronously
     //the calls to firebase are nested.
     //1. look at the achievements for the user
     //2. look at past instance records to identify what new stars should be added
-    private void identifyAchievements(){
+    public void identifyAchievements(){
         identifyExistingAchievements();
     }
 
     private void identifyExistingAchievements(){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = db.getReference("achievements/"+userID+"/"+themeID);
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference achievementsRef = db.getReference(
+                FirebaseDBHeaders.ACHIEVEMENTS + "/" +
+                        userID + "/" +
+                        instanceRecord.getLessonId());
+        achievementsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 AchievementStars existingAchievements = dataSnapshot.getValue(AchievementStars.class);
@@ -76,14 +70,14 @@ public class ResultsManager {
         });
     }
 
-    //we are only passing the existing achievements so we can compare the old and new set of achievements.
+    //we are passing the existing achievements so we can compare the old and new set of achievements.
     //identification should not be different whether this instance record is updated prior or after
-    private void identifyNewAchievements(AchievementStars existingAchievements){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = db.getReference("instanceRecords/"+userID+"/"+themeID);
-        final AchievementStars finalExistingAchievements = existingAchievements;
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void identifyNewAchievements(final AchievementStars existingAchievements){
+        DatabaseReference instanceRecordsRef = db.getReference(
+                FirebaseDBHeaders.INSTANCE_RECORDS + "/"+
+                        userID + "/" +
+                        instanceRecord.getLessonId());
+        instanceRecordsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 AchievementStars newAchievements = new AchievementStars();
@@ -118,9 +112,9 @@ public class ResultsManager {
                     }
                 }
 
-                if (shouldUpdateStars(finalExistingAchievements, newAchievements)){
-                    ((Results)context).populateNewStars(finalExistingAchievements, newAchievements);
-                    updateAchievements(finalExistingAchievements, newAchievements);
+                if (shouldUpdateStars(existingAchievements, newAchievements)){
+                    updateAchievements(existingAchievements, newAchievements);
+                    resultsManagerListener.onAchievementsSaved(existingAchievements, newAchievements);
                 }
 
             }
@@ -166,58 +160,18 @@ public class ResultsManager {
             combinedAchievements.setRepeatInstance(false);
         }
 
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = db.getReference("achievements/"+userID+"/"+themeID);
+        DatabaseReference ref = db.getReference(
+                FirebaseDBHeaders.ACHIEVEMENTS + "/" +
+                        userID + "/" +
+                        instanceRecord.getLessonId());
         //overwrite/create achievements
         ref.setValue(combinedAchievements);
     }
 
-    private void saveInstanceRecord(){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    public void saveInstanceRecord(){
         DatabaseReference ref = db.getReference(
                 FirebaseDBHeaders.INSTANCE_RECORDS + "/" + userID + "/" +
-                themeID + "/" + instanceRecord.getInstanceId() +"/" + instanceRecord.getId());
+                instanceRecord.getLessonId() + "/" + instanceRecord.getInstanceId() +"/" + instanceRecord.getId());
         ref.setValue(instanceRecord);
     }
-
-    /*
-    private void showQuestionRecord(){
-        //organize question data into a map for easier retrieval
-        Map<String, QuestionData> questionMap = new HashMap<>();
-        for (QuestionData data : questions){
-            questionMap.put(data.getId(), data);
-        }
-
-        List<QuestionAttempt> attempts = instanceRecord.getAttempts();
-        for (QuestionAttempt attempt : attempts){
-            QuestionData questionData = questionMap.get(attempt.getQuestionID());
-            //shouldn't happen
-            if (questionData == null){
-                continue;
-            }
-            ((Results)context).addQuestion(questionData.getQuestion());
-            ((Results)context).addResponse(attempt.getResponse(),attempt.getCorrect());
-        }
-    }*/
-
-    private void showQuestionsCorrect(){
-        List<QuestionAttempt> attempts = instanceRecord.getAttempts();
-        String tempQuestionID = "";
-        int totalQuestions = 0;
-        int correctQuestions = 0;
-        for (QuestionAttempt attempt : attempts){
-            String questionID = attempt.getQuestionID();
-            if (attempt.getCorrect())
-                correctQuestions++;
-            if (!tempQuestionID.equals(questionID)){
-                totalQuestions++;
-                tempQuestionID = questionID;
-            }
-        }
-
-        ((Results)context).populateCorrectCount(correctQuestions, totalQuestions);
-    }
-
 }

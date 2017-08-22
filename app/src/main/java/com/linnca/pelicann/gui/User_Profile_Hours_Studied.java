@@ -10,10 +10,6 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.InstanceRecord;
 import com.linnca.pelicann.db.datawrappers.QuestionAttempt;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.Days;
-import org.joda.time.Seconds;
 
 import java.util.ArrayList;
 import java.util.List;

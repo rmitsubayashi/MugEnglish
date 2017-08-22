@@ -99,4 +99,27 @@ public class QuestionData implements Serializable{
     public List<String> getAcceptableAnswers() {return acceptableAnswers;}
 
     public void setAcceptableAnswers(List<String> acceptableAnswers){this.acceptableAnswers = acceptableAnswers; }
+
+    //used in question manager when we want to add question data to a list
+    // of review questions
+    @Override
+    public boolean equals(Object object){
+        if (object == null)
+            return false;
+
+        if (!(object instanceof QuestionData))
+            return false;
+
+        QuestionData data = (QuestionData)object;
+        //we only check the ID because the label and description might change
+        //if a user adds the entity data after it has been modified
+        return  (data.getId().equals(this.id));
+    }
+
+    @Override
+    public int hashCode(){
+        int result = 17;
+        result = 31 * result + id.hashCode();
+        return result;
+    }
 }

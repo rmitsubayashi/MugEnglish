@@ -43,18 +43,18 @@ public class LessonDetails extends Fragment {
     private LessonDetailsListener lessonDetailsListener;
 
     public interface LessonDetailsListener {
-        void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData);
+        void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData, String lessonKey);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_lesson_details, container, false);
-        list = (RecyclerView) view.findViewById(R.id.lesson_details_instanceList);
-        noItemTextView = (TextView) view.findViewById(R.id.lesson_details_no_items);
-        loading = (ProgressBar) view.findViewById(R.id.lesson_details_loading);
-        mainLayout = (ViewGroup) view.findViewById(R.id.fragment_lesson_details);
-        createButton = (FloatingActionButton)view.findViewById(R.id.lesson_details_add);
+        list = view.findViewById(R.id.lesson_details_instanceList);
+        noItemTextView = view.findViewById(R.id.lesson_details_no_items);
+        loading = view.findViewById(R.id.lesson_details_loading);
+        mainLayout = view.findViewById(R.id.fragment_lesson_details);
+        createButton = view.findViewById(R.id.lesson_details_add);
         Bundle arguments = getArguments();
         if (arguments.getSerializable(BUNDLE_LESSON_DATA) != null) {
             //get data
@@ -184,30 +184,26 @@ public class LessonDetails extends Fragment {
         iconView.setImageResource(imageID);*/
 
         //grab list of instances
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            DatabaseReference ref2 = FirebaseDatabase.getInstance().getReference(
-                    FirebaseDBHeaders.LESSON_INSTANCES + "/"+userID+"/"+ lessonData.getKey());
-            list.setLayoutManager(new LinearLayoutManager(getContext()));
-            firebaseAdapter = new LessonDetailsAdapter(ref2, noItemTextView, loading, lessonDetailsListener);
-            //when we create a new instance, remove the progress spinner
-            firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onItemRangeInserted(int positionStart, int itemCount) {
-                    super.onItemRangeInserted(positionStart, itemCount);
-                    createButton.setIndeterminate(false);
-                    createButton.setEnabled(true);
-                }
-            });
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference lessonInstancesRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.LESSON_INSTANCES + "/"+userID+"/"+ lessonData.getKey());
+        list.setLayoutManager(new LinearLayoutManager(getContext()));
+        firebaseAdapter = new LessonDetailsAdapter(lessonInstancesRef, noItemTextView, loading, lessonDetailsListener, lessonData.getKey());
+        //when we create a new instance, remove the progress spinner
+        firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                createButton.setIndeterminate(false);
+                createButton.setEnabled(true);
+            }
+        });
 
 
 
-            list.setAdapter(firebaseAdapter);
+        list.setAdapter(firebaseAdapter);
 
-            registerForContextMenu(list);
-
-        }
-
+        registerForContextMenu(list);
     }
 
 

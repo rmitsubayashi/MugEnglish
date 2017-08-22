@@ -1,6 +1,8 @@
 package com.linnca.pelicann.gui;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.Preference;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +36,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LessonList.LessonListListener,
         UserInterests.UserInterestListener,
         Question_General.QuestionListener,
-        LessonDetails.LessonDetailsListener
+        LessonDetails.LessonDetailsListener,
+        Results.ResultsListener
 {
     private final String TAG = "MainActivity";
     private Toolbar toolbar;
@@ -50,12 +54,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar)findViewById(R.id.tool_bar);
+        toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         fragmentManager = getSupportFragmentManager();
         questionManager = new QuestionManager(getQuestionManagerListener());
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.activity_main);
+        drawerLayout = findViewById(R.id.activity_main);
         ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,drawerLayout, toolbar, R.string.lesson_list_navigation_drawer_open, R.string.lesson_list_navigation_drawer_close){
 
@@ -82,11 +86,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             newFragment = new LessonList();
                             bundle.putInt(LessonList.LESSON_CATEGORY_ID, LessonHierarchyViewer.ID_WORK);
                             newFragment.setArguments(bundle);
+                            setLastSelectedLessonCategory(LessonHierarchyViewer.ID_WORK);
                             break;
                         case R.id.main_navigation_drawer_lesson_countries :
                             newFragment = new LessonList();
                             bundle.putInt(LessonList.LESSON_CATEGORY_ID, LessonHierarchyViewer.ID_COUNTRIES);
                             newFragment.setArguments(bundle);
+                            setLastSelectedLessonCategory(LessonHierarchyViewer.ID_COUNTRIES);
                             break;
                         default:
                             return;
@@ -116,8 +122,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //calling sync state is necessary or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
 
-        navigationView = (NavigationView)findViewById(R.id.main_navigation_drawer);
+        navigationView = findViewById(R.id.main_navigation_drawer);
         navigationView.setNavigationItemSelectedListener(this);
+
+        setLessonView();
     }
 
     @Override
@@ -216,14 +224,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onQuestionsFinished(InstanceRecord instanceRecord) {
+                Fragment fragment = new Results();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Results.BUNDLE_INSTANCE_RECORD, instanceRecord);
+                fragment.setArguments(bundle);
 
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment);
+                fragmentTransaction.commit();
             }
         };
     }
 
     @Override
-    public void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData){
-        questionManager.startQuestions(lessonInstanceData);
+    public void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData, String lessonKey){
+        questionManager.startQuestions(lessonInstanceData, lessonKey);
     }
 
     @Override
@@ -234,5 +249,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onNextQuestion(){
         questionManager.nextQuestion();
+    }
+
+    private void setLastSelectedLessonCategory(int lessonCategoryID){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(getString(R.string.preferences_last_selected_lesson_category), lessonCategoryID);
+        editor.apply();
+    }
+
+    @Override
+    public void resultsToLessonCategories(){
+        questionManager.resetManager(QuestionManager.REVIEW);
+        setLessonView();
+    }
+
+    @Override
+    public void resultsToReview(InstanceRecord instanceRecord){
+        questionManager.startReview(instanceRecord);
+    }
+
+    private void setLessonView(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        //this is the ID used by the fragment
+        //default (the user has never selected an item) is countries for now
+        int lastSelectedLessonCategoryID = preferences.getInt(getString(R.string.preferences_last_selected_lesson_category), LessonHierarchyViewer.ID_COUNTRIES);
+        //finding the ID of the navigation drawer
+        int navigationDrawerItemIDToSelect;
+        switch (lastSelectedLessonCategoryID){
+            case LessonHierarchyViewer.ID_COUNTRIES :
+                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_countries;
+                break;
+            case LessonHierarchyViewer.ID_GREETINGS :
+                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_work;
+                break;
+            default:
+                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_countries;
+        }
+        navigationView.setCheckedItem(navigationDrawerItemIDToSelect);
+        Fragment lessonListFragment = new LessonList();
+        Bundle bundle = new Bundle();
+        bundle.putInt(LessonList.LESSON_CATEGORY_ID, lastSelectedLessonCategoryID);
+        lessonListFragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonListFragment);
+        fragmentTransaction.commit();
     }
 }

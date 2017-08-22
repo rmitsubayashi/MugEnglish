@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LessonInstanceData implements Serializable{
-
+    private String id;
     private List<String> questionSetIds;
     //for every question with more than one possible variation,
     //we check this to see which variation we have here
@@ -21,10 +21,19 @@ public class LessonInstanceData implements Serializable{
         interestLabels = new ArrayList<>();
     }
 
-    public LessonInstanceData(List<String> questionSetIds, List<String> questionIds, List<String> interestLabels) {
+    public LessonInstanceData(String id, List<String> questionSetIds, List<String> questionIds, List<String> interestLabels) {
+        this.id = id;
         this.questionSetIds = new ArrayList<>(questionSetIds);
         this.questionIds = new ArrayList<>(questionIds);
         this.interestLabels = new ArrayList<>(interestLabels);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public List<String> getQuestionSetIds() {

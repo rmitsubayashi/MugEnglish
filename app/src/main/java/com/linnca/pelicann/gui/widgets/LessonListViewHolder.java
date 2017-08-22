@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 //holder for user interest list cells
-public class LessonListViewHolder extends RecyclerView.ViewHolder {
+class LessonListViewHolder extends RecyclerView.ViewHolder {
     private final TextView text;
     private final List<ImageView> stars = new ArrayList<>();
 
-    public LessonListViewHolder(View itemView) {
+    LessonListViewHolder(View itemView) {
         super(itemView);
         text = (TextView) itemView.findViewById(R.id.lesson_list_item_text);
         stars.add((ImageView) itemView.findViewById(R.id.lesson_list_item_star1));
@@ -28,7 +28,7 @@ public class LessonListViewHolder extends RecyclerView.ViewHolder {
         this.text.setText(text);
     }
 
-    public List<ImageView> getStars(){
+    List<ImageView> getStars(){
         return this.stars;
     }
 }

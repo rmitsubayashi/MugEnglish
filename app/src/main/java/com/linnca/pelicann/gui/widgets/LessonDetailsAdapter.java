@@ -30,13 +30,17 @@ public class LessonDetailsAdapter
     private TextView noItems;
     //so we can click on an item and start questions
     private LessonDetails.LessonDetailsListener lessonDetailsListener;
+    //need it for the listener
+    private String lessonKey;
 
-    public LessonDetailsAdapter(DatabaseReference ref, TextView noItems, ProgressBar loading, LessonDetails.LessonDetailsListener lessonDetailsListener){
+    public LessonDetailsAdapter(DatabaseReference ref, TextView noItems, ProgressBar loading,
+                                LessonDetails.LessonDetailsListener lessonDetailsListener, String lessonKey){
         super(LessonInstanceData.class, R.layout.inflatable_lesson_details_instance_list_item,
                 LessonDetailsViewHolder.class, ref);
         this.noItems = noItems;
         this.loading = loading;
         this.lessonDetailsListener = lessonDetailsListener;
+        this.lessonKey = lessonKey;
     }
 
     public DatabaseReference getLongClickPosition(){
@@ -62,7 +66,7 @@ public class LessonDetailsAdapter
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lessonDetailsListener.lessonDetailsToQuestions(data);
+                lessonDetailsListener.lessonDetailsToQuestions(data, lessonKey);
             }
         });
 
