@@ -32,7 +32,6 @@ import com.linnca.pelicann.questionmanager.QuestionManager;
 import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        Preferences.LogoutListener,
         LessonList.LessonListListener,
         UserInterests.UserInterestListener,
         Question_General.QuestionListener,
@@ -146,23 +145,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //and set the action on the onCloseDrawer listener for the drawerLayout
         drawerLayout.closeDrawer(navigationView, true);
         return false;
-    }
-
-    @Override
-    public void logout(){
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            return;
-        }
-        if (FirebaseAuth.getInstance().getCurrentUser().getProviderId().equals(FirebaseAuthProvider.PROVIDER_ID))
-            return;
-        FirebaseAuth.getInstance().signOut();
-        /*
-        //remove this fragment
-        getFragmentManager().popBackStack();
-        //send user to main page(theme list)?
-        Intent intent =new Intent(this, LessonList.class);
-        startActivity(intent);
-        finish();*/
     }
 
     @Override
@@ -296,6 +278,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.commit();
     }
 
+    //the navigation view doesn't handle checking items under sub-headers
+    // so we have to handle the logic manually
     private void checkNavigationItem(int id){
         if (selectedNavigationItemID != -1){
             navigationView.getMenu().findItem(selectedNavigationItemID).setChecked(false);

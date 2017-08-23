@@ -17,14 +17,5 @@
             android:defaultValue="1"
             />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:key="@string/preferences_category_account_key"
-        android:title="@string/preferences_category_account_label"
-        >
-        <Preference
-            android:key="@string/preferences_account_logout_key"
-            android:title="@string/preferences_account_logout_label"
-            />
-    </PreferenceCategory>
 
 </PreferenceScreen>

@@ -92,25 +92,23 @@
         preferences:description before question
     </string>
     <string name="preferences_questions_descriptionBeforeQuestions_label">
-        問題選択画面に説明文を表示する
+        説明文を表示
     </string>
     <string name="preferences_questions_descriptionBeforeQuestions_description">
-        説明文を読まずにいきなり問題を解いてみるのも正しい勉強法。\n
-        全問間違った場合も、結果的に勉強効率が上がることも証明されています。
+        挑戦するのが一番大事。\n
+        説明文を読まずにいきなりチャレンジしてみるのも正しい勉強法。\n
+        全問間違っても大丈夫です。\n
+        問題が終わったら説明文を表示します。
     </string>
     <string name="preferences_questions_numberOfAttemptsPerQuestion_key">
         preferences:number of question attempts
     </string>
     <string name="preferences_questions_numberOfAttemptsPerQuestion_label">
-        問題ごとの解答回数を記入してください
+        問題の解答回数
     </string>
     <string name="preferences_questions_numberOfAttemptsPerQuestion_description">
-        いろいろ調整してみて、気楽に勉強できる解答回数を探そう。
+        問題ごとに、何回ミスをしていいか設定できます。\nいろいろ調整してみて、気楽に勉強できる解答回数を探そう。
     </string>
-    <string name="preferences_category_account_label">アカウント</string>
-    <string name="preferences_category_account_key">preferences:account</string>
-    <string name="preferences_account_logout_label">ログアウト</string>
-    <string name="preferences_account_logout_key">preferences:logout</string>
     <string name="preferences_first_time_key">preferences:first time</string>
     <string name="preferences_last_selected_lesson_category">preferences: last selected lesson category</string>
 
