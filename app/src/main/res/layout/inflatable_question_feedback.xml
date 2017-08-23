@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
                 android:text="@string/question_feedback_next"
-                android:background="@drawable/gray_button"
+                android:background="@drawable/white_button"
                 android:textColor="?attr/colorAccent"
                 android:id="@+id/question_feedback_next"/>
 

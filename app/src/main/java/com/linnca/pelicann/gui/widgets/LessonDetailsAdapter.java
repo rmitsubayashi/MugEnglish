@@ -1,7 +1,6 @@
 package com.linnca.pelicann.gui.widgets;
 
 
-import android.app.Activity;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -11,12 +10,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.gui.LessonDetails;
-import com.linnca.pelicann.questionmanager.QuestionManager;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class LessonDetailsAdapter

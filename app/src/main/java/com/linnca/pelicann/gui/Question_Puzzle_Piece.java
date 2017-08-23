@@ -9,15 +9,11 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.datawrappers.QuestionData;
 import com.linnca.pelicann.questiongenerator.QuestionUtils;
-import com.linnca.pelicann.questionmanager.QuestionManager;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -31,24 +27,39 @@ public class Question_Puzzle_Piece extends Question_General {
     private Button submitButton;
     private ScrollView scrollView;
     private ViewGroup grandparentLayout;
+    private int buttonLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        //determine whether to use small or big buttons
+        List<String> choices = questionData.getChoices();
+        int choicesLength = 0;
+        for (String choice : choices){
+            choicesLength += choice.length();
+            //space between words
+            choicesLength += 3;
+        }
+
+        if (choicesLength > 90){
+            buttonLayout = R.layout.inflatable_question_puzzle_piece_choice_small;
+        } else {
+            buttonLayout = R.layout.inflatable_question_puzzle_piece_choice;
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_question_puzzle_piece, container, false);
-        parentViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.fragment_question_puzzle_piece);
-        siblingViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.question_puzzle_piece_main_layout);
+        parentViewGroupForFeedback = view.findViewById(R.id.fragment_question_puzzle_piece);
+        siblingViewGroupForFeedback = view.findViewById(R.id.question_puzzle_piece_main_layout);
 
-        answerLayout = (FlowLayout) view.findViewById(R.id.question_puzzle_piece_answer);
-        choicesLayout = (FlowLayout) view.findViewById(R.id.question_puzzle_piece_choiceRow);
-        questionTextView = (TextView) view.findViewById(R.id.question_puzzle_piece_question);
-        submitButton = (Button) view.findViewById(R.id.question_puzzle_piece_submit);
-        scrollView = (ScrollView)view.findViewById(R.id.question_puzzle_piece_answer_scroll);
+        answerLayout = view.findViewById(R.id.question_puzzle_piece_answer);
+        choicesLayout = view.findViewById(R.id.question_puzzle_piece_choiceRow);
+        questionTextView = view.findViewById(R.id.question_puzzle_piece_question);
+        submitButton = view.findViewById(R.id.question_puzzle_piece_submit);
+        scrollView = view.findViewById(R.id.question_puzzle_piece_answer_scroll);
         //same view
         grandparentLayout = siblingViewGroupForFeedback;
 
@@ -110,7 +121,7 @@ public class Question_Puzzle_Piece extends Question_General {
 
         //creating a new button every time is expensive?
         for (String choice : choices){
-            Button choiceButton = (Button)inflater.inflate(R.layout.inflatable_question_puzzle_piece_choice, choicesLayout, false);
+            Button choiceButton = (Button)inflater.inflate(buttonLayout, choicesLayout, false);
             choiceButton.setText(choice);
 
             choiceButton.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +131,7 @@ public class Question_Puzzle_Piece extends Question_General {
                     view.setEnabled(false);
                     final View finalView = view;
                     final Button answerButton =
-                            (Button)inflater.inflate(R.layout.inflatable_question_puzzle_piece_choice, answerLayout, false);
+                            (Button)inflater.inflate(buttonLayout, answerLayout, false);
                     answerButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

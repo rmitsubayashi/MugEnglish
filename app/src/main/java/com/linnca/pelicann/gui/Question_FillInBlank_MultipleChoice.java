@@ -2,7 +2,6 @@ package com.linnca.pelicann.gui;
 
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -15,10 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.datawrappers.QuestionData;
 import com.linnca.pelicann.gui.widgets.GUIUtils;
 import com.linnca.pelicann.questiongenerator.QuestionUtils;
-import com.linnca.pelicann.questionmanager.QuestionManager;
 
 import java.util.List;
 

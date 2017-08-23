@@ -9,9 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.datawrappers.QuestionData;
 import com.linnca.pelicann.questiongenerator.QuestionUtils;
-import com.linnca.pelicann.questionmanager.QuestionManager;
 
 import java.util.List;
 
@@ -28,11 +26,11 @@ public class Question_MultipleChoice extends Question_General {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_question_multiple_choice, container, false);
-        parentViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.fragment_question_multiple_choice);
-        siblingViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.question_multiple_choice_main_layout);
+        parentViewGroupForFeedback = view.findViewById(R.id.fragment_question_multiple_choice);
+        siblingViewGroupForFeedback = view.findViewById(R.id.question_multiple_choice_main_layout);
 
-        questionTextView = (TextView) view.findViewById(R.id.question_multiple_choice_question);
-        choicesLayout = (LinearLayout) view.findViewById(R.id.question_multiple_choice_choices_layout);
+        questionTextView = view.findViewById(R.id.question_multiple_choice_question);
+        choicesLayout = view.findViewById(R.id.question_multiple_choice_choices_layout);
 
         populateQuestion();
         populateButtons(inflater);

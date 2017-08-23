@@ -13,6 +13,7 @@
     <color name="lgreen500">#8BC34A</color>
     <color name="red500">#F44336</color>
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
     <color name="gray50">#ECEFF1</color>
     <color name="gray500">#9E9E9E</color>
     <!--other colors-->

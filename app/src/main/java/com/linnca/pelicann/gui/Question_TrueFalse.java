@@ -8,9 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.datawrappers.QuestionData;
 import com.linnca.pelicann.questiongenerator.QuestionUtils;
-import com.linnca.pelicann.questionmanager.QuestionManager;
 
 public class Question_TrueFalse extends Question_General {
     private TextView questionTextView;

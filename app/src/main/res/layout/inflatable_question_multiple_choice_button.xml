@@ -3,8 +3,8 @@
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/lblue_button"
-        android:textColor="@color/white"
+        android:background="@drawable/lblue_button_with_states"
+        android:textColor="@drawable/white_text_with_states"
         android:textSize="15sp"
         android:layout_marginBottom="16dp"
         style="@style/Widget.AppCompat.Button.Borderless"/>

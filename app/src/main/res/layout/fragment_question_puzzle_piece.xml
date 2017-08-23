@@ -36,7 +36,6 @@
             android:text="@string/question_puzzle_piece_submit"
             style="@style/questions_submit_button"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
 
             android:id="@+id/question_puzzle_piece_submit"/>

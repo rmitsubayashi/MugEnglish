@@ -8,18 +8,16 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
-import com.linnca.pelicann.questionmanager.QuestionManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,8 +144,30 @@ public abstract class Question_General extends Fragment {
                         openFeedback(false);
                     } else {
                         //the user still has attempts remaining
-                        if (disableChoiceAfterWrongAnswer)
-                            view.setEnabled(false);
+                        final View finalView = view;
+                        Animation wrongAnswerAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
+                        //we want to disable the button (if we have to)
+                        // after the wrong animation ends
+                        wrongAnswerAnimation.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                if (disableChoiceAfterWrongAnswer) {
+                                    finalView.setEnabled(false);
+                                }
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+
+                        view.startAnimation(wrongAnswerAnimation);
                     }
                 }
 

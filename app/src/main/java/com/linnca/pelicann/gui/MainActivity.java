@@ -11,15 +11,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.Preference;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthProvider;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.database2classmappings.QuestionTypeMappings;
 import com.linnca.pelicann.db.datawrappers.InstanceRecord;
@@ -28,8 +25,6 @@ import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
 import com.linnca.pelicann.questiongenerator.LessonHierarchyViewer;
 import com.linnca.pelicann.questionmanager.QuestionManager;
-
-import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         LessonList.LessonListListener,

@@ -1,7 +1,5 @@
 package com.linnca.pelicann.questionmanager;
 
-import android.content.Context;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -11,12 +9,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.AchievementStars;
 import com.linnca.pelicann.db.datawrappers.InstanceRecord;
-import com.linnca.pelicann.db.datawrappers.QuestionAttempt;
-import com.linnca.pelicann.db.datawrappers.QuestionData;
-import com.linnca.pelicann.gui.Results;
-
-import java.util.ArrayList;
-import java.util.List;
 
 //this manages the results displayed to the user
 public class ResultsManager {

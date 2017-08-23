@@ -7,12 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.datawrappers.InstanceRecord;
-import com.linnca.pelicann.db.datawrappers.QuestionAttempt;
-
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class User_Profile_Hours_Studied extends Fragment {
 
