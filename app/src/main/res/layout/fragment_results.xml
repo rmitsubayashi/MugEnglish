@@ -38,21 +38,18 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:visibility="gone"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/lblue500"
+            android:background="@drawable/lblue_button"
             android:textColor="@color/white"
             android:text="@string/results_review"
-            android:elevation="4dp"
             />
         <!--change text and layout depending on whether the user needs to review-->
         <Button
             android:id="@+id/results_finish"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/lblue500"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/lblue_button"
             android:textColor="@color/white"
-            android:elevation="4dp"
             android:text="@string/results_finish_no_review"/>
     </LinearLayout>
 </ScrollView>

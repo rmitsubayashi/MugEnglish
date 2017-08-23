@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--we might need to reorganize this since the buttons will be the same as the true
- false questions?-->
+<!--a button without elevation-->
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@drawable/lblue_button"
         android:textColor="@color/white"
         android:textSize="15sp"
         android:layout_marginBottom="16dp"

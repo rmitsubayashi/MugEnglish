@@ -151,10 +151,9 @@ public class Results extends Fragment {
             });
             //change the layout of the finish button to recommend review
             // (make it borderless)
-            finishButton.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.transparent));
+            finishButton.setBackgroundResource(R.drawable.transparent_button);
             finishButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lblue500));
             finishButton.setText(R.string.results_finish_review);
-            finishButton.setElevation(0);
         }
     }
 
