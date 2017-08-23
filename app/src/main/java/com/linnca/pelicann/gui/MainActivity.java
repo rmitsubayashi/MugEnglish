@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fragmentManager;
     private boolean navigationItemSelected = false;
     private CharSequence selectedNavigationItemTitle;
-    private int selectedNavigationItemID;
+    private int selectedNavigationItemID = -1;
 
     private QuestionManager questionManager;
 
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull final MenuItem menuItem){
         menuItem.setChecked(true);
         navigationItemSelected = true;
-        selectedNavigationItemID = menuItem.getItemId();
+        checkNavigationItem(menuItem.getItemId());
         selectedNavigationItemTitle = menuItem.getTitle();
         //we want the action to trigger after the drawer closes
         //(for better ux) so close the drawer here
@@ -280,13 +280,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case LessonHierarchyViewer.ID_COUNTRIES :
                 navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_countries;
                 break;
-            case LessonHierarchyViewer.ID_GREETINGS :
+            case LessonHierarchyViewer.ID_WORK :
                 navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_work;
                 break;
             default:
                 navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_countries;
         }
-        navigationView.setCheckedItem(navigationDrawerItemIDToSelect);
+        checkNavigationItem(navigationDrawerItemIDToSelect);
         Fragment lessonListFragment = new LessonList();
         Bundle bundle = new Bundle();
         bundle.putInt(LessonList.LESSON_CATEGORY_ID, lastSelectedLessonCategoryID);
@@ -294,5 +294,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonListFragment);
         fragmentTransaction.commit();
+    }
+
+    private void checkNavigationItem(int id){
+        if (selectedNavigationItemID != -1){
+            navigationView.getMenu().findItem(selectedNavigationItemID).setChecked(false);
+        }
+        navigationView.getMenu().findItem(id).setChecked(true);
+        selectedNavigationItemID = id;
     }
 }

@@ -145,7 +145,7 @@
     <string name="main_navigation_drawer_data">データ</string>
     <string name="main_navigation_drawer_settings">設定</string>
 
-    <string name="main_navigation_drawer_lesson_categories">レッスン</string>
+    <string name="main_navigation_drawer_lesson_categories_level1">レベル1</string>
 
     <!--Lesson list page -->
     <string name="lesson_list_app_bar_title">テーマを選択</string>
