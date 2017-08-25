@@ -8,11 +8,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,10 +35,12 @@ import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 * We can make our own if we have time
 * */
 public class UserInterests extends Fragment {
+    private final String TAG = "UserInterests";
     private ViewGroup mainLayout;
     private RecyclerView listView;
     private FirebaseRecyclerAdapter firebaseAdapter = null;
     private Snackbar undoSnackBar;
+    private RecyclerView.OnItemTouchListener undoOnTouchListener;
     private ActionMode actionMode;
     private FloatingActionButton searchFAB;
     private UserInterestListener userInterestListener;
@@ -198,7 +202,6 @@ public class UserInterests extends Fragment {
     }
 
     private void setListListeners(){
-        //needed for the firebase adapter
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
         listView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -243,8 +246,38 @@ public class UserInterests extends Fragment {
     }
     
     private void showUndoSnackBar(final WikiDataEntryData data){
+        if (undoOnTouchListener != null) {
+            listView.removeOnItemTouchListener(undoOnTouchListener);
+            undoOnTouchListener = null;
+        }
+
         undoSnackBar = Snackbar.make(mainLayout, R.string.user_interests_list_item_deleted,
                 Snackbar.LENGTH_INDEFINITE);
+
+        undoOnTouchListener = new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+                if (undoSnackBar.isShown()) {
+                    undoSnackBar.dismiss();
+                }
+                //don't want the scroll listener attached forever
+                listView.removeOnItemTouchListener(this);
+                undoOnTouchListener = null;
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        };
+        listView.addOnItemTouchListener(undoOnTouchListener);
+        Log.d(TAG, "Adding onTouchListener");
         undoSnackBar.setAction(R.string.user_interests_list_item_deleted_undo,
                 new View.OnClickListener() {
                     @Override
@@ -252,22 +285,13 @@ public class UserInterests extends Fragment {
                         //undo
                         UserInterestAdder userInterestAdder = new UserInterestAdder();
                         userInterestAdder.justAdd(data);
-                        undoSnackBar.dismiss();
+                        if (undoOnTouchListener != null) {
+                            listView.removeOnItemTouchListener(undoOnTouchListener);
+                            undoOnTouchListener = null;
+                        }
                     }
                 }
         );
-
-        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (undoSnackBar.isShown()) {
-                    undoSnackBar.dismiss();
-                }
-                //don't want the scroll listener attached forever
-                listView.removeOnScrollListener(this);
-            }
-        });
 
         undoSnackBar.show();
     }

@@ -18,7 +18,6 @@ import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 //people, places, etc.
 public class UserInterestAdder {
     private WikiDataEntryData dataToAdd;
-    private String pronunciation;
     private  PronunciationSearcher pronunciationSearcher = new PronunciationSearcher();
 
     public void findPronunciationAndAdd(WikiDataEntryData dataToAdd){
@@ -38,6 +37,9 @@ public class UserInterestAdder {
     private class PronunciationSearchThread extends Thread {
         @Override
         public void run(){
+            if (dataToAdd == null)
+                return;
+            String pronunciation;
             try {
                 pronunciation = pronunciationSearcher.getPronunciationFromWikiBase(dataToAdd.getWikiDataID());
             } catch (Exception e){
@@ -52,6 +54,7 @@ public class UserInterestAdder {
                     e.printStackTrace();
                 }
             }
+            dataToAdd.setPronunciation(pronunciation);
             saveUserInterest();
         }
     }
@@ -67,7 +70,6 @@ public class UserInterestAdder {
                     FirebaseDBHeaders.USER_INTERESTS + "/" +
                             userID + "/" +
                             dataToAdd.getWikiDataID());
-            dataToAdd.setPronunciation(pronunciation);
             userInterestRef.setValue(dataToAdd);
 
             //also add this to the recommendation map
