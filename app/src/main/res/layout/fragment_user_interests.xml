@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/user_interests_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="com.linnca.pelicann.gui.UserInterests">
+                android:layout_height="match_parent">
     <!--padding & clipToPadding so fab doesn't cover up last item's delete button -->
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
@@ -14,40 +13,17 @@
         android:id="@+id/user_interests_list"/>
 
     <!--make sure this comes after the list so this is clickable -->
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/user_interests_fab_menu"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/user_interests_search_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        app:menu_colorNormal="?attr/colorPrimaryDark"
-        app:menu_colorPressed="?attr/colorPrimaryDark"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        >
-        <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/facebook"
-            app:fab_colorNormal="@color/facebook"
-            app:fab_colorPressed="@color/facebook"
-            android:id="@+id/user_interests_fab_facebook"/>
-        <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/twitter"
-            app:fab_colorNormal="@color/twitter"
-            app:fab_colorPressed="@color/twitter"
-            android:id="@+id/user_interests_fab_twitter"/>
-        <com.github.clans.fab.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_search"
-            android:id="@+id/user_interests_fab_search"/>
-
-    </com.github.clans.fab.FloatingActionMenu>
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_add_24dp"
+        android:tint="@color/white"
+        />
 
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

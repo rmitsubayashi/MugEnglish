@@ -1,6 +1,5 @@
 package com.linnca.pelicann.userinterestcontrols;
 
-
 import android.os.AsyncTask;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,35 +16,49 @@ import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 //search for relevant pronunciation and then add.
 //we are sorting by pronunciation now, but later we might classify more generally like
 //people, places, etc.
-public class UserInterestAdder extends AsyncTask<WikiDataEntryData, Integer, String> {
+public class UserInterestAdder {
     private WikiDataEntryData dataToAdd;
+    private String pronunciation;
     private  PronunciationSearcher pronunciationSearcher = new PronunciationSearcher();
 
-    @Override
-    protected String doInBackground(WikiDataEntryData... dataList){
-        dataToAdd = dataList[0];
-        String pronunciation;
-        try {
-            pronunciation = pronunciationSearcher.getPronunciationFromWikiBase(dataToAdd.getWikiDataID());
-        } catch (Exception e){
-            e.printStackTrace();
-            pronunciation =  pronunciationSearcher.zenkakuKatakanaToZenkakuHiragana(dataToAdd.getLabel());
-        }
+    public void findPronunciationAndAdd(WikiDataEntryData dataToAdd){
+        this.dataToAdd = dataToAdd;
+        PronunciationSearchThread thread = new PronunciationSearchThread();
+        thread.start();
+    }
 
-        if (pronunciationSearcher.containsKanji(pronunciation)){
+    //we don't need to find the pronunciation.
+    //for example recommended entries, undo entries
+    //already have the right pronunciations
+    public void justAdd(WikiDataEntryData dataToAdd){
+        this.dataToAdd = dataToAdd;
+        saveUserInterest();
+    }
+
+    private class PronunciationSearchThread extends Thread {
+        @Override
+        public void run(){
             try {
-                return pronunciationSearcher.getPronunciationFromMecap(pronunciation);
+                pronunciation = pronunciationSearcher.getPronunciationFromWikiBase(dataToAdd.getWikiDataID());
             } catch (Exception e){
                 e.printStackTrace();
-                return pronunciation;
+                pronunciation =  pronunciationSearcher.zenkakuKatakanaToZenkakuHiragana(dataToAdd.getLabel());
             }
-        } else {
-            return pronunciation;
+
+            if (pronunciationSearcher.containsKanji(pronunciation)){
+                try {
+                    pronunciation = pronunciationSearcher.getPronunciationFromMecap(pronunciation);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            saveUserInterest();
         }
     }
 
-    @Override
-    protected void onPostExecute(String pronunciation){
+
+
+    private void saveUserInterest(){
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             FirebaseDatabase db = FirebaseDatabase.getInstance();

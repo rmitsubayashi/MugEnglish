@@ -3,6 +3,8 @@ package com.linnca.pelicann.gui;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,6 +25,7 @@ import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 import com.linnca.pelicann.gui.widgets.UserInterestAdapter;
 import com.linnca.pelicann.gui.widgets.UserInterestViewHolder;
+import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 
 /*
 * We are using an external library for the FABs
@@ -31,12 +33,12 @@ import com.linnca.pelicann.gui.widgets.UserInterestViewHolder;
 * We can make our own if we have time
 * */
 public class UserInterests extends Fragment {
+    private ViewGroup mainLayout;
     private RecyclerView listView;
     private FirebaseRecyclerAdapter firebaseAdapter = null;
+    private Snackbar undoSnackBar;
     private ActionMode actionMode;
-    private FloatingActionButton searchButton;
-    private FloatingActionButton facebookButton;
-    private FloatingActionButton twitterButton;
+    private FloatingActionButton searchFAB;
     private UserInterestListener userInterestListener;
 
     interface UserInterestListener {
@@ -47,10 +49,9 @@ public class UserInterests extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_user_interests, container, false);
-        listView = (RecyclerView)view.findViewById(R.id.user_interests_list);
-        searchButton = (FloatingActionButton) view.findViewById(R.id.user_interests_fab_search);
-        facebookButton = (FloatingActionButton) view.findViewById(R.id.user_interests_fab_facebook);
-        twitterButton = (FloatingActionButton) view.findViewById(R.id.user_interests_fab_twitter);
+        mainLayout = view.findViewById(R.id.user_interests_layout);
+        listView = view.findViewById(R.id.user_interests_list);
+        searchFAB = view.findViewById(R.id.user_interests_search_fab);
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             loadUser();
             populateFABs();
@@ -178,7 +179,8 @@ public class UserInterests extends Fragment {
             //shouldn't be too much of a bother once the user has searched for something...
             firebaseAdapter = new UserInterestAdapter(
                     WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
-                    UserInterestViewHolder.class, ref.orderByChild("pronunciation"), userID
+                    UserInterestViewHolder.class, ref.orderByChild("pronunciation"), userID,
+                    getUserInterestAdapterListener()
             );
         } else {
             //ends at string + (high unicode character)
@@ -186,7 +188,8 @@ public class UserInterests extends Fragment {
             firebaseAdapter = new UserInterestAdapter(
                     WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
                     UserInterestViewHolder.class, ref.orderByChild("label").startAt(query).endAt(query + "\uFFFF"),
-                    userID
+                    userID,
+                    getUserInterestAdapterListener()
             );
         }
 
@@ -219,28 +222,56 @@ public class UserInterests extends Fragment {
 
 
     private void populateFABs(){
-        facebookButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
 
-        searchButton.setOnClickListener(new View.OnClickListener() {
+        searchFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 userInterestListener.userInterestsToSearchInterests();
             }
         });
 
-        twitterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    }
 
+    private UserInterestAdapter.UserInterestAdapterListener getUserInterestAdapterListener(){
+        return new UserInterestAdapter.UserInterestAdapterListener() {
+            @Override
+            public void onItemRemoved(WikiDataEntryData item) {
+                showUndoSnackBar(item);
+            }
+        };
+    }
+    
+    private void showUndoSnackBar(final WikiDataEntryData data){
+        undoSnackBar = Snackbar.make(mainLayout, R.string.user_interests_list_item_deleted,
+                Snackbar.LENGTH_INDEFINITE);
+        undoSnackBar.setAction(R.string.user_interests_list_item_deleted_undo,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //undo
+                        UserInterestAdder userInterestAdder = new UserInterestAdder();
+                        userInterestAdder.justAdd(data);
+                        undoSnackBar.dismiss();
+                    }
+                }
+        );
+
+        listView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (undoSnackBar.isShown()) {
+                    undoSnackBar.dismiss();
+                }
+                //don't want the scroll listener attached forever
+                listView.removeOnScrollListener(this);
             }
         });
 
+        undoSnackBar.show();
     }
+
     @Override
     public void onDestroy(){
         super.onDestroy();

@@ -2,7 +2,6 @@
 <RelativeLayout
     android:id="@+id/fragment_lesson_details"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.linnca.pelicann.gui.LessonDetails"
     android:layout_width="match_parent"
@@ -38,22 +37,16 @@
         android:overScrollMode="never"
         android:id="@+id/lesson_details_instanceList"/>
 
-    <com.github.clans.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/lesson_details_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:src="@drawable/fab_add"
-        app:fab_colorNormal="?attr/colorAccent"
-        app:fab_colorPressed="?attr/colorAccent"
-        app:fab_progress_color="?attr/colorAccent"
-        app:fab_progress_indeterminate="false"
-        app:fab_progress_showBackground="false"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/ic_add_24dp"
+        android:tint="@color/white"/>
 
 </RelativeLayout>

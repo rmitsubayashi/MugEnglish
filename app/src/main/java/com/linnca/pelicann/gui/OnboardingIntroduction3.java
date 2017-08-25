@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.gui.widgets.OnboardingIntroductionBundle;
 import com.linnca.pelicann.gui.widgets.OnboardingNextListener;
+import com.linnca.pelicann.gui.widgets.UserInterestAdapter;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 
 public class OnboardingIntroduction3 extends Fragment {
@@ -49,7 +50,8 @@ public class OnboardingIntroduction3 extends Fragment {
             @Override
             public void onClick(View view) {
                 //save data in firebase first?
-                OnboardingIntroduction3.this.saveInterestInDatabase(data);
+                UserInterestAdder userInterestAdder = new UserInterestAdder();
+                userInterestAdder.findPronunciationAndAdd(data.getData());
                 nextListener.nextScreen();
             }
         });
@@ -174,13 +176,5 @@ public class OnboardingIntroduction3 extends Fragment {
         } catch (Exception e) {
             throw new ClassCastException(context.toString() + " must implement nextListener");
         }
-    }
-
-    private void saveInterestInDatabase(OnboardingIntroductionBundle data){
-        //the user's temporary login is saved already
-        if (FirebaseAuth.getInstance().getCurrentUser() == null)
-            return;
-        UserInterestAdder conn = new UserInterestAdder();
-        conn.execute(data.getData());
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.github.clans.fab.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -194,8 +194,7 @@ public class LessonDetails extends Fragment {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
-                createButton.setIndeterminate(false);
-                createButton.setEnabled(true);
+
             }
         });
 
@@ -244,8 +243,6 @@ public class LessonDetails extends Fragment {
     }
 
     private void createNewInstance(){
-        //default is false (nothing shown since progress is 0%)
-        createButton.setIndeterminate(true);
         createButton.setEnabled(false);
         //load lesson class
         Lesson lesson = LessonFactory.parseLesson(lessonData.getKey(),

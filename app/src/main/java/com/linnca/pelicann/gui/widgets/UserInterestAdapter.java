@@ -11,12 +11,20 @@ import com.linnca.pelicann.userinterestcontrols.UserInterestRemover;
 public class UserInterestAdapter
         extends FirebaseRecyclerAdapter<WikiDataEntryData, UserInterestViewHolder> {
     private String userID;
+    private UserInterestAdapterListener listener;
+
+    public interface UserInterestAdapterListener {
+        //should allow undo-ing
+        void onItemRemoved(WikiDataEntryData item);
+    }
 
     //Query instead of reference so we can order the data alphabetically
     public UserInterestAdapter(Class<WikiDataEntryData> dataClass, int layoutID,
-                               Class<UserInterestViewHolder> viewHolderClass, Query query, String userID){
+                               Class<UserInterestViewHolder> viewHolderClass, Query query, String userID,
+                               UserInterestAdapterListener listener){
         super(dataClass, layoutID, viewHolderClass, query);
         this.userID = userID;
+        this.listener = listener;
     }
 
     @Override
@@ -35,6 +43,7 @@ public class UserInterestAdapter
             @Override
             public void onClick(View view) {
                 UserInterestRemover.removeUserInterest(wikiDataEntryData, userID);
+                listener.onItemRemoved(wikiDataEntryData);
             }
         });
 

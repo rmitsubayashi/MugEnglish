@@ -195,6 +195,8 @@
     <string name="user_interests_search_hint">検索</string>
     <string name="title_activity_fab">fab</string>
     <string name="user_interests_list_item_delete">消去</string>
+    <string name="user_interests_list_item_deleted">消去しました</string>
+    <string name="user_interests_list_item_deleted_undo">戻す</string>
 
     <!--user profile-->
     <string name="user_profile_app_bar_title">データ</string>

@@ -130,7 +130,8 @@ public class SearchInterests extends Fragment {
             @Override
             public void onAddInterest(WikiDataEntryData data) {
                 //add the interest
-                addInterest(data);
+                UserInterestAdder userInterestAdder = new UserInterestAdder();
+                userInterestAdder.findPronunciationAndAdd(data);
                 //change UI
                 if (headerView == null) {
                     //shouldn't happen
@@ -147,14 +148,6 @@ public class SearchInterests extends Fragment {
                 populateRecommendations(data.getWikiDataID());
             }
         };
-    }
-
-    private void addInterest(WikiDataEntryData dataToAdd){
-        //disable button first for better ux (less lag).
-        //then search for pronunciation
-        //and add the wikiData entry
-        UserInterestAdder conn = new UserInterestAdder();
-        conn.execute(dataToAdd);
     }
 
     private void populateRecommendations(String wikiDataID){
