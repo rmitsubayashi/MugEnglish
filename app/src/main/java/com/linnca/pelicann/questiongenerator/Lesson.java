@@ -8,6 +8,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
@@ -37,11 +39,14 @@ public abstract class Lesson {
 	//where we will populate new questions for this instance (from each inherited class)
 	protected List<QuestionDataWrapper> newQuestions = new ArrayList<>();
 	//question set ids we need to query FireBase to get more information
-	private List<String> questionSetIDs = new ArrayList<>();
+	private List<String> questionSetIDs = Collections.synchronizedList(new ArrayList<String>());
 	//これが出題される問題のトピック
 	//protected Document documentOfTopics = null;
 	//interests to search
 	private final Set<WikiDataEntryData> userInterests = new HashSet<>();
+	//interests that we have filled/know we can't fill (so we don't search for them)
+	//needs to be synchronized
+	private Set<WikiDataEntryData> userInterestsChecked = Collections.synchronizedSet(new HashSet<WikiDataEntryData>());
 	//makes sure we are not giving duplicate questions
 	// from previous instances of the user.
 	// Storing the IDs of the question sets
@@ -54,8 +59,6 @@ public abstract class Lesson {
 	//indicates whether we have already searched for interests related to the user.
 	//this prevents an infinite loop
 	private boolean relatedUserInterestsSearched = false;
-	//save this so we don't have to fetch the same data again
-	private DataSnapshot questionSetIDsForLesson = null;
 	//what to do after we finish creating an instance
 	private LessonListener lessonListener;
 
@@ -121,11 +124,8 @@ public abstract class Lesson {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
 				for (DataSnapshot lessonInstanceSnapshot : dataSnapshot.getChildren()) {
-					for (DataSnapshot questionSetSnapshot : lessonInstanceSnapshot.getChildren()) {
-						LessonInstanceData lessonInstanceData = questionSetSnapshot.getValue(LessonInstanceData.class);
-						userQuestionHistory.addAll(lessonInstanceData.getQuestionSetIds());
-
-					}
+					LessonInstanceData lessonInstanceData = lessonInstanceSnapshot.getValue(LessonInstanceData.class);
+					userQuestionHistory.addAll(lessonInstanceData.getQuestionSetIds());
 				}
 
 				fillQuestionsFromDatabase();
@@ -145,66 +145,74 @@ public abstract class Lesson {
 	//pretty expensive because we are grabbing all question set ids for a lesson,
 	// but I can't think of any other way to make this work..
 	private void fillQuestionsFromDatabase(){
-		//this gets us a list of question set IDs indexed by the wikiData ID.
-		DatabaseReference ref = db.getReference(
+		final AtomicInteger questionSetsToPopulateAtomicInt = new AtomicInteger(questionSetsLeftToPopulate);
+		final AtomicInteger userInterestsLooped = new AtomicInteger(0);
+		DatabaseReference questionSetRef = db.getReference(
 				FirebaseDBHeaders.QUESTION_SET_IDS_PER_LESSON + "/" + lessonKey);
-		ref.addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(DataSnapshot questionSetIDsSnapshot) {
-				//save this as a class variable since we will need the same exact data again.
-				//(one less connection)
-				questionSetIDsForLesson = questionSetIDsSnapshot;
+		//prevent the same user interests popping up over and over.
+		//this is not a concern about repeated instances of a single theme.
+		//but more of a problem when the user starts 10 themes and 9 of them include
+		//Leonardo Dicaprio because he is first on the list in the database.
+		//set -> list
+		final List<WikiDataEntryData> userInterestList = new ArrayList<>(userInterests);
+		Collections.shuffle(userInterestList);
+		for (final WikiDataEntryData userInterest : userInterestList){
+			//we might be finished already.
+			if (questionSetsToPopulateAtomicInt.get() == 0){
+				break;
+			}
+			DatabaseReference userInterestQuestionSetRef = questionSetRef.child(userInterest.getWikiDataID());
 
-				//prevent the same user interests popping up over and over.
-				//this is not a concern about repeated instances of a single theme.
-				//but more of a problem when the user starts 10 themes and 9 of them include
-				//Leonardo Dicaprio because he is first on the list in the database.
-				//set -> list
-				List<WikiDataEntryData> userInterestList = new ArrayList<>(userInterests);
-				Collections.shuffle(userInterestList);
-				for (WikiDataEntryData userInterest : userInterestList){
-					String interestID = userInterest.getWikiDataID();
-					if (questionSetIDsSnapshot.hasChild(interestID)){
-						//there can be more than one question sets per interest
-						//ex: Manny Pacquiao plays both basketball and boxing professionally
-						DataSnapshot questionSetSnapshot = questionSetIDsSnapshot.child(interestID);
-						for (DataSnapshot questionSetIDSnapshot : questionSetSnapshot.getChildren()){
+			userInterestQuestionSetRef.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot dataSnapshot) {
+
+					if (questionSetsToPopulateAtomicInt.get() == 0){
+						return;
+					}
+					//this means someone already checked and it didn't match
+					if (dataSnapshot.exists() && dataSnapshot.getValue() == null){
+						userInterestsChecked.add(userInterest);
+					}
+
+					//check the questions to see if we have one the user hasn't had yet
+					if (dataSnapshot.exists() && dataSnapshot.getValue() != null){
+						userInterestsChecked.add(userInterest);
+						for (DataSnapshot questionSetIDSnapshot : dataSnapshot.getChildren()){
 							String questionSetID = questionSetIDSnapshot.getValue(String.class);
 							if (!userQuestionHistory.contains(questionSetID)) {
 								questionSetIDs.add(questionSetID);
-								questionSetsLeftToPopulate--;
-								if (questionSetsLeftToPopulate == 0) break;
+								if (questionSetsToPopulateAtomicInt.decrementAndGet() == 0) break;
 							}
 						}
-						//if the user's interest exists for the theme,
-						//no matter if the questions are new(we will add them to the question list)
-						// or previously done (we do not add it to our question list),
-						//we will not need to search for the interest again
-						userInterests.remove(userInterest);
 
-						if (questionSetsLeftToPopulate == 0) break;
+						if (questionSetsToPopulateAtomicInt.get() == 0) {
+							questionSetsLeftToPopulate = questionSetsToPopulateAtomicInt.get();
+							//skip creating questions
+							//and save them in the db
+							getQuestionDataFromQuestionSetIDs();
+							return;
+						}
+					}
+
+					//if this is the last one, we should continue ()
+					if (userInterestsLooped.incrementAndGet() == userInterestList.size()){
+						questionSetsLeftToPopulate = questionSetsToPopulateAtomicInt.get();
+						//we have to do this in a separate thread because the
+						//onDataChange method runs on the UI thread
+						CreateQuestionHelper helper = new CreateQuestionHelper();
+						//we can ignore the warning on Android Studio
+						helper.start();
 					}
 				}
 
-				//we don't need to create new questions
-				if (questionSetsLeftToPopulate == 0){
-					//skip creating questions
-					//and save them in the db
-					getQuestionDataFromQuestionSetIDs();
-				} else {
-					//we have to do this in a separate thread because the
-					//onDataChange method runs on the UI thread
-					CreateQuestionHelper helper = new CreateQuestionHelper();
-					//we can ignore the warning on Android Studio
-					helper.start();
+				@Override
+				public void onCancelled(DatabaseError databaseError) {
+
 				}
-			}
+			});
 
-			@Override
-			public void onCancelled(DatabaseError databaseError) {
-
-			}
-		});
+		}
 	}
 
 	//Firebase onChange() works on the main UI Thread (even if it's called from another service
@@ -213,7 +221,11 @@ public abstract class Lesson {
 		@Override
 		public void run(){
 			try {
-				populateResults(userInterests);
+				//we don't need to check for interests we've already matched /
+				// know we can't match
+				Set<WikiDataEntryData> copy = new HashSet<>(userInterests);
+				copy.removeAll(userInterestsChecked);
+				populateResults(copy);
 
 				//from here the methods are not (might not be) synchronous
 				//more methods embedded in this.
@@ -273,16 +285,17 @@ public abstract class Lesson {
 	//but this is so all questions possible for one lesson are created.
 	//if we only create questions for the user, all the rest of the questions
 	//will never be created
-	protected void saveNewQuestions(){
-		//we will add the newly created set IDs to this user's question set IDs for this instance
-		List<String> newQuestionSetIDs = new ArrayList<>();
+	private void saveNewQuestions(){
 		DatabaseReference questionRef = db.getReference(FirebaseDBHeaders.QUESTIONS);
 		DatabaseReference questionSetRef = db.getReference(
-				FirebaseDBHeaders.QUESTION_SETS + "/" +
-						lessonKey
+				FirebaseDBHeaders.QUESTION_SETS
 		);
 		DatabaseReference questionSetIDsPerLessonRef = db.getReference(
 				FirebaseDBHeaders.QUESTION_SET_IDS_PER_LESSON + "/" +
+						lessonKey
+		);
+		DatabaseReference randomQuestionSetIDsRef = db.getReference(
+				FirebaseDBHeaders.RANDOM_QUESTION_SET_IDS + "/" +
 						lessonKey
 		);
 		//we are looping through each question set.
@@ -308,15 +321,18 @@ public abstract class Lesson {
 
 			String questionSetWikiDataID = questionDataWrapper.getWikiDataID();
 			//save the question set
-			DatabaseReference questionSetWikiDataIDRef = questionSetRef.child(questionSetWikiDataID);
-			String questionSetKey = questionSetWikiDataIDRef.push().getKey();
-			questionSetWikiDataIDRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_QUESTION_IDS)
+			String questionSetKey = questionSetRef.push().getKey();
+			questionSetRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_QUESTION_IDS)
 					.setValue(questionIDs);
-			questionSetWikiDataIDRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_LABEL)
+			questionSetRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_LABEL)
 					.setValue(questionDataWrapper.getInterestLabel());
 
 			//save the id reference of the question set we just created
 			questionSetIDsPerLessonRef.child(questionSetWikiDataID).push().setValue(questionSetKey);
+
+			DatabaseReference randomQuestionSetIDRef = randomQuestionSetIDsRef.push();
+			randomQuestionSetIDRef.child(FirebaseDBHeaders.RANDOM_QUESTION_SET_ID).setValue(questionSetKey);
+			randomQuestionSetIDRef.child(FirebaseDBHeaders.RANDOM_QUESTION_SET_DATE).setValue(ServerValue.TIMESTAMP);
 
 			//only save the data in the user's current set of questions if
 			//less than the remaining question count.
@@ -364,34 +380,90 @@ public abstract class Lesson {
 		//the topics in the db only store wikiData IDs
 		//so we will need to fetch the label from wikiData and update
 
-		List<DataSnapshot> allQuestionSetIDRefs = new ArrayList<>();
-		//questionSetIDsForLesson reference =
-		//FirebaseDBHeaders.QUESTION_SETS + "/" + lessonKey
-		for (DataSnapshot questionSetSnapshot : questionSetIDsForLesson.getChildren()) {
-			allQuestionSetIDRefs.add(questionSetSnapshot);
-		}
-		//if we don't shuffle, the user will get lower WikiData ID topics first
-		Collections.shuffle(allQuestionSetIDRefs);
+		DatabaseReference randomIDsRef = FirebaseDatabase.getInstance().getReference(
+				FirebaseDBHeaders.RANDOM_QUESTION_SET_IDS + "/" +
+						lessonKey
+		);
 
-		for (DataSnapshot questionSetIDRef : allQuestionSetIDRefs){
+		//by pigeon hole, we are guaranteed to get questions the user hasn't had
+		final int minimumFetchCount = userQuestionHistory.size() + questionSetsLeftToPopulate;
+		Query allRandomIDsQuery = randomIDsRef.orderByChild(FirebaseDBHeaders.RANDOM_QUESTION_SET_DATE)
+				.limitToFirst(minimumFetchCount);
+		allRandomIDsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				List<DataSnapshot> questionSetSnapshots = new ArrayList<>();
+				for (DataSnapshot questionSetSnapshot : dataSnapshot.getChildren()) {
+					questionSetSnapshots.add(questionSetSnapshot);
+				}
+				//we are ordering by date, so it's likely that a user will get two sets created at the same time
+				// (same user interest) so shuffle them to make sure this won't happen as often
+				Collections.shuffle(questionSetSnapshots);
+				for (DataSnapshot questionSetSnapshot : questionSetSnapshots){
+					String questionSetID = questionSetSnapshot.child(FirebaseDBHeaders.RANDOM_QUESTION_SET_ID).getValue(String.class);
+					//if the user hasn't had the question yet and is not in their current question set
+					if (!userQuestionHistory.contains(questionSetID) && !questionSetIDs.contains(questionSetID)) {
+						questionSetIDs.add(questionSetID);
+						questionSetsLeftToPopulate--;
+					}
+
+					//refresh timestamp so this goes to the end
+					String key = questionSetSnapshot.getKey();
+					db.getReference(FirebaseDBHeaders.RANDOM_QUESTION_SET_IDS + "/" +
+							lessonKey + "/" +
+							key + "/" +
+							FirebaseDBHeaders.RANDOM_QUESTION_SET_DATE
+					).setValue(ServerValue.TIMESTAMP);
+
+					if (questionSetsLeftToPopulate == 0)
+						break;
+
+				}
+
+				//last resort, populate with already created questions
+				if (questionSetsLeftToPopulate != 0){
+					//make it a list so we can shuffle
+					List<String> userQuestionHistoryList = new ArrayList<>(userQuestionHistory);
+					Collections.shuffle(userQuestionHistoryList);
+					//no need to check if the user's question history is more than the remaining topics
+					//because it is guaranteed to be at least equal
+					for (String questionSetID : userQuestionHistoryList){
+						//we odn't want duplicates
+						if (!questionSetIDs.contains(questionSetID)) {
+							questionSetIDs.add(questionSetID);
+							questionSetsLeftToPopulate--;
+						}
+
+						//we are finished populating questions
+						if (questionSetsLeftToPopulate == 0)
+							break;
+					}
+				}
+
+				//continue
+				getQuestionDataFromQuestionSetIDs();
+
+			}
+
+			@Override
+			public void onCancelled(DatabaseError databaseError) {
+
+			}
+		});
+
+		/*for (DataSnapshot questionSetIDRef : allQuestionSetIDRefs){
 			for (DataSnapshot questionSet : questionSetIDRef.getChildren()) {
-				GenericTypeIndicator<List<String>> type =
-						new GenericTypeIndicator<List<String>>() {
-						};
-				List<String> questionSetIDList = questionSet.getValue(type);
+				String questionSetID = questionSet.getValue(String.class);
 				//we need the label, not the ID
 				//we can either save the label as well in the firebase entry,
 				//but that seems like too much extra data added?
 				//so fetch the name from wikiData
 
-				for  (String questionSetID : questionSetIDList) {
-					if (!userQuestionHistory.contains(questionSetID)) {
-						questionSetIDs.add(questionSetID);
-						questionSetsLeftToPopulate--;
-					}
-					if (questionSetsLeftToPopulate == 0)
-						break;
+				if (!userQuestionHistory.contains(questionSetID)) {
+					questionSetIDs.add(questionSetID);
+					questionSetsLeftToPopulate--;
 				}
+
 				if (questionSetsLeftToPopulate == 0)
 					break;
 			}
@@ -413,8 +485,7 @@ public abstract class Lesson {
 			}
 		}
 
-		questionSetIDsForLesson = null;
-		getQuestionDataFromQuestionSetIDs();
+		getQuestionDataFromQuestionSetIDs();*/
 	}
 
 	private void getQuestionDataFromQuestionSetIDs(){

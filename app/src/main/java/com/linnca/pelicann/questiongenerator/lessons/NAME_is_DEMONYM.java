@@ -221,8 +221,7 @@ public class NAME_is_DEMONYM extends Lesson {
         //remove if it is in the list so we don't choose it
         optionList.remove(qr.demonymEN);
         Collections.shuffle(optionList);
-        Queue<String> optionQueue = new LinkedList<>(optionList);
-        return optionQueue;
+        return new LinkedList<>(optionList);
     }
 
     private List<QuestionData> createFillInBlankQuestion(QueryResult qr){

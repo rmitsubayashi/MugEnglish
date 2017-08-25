@@ -45,7 +45,7 @@ public class LessonDetailsAdapter
     }
 
     @Override
-    public void populateViewHolder(final LessonDetailsViewHolder holder, final LessonInstanceData data, final int position) {
+    public void populateViewHolder(final LessonDetailsViewHolder holder, final LessonInstanceData data, int position) {
         String allInterestsLabel = "";
         for (String interestLabel : data.getInterestLabels()) {
             allInterestsLabel += interestLabel + " + ";
@@ -67,10 +67,11 @@ public class LessonDetailsAdapter
             }
         });
 
+        final DatabaseReference ref = getRef(position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                longClickRef = getRef(position);
+                longClickRef = ref;
                 //returning false so we can catch the onlongclicklistener of the parent
                 return false;
             }

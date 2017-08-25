@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 public class The_DEMONYM_flag_is_COLORS extends Lesson{
     public static final String KEY = "The_DEMONYM_flag_is_COLORS";
@@ -144,77 +143,69 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
 
     }
 
-    //need to store in a private variable so we can access it in the answer
-    private String fillInBlankAnswer;
-    private String fillInBlankQuestion(QueryResult qr){
-        List<QueryResult> colors = queryResultMap.get(qr.countryID);
-        List<String> colorStrings = new ArrayList<>(colors.size());
-        for (QueryResult color : colors){
-            colorStrings.add(color.colorEN);
-        }
-
-        int random = new Random().nextInt(colorStrings.size());
-        fillInBlankAnswer = colorStrings.get(random);
-        colorStrings.set(random,QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE);
-        Collections.shuffle(colorStrings);
-        String colorSeries = GrammarRules.commasInASeries(colorStrings, "and");
+    private String fillInBlankQuestion(QueryResult qr, String answer, List<String> colorStrings){
+        List<String> colorStringsCopy = new ArrayList<>(colorStrings);
+        int answerIndex = colorStringsCopy.indexOf(answer);
+        colorStringsCopy.set(answerIndex, QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        Collections.shuffle(colorStringsCopy);
+        String colorSeries = GrammarRules.commasInASeries(colorStringsCopy, "and");
 
         return "The " + qr.demonymEN + " flag is " + colorSeries + ".";
     }
 
-    private String fillInBlankAnswer(){
-        return fillInBlankAnswer;
+    private List<String> fillInBlankChoices(List<String> colorStrings){
+        List<String> allColorsCopy = new ArrayList<>(allColors);
+        allColorsCopy.removeAll(colorStrings);
+        Collections.shuffle(allColorsCopy);
+        allColorsCopy = allColorsCopy.subList(0,2);
+        return allColorsCopy;
     }
 
-    private List<String> fillInBlankChoices(QueryResult qr){
+    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
+        //get all colors for the flag
         List<QueryResult> colors = queryResultMap.get(qr.countryID);
         List<String> colorStrings = new ArrayList<>(colors.size());
         for (QueryResult color : colors){
             colorStrings.add(color.colorEN);
         }
-        List<String> allColorsCopy = new ArrayList<>(allColors);
-        allColorsCopy.removeAll(colorStrings);
-        Collections.shuffle(allColorsCopy);
-        return allColorsCopy.subList(0,2);
-    }
-
-    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
-        String question = this.fillInBlankQuestion(qr);
-        //saved in a temp variable
-        String answer = fillInBlankAnswer();
-        List<String> choices = fillInBlankChoices(qr);
-        choices.add(answer);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.countryJP);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
-        data.setQuestion(question);
-        data.setChoices(choices);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
-
         List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
+        //one question for each color in the flag
+        for (String color : colorStrings) {
+            String question = this.fillInBlankQuestion(qr, color, colorStrings);
+            //add answer t ochoices
+            List<String> choices = fillInBlankChoices(colorStrings);
+            choices.add(color);
+            QuestionData data = new QuestionData();
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(qr.countryJP);
+            data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+            data.setQuestion(question);
+            data.setChoices(choices);
+            data.setAnswer(color);
+            data.setAcceptableAnswers(null);
+            data.setVocabulary(null);
+
+            dataList.add(data);
+        }
 
         return dataList;
     }
 
-    private String fillInBlankInputAnswer;
-    private String fillInBlankInputQuestion(QueryResult qr){
+    private String fillInBlankInputQuestion(QueryResult qr, String answerColorEN){
         List<QueryResult> colors = queryResultMap.get(qr.countryID);
         //not really relevant whether we make a copy before shuffling
         Collections.shuffle(colors);
         List<String> colorStringsEN = new ArrayList<>(colors.size());
         for (QueryResult color : colors){
-            colorStringsEN.add(color.colorEN);
+            if (color.colorEN.equals(answerColorEN)){
+                colorStringsEN.add(QuestionUtils.FILL_IN_BLANK_TEXT);
+            } else {
+                colorStringsEN.add(color.colorEN);
+            }
         }
 
-        int random = new Random().nextInt(colorStringsEN.size());
-        fillInBlankInputAnswer = colorStringsEN.get(random);
-        colorStringsEN.set(random,QuestionUtils.FILL_IN_BLANK_TEXT);
-        String countrySeriesEN = GrammarRules.commasInASeries(colorStringsEN,"and");
+        String countrySeriesEN = GrammarRules.commasInASeries(colorStringsEN, "and");
 
         List<String> colorStringsJP = new ArrayList<>(colors.size());
         for (QueryResult color : colors){
@@ -233,25 +224,30 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
         return sentence1 + sentence2;
     }
 
-    private String fillInBlankInputAnswer(){
-        return fillInBlankInputAnswer;
-    }
-
     private List<QuestionData> createFillInBlankInputQuestion(QueryResult qr){
-        String question = this.fillInBlankInputQuestion(qr);
-        String answer = fillInBlankInputAnswer();
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.countryJP);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setVocabulary(null);
-
+        List<QueryResult> colors = queryResultMap.get(qr.countryID);
+        //not really relevant whether we make a copy before shuffling
+        Collections.shuffle(colors);
+        List<String> colorStrings = new ArrayList<>(colors.size());
+        for (QueryResult color : colors){
+            colorStrings.add(color.colorEN);
+        }
         List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
+        for (String color : colorStrings) {
+            String question = this.fillInBlankInputQuestion(qr, color);
+            QuestionData data = new QuestionData();
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(qr.countryJP);
+            data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+            data.setQuestion(question);
+            data.setChoices(null);
+            data.setAnswer(color);
+            data.setVocabulary(null);
+
+            dataList.add(data);
+        }
+
         return dataList;
     }
 }

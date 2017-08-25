@@ -10,6 +10,9 @@ public class FirebaseDBHeaders {
     public static String QUESTION_SETS = "questionSets";
     public static String QUESTION_SETS_QUESTION_IDS = "questions";
     public static String QUESTION_SETS_LABEL ="label";
+    public static String RANDOM_QUESTION_SET_IDS = "randomQuestionSets";
+    public static String RANDOM_QUESTION_SET_ID = "setID";
+    public static String RANDOM_QUESTION_SET_DATE = "date";
     public static String INSTANCE_RECORDS = "instanceRecords";
     public static String UTILS = "utils";
     public static String RECOMMENDATION_MAP = "recommendationMap";
