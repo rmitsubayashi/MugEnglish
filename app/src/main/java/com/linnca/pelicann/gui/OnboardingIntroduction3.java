@@ -51,7 +51,7 @@ public class OnboardingIntroduction3 extends Fragment {
             public void onClick(View view) {
                 //save data in firebase first?
                 UserInterestAdder userInterestAdder = new UserInterestAdder();
-                userInterestAdder.findPronunciationAndAdd(data.getData());
+                userInterestAdder.findPronunciationAndCategoryThenAdd(data.getData());
                 nextListener.nextScreen();
             }
         });

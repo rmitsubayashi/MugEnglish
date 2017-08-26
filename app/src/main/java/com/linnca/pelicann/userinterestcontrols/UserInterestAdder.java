@@ -1,6 +1,5 @@
 package com.linnca.pelicann.userinterestcontrols;
 
-import android.os.AsyncTask;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -10,8 +9,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 //search for relevant pronunciation and then add.
 //we are sorting by pronunciation now, but later we might classify more generally like
@@ -19,10 +23,11 @@ import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 public class UserInterestAdder {
     private WikiDataEntryData dataToAdd;
     private  PronunciationSearcher pronunciationSearcher = new PronunciationSearcher();
+    private WikiBaseEndpointConnector wikiBaseEndpointConnector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
 
-    public void findPronunciationAndAdd(WikiDataEntryData dataToAdd){
+    public void findPronunciationAndCategoryThenAdd(WikiDataEntryData dataToAdd){
         this.dataToAdd = dataToAdd;
-        PronunciationSearchThread thread = new PronunciationSearchThread();
+        PronunciationCategorySearchThread thread = new PronunciationCategorySearchThread();
         thread.start();
     }
 
@@ -34,7 +39,7 @@ public class UserInterestAdder {
         saveUserInterest();
     }
 
-    private class PronunciationSearchThread extends Thread {
+    private class PronunciationCategorySearchThread extends Thread {
         @Override
         public void run(){
             if (dataToAdd == null)
@@ -55,6 +60,33 @@ public class UserInterestAdder {
                 }
             }
             dataToAdd.setPronunciation(pronunciation);
+
+            boolean classificationSet = false;
+            try {
+                Document resultDOM = wikiBaseEndpointConnector.fetchDOMFromGetRequest(getPersonSearchQuery(dataToAdd.getWikiDataID()));
+                NodeList allResults = resultDOM.getElementsByTagName(
+                        WikiDataSPARQLConnector.RESULT_TAG
+                );
+                int resultLength = allResults.getLength();
+                if (resultLength > 0){
+                    dataToAdd.setClassification(WikiDataEntryData.CLASSIFICATION_PERSON);
+                    classificationSet = true;
+                }
+
+                if (!classificationSet){
+                    resultDOM = wikiBaseEndpointConnector.fetchDOMFromGetRequest(getPlaceSearchQuery(dataToAdd.getWikiDataID()));
+                    allResults = resultDOM.getElementsByTagName(
+                            WikiDataSPARQLConnector.RESULT_TAG
+                    );
+                    resultLength = allResults.getLength();
+                    if (resultLength > 0){
+                        dataToAdd.setClassification(WikiDataEntryData.CLASSIFICATION_PLACE);
+                        classificationSet = true;
+                    }
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
             saveUserInterest();
         }
     }
@@ -130,5 +162,27 @@ public class UserInterestAdder {
 
             }
         });
+    }
+
+    private String getPersonSearchQuery(String wikidataID){
+        return "SELECT ?person " +
+                "WHERE " +
+                "{" +
+                "  {?person wdt:P31 wd:Q5} " +
+                "  UNION {?person wdt:P31/wdt:P279* wd:Q15632617} " +
+                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en','ja'. } . " +
+                "  BIND (wd:" + wikidataID + " as ?person)" +
+                "}";
+    }
+
+    private String getPlaceSearchQuery(String wikidataID){
+        return "SELECT DISTINCT ?place " +
+                "WHERE " +
+                "{" +
+                "  {?place wdt:P31/wdt:P279* wd:Q2221906} " +
+                "  UNION {?place wdt:P31/wdt:P279* wd:Q3895768} . " +
+                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en,ja' . } " +
+                "  BIND (wd:" + wikidataID + " as ?place) " +
+                "}";
     }
 }

@@ -131,7 +131,7 @@ public class SearchInterests extends Fragment {
             public void onAddInterest(WikiDataEntryData data) {
                 //add the interest
                 UserInterestAdder userInterestAdder = new UserInterestAdder();
-                userInterestAdder.findPronunciationAndAdd(data);
+                userInterestAdder.findPronunciationAndCategoryThenAdd(data);
                 //change UI
                 if (headerView == null) {
                     //shouldn't happen

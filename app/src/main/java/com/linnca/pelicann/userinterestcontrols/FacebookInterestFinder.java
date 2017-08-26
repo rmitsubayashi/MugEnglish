@@ -129,7 +129,7 @@ public class FacebookInterestFinder extends IntentService{
                 for (WikiDataEntryData interest : interests) {
                     //add
                     UserInterestAdder userInterestAdder = new UserInterestAdder();
-                    userInterestAdder.findPronunciationAndAdd(interest);
+                    userInterestAdder.findPronunciationAndCategoryThenAdd(interest);
                 }
                 return Transaction.success(mutableData);
             }
