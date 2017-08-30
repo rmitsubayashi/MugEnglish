@@ -1,7 +1,10 @@
 package com.linnca.pelicann.gui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,12 +27,15 @@ import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 import com.linnca.pelicann.gui.widgets.SearchResultsAdapter;
+import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class SearchInterests extends Fragment {
     private EntitySearcher searcher;
@@ -40,9 +46,19 @@ public class SearchInterests extends Fragment {
     //initial row count of search results
     private int defaultRowCt = 10;
     private int recommendationCt = 5;
+    //so we don't show search results queried before the curently shown result
+    private int queryOrderSent = 0;
+    private Lock lock = new ReentrantLock();
+    private int queryOrderReceived = 0;
     //we can do continue=# to get the results from that number of results
     //increment when we want more rows
     private Integer currentRowCt = defaultRowCt;
+
+    private SearchInterestsListener searchInterestsListener;
+
+    interface SearchInterestsListener {
+        void setToolbarState(ToolbarState state);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,16 +76,46 @@ public class SearchInterests extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_search_interests, container, false);
-        list = (ListView) view.findViewById(R.id.search_results_result_list);
+        list = view.findViewById(R.id.search_results_result_list);
         headerView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_header, list, false);
 
         return view;
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+        searchInterestsListener.setToolbarState(
+                new ToolbarState(getString(R.string.fragment_search_interests_title), true, false, null)
+        );
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        implementListeners(context);
+    }
+
+    //must implement to account for lower APIs
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        implementListeners(activity);
+    }
+
+    private void implementListeners(Context context){
+        try {
+            searchInterestsListener = (SearchInterestsListener) context;
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
-        searchView.setSubmitButtonEnabled(true);
+        //since we are doing real time, we can disable the submit button
+        searchView.setSubmitButtonEnabled(false);
         //make it so the user can search without having to tap the search box (UX)
         searchView.setIconified(false);
         searchView.setIconifiedByDefault(false);
@@ -110,9 +156,21 @@ public class SearchInterests extends Fragment {
                     }
 
                     @Override
-                    public boolean onQueryTextChange(String s) {
-                        if (s.length() > 1)
-                            populateResults(s);
+                    public boolean onQueryTextChange(final String s) {
+                        //after a short time after the query is entered,
+                        //if no new text has been entered, search.
+                        //if there is new text, do nothing
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (searchView.getQuery().toString().equals(s)) {
+                                    if (s.length() > 1) {
+                                        populateResults(s);
+                                    }
+                                }
+                            }
+                        }, 200);
+
                         return true;
                     }
                 });
@@ -187,20 +245,59 @@ public class SearchInterests extends Fragment {
     private void populateResults(String query){
         try {
             SearchConnection conn = new SearchConnection();
-            String[] queryList = {query, currentRowCt.toString()};
-            conn.execute(queryList);
+            SearchConnectionHelperClass helper = new SearchConnectionHelperClass(query, currentRowCt, queryOrderSent++);
+            conn.execute(helper);
         } catch (Exception e){
             e.printStackTrace();
         }
     }
 
-    private class SearchConnection extends AsyncTask< String[], Integer, List<WikiDataEntryData> > {
+    private class SearchConnectionHelperClass {
+        private String query;
+        private int maxRowCount;
+        private int searchOrder;
+
+        SearchConnectionHelperClass(String query, int maxRowCount, int searchOrder) {
+            this.query = query;
+            this.maxRowCount = maxRowCount;
+            this.searchOrder = searchOrder;
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        int getMaxRowCount() {
+            return maxRowCount;
+        }
+
+        int getSearchOrder() {
+            return searchOrder;
+        }
+    }
+
+    private class SearchConnection extends AsyncTask< SearchConnectionHelperClass, Integer, List<WikiDataEntryData> > {
         @Override
-        protected List<WikiDataEntryData> doInBackground(String[]... queryList){
-            String[] query = queryList[0];
+        protected List<WikiDataEntryData> doInBackground(SearchConnectionHelperClass... queryList){
+            SearchConnectionHelperClass helper = queryList[0];
+            String query = helper.getQuery();
+            int maxRowCount = helper.getMaxRowCount();
+            final int searchOrder = helper.getSearchOrder();
             List<WikiDataEntryData> result = new ArrayList<>();
             try {
-                result = searcher.search(query[0], Integer.parseInt(query[1]));
+                result = searcher.search(query, maxRowCount);
+                //if another query that came after this one finished first,
+                //don't execute this query
+                lock.lock();
+                try {
+                    if (queryOrderReceived > searchOrder) {
+                        lock.unlock();
+                        return null;
+                    }
+                    queryOrderReceived = searchOrder;
+                } finally {
+                    lock.unlock();
+                }
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -210,6 +307,14 @@ public class SearchInterests extends Fragment {
 
         @Override
         protected void onPostExecute(List<WikiDataEntryData> result){
+            //if the user exited the screen and we can't update the list
+            if (!SearchInterests.this.isVisible()){
+                return;
+            }
+            //don't do anything if this query comes before another one already reflected
+            if (result == null){
+                return;
+            }
             //the adapter might not be loaded yet
             if (adapter != null){
                 adapter.updateEntries(result);

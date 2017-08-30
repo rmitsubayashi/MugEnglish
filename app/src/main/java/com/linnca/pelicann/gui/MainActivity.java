@@ -1,46 +1,90 @@
 package com.linnca.pelicann.gui;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.database2classmappings.QuestionTypeMappings;
 import com.linnca.pelicann.db.datawrappers.InstanceRecord;
+import com.linnca.pelicann.db.datawrappers.LessonCategory;
 import com.linnca.pelicann.db.datawrappers.LessonData;
 import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
+import com.linnca.pelicann.gui.widgets.LessonDescriptionLayoutHelper;
+import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.questiongenerator.LessonHierarchyViewer;
 import com.linnca.pelicann.questionmanager.QuestionManager;
+
+import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         LessonList.LessonListListener,
         UserInterests.UserInterestListener,
+        SearchInterests.SearchInterestsListener,
         Question_General.QuestionListener,
         LessonDetails.LessonDetailsListener,
-        Results.ResultsListener
+        Results.ResultsListener,
+        Preferences.PreferencesListener,
+        LessonDescription.LessonDescriptionListener
 {
     private final String TAG = "MainActivity";
-    private Toolbar toolbar;
+    private InputMethodManager inputMethodManager;
+    private boolean searchIconVisible = false;
+    private boolean descriptionIconVisible = false;
+    private String descriptionLessonKey;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private boolean hamburgerEnabled = false;
+    private boolean toolbarBackListenerAttached = false;
     private FragmentManager fragmentManager;
     private boolean navigationItemSelected = false;
-    private CharSequence selectedNavigationItemTitle;
     private int selectedNavigationItemID = -1;
+
+    private String topmostFragmentTag = "";
+    private final String FRAGMENT_USER_INTERESTS = "userInterests";
+    private final String FRAGMENT_LESSON_LIST = "lessonList";
+    private final String FRAGMENT_SETTINGS = "settings";
+    private final String FRAGMENT_LESSON_DETAILS = "lessonDetails";
+    private final String FRAGMENT_QUESTION = "question";
+    private final String FRAGMENT_RESULTS = "results";
+    private final String FRAGMENT_SEARCH_INTERESTS = "searchInterests";
+    private final String FRAGMENT_LESSON_DESCRIPTION = "lessonDescription";
 
     private QuestionManager questionManager;
 
@@ -50,11 +94,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
         fragmentManager = getSupportFragmentManager();
         questionManager = new QuestionManager(getQuestionManagerListener());
 
-        drawerLayout = findViewById(R.id.activity_main);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(
+        drawerLayout = findViewById(R.id.main_activity_drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,drawerLayout, toolbar, R.string.lesson_list_navigation_drawer_open, R.string.lesson_list_navigation_drawer_close){
 
             @Override
@@ -66,36 +111,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (navigationItemSelected){
                     Fragment newFragment;
                     Bundle bundle = new Bundle();
+                    String newFragmentTag = "";
                     switch (selectedNavigationItemID){
                         case R.id.main_navigation_drawer_interests :
                             newFragment = new UserInterests();
+                            newFragmentTag = FRAGMENT_USER_INTERESTS;
                             break;
                         case R.id.main_navigation_drawer_data :
                             newFragment = new UserProfile();
                             break;
                         case R.id.main_navigation_drawer_settings :
                             newFragment = new Preferences();
+                            newFragmentTag = FRAGMENT_SETTINGS;
                             break;
                         case R.id.main_navigation_drawer_lesson_work :
                             newFragment = new LessonList();
                             bundle.putInt(LessonList.LESSON_CATEGORY_ID, LessonHierarchyViewer.ID_WORK);
                             newFragment.setArguments(bundle);
                             setLastSelectedLessonCategory(LessonHierarchyViewer.ID_WORK);
+                            newFragmentTag = FRAGMENT_LESSON_LIST;
                             break;
                         case R.id.main_navigation_drawer_lesson_countries :
                             newFragment = new LessonList();
                             bundle.putInt(LessonList.LESSON_CATEGORY_ID, LessonHierarchyViewer.ID_COUNTRIES);
                             newFragment.setArguments(bundle);
                             setLastSelectedLessonCategory(LessonHierarchyViewer.ID_COUNTRIES);
+                            newFragmentTag = FRAGMENT_LESSON_LIST;
                             break;
                         default:
                             return;
                     }
+                    clearBackStack();
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.main_activity_fragment_container, newFragment);
+                    fragmentTransaction.replace(R.id.main_activity_fragment_container, newFragment, newFragmentTag);
                     fragmentTransaction.commit();
-
-                    toolbar.setTitle(selectedNavigationItemTitle);
+                    topmostFragmentTag = newFragmentTag;
 
                     //reset so this won't be called if user plainly closes navigation drawer
                     navigationItemSelected = false;
@@ -115,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //calling sync state is necessary or else your hamburger icon wont show up
         actionBarDrawerToggle.syncState();
+        hamburgerEnabled = true;
 
         navigationView = findViewById(R.id.main_navigation_drawer);
         navigationView.setNavigationItemSelectedListener(this);
@@ -130,16 +181,96 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+        Log.d(TAG, "Called onPrepareOptionsMenu()");
+        //to make sure the animation doesn't trigger on launch,
+        //the menu is defaulted to invisible
+        animateMenuItem(menu.findItem(R.id.app_bar_search), searchIconVisible);
+        animateMenuItem(menu.findItem(R.id.app_bar_description), descriptionIconVisible);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.app_bar_description :
+                //we set this to null when we don't have a description
+                //associated with the current fragment.
+                //technically this is not needed as we are also hiding the icon
+                if (descriptionLessonKey != null){
+                    Fragment lessonDescriptionFragment = new LessonDescription();
+                    Bundle bundle = new Bundle();
+                    bundle.putString(LessonDescription.BUNDLE_LESSON_KEY, descriptionLessonKey);
+                    lessonDescriptionFragment.setArguments(bundle);
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
+                            0, R.anim.slide_out_bottom
+                    );
+                    if (fragmentManager.getBackStackEntryCount() != 0 ){
+                        String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
+                        fragmentTransaction.addToBackStack(fragmentTag);
+                    } else {
+                        fragmentTransaction.addToBackStack(topmostFragmentTag);
+                    }
+                    fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonDescriptionFragment, FRAGMENT_LESSON_DESCRIPTION);
+                    fragmentTransaction.commit();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem menuItem){
         menuItem.setChecked(true);
         navigationItemSelected = true;
         checkNavigationItem(menuItem.getItemId());
-        selectedNavigationItemTitle = menuItem.getTitle();
         //we want the action to trigger after the drawer closes
         //(for better ux) so close the drawer here
         //and set the action on the onCloseDrawer listener for the drawerLayout
         drawerLayout.closeDrawer(navigationView, true);
         return false;
+    }
+
+    @Override
+    public void onBackPressed(){
+        //default behavior for when a drawer is open is to close it
+        if (drawerLayout.isDrawerOpen(navigationView)){
+            drawerLayout.closeDrawer(navigationView, true);
+            return;
+        }
+
+        //have to handle this in the activity or it gets really pain-in-the-ass-y.
+        //not necessary for a lot of cases, but can't help it
+        hideKeyboard();
+
+        Fragment questionFragment = fragmentManager.findFragmentByTag(FRAGMENT_QUESTION);
+        if (questionFragment != null && questionFragment.isVisible()){
+            if (questionManager.isQuestionsStarted())
+                questionManager.resetManager(QuestionManager.QUESTIONS);
+            //we are just going back to the start of the review
+            if (questionManager.isReviewStarted())
+                questionManager.resetReviewMarker();
+
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(questionFragment);
+            fragmentTransaction.commit();
+        }
+
+        Fragment resultsFragment = fragmentManager.findFragmentByTag(FRAGMENT_RESULTS);
+        if (resultsFragment != null && resultsFragment.isVisible()){
+            questionManager.resetManager(QuestionManager.REVIEW);
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(resultsFragment);
+            fragmentTransaction.commit();
+        }
+
+        if (fragmentManager.getBackStackEntryCount() == 1){
+            switchActionBarUpButton();
+        }
+
+        super.onBackPressed();
     }
 
     @Override
@@ -150,22 +281,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bundle.putInt(LessonDetails.BUNDLE_BACKGROUND_COLOR, backgroundColor);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_LESSON_DETAILS);
+        fragmentTransaction.addToBackStack(FRAGMENT_LESSON_LIST);
         fragmentTransaction.commit();
+        switchActionBarUpButton();
+
     }
 
     @Override
     public void userInterestsToSearchInterests(){
         Fragment fragment = new SearchInterests();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_SEARCH_INTERESTS);
+        fragmentTransaction.addToBackStack(FRAGMENT_USER_INTERESTS);
         fragmentTransaction.commit();
+        switchActionBarUpButton();
     }
 
     private QuestionManager.QuestionManagerListener getQuestionManagerListener(){
         return new QuestionManager.QuestionManagerListener() {
             @Override
-            public void onNextQuestion(QuestionData questionData) {
+            public void onNextQuestion(QuestionData questionData, boolean firstQuestion) {
                 Fragment fragment;
                 switch (questionData.getQuestionType()){
                     case QuestionTypeMappings.FILL_IN_BLANK_INPUT :
@@ -191,11 +327,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA,
                         questionData);
                 fragment.setArguments(bundle);
+                //do not add to the back stack because we don't want the user going back to a question
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                if (firstQuestion){
+                    if (questionManager.isQuestionsStarted())
+                        fragmentTransaction.addToBackStack(FRAGMENT_LESSON_DETAILS);
+                    else if (questionManager.isReviewStarted())
+                        fragmentTransaction.addToBackStack(FRAGMENT_RESULTS);
+                }
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                         R.anim.slide_in_left, R.anim.slide_out_right
                 );
-                fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment);
+                fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_QUESTION);
                 fragmentTransaction.commit();
             }
 
@@ -207,8 +350,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment.setArguments(bundle);
 
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment);
+                Fragment questionFragment = fragmentManager.findFragmentByTag(FRAGMENT_QUESTION);
+                if (questionFragment != null) {
+                    fragmentTransaction.remove(questionFragment);
+                }
+                fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_RESULTS);
                 fragmentTransaction.commit();
+            }
+
+            @Override
+            public void onReviewFinished(){
+                //just go back to the lesson details screen?
+                fragmentManager.popBackStack(FRAGMENT_LESSON_DETAILS, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                Fragment resultsFragment = fragmentManager.findFragmentByTag(FRAGMENT_RESULTS);
+                if (resultsFragment != null){
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.remove(resultsFragment);
+                    fragmentTransaction.commit();
+                }
+
             }
         };
     }
@@ -225,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onNextQuestion(){
-        questionManager.nextQuestion();
+        questionManager.nextQuestion(false);
     }
 
     private void setLastSelectedLessonCategory(int lessonCategoryID){
@@ -247,6 +407,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void setLessonView(){
+        clearBackStack();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //this is the ID used by the fragment
         //default (the user has never selected an item) is countries for now
@@ -269,8 +430,68 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bundle.putInt(LessonList.LESSON_CATEGORY_ID, lastSelectedLessonCategoryID);
         lessonListFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonListFragment);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonListFragment, FRAGMENT_LESSON_LIST);
         fragmentTransaction.commit();
+        topmostFragmentTag = FRAGMENT_LESSON_LIST;
+
+        if (!hamburgerEnabled){
+            switchActionBarUpButton();
+        }
+    }
+
+    private void animateMenuItem(final MenuItem menuItem, final boolean toVisibility){
+        Log.d(TAG, "called");
+        boolean currentlyVisible = menuItem.isVisible();
+        Log.d(TAG, "CurrentVisibility is " + currentlyVisible);
+        Log.d(TAG, "ToVisibility is " + toVisibility);
+        //no need to animate
+        if (currentlyVisible == toVisibility){
+            return;
+        }
+
+        ValueAnimator valueAnimator;
+        final Drawable iconDrawable = menuItem.getIcon();
+        Log.d(TAG, "Start: MenuItem alpha is " + menuItem.getIcon().getAlpha());
+        //we are fading it out
+        if (currentlyVisible) {
+             valueAnimator = ValueAnimator.ofInt(255, 0);
+        } else {
+            valueAnimator = ValueAnimator.ofInt(0,255);
+            iconDrawable.setAlpha(0);
+            menuItem.setVisible(true);
+
+        }
+        valueAnimator.setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                iconDrawable.setAlpha((int)valueAnimator.getAnimatedValue());
+            }
+        });
+        valueAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                menuItem.setVisible(toVisibility);
+                Log.d(TAG, "Set icon visibility to " + menuItem.isVisible());
+                iconDrawable.setAlpha(255);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        });
+        valueAnimator.start();
     }
 
     //the navigation view doesn't handle checking items under sub-headers
@@ -281,5 +502,146 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         navigationView.getMenu().findItem(id).setChecked(true);
         selectedNavigationItemID = id;
+    }
+
+    private void clearBackStack(){
+        fragmentManager.popBackStack(topmostFragmentTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    private void switchActionBarUpButton(){
+        if (hamburgerEnabled){
+            ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(actionBarDrawerToggle.getDrawerArrowDrawable(), "progress", 1);
+            objectAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+                    hamburgerEnabled = false;
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    if (!toolbarBackListenerAttached){
+                        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                onUpPressed();
+                            }
+                        });
+                        toolbarBackListenerAttached = true;
+                    }
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            });
+
+            objectAnimator.start();
+        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            actionBarDrawerToggle.setToolbarNavigationClickListener(null);
+            toolbarBackListenerAttached = false;
+            hamburgerEnabled = true;
+            ObjectAnimator.ofFloat(actionBarDrawerToggle.getDrawerArrowDrawable(), "progress", 0).start();
+        }
+    }
+
+    private void onUpPressed(){
+        onBackPressed();
+    }
+
+    private TextView getToolbarTextView(){
+        int childCount = toolbar.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View child = toolbar.getChildAt(i);
+            if (child instanceof TextView) {
+                return (TextView)child;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setToolbarState(ToolbarState state){
+        Log.d(TAG, "Setting toolbar state");
+        String toolbarTitle = state.getTitle();
+        if (!toolbarTitle.equals("") || !toolbarTitle.equals("no title")){
+            setToolbarTitle(toolbarTitle);
+        }
+
+        //icons
+        searchIconVisible = state.searchIconVisible();
+        descriptionIconVisible = state.descriptionIconVisible();
+        descriptionLessonKey = state.getDescriptionLessonKey();
+
+        //this redraws the toolbar so the initial visibility is always false.
+        //this is not the right way (nor the behavior I want) but this can come later...
+        invalidateOptionsMenu();
+    }
+
+    private void setToolbarTitle(final String title){
+        //getSupportActionBar should never be null but just in case
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null){
+            toolbar.setTitle(title);
+            return;
+        }
+        //don't do anything if the titles are the same
+        if (actionBar.getTitle() != null &&
+                actionBar.getTitle().toString().equals(title)) {
+            return;
+        }
+        
+        final View view = getToolbarTextView();
+        //there won't be a textview if the toolbar doesn't have a title
+        if (view == null){
+            actionBar.setTitle(title);
+        } else {
+            AlphaAnimation fadeOut = new AlphaAnimation(1f, 0f);
+            fadeOut.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
+            fadeOut.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    actionBar.setTitle(title);
+
+                    AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
+                    fadeIn.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
+                    view.startAnimation(fadeIn);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+            view.startAnimation(fadeOut);
+        }
+    }
+
+    private void hideKeyboard(){
+        // Check if no view has focus:
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            if (inputMethodManager == null)
+                inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

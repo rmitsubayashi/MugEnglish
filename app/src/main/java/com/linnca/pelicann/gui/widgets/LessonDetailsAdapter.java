@@ -14,7 +14,9 @@ import com.linnca.pelicann.gui.LessonDetails;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 public class LessonDetailsAdapter
         extends FirebaseRecyclerAdapter<LessonInstanceData, LessonDetailsViewHolder> {
@@ -47,8 +49,12 @@ public class LessonDetailsAdapter
     @Override
     public void populateViewHolder(final LessonDetailsViewHolder holder, final LessonInstanceData data, int position) {
         String allInterestsLabel = "";
+        Set<String> duplicates = new HashSet<>(data.getInterestLabels().size());
         for (String interestLabel : data.getInterestLabels()) {
-            allInterestsLabel += interestLabel + " + ";
+            if (!duplicates.contains(interestLabel)) {
+                allInterestsLabel += interestLabel + " + ";
+            }
+            duplicates.add(interestLabel);
         }
         allInterestsLabel = allInterestsLabel.substring(0,allInterestsLabel.length()-3);
         holder.setInterestsLabel(allInterestsLabel);

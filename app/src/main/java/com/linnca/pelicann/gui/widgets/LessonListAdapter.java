@@ -25,8 +25,8 @@ import java.util.List;
 
 public class LessonListAdapter
         extends RecyclerView.Adapter<LessonListViewHolder> {
-    List<LessonData> data;
-    LessonList.LessonListListener listener;
+    private List<LessonData> data;
+    private LessonList.LessonListListener listener;
 
     public LessonListAdapter(List<LessonData> lessons, LessonList.LessonListListener listener){
         this.data = lessons;
@@ -56,10 +56,7 @@ public class LessonListAdapter
 
         holder.setText(lessonData.getTitle());
 
-        String userID = "";
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        }
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         List<ImageView> stars = holder.getStars();
         String lessonKey = lessonData.getKey();
         populateStars(lessonKey, userID, stars);

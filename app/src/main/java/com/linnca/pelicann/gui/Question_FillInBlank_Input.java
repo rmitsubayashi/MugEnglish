@@ -8,9 +8,11 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,18 +33,25 @@ public class Question_FillInBlank_Input extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+
+        //as of now, this is the only way
+        //I can stick the response feedback bottom sheet on the bottom.
+        //(if I have the keyboard open while submitting an answer,
+        //the bottom sheet comes above the keyboard even though
+        //it is closing
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_question_fill_in_blank_input, container, false);
-        parentViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.fragment_question_fill_in_blank_input);
-        siblingViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.question_fill_in_blank_input_main_layout);
+        parentViewGroupForFeedback = view.findViewById(R.id.fragment_question_fill_in_blank_input);
+        siblingViewGroupForFeedback = view.findViewById(R.id.question_fill_in_blank_input_main_layout);
 
-        questionTextView = (TextView) view.findViewById(R.id.question_fill_in_blank_input_question);
-        submitButton = (Button)view.findViewById(R.id.question_fill_in_blank_input_submit);
-        questionInput = (EditText) view.findViewById(R.id.question_fill_in_blank_input_input);
+        questionTextView = view.findViewById(R.id.question_fill_in_blank_input_question);
+        submitButton = view.findViewById(R.id.question_fill_in_blank_input_submit);
+        questionInput = view.findViewById(R.id.question_fill_in_blank_input_input);
         createQuestionLayout();
         inflateFeedback(inflater);
         return view;
@@ -110,5 +119,14 @@ public class Question_FillInBlank_Input extends Question_General {
         if (imm != null) {
             imm.hideSoftInputFromWindow(questionInput.getWindowToken(), 0);
         }
+
+
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        //change it back to default
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="description_name_is_a_occupation_explanation">注目してほしいのは多くの職業の最後につく<b>-er</b></string>
+    <string name="description_name_is_a_occupation_example1_word">soccer play<b>er</b></string>
+    <string name="description_name_is_a_occupation_example1_explanation">サッカー（<i>soccer</i>）を遊ぶ(<i>play</i>)人(<b>-er</b>) = サッカー選手</string>
+    <string name="description_name_is_a_occupation_example2_word">programm<b>er</b></string>
+    <string name="description_name_is_a_occupation_example2_explanation">プログラミングをする(<i>program</i>)人(<b>-er</b>) = プログラマー</string>
+    <string name="description_name_is_a_occupation_example3_word">firefight<b>er</b></string>
+    <string name="description_name_is_a_occupation_example3_explanation">火事(<i>fire</i>)と戦う(<i>fight</i>)人(<b>-er</b>) = 消防士</string>
+    <string name="description_name_is_a_occupation_explanation2">このように、<b>-er</b>は「～をする人」という意味を持っている。\n
+    もちろん<b>-er</b>のつかない職業もあるけど、目安にするのもいいかも。 </string>
+</resources>

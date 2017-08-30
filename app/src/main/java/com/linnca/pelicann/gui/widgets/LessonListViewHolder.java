@@ -17,7 +17,7 @@ class LessonListViewHolder extends RecyclerView.ViewHolder {
 
     LessonListViewHolder(View itemView) {
         super(itemView);
-        text = (TextView) itemView.findViewById(R.id.lesson_list_item_text);
+        text = itemView.findViewById(R.id.lesson_list_item_text);
         stars.add((ImageView) itemView.findViewById(R.id.lesson_list_item_star1));
         stars.add((ImageView) itemView.findViewById(R.id.lesson_list_item_star2));
         stars.add((ImageView) itemView.findViewById(R.id.lesson_list_item_star3));
@@ -26,6 +26,12 @@ class LessonListViewHolder extends RecyclerView.ViewHolder {
 
     public void setText(String text) {
         this.text.setText(text);
+    }
+
+    public int[] getTextViewLocation(){
+        int[] coords = new int[2];
+        text.getLocationInWindow(coords);
+        return coords;
     }
 
     List<ImageView> getStars(){

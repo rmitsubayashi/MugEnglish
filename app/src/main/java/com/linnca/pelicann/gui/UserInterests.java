@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
+import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.gui.widgets.UserInterestAdapter;
 import com.linnca.pelicann.gui.widgets.UserInterestViewHolder;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
@@ -47,6 +48,7 @@ public class UserInterests extends Fragment {
 
     interface UserInterestListener {
         void userInterestsToSearchInterests();
+        void setToolbarState(ToolbarState state);
     }
 
     @Override
@@ -61,6 +63,15 @@ public class UserInterests extends Fragment {
             populateFABs();
         }
         return view;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        userInterestListener.setToolbarState(
+                new ToolbarState(getString(R.string.fragment_user_interests_title),
+                        false, false, null)
+        );
     }
 
     @Override

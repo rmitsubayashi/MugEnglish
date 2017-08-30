@@ -53,4 +53,15 @@ public class LessonHierarchyViewer {
 
         return null;
     }
+
+    public LessonData getLessonData(String lessonKey){
+        for (LessonCategory category : lessonCategories){
+            for (LessonData lessonData : category.getLessons()){
+                if (lessonData.getKey().equals(lessonKey)){
+                    return lessonData;
+                }
+            }
+        }
+        return null;
+    }
 }

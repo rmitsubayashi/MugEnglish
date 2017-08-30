@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--although we are changing the background color at runtime,
+if we don't set it here, the bottom sheet comes in from the top??
+-->
 <android.support.v4.widget.NestedScrollView
     android:layout_width="match_parent"
     android:layout_height="200dp"

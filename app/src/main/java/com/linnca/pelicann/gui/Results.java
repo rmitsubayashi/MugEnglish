@@ -16,6 +16,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.AchievementStars;
 import com.linnca.pelicann.db.datawrappers.InstanceRecord;
 import com.linnca.pelicann.db.datawrappers.QuestionAttempt;
+import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.questionmanager.ResultsManager;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class Results extends Fragment {
     interface ResultsListener {
         void resultsToLessonCategories();
         void resultsToReview(InstanceRecord instanceRecord);
+        void setToolbarState(ToolbarState state);
     }
 
     @Override
@@ -67,6 +69,14 @@ public class Results extends Fragment {
         resultsManager.identifyAchievements();
         setLayout();
         return view;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        resultsListener.setToolbarState(
+                new ToolbarState(getString(R.string.results_app_bar_title), false, true, instanceRecord.getLessonId())
+        );
     }
 
     @Override

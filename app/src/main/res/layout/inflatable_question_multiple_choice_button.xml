@@ -7,4 +7,5 @@
         android:textColor="@drawable/white_text_with_states"
         android:textSize="15sp"
         android:layout_marginBottom="16dp"
+        android:textAllCaps="false"
         style="@style/Widget.AppCompat.Button.Borderless"/>

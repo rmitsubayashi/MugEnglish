@@ -3,18 +3,24 @@ package com.linnca.pelicann.gui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -26,15 +32,18 @@ import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.LessonData;
 import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.gui.widgets.LessonDetailsAdapter;
+import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.questiongenerator.Lesson;
 import com.linnca.pelicann.questiongenerator.LessonFactory;
 
 public class LessonDetails extends Fragment {
+    private final String TAG = "LessonDetails";
     public static String BUNDLE_LESSON_DATA = "lessonData";
     public static String BUNDLE_BACKGROUND_COLOR = "backgroundColor";
     private LessonData lessonData;
     private RecyclerView list;
     private FloatingActionButton createButton;
+    private ProgressBar createProgressBar;
     private TextView noItemTextView;
     private ProgressBar loading;
     private ViewGroup mainLayout;
@@ -44,6 +53,7 @@ public class LessonDetails extends Fragment {
 
     public interface LessonDetailsListener {
         void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData, String lessonKey);
+        void setToolbarState(ToolbarState state);
     }
 
     @Override
@@ -55,6 +65,7 @@ public class LessonDetails extends Fragment {
         loading = view.findViewById(R.id.lesson_details_loading);
         mainLayout = view.findViewById(R.id.fragment_lesson_details);
         createButton = view.findViewById(R.id.lesson_details_add);
+        createProgressBar = view.findViewById(R.id.lesson_details_add_progress_bar);
         Bundle arguments = getArguments();
         if (arguments.getSerializable(BUNDLE_LESSON_DATA) != null) {
             //get data
@@ -69,6 +80,14 @@ public class LessonDetails extends Fragment {
         setLessonColor(color);
 
         return view;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        lessonDetailsListener.setToolbarState(
+                new ToolbarState(lessonData.getTitle(), false, true, lessonData.getKey())
+        );
     }
 
     @Override
@@ -209,6 +228,7 @@ public class LessonDetails extends Fragment {
     private void setLessonColor(int color){
         //background for whole activity
         mainLayout.setBackgroundColor(color);
+
         /*
         //status bar (post-lollipop)
         if (Build.VERSION.SDK_INT >= 21) {
@@ -239,17 +259,59 @@ public class LessonDetails extends Fragment {
                 createNewInstance();
             }
         });
-
     }
 
     private void createNewInstance(){
         createButton.setEnabled(false);
+        createButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.gray500)));
+
+        createProgressBar.setVisibility(View.VISIBLE);
         //load lesson class
         Lesson lesson = LessonFactory.parseLesson(lessonData.getKey(),
                 new Lesson.LessonListener() {
             @Override
             public void onLessonCreated() {
+                //since these will be called from a separate thread, we want to make sure
+                // these run on the UI thread
+                //( not sure if this achieves it though. These are called even though we destroy the fragment)
+                createButton.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (LessonDetails.this.isVisible()) {
+                            createButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.orange500)));
+                            createButton.setEnabled(true);
+                        }
+                    }
+                });
+                createProgressBar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (LessonDetails.this.isVisible()) {
+                            Animation fadeoutAnimation = new AlphaAnimation(1f,0f);
+                            fadeoutAnimation.setDuration(500);
+                            fadeoutAnimation.setAnimationListener(new Animation.AnimationListener() {
+                                @Override
+                                public void onAnimationStart(Animation animation) {
 
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animation animation) {
+                                    createProgressBar.setVisibility(View.INVISIBLE);
+                                    //reset alpha so the progress bar shows the next time around
+                                    createProgressBar.setAlpha(1f);
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animation animation) {
+
+                                }
+                            });
+                            createProgressBar.startAnimation(fadeoutAnimation);
+
+                        }
+                    }
+                });
             }
         });
         //first part connects to Firebase

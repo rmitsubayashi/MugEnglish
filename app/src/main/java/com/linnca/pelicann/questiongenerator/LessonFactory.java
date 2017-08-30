@@ -9,6 +9,7 @@ import com.linnca.pelicann.questiongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.questiongenerator.lessons.The_DEMONYM_flag_is_COLORS;
 
 public class LessonFactory {
+    private LessonFactory(){}
     public static Lesson parseLesson(String lessonKey, Lesson.LessonListener listener){
         switch (lessonKey) {
             case NAME_is_DEMONYM.KEY :

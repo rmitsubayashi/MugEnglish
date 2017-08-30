@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
+import com.linnca.pelicann.gui.widgets.ToolbarState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,7 @@ public abstract class Question_General extends Fragment {
     protected boolean disableChoiceAfterWrongAnswer;
     private BottomSheetBehavior behavior;
     private NestedScrollView feedback;
+    private Button nextButton;
     protected ViewGroup parentViewGroupForFeedback;
     protected ViewGroup siblingViewGroupForFeedback;
 
@@ -43,6 +46,7 @@ public abstract class Question_General extends Fragment {
     interface QuestionListener {
         void onNextQuestion();
         void onRecordResponse(String response, boolean correct);
+        void setToolbarState(ToolbarState state);
     }
 
     @Override
@@ -51,6 +55,14 @@ public abstract class Question_General extends Fragment {
         questionData = (QuestionData)getArguments().getSerializable(BUNDLE_QUESTION_DATA);
         setMaxNumberOfAttempts();
         disableChoiceAfterWrongAnswer = disableChoiceAfterWrongAnswer();
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        questionListener.setToolbarState(
+                new ToolbarState(getString(R.string.question_title), false, true, questionData.getLessonId())
+        );
     }
 
     @Override
@@ -180,7 +192,7 @@ public abstract class Question_General extends Fragment {
         feedback = (NestedScrollView) inflater
                 .inflate(R.layout.inflatable_question_feedback, parentViewGroupForFeedback, false);
         behavior = BottomSheetBehavior.from(feedback);
-        Button nextButton = (Button)feedback.findViewById(R.id.question_feedback_next);
+        nextButton = feedback.findViewById(R.id.question_feedback_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -192,24 +204,30 @@ public abstract class Question_General extends Fragment {
     }
 
     private void openFeedback(boolean correct){
-        //when we first display the question the bottom sheet is hideable & hidden
+        //when we first display the question the bottom sheet is hidden & can be hidden.
         //whether the answer was correct or not,
-        //we don't want the user to be able to hide the view
+        //we don't want the user to be able to hide the view because the net button is there
+        //so make it non-hide-able
         behavior.setHideable(false);
 
-        TextView feedbackTitle = (TextView)feedback.findViewById(R.id.question_feedback_title);
+        if (correct){
+            feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
+            nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
+        } //else condition is default now
+        TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
         if (correct){
             feedbackTitle.setText(R.string.question_feedback_correct);
             behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             feedbackTitle.setText(R.string.question_feedback_incorrect);
             TextView feedbackDescription =
-                    (TextView)feedback.findViewById(R.id.question_feedback_description);
+                    feedback.findViewById(R.id.question_feedback_description);
             feedbackDescription.setText(getFeedback());
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
 
-
+        //we don't want the user to be able to interact with the background,
+        //but we want them ot be able to see it
         disableBackground(siblingViewGroupForFeedback);
         siblingViewGroupForFeedback.setAlpha(0.5f);
     }

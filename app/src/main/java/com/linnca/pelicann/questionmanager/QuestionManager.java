@@ -50,8 +50,9 @@ public class QuestionManager{
 	private List<QuestionData> missedQuestionsForReviewList = new ArrayList<>();
 
 	public interface QuestionManagerListener{
-		void onNextQuestion(QuestionData questionData);
+		void onNextQuestion(QuestionData questionData, boolean firstQuestion);
 		void onQuestionsFinished(InstanceRecord instanceRecord);
+        void onReviewFinished();
 	}
 
 	public QuestionManager(QuestionManagerListener listener){
@@ -66,9 +67,13 @@ public class QuestionManager{
 			this.lessonInstanceData = data;
 			this.lessonKey = lessonKey;
 			startNewInstanceRecord();
-			nextQuestion();
+			nextQuestion(true);
 		}
 	}
+
+	public boolean isQuestionsStarted(){
+        return questionsStarted;
+    }
 
 	public void startReview(InstanceRecord instanceRecord){
 		if (!reviewStarted){
@@ -77,11 +82,15 @@ public class QuestionManager{
 			this.instanceRecord = instanceRecord;
 			//make it easier to loop through
 			missedQuestionsForReviewList = new ArrayList<>(missedQuestionsForReviewSet);
-			nextQuestion();
+			nextQuestion(true);
 		}
 	}
 
-	public void nextQuestion(){
+	public boolean isReviewStarted(){
+        return reviewStarted;
+    }
+
+	public void nextQuestion(final boolean firstQuestion){
 		//don't do anything if we haven't started anything
 		if (!questionsStarted && !reviewStarted){
 			return;
@@ -108,7 +117,7 @@ public class QuestionManager{
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot) {
 					currentQuestionData = dataSnapshot.getValue(QuestionData.class);
-					questionManagerListener.onNextQuestion(currentQuestionData);
+					questionManagerListener.onNextQuestion(currentQuestionData, firstQuestion);
 					questionMkr++;
 				}
 
@@ -123,10 +132,11 @@ public class QuestionManager{
 			//review
 			if (questionMkr == missedQuestionsForReviewList.size()){
 				resetManager(REVIEW);
+                questionManagerListener.onReviewFinished();
 				return;
 			}
 			currentQuestionData = missedQuestionsForReviewList.get(questionMkr);
-			questionManagerListener.onNextQuestion(currentQuestionData);
+			questionManagerListener.onNextQuestion(currentQuestionData, firstQuestion);
 			questionMkr++;
 		} else {
 			//somehow we don't have the questions stored.
@@ -151,7 +161,7 @@ public class QuestionManager{
 						@Override
 						public void onDataChange(DataSnapshot dataSnapshot) {
 							currentQuestionData = dataSnapshot.getValue(QuestionData.class);
-							questionManagerListener.onNextQuestion(currentQuestionData);
+							questionManagerListener.onNextQuestion(currentQuestionData, false);
 							questionMkr = newQuestionMkr;
 						}
 
@@ -167,6 +177,7 @@ public class QuestionManager{
 			if (!foundNextQuestion){
 				//that means the user is finished with the review
 				resetManager(REVIEW);
+                questionManagerListener.onReviewFinished();
 			}
 		}
 
@@ -247,6 +258,14 @@ public class QuestionManager{
 			missedQuestionsForReviewSet.clear();
 			missedQuestionsForReviewList.clear();
 		}
+	}
+
+	public void resetReviewMarker(){
+		questionMkr = 0;
+		reviewStarted = false;
+		//we are going to make a new list the next time the
+		//user reviews
+		missedQuestionsForReviewList.clear();
 	}
 
 
