@@ -32,8 +32,10 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,10 +47,14 @@ import com.linnca.pelicann.db.datawrappers.LessonData;
 import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
 import com.linnca.pelicann.gui.widgets.LessonDescriptionLayoutHelper;
+import com.linnca.pelicann.gui.widgets.ToolbarSpinnerAdapter;
+import com.linnca.pelicann.gui.widgets.ToolbarSpinnerItem;
 import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.questiongenerator.LessonHierarchyViewer;
 import com.linnca.pelicann.questionmanager.QuestionManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
+    private Spinner toolbarSpinner;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private boolean hamburgerEnabled = false;
     private boolean toolbarBackListenerAttached = false;
@@ -93,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.tool_bar);
+        toolbarSpinner = toolbar.findViewById(R.id.tool_bar_spinner);
         setSupportActionBar(toolbar);
 
         fragmentManager = getSupportFragmentManager();
@@ -440,10 +448,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void animateMenuItem(final MenuItem menuItem, final boolean toVisibility){
-        Log.d(TAG, "called");
         boolean currentlyVisible = menuItem.isVisible();
-        Log.d(TAG, "CurrentVisibility is " + currentlyVisible);
-        Log.d(TAG, "ToVisibility is " + toVisibility);
         //no need to animate
         if (currentlyVisible == toVisibility){
             return;
@@ -451,7 +456,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ValueAnimator valueAnimator;
         final Drawable iconDrawable = menuItem.getIcon();
-        Log.d(TAG, "Start: MenuItem alpha is " + menuItem.getIcon().getAlpha());
         //we are fading it out
         if (currentlyVisible) {
              valueAnimator = ValueAnimator.ofInt(255, 0);
@@ -477,7 +481,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onAnimationEnd(Animator animator) {
                 menuItem.setVisible(toVisibility);
-                Log.d(TAG, "Set icon visibility to " + menuItem.isVisible());
                 iconDrawable.setAlpha(255);
             }
 
@@ -574,9 +577,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void setToolbarState(ToolbarState state){
-        Log.d(TAG, "Setting toolbar state");
         String toolbarTitle = state.getTitle();
-        if (!toolbarTitle.equals("") || !toolbarTitle.equals("no title")){
+        if (toolbarTitle.equals(ToolbarState.NO_TITLE_WITH_SPINNER)){
+            addSpinnerAdapter();
+        }
+        if (!toolbarTitle.equals("")){
             setToolbarTitle(toolbarTitle);
         }
 
@@ -588,6 +593,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //this redraws the toolbar so the initial visibility is always false.
         //this is not the right way (nor the behavior I want) but this can come later...
         invalidateOptionsMenu();
+    }
+
+    private void addSpinnerAdapter(){
+        if (toolbarSpinner.getAdapter() == null){
+            List<ToolbarSpinnerItem> toolbarSpinnerItems = new ArrayList<>();
+            toolbarSpinnerItems.add(
+                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_all), R.drawable.ic_all)
+            );
+            toolbarSpinnerItems.add(
+                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_people), R.drawable.ic_person)
+            );
+            toolbarSpinnerItems.add(
+                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_places), R.drawable.ic_places)
+            );
+            toolbarSpinnerItems.add(
+                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_other), R.drawable.ic_other)
+            );
+            ToolbarSpinnerAdapter adapter = new ToolbarSpinnerAdapter(this, toolbarSpinnerItems);
+            toolbarSpinner.setAdapter(adapter);
+            toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                    Log.d(TAG, "Item selected");
+                    Fragment userInterestFragment = fragmentManager.findFragmentByTag(FRAGMENT_USER_INTERESTS);
+                    if (userInterestFragment != null && userInterestFragment.isVisible()){
+                        //since we don't have ids, differentiate the items by position
+                        int filter;
+                        switch (position){
+                            case 0 :
+                                filter = ToolbarSpinnerAdapter.FILTER_ALL;
+                                break;
+                            case 1 :
+                                filter = ToolbarSpinnerAdapter.FILTER_PERSON;
+                                break;
+                            case 2 :
+                                filter = ToolbarSpinnerAdapter.FILTER_PLACE;
+                                break;
+                            case 3 :
+                                filter = ToolbarSpinnerAdapter.FILTER_OTHER;
+                                break;
+                            default :
+                                filter = ToolbarSpinnerAdapter.FILTER_ALL;
+                        }
+                        ((UserInterests)userInterestFragment).filterUserInterests(filter);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+        }
     }
 
     private void setToolbarTitle(final String title){
@@ -602,10 +660,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 actionBar.getTitle().toString().equals(title)) {
             return;
         }
-        
+
+        if (actionBar.getTitle().equals("") && toolbarSpinner.getVisibility() == View.VISIBLE &&
+                title.equals(ToolbarState.NO_TITLE_WITH_SPINNER)){
+            //resetting the spinner.
+            //this doesn't trigger the onItemSelected listener
+            //attached to the spinner
+            toolbarSpinner.setSelection(0);
+            return;
+        }
+
+
         final View view = getToolbarTextView();
         //there won't be a textview if the toolbar doesn't have a title
-        if (view == null){
+        if (view == null && toolbarSpinner.getVisibility() == View.GONE){
             actionBar.setTitle(title);
         } else {
             AlphaAnimation fadeOut = new AlphaAnimation(1f, 0f);
@@ -618,11 +686,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    actionBar.setTitle(title);
-
                     AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
                     fadeIn.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-                    view.startAnimation(fadeIn);
+
+                    if (title.equals(ToolbarState.NO_TITLE_WITH_SPINNER)){
+                        toolbarSpinner.setVisibility(View.VISIBLE);
+                        actionBar.setTitle("");
+
+                        toolbarSpinner.startAnimation(fadeIn);
+                    } else {
+                        actionBar.setTitle(title);
+                        //try grabbing the view again if it was null at first.
+                        //since we are populating the textView, it should exist
+                        if (view == null) {
+                            TextView populatedView = getToolbarTextView();
+                            if (populatedView != null) {
+                                populatedView.startAnimation(fadeIn);
+                            }
+                        } else {
+                            view.startAnimation(fadeIn);
+                        }
+                    }
                 }
 
                 @Override
@@ -631,7 +715,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
 
-            view.startAnimation(fadeOut);
+            if (view == null){
+                toolbarSpinner.startAnimation(fadeOut);
+            } else {
+                view.startAnimation(fadeOut);
+            }
+        }
+
+        if (toolbarSpinner.getVisibility() == View.VISIBLE){
+            toolbarSpinner.setVisibility(View.GONE);
+            //resetting the spinner so the next time,
+            //it will start at the default location
+            //this doesn't trigger the onItemSelected listener
+            //attached to the spinner
+            toolbarSpinner.setSelection(0);
         }
     }
 

@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -20,8 +21,12 @@ import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
@@ -29,6 +34,9 @@ import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.gui.widgets.UserInterestAdapter;
 import com.linnca.pelicann.gui.widgets.UserInterestViewHolder;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 * We are using an external library for the FABs
@@ -39,7 +47,9 @@ public class UserInterests extends Fragment {
     private final String TAG = "UserInterests";
     private ViewGroup mainLayout;
     private RecyclerView listView;
-    private FirebaseRecyclerAdapter firebaseAdapter = null;
+    private Query userInterestQuery;
+    private ValueEventListener userInterestQueryListener;
+    private UserInterestAdapter userInterestListAdapter = null;
     private Snackbar undoSnackBar;
     private RecyclerView.OnItemTouchListener undoOnTouchListener;
     private ActionMode actionMode;
@@ -69,7 +79,7 @@ public class UserInterests extends Fragment {
     public void onStart(){
         super.onStart();
         userInterestListener.setToolbarState(
-                new ToolbarState(getString(R.string.fragment_user_interests_title),
+                new ToolbarState(ToolbarState.NO_TITLE_WITH_SPINNER,
                         false, false, null)
         );
     }
@@ -95,40 +105,17 @@ public class UserInterests extends Fragment {
         }
     }
 
+    //called by the main activity (which has access to the spinner for the filter)
+    public void filterUserInterests(int filter){
+        if (userInterestListAdapter != null)
+            userInterestListAdapter.setFilter(filter);
+    }
+
     private void loadUser(){
         setListListeners();
         //populateFABs();
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.user_interests_app_bar_menu, menu);
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.user_interests_app_bar_search).getActionView();
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                updateAdapter(s);
-                return true;
-            }
-        });
-
-        return true;
-    }*/
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
         // Called when the action mode is created; startActionMode() was called
@@ -175,41 +162,40 @@ public class UserInterests extends Fragment {
         }
     } */
 
-    private void updateAdapter(String query){
-        //clear adapter
-        if (firebaseAdapter != null)
-            firebaseAdapter.cleanup();
-
-        //update the list as necessary
-
+    private void setAdapter(){
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBHeaders.USER_INTERESTS + "/"+userID);
-        if (query.equals("")){
-            //since firebase doesn't support multiple ordering,
-            //we can't search for the characters typed i.e. "長友~"
-            //and sort by the pronunciation "ながとも"
-            //which is stupid, but until then, just sort by pronunciation
-            //only when the user doesn't have anything typed.
-            //shouldn't be too much of a bother once the user has searched for something...
-            firebaseAdapter = new UserInterestAdapter(
-                    WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
-                    UserInterestViewHolder.class, ref.orderByChild("pronunciation"), userID,
-                    getUserInterestAdapterListener()
-            );
-        } else {
-            //ends at string + (high unicode character)
-            // which means all Japanese characters are included
-            firebaseAdapter = new UserInterestAdapter(
-                    WikiDataEntryData.class, R.layout.inflatable_user_interests_list_item,
-                    UserInterestViewHolder.class, ref.orderByChild("label").startAt(query).endAt(query + "\uFFFF"),
-                    userID,
-                    getUserInterestAdapterListener()
-            );
-        }
+        userInterestListAdapter = new UserInterestAdapter(
+                userID,
+                getUserInterestAdapterListener()
+        );
+
+        DatabaseReference userInterestRef = FirebaseDatabase.getInstance()
+                .getReference(FirebaseDBHeaders.USER_INTERESTS + "/" +
+                        userID);
+        //order alphabetically
+        userInterestQuery = userInterestRef.orderByChild("pronunciation");
+
+        userInterestQueryListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<WikiDataEntryData> userInterests = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    WikiDataEntryData interest = snapshot.getValue(WikiDataEntryData.class);
+                    userInterests.add(interest);
+                }
+
+                userInterestListAdapter.setInterests(userInterests);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        userInterestQuery.addValueEventListener(userInterestQueryListener);
 
 
-        listView.setAdapter(firebaseAdapter);
+        listView.setAdapter(userInterestListAdapter);
     }
 
     private void setListListeners(){
@@ -227,17 +213,11 @@ public class UserInterests extends Fragment {
                 return true;
             }
         });
-        //updating the list with an empty query (default)
-        updateAdapter("");
-
-
-
+        setAdapter();
     }
 
 
     private void populateFABs(){
-
-
         searchFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -310,7 +290,7 @@ public class UserInterests extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if (firebaseAdapter != null)
-            firebaseAdapter.cleanup();
+        if (userInterestQuery != null && userInterestQueryListener != null)
+            userInterestQuery.removeEventListener(userInterestQueryListener);
     }
 }

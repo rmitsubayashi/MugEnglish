@@ -198,6 +198,10 @@
     <string name="user_interests_list_item_delete">消去</string>
     <string name="user_interests_list_item_deleted">消去しました</string>
     <string name="user_interests_list_item_deleted_undo">戻す</string>
+    <string name="user_interests_filter_all">すべて</string>
+    <string name="user_interests_filter_people">人間</string>
+    <string name="user_interests_filter_places">場所</string>
+    <string name="user_interests_filter_other">その他</string>
 
     <!--user profile-->
     <string name="user_profile_app_bar_title">データ</string>

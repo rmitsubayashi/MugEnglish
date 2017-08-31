@@ -23,9 +23,9 @@ public class UserInterestViewHolder  extends RecyclerView.ViewHolder {
 
     public UserInterestViewHolder(View itemView) {
         super(itemView);
-        label = (TextView) itemView.findViewById(R.id.user_interests_list_item_label);
-        description = (TextView) itemView.findViewById(R.id.user_interests_list_item_description);
-        deleteButton = (Button) itemView.findViewById(R.id.user_interests_list_item_delete);
+        label = itemView.findViewById(R.id.user_interests_list_item_label);
+        description = itemView.findViewById(R.id.user_interests_list_item_description);
+        deleteButton = itemView.findViewById(R.id.user_interests_list_item_delete);
     }
 
 

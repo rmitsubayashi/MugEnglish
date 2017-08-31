@@ -1,7 +1,7 @@
 package com.linnca.pelicann.gui.widgets;
 
 public class ToolbarState {
-    public static String NO_TITLE = "no title";
+    public static String NO_TITLE_WITH_SPINNER = "no title with spinner";
     private String title;
     private boolean searchIcon;
     private boolean descriptionIcon;

@@ -19,7 +19,15 @@
             android:background="?attr/colorPrimary"
             app:titleTextColor="@color/white"
             android:elevation="4dp"
-            style="@style/Base.ThemeOverlay.AppCompat.Dark"/>
+            style="@style/Base.ThemeOverlay.AppCompat.Dark">
+            <Spinner
+                android:id="@+id/tool_bar_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+
+                />
+        </android.support.v7.widget.Toolbar>
 
         <FrameLayout
             android:id="@+id/main_activity_fragment_container"

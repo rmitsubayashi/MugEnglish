@@ -169,7 +169,7 @@ public class SearchInterests extends Fragment {
                                     }
                                 }
                             }
-                        }, 200);
+                        }, 400);
 
                         return true;
                     }
