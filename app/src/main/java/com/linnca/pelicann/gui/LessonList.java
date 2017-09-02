@@ -50,7 +50,7 @@ public class LessonList extends Fragment {
         LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer(getContext());
         listener.setToolbarState(
                 new ToolbarState(lessonHierarchyViewer.getLessonCategory(lessonCategoryID).getTitle(),
-                        false, false, null)
+                        false, null)
             );
     }
 

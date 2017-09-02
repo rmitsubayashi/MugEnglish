@@ -33,6 +33,7 @@ import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -48,7 +49,7 @@ public class SearchInterests extends Fragment {
     private int defaultRecommendationCt = 1;
     private int incrementRecommendationCt = 1;
     private int recommendationCt = defaultRecommendationCt;
-    //so we don't show search results queried before the curently shown result
+    //so we don't show search results queried before the currently shown result
     private int queryOrderSent = 0;
     private Lock lock = new ReentrantLock();
     private int queryOrderReceived = 0;
@@ -92,7 +93,7 @@ public class SearchInterests extends Fragment {
     public void onStart(){
         super.onStart();
         searchInterestsListener.setToolbarState(
-                new ToolbarState(getString(R.string.fragment_search_interests_title), true, false, null)
+                new ToolbarState(getString(R.string.fragment_search_interests_title), true, null)
         );
     }
 
@@ -313,10 +314,11 @@ public class SearchInterests extends Fragment {
     }
 
     private class SearchConnection extends AsyncTask< SearchConnectionHelperClass, Integer, List<WikiDataEntryData> > {
+        private String query;
         @Override
         protected List<WikiDataEntryData> doInBackground(SearchConnectionHelperClass... queryList){
             SearchConnectionHelperClass helper = queryList[0];
-            String query = helper.getQuery();
+            query = helper.getQuery();
             int maxRowCount = helper.getMaxRowCount();
             final int searchOrder = helper.getSearchOrder();
             List<WikiDataEntryData> result = new ArrayList<>();
@@ -355,7 +357,30 @@ public class SearchInterests extends Fragment {
             if (adapter != null){
                 //filter out all of the user's interests
                 result.removeAll(userInterests);
+                //remove disambiguation pages (we will never need them)
+                removeDisambiguationPages(result);
+                //display empty state if the results are empty
+                if (result.size() == 0){
+                    WikiDataEntryData emptyState = new WikiDataEntryData();
+                    emptyState.setWikiDataID(adapter.VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID);
+                    emptyState.setLabel(query);
+                    result.add(emptyState);
+                }
                 adapter.updateEntries(result);
+            }
+        }
+    }
+
+    private void removeDisambiguationPages(List<WikiDataEntryData> result){
+        for (Iterator<WikiDataEntryData> iterator = result.iterator(); iterator.hasNext();){
+            WikiDataEntryData data = iterator.next();
+            String description = data.getDescription();
+            //not sure if these cover every case
+            if (description.equals("ウィキペディアの曖昧さ回避ページ") ||
+                    description.equals("ウィキメディアの曖昧さ回避ページ") ||
+                    description.equals("Wikipedia disambiguation page") ||
+                    description.equals("Wikimedia disambiguation page")){
+                iterator.remove();
             }
         }
     }

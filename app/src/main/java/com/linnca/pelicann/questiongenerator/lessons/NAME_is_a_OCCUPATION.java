@@ -11,6 +11,7 @@ import com.linnca.pelicann.questiongenerator.Lesson;
 import com.linnca.pelicann.questiongenerator.QGUtils;
 import com.linnca.pelicann.questiongenerator.QuestionDataWrapper;
 import com.linnca.pelicann.questiongenerator.QuestionUtils;
+import com.linnca.pelicann.questiongenerator.TermAdjuster;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -89,6 +90,7 @@ public class NAME_is_a_OCCUPATION extends Lesson{
             String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
             String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
             String occupationEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationEN");
+            occupationEN = TermAdjuster.adjustOccupationEN(occupationEN);
             String occupationJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationLabel");
 
             QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, occupationEN, occupationJP);

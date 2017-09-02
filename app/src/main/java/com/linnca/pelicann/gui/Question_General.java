@@ -29,8 +29,12 @@ public abstract class Question_General extends Fragment {
     private final String TAG = "Question_General";
     public static int UNLIMITED_ATTEMPTS = -1;
     public static String BUNDLE_QUESTION_DATA = "bundleQuestionData";
+    public static String BUNDLE_QUESTION_NUMBER = "bundleQuestionNumber";
+    public static String BUNDLE_QUESTION_TOTAL_QUESTIONS = "bundleTotalQuestions";
 
     protected QuestionData questionData;
+    private int questionNumber;
+    private int totalQuestions;
 
     protected int maxNumberOfAttempts;
     protected int attemptCt = 0;
@@ -52,7 +56,10 @@ public abstract class Question_General extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        questionData = (QuestionData)getArguments().getSerializable(BUNDLE_QUESTION_DATA);
+        Bundle args = getArguments();
+        questionData = (QuestionData)args.getSerializable(BUNDLE_QUESTION_DATA);
+        questionNumber = args.getInt(BUNDLE_QUESTION_NUMBER);
+        totalQuestions = args.getInt(BUNDLE_QUESTION_TOTAL_QUESTIONS);
         setMaxNumberOfAttempts();
         disableChoiceAfterWrongAnswer = disableChoiceAfterWrongAnswer();
     }
@@ -61,7 +68,8 @@ public abstract class Question_General extends Fragment {
     public void onStart(){
         super.onStart();
         questionListener.setToolbarState(
-                new ToolbarState(getString(R.string.question_title), false, true, questionData.getLessonId())
+                new ToolbarState(getContext().getString(R.string.question_title, questionNumber, totalQuestions),
+                        false, questionData.getLessonId())
         );
     }
 

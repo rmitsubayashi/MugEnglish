@@ -4,14 +4,13 @@ public class ToolbarState {
     public static String NO_TITLE_WITH_SPINNER = "no title with spinner";
     private String title;
     private boolean searchIcon;
-    private boolean descriptionIcon;
+    //null if we wanat the icon to be hidden
     private String descriptionLessonKey;
 
-    public ToolbarState(String title, boolean searchIcon, boolean descriptionIcon,
+    public ToolbarState(String title, boolean searchIcon,
                         String descriptionLessonKey) {
         this.title = title;
         this.searchIcon = searchIcon;
-        this.descriptionIcon = descriptionIcon;
         this.descriptionLessonKey = descriptionLessonKey;
     }
 
@@ -29,14 +28,6 @@ public class ToolbarState {
 
     public void setSearchIcon(boolean visible) {
         this.searchIcon = visible;
-    }
-
-    public boolean descriptionIconVisible() {
-        return descriptionIcon;
-    }
-
-    public void setDescriptionIcon(boolean visible) {
-        this.descriptionIcon = visible;
     }
 
     public String getDescriptionLessonKey() {

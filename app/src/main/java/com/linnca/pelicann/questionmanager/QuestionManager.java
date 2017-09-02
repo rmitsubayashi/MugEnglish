@@ -34,8 +34,8 @@ public class QuestionManager{
 	private String lessonKey = null;
 	private QuestionData currentQuestionData;
 	private QuestionManagerListener questionManagerListener;
-	//-1 so first call of nextQuestion() would be 0
 	private int questionMkr = 0;
+	private int totalQuestions = 0;
 	//store information about this instance of the instance.
 	//a user can run this instance multiple times
 	private InstanceRecord instanceRecord;
@@ -50,7 +50,7 @@ public class QuestionManager{
 	private List<QuestionData> missedQuestionsForReviewList = new ArrayList<>();
 
 	public interface QuestionManagerListener{
-		void onNextQuestion(QuestionData questionData, boolean firstQuestion);
+		void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion);
 		void onQuestionsFinished(InstanceRecord instanceRecord);
         void onReviewFinished();
 	}
@@ -65,6 +65,7 @@ public class QuestionManager{
 			questionsStarted = true;
 			reviewStarted = false;//just to make sure
 			this.lessonInstanceData = data;
+			totalQuestions = lessonInstanceData.questionCount();
 			this.lessonKey = lessonKey;
 			startNewInstanceRecord();
 			nextQuestion(true);
@@ -80,6 +81,7 @@ public class QuestionManager{
 			reviewStarted = true;
 			questionsStarted = false;//just to make sure
 			this.instanceRecord = instanceRecord;
+			totalQuestions = missedQuestionsForReviewSet.size();
 			//make it easier to loop through
 			missedQuestionsForReviewList = new ArrayList<>(missedQuestionsForReviewSet);
 			nextQuestion(true);
@@ -90,7 +92,9 @@ public class QuestionManager{
         return reviewStarted;
     }
 
-	public void nextQuestion(final boolean firstQuestion){
+    //we need to know whether this is the first question
+	//so we can put the previous fragment on the back stack
+	public void nextQuestion(final boolean isFirstQuestion){
 		//don't do anything if we haven't started anything
 		if (!questionsStarted && !reviewStarted){
 			return;
@@ -117,7 +121,7 @@ public class QuestionManager{
 				@Override
 				public void onDataChange(DataSnapshot dataSnapshot) {
 					currentQuestionData = dataSnapshot.getValue(QuestionData.class);
-					questionManagerListener.onNextQuestion(currentQuestionData, firstQuestion);
+					questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
 					questionMkr++;
 				}
 
@@ -128,7 +132,7 @@ public class QuestionManager{
 			});
 		}
 		//for review
-		else if (missedQuestionsForReviewList.size() != 0){
+		else {
 			//review
 			if (questionMkr == missedQuestionsForReviewList.size()){
 				resetManager(REVIEW);
@@ -136,9 +140,9 @@ public class QuestionManager{
 				return;
 			}
 			currentQuestionData = missedQuestionsForReviewList.get(questionMkr);
-			questionManagerListener.onNextQuestion(currentQuestionData, firstQuestion);
+			questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
 			questionMkr++;
-		} else {
+		} /*else {
 			//somehow we don't have the questions stored.
 			//the instance record still has a record of the questions attempts
 			//so use that
@@ -179,7 +183,7 @@ public class QuestionManager{
 				resetManager(REVIEW);
                 questionManagerListener.onReviewFinished();
 			}
-		}
+		}*/
 
 	}
 
@@ -247,6 +251,7 @@ public class QuestionManager{
 	public void resetManager(int identifier){
 		//do for both review and normal run
 		questionMkr = 0;
+		totalQuestions = 0;
 		lessonInstanceData = null;
 		currentQuestionData = null;
 		instanceRecord = null;

@@ -169,6 +169,9 @@
     <string name="search_interests_recommendations_success">追加しました！</string>
     <string name="search_interests_recommendations_title">%1$sを追加した人はこんなものを追加しています</string>
     <string name="search_interests_recommendations_more">もっと表示する</string>
+    <string name="search_interests_empty_state_title">「%1$s」の検索結果　0件</string>
+    <string name="search_interests_empty_state_title_backup">見つかりませんでした</string>
+    <string name="search_interests_empty_state_advice">検索エンジンはWikipedia（ウィキペディア）のデータベースを参照しています。\nWikipediaの記事に載っている題名を検索してみてください！</string>
 
     <!--Facebook interests-->
     <string name="facebook_interests_app_bar_title">Facebookで検索</string>
@@ -185,12 +188,12 @@
     <string name="lesson_details_did_not_choose_instance">問題を選択してください</string>
     <string name="lesson_details_item_menu_more_info">詳細</string>
     <string name="lesson_details_item_menu_delete">消去</string>
-    <string name="lesson_details_no_items">該当なし\n\n
+    <string name="lesson_details_no_items">レッスンがありません\n\n
     +ボタンを押して\n
-    追加してください</string>
+    レッスンを作成してください</string>
 
     <string name="lesson_description_title">説明</string>
-    <string name="lesson_description_no_description_available">このレッスンの説明文はありません</string>
+    <string name="lesson_description_no_description_available">残念ながらこのレッスンの説明文はありません</string>
 
     <!--user interests list-->
     <string name="user_interests_app_bar_title">お気に入り</string>
@@ -216,7 +219,7 @@
     <string name="user_profile_report_card_num_answered">回答数</string>
 
     <!--questions-->
-    <string name="question_title">問題</string>
+    <string name="question_title">問 %1$d/%2$d</string>
     <string name="question_feedback_correct">正解</string>
     <string name="question_feedback_incorrect">不正解</string>
     <string name="question_feedback_next">次へ</string>

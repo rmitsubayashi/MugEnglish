@@ -30,7 +30,7 @@ public class LessonDescription extends Fragment {
         LessonDescriptionLayoutHelper helper = new LessonDescriptionLayoutHelper();
         Integer layoutID = helper.getLayoutID(lessonKey);
         if (layoutID == null){
-            //layout if we can't find one (we should preemptively handle it either way)
+            //layout if we can't find one (we preemptively handle it either way)
             return inflater.inflate(R.layout.fragment_lesson_description_not_found, container, false);
         }
 
@@ -47,7 +47,7 @@ public class LessonDescription extends Fragment {
     public void onStart(){
         super.onStart();
         listener.setToolbarState(
-                new ToolbarState(getString(R.string.lesson_description_title), false, false, null)
+                new ToolbarState(getString(R.string.lesson_description_title), false, null)
         );
     }
 

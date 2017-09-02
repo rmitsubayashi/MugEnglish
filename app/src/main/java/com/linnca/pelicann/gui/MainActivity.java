@@ -36,6 +36,7 @@ import com.linnca.pelicann.db.datawrappers.InstanceRecord;
 import com.linnca.pelicann.db.datawrappers.LessonData;
 import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
+import com.linnca.pelicann.gui.widgets.LessonDescriptionLayoutHelper;
 import com.linnca.pelicann.gui.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.gui.widgets.ToolbarSpinnerItem;
 import com.linnca.pelicann.gui.widgets.ToolbarState;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fragmentManager;
     private boolean navigationItemSelected = false;
     private int selectedNavigationItemID = -1;
+    private LessonDescriptionLayoutHelper lessonDescriptionLayoutHelper = new LessonDescriptionLayoutHelper();
 
     private String topmostFragmentTag = "";
     private final String FRAGMENT_USER_INTERESTS = "userInterests";
@@ -297,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private QuestionManager.QuestionManagerListener getQuestionManagerListener(){
         return new QuestionManager.QuestionManagerListener() {
             @Override
-            public void onNextQuestion(QuestionData questionData, boolean firstQuestion) {
+            public void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion) {
                 Fragment fragment;
                 switch (questionData.getQuestionType()){
                     case QuestionTypeMappings.FILL_IN_BLANK_INPUT :
@@ -322,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA,
                         questionData);
+                bundle.putInt(Question_General.BUNDLE_QUESTION_NUMBER, questionNumber);
+                bundle.putInt(Question_General.BUNDLE_QUESTION_TOTAL_QUESTIONS, totalQuestions);
                 fragment.setArguments(bundle);
                 //do not add to the back stack because we don't want the user going back to a question
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -575,8 +579,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //icons
         searchIconVisible = state.searchIconVisible();
-        descriptionIconVisible = state.descriptionIconVisible();
         descriptionLessonKey = state.getDescriptionLessonKey();
+        if (descriptionLessonKey == null) {
+            descriptionIconVisible = false;
+        } else {
+            descriptionIconVisible = lessonDescriptionLayoutHelper.layoutExists(descriptionLessonKey);
+
+        }
 
         //this redraws the toolbar so the initial visibility is always false.
         //this is not the right way (nor the behavior I want) but this can come later...
@@ -660,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         final View view = getToolbarTextView();
-        //there won't be a textview if the toolbar doesn't have a title
+        //there won't be a TextView if the toolbar doesn't have a title
         if (view == null && toolbarSpinner.getVisibility() == View.GONE){
             actionBar.setTitle(title);
         } else {

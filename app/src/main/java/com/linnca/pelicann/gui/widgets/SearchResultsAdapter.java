@@ -14,10 +14,12 @@ import java.util.List;
 public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String VIEW_TYPE_HEADER_WIKIDATA_ID = "header";
     private String VIEW_TYPE_FOOTER_WIKIDATA_ID = "footer";
+    public String VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID = "emptyState";
 
     private int VIEW_TYPE_HEADER = 1;
     private int VIEW_TYPE_FOOTER = 2;
     private int VIEW_TYPE_NORMAL = 3;
+    private int VIEW_TYPE_EMPTY = 4;
 
     private List<WikiDataEntryData> results = new ArrayList<>();
     private SearchResultsAdapterListener searchResultsAdapterListener;
@@ -51,6 +53,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (data.getWikiDataID().equals(VIEW_TYPE_FOOTER_WIKIDATA_ID)){
             return VIEW_TYPE_FOOTER;
         }
+        if (data.getWikiDataID().equals(VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID)){
+            return VIEW_TYPE_EMPTY;
+        }
         return VIEW_TYPE_NORMAL;
     }
 
@@ -65,6 +70,10 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (viewType == VIEW_TYPE_FOOTER){
             itemView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_footer, parent, false);
             return new SearchResultsFooterViewHolder(itemView);
+        }
+        if (viewType == VIEW_TYPE_EMPTY){
+            itemView = inflater.inflate(R.layout.inflatable_search_interests_empty_state, parent, false);
+            return new SearchResultsEmptyStateViewHolder(itemView);
         }
         //everything else is a item
         itemView = inflater.inflate(R.layout.inflatable_search_interests_result_item, parent, false);
@@ -93,6 +102,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
                     searchResultsAdapterListener.onLoadMoreRecommendations(recommendationWikiDataEntryData);
                 }
             });
+        } else if (viewHolder instanceof SearchResultsEmptyStateViewHolder){
+            WikiDataEntryData data = results.get(position);
+            ((SearchResultsEmptyStateViewHolder) viewHolder).setQuery(data.getLabel());
         }
     }
 

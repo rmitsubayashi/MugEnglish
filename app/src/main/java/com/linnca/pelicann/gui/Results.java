@@ -75,7 +75,7 @@ public class Results extends Fragment {
     public void onStart(){
         super.onStart();
         resultsListener.setToolbarState(
-                new ToolbarState(getString(R.string.results_app_bar_title), false, true, instanceRecord.getLessonId())
+                new ToolbarState(getString(R.string.results_app_bar_title), false, instanceRecord.getLessonId())
         );
     }
 

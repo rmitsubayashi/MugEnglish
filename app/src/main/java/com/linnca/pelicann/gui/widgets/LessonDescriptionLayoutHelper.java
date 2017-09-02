@@ -16,10 +16,7 @@ public class LessonDescriptionLayoutHelper {
     }
 
     public boolean layoutExists(String lessonKey){
-        if (lessonKey == null){
-            return false;
-        }
-        return layoutIDs.containsKey(lessonKey);
+        return lessonKey != null && layoutIDs.containsKey(lessonKey);
     }
 
 
@@ -32,8 +29,8 @@ public class LessonDescriptionLayoutHelper {
     }
 
     private void populateLayoutIDs(){
-        layoutIDs.put(NAME_is_DEMONYM.KEY, null);
-        layoutIDs.put(The_DEMONYM_flag_is_COLORS.KEY, null);
+        //layoutIDs.put(NAME_is_DEMONYM.KEY, null);
+        //layoutIDs.put(The_DEMONYM_flag_is_COLORS.KEY, null);
         layoutIDs.put(NAME_is_a_OCCUPATION.KEY, R.layout.fragment_description_name_is_a_occupation);
     }
 }
