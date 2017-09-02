@@ -1,12 +1,9 @@
 package com.linnca.pelicann.gui.widgets;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
@@ -14,83 +11,178 @@ import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchResultsAdapter extends BaseAdapter {
-    private LayoutInflater layoutInflater;
+public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private String VIEW_TYPE_HEADER_WIKIDATA_ID = "header";
+    private String VIEW_TYPE_FOOTER_WIKIDATA_ID = "footer";
+
+    private int VIEW_TYPE_HEADER = 1;
+    private int VIEW_TYPE_FOOTER = 2;
+    private int VIEW_TYPE_NORMAL = 3;
+
     private List<WikiDataEntryData> results = new ArrayList<>();
-    private List<WikiDataEntryData> userInterests;
-    private OnAddInterestListener onAddInterestListener;
+    private SearchResultsAdapterListener searchResultsAdapterListener;
 
-    public interface OnAddInterestListener {
+    private boolean showHeader = false;
+    private boolean showFooter = false;
+    private String headerLabel = "";
+    private WikiDataEntryData recommendationWikiDataEntryData;
+
+    public interface SearchResultsAdapterListener {
         void onAddInterest(WikiDataEntryData data);
+        void onLoadMoreRecommendations(WikiDataEntryData wikiDataEntryData);
     }
 
-    private static class ViewHolder {
-        TextView name;
-        TextView description;
-        Button addButton;
-    }
-
-    public SearchResultsAdapter(Context context, List<WikiDataEntryData> userInterests, OnAddInterestListener listener){
-        onAddInterestListener = listener;
-        layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.userInterests = new ArrayList<>(userInterests);
+    public SearchResultsAdapter(SearchResultsAdapterListener listener){
+        searchResultsAdapterListener = listener;
     }
 
     @Override
-    public int getCount(){ return results.size(); }
+    public int getItemCount(){ return results.size(); }
 
     @Override
-    public long getItemId(int position){ return position; }
+    public long getItemId(int position){ return results.get(position).hashCode(); }
 
     @Override
-    public WikiDataEntryData getItem(int position){
-        return results.get(position);
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        ViewHolder holder;
-
-        if (convertView == null){
-            holder = new ViewHolder();
-            convertView = layoutInflater.inflate(R.layout.inflatable_search_interests_result_item, parent, false);
-
-            holder.name = (TextView)convertView.findViewById(R.id.search_interests_result_label);
-            holder.description = (TextView)convertView.findViewById(R.id.search_interests_result_description);
-            holder.addButton = (Button)convertView.findViewById(R.id.search_interests_result_add_button);
-
-            convertView.setTag(holder);
-        } else{
-            holder = (ViewHolder)convertView.getTag();
-        }
-
+    public int getItemViewType(int position){
         WikiDataEntryData data = results.get(position);
-        holder.name.setText(data.getLabel());
-        String description = data.getDescription();
-        if (description.equals("")){
-            description = "説明なし";
+        if (data.getWikiDataID().equals(VIEW_TYPE_HEADER_WIKIDATA_ID)){
+            return VIEW_TYPE_HEADER;
         }
-        holder.description.setText(description);
-
-
-        final WikiDataEntryData fData = data;
-        holder.addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onAddInterestListener.onAddInterest(fData);
-                userInterests.add(fData);
-            }
-        });
-
-        return convertView;
+        if (data.getWikiDataID().equals(VIEW_TYPE_FOOTER_WIKIDATA_ID)){
+            return VIEW_TYPE_FOOTER;
+        }
+        return VIEW_TYPE_NORMAL;
     }
 
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        View itemView;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if (viewType == VIEW_TYPE_HEADER){
+            itemView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_header, parent, false);
+            return new SearchResultsHeaderViewHolder(itemView);
+        }
+        if (viewType == VIEW_TYPE_FOOTER){
+            itemView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_footer, parent, false);
+            return new SearchResultsFooterViewHolder(itemView);
+        }
+        //everything else is a item
+        itemView = inflater.inflate(R.layout.inflatable_search_interests_result_item, parent, false);
+        return new SearchResultsViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position){
+        if (viewHolder instanceof SearchResultsViewHolder){
+            WikiDataEntryData data = results.get(position);
+            ((SearchResultsViewHolder) viewHolder).setLabel(data.getLabel());
+            ((SearchResultsViewHolder) viewHolder).setDescription(data.getDescription());
+            final WikiDataEntryData fData = data;
+            ((SearchResultsViewHolder)viewHolder).setButtonListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchResultsAdapterListener.onAddInterest(fData);
+                }
+            });
+        } else if (viewHolder instanceof SearchResultsHeaderViewHolder){
+            ((SearchResultsHeaderViewHolder) viewHolder).setTitle(headerLabel);
+        } else if (viewHolder instanceof SearchResultsFooterViewHolder){
+            ((SearchResultsFooterViewHolder) viewHolder).setButton(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    searchResultsAdapterListener.onLoadMoreRecommendations(recommendationWikiDataEntryData);
+                }
+            });
+        }
+    }
+
+    //a whole new set of data.
     public void updateEntries(List<WikiDataEntryData> newList){
+        //animate footer/header removal
+        if (showHeader){
+            notifyItemRemoved(0);
+        }
+        if (showFooter){
+            notifyItemRemoved(results.size()-2);
+        }
+        showHeader = false;
+        showFooter = false;
         //so we don't keep the same reference
         results = new ArrayList<>(newList);
-        //remove all entries that the user already has
-        results.removeAll(userInterests);
         notifyDataSetChanged();
+    }
+
+    public void showRecommendations(List<WikiDataEntryData> newList){
+        //if the header and footer is shown, that means we are already showing the user
+        // recommendations. so, instead of refreshing a new set of recommendation,
+        //insert the data so we can animate it better.
+        //for cases when the user adds an item from recommendations,
+        //we set showHeader & showFooter to false when we set the new WikiData ID
+        if (showHeader && showFooter){
+            moreRecommendations(newList);
+            return;
+        }
+
+        //so we don't keep the same reference
+        results = new ArrayList<>(newList);
+        showHeader = true;
+        showFooter = true;
+        addHeader(results);
+        addFooter(results);
+
+        notifyDataSetChanged();
+    }
+
+    //add to current data (animate)
+    private void moreRecommendations(List<WikiDataEntryData> newList){
+        //remove the header and footer views
+        int prevListCt = results.size()-2;
+        int newListCt = newList.size();
+        //no need to add more
+        if (prevListCt == newListCt){
+            return;
+        }
+
+        int recommendationsAdded = newListCt - prevListCt;
+
+
+        results = new ArrayList<>(newList);
+        addHeader(results);
+        addFooter(results);
+        notifyItemRangeInserted(prevListCt+1, recommendationsAdded);
+    }
+
+    public void setRecommendationWikiDataEntryData(WikiDataEntryData data){
+        this.recommendationWikiDataEntryData = data;
+        headerLabel = data.getLabel();
+        //to help with distinguishing between headers/footers shown
+        //in more recommendations and headers/footers shown
+        //in recommendations -> add
+        showHeader = false;
+        showFooter = false;
+    }
+
+    private void addHeader(List<WikiDataEntryData> data){
+        WikiDataEntryData headerPlaceHolder = new WikiDataEntryData();
+        headerPlaceHolder.setWikiDataID(VIEW_TYPE_HEADER_WIKIDATA_ID);
+        data.add(0, headerPlaceHolder);
+    }
+
+    private void addFooter(List<WikiDataEntryData> data){
+        WikiDataEntryData footerPlaceHolder = new WikiDataEntryData();
+        footerPlaceHolder.setWikiDataID(VIEW_TYPE_FOOTER_WIKIDATA_ID);
+        data.add(footerPlaceHolder);
+    }
+
+    public void removeFooter(){
+        if (showFooter){
+            WikiDataEntryData footerView = results.get(results.size()-1);
+            //just make sure the last item is a footer
+            if (footerView.getWikiDataID().equals(VIEW_TYPE_FOOTER_WIKIDATA_ID)){
+                results.remove(results.size()-1);
+                notifyItemRemoved(results.size());
+            }
+        }
     }
 
 

@@ -10,13 +10,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.transition.TransitionManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NavUtils;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,26 +23,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.database2classmappings.QuestionTypeMappings;
 import com.linnca.pelicann.db.datawrappers.InstanceRecord;
-import com.linnca.pelicann.db.datawrappers.LessonCategory;
 import com.linnca.pelicann.db.datawrappers.LessonData;
 import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
-import com.linnca.pelicann.gui.widgets.LessonDescriptionLayoutHelper;
 import com.linnca.pelicann.gui.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.gui.widgets.ToolbarSpinnerItem;
 import com.linnca.pelicann.gui.widgets.ToolbarState;
@@ -55,7 +44,6 @@ import com.linnca.pelicann.questionmanager.QuestionManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         LessonList.LessonListListener,

@@ -16,11 +16,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.gui.widgets.OnboardingIntroductionBundle;
 import com.linnca.pelicann.gui.widgets.OnboardingNextListener;
-import com.linnca.pelicann.gui.widgets.UserInterestAdapter;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 
 public class OnboardingIntroduction3 extends Fragment {

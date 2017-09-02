@@ -167,7 +167,8 @@
     <string name="search_interests_search_hint">検索</string>
     <string name="search_interests_add">追加</string>
     <string name="search_interests_recommendations_success">追加しました！</string>
-    <string name="search_interests_recommendations_title">%1$sを追加した人はこれも追加しています</string>
+    <string name="search_interests_recommendations_title">%1$sを追加した人はこんなものを追加しています</string>
+    <string name="search_interests_recommendations_more">もっと表示する</string>
 
     <!--Facebook interests-->
     <string name="facebook_interests_app_bar_title">Facebookで検索</string>

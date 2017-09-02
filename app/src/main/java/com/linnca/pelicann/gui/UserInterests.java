@@ -8,8 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,7 +17,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,7 +29,6 @@ import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.gui.widgets.UserInterestAdapter;
-import com.linnca.pelicann.gui.widgets.UserInterestViewHolder;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 
 import java.util.ArrayList;
@@ -268,7 +264,6 @@ public class UserInterests extends Fragment {
             }
         };
         listView.addOnItemTouchListener(undoOnTouchListener);
-        Log.d(TAG, "Adding onTouchListener");
         undoSnackBar.setAction(R.string.user_interests_list_item_deleted_undo,
                 new View.OnClickListener() {
                     @Override

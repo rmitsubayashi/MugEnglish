@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.Query;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
 import com.linnca.pelicann.userinterestcontrols.UserInterestRemover;
@@ -191,6 +189,10 @@ public class UserInterestAdapter
                     }
                     oldFilteredListIndex++;
                 }
+            }
+            //to handle when the last item should be added
+            if (tempToAdd > 0){
+                notifyItemRangeInserted(oldFilteredListIndex+itemsAdded, tempToAdd);
             }
             return;
         }

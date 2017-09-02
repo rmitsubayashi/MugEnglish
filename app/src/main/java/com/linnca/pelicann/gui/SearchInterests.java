@@ -6,13 +6,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,14 +38,16 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SearchInterests extends Fragment {
+    private final String TAG = "SearchInterests";
     private EntitySearcher searcher;
     private SearchView searchView;
-    private ListView list;
-    private View headerView;
+    private RecyclerView list;
     private SearchResultsAdapter adapter = null;
     //initial row count of search results
     private int defaultRowCt = 10;
-    private int recommendationCt = 5;
+    private int defaultRecommendationCt = 1;
+    private int incrementRecommendationCt = 1;
+    private int recommendationCt = defaultRecommendationCt;
     //so we don't show search results queried before the curently shown result
     private int queryOrderSent = 0;
     private Lock lock = new ReentrantLock();
@@ -53,6 +55,12 @@ public class SearchInterests extends Fragment {
     //we can do continue=# to get the results from that number of results
     //increment when we want more rows
     private Integer currentRowCt = defaultRowCt;
+    //so  we can filter out user interests we don't need
+    private List<WikiDataEntryData> userInterests = new ArrayList<>();
+    //we get more than we need to guarantee populating the recommendations
+    //so save it and when the user loads more,
+    // we can reference this first
+    private List<WikiDataEntryData> savedRecommendations;
 
     private SearchInterestsListener searchInterestsListener;
 
@@ -77,8 +85,6 @@ public class SearchInterests extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_search_interests, container, false);
         list = view.findViewById(R.id.search_results_result_list);
-        headerView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_header, list, false);
-
         return view;
     }
 
@@ -118,6 +124,8 @@ public class SearchInterests extends Fragment {
         searchView.setSubmitButtonEnabled(false);
         //make it so the user can search without having to tap the search box (UX)
         searchView.setIconified(false);
+        //not sure if we want the user to be able to iconify the searchView
+        //because there's nothing else really on the app bar
         searchView.setIconifiedByDefault(false);
         searchView.setFocusable(true);
         searchView.requestFocusFromTouch();
@@ -127,6 +135,7 @@ public class SearchInterests extends Fragment {
 
     private void addSearchFunctionality(){
 
+        //first get all the user's interests so we can filter out duplicate results
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -138,14 +147,16 @@ public class SearchInterests extends Fragment {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<WikiDataEntryData> userInterests = new ArrayList<>();
                 for (DataSnapshot child : dataSnapshot.getChildren()){
                     WikiDataEntryData data = child.getValue(WikiDataEntryData.class);
                     userInterests.add(data);
                 }
 
-                SearchResultsAdapter.OnAddInterestListener onAddInterestListener = getOnAddInterestListener();
-                adapter = new SearchResultsAdapter(getContext(), userInterests, onAddInterestListener);
+
+
+                list.setLayoutManager(new LinearLayoutManager(getContext()));
+                SearchResultsAdapter.SearchResultsAdapterListener searchResultsAdapterListener = getSearchResultsAdapterListener();
+                adapter = new SearchResultsAdapter(searchResultsAdapterListener);
                 list.setAdapter(adapter);
 
                 //only want to attach the listener after user info is initially loaded
@@ -165,6 +176,7 @@ public class SearchInterests extends Fragment {
                             public void run() {
                                 if (searchView.getQuery().toString().equals(s)) {
                                     if (s.length() > 1) {
+                                        //search
                                         populateResults(s);
                                     }
                                 }
@@ -183,41 +195,56 @@ public class SearchInterests extends Fragment {
         });
     }
 
-    private SearchResultsAdapter.OnAddInterestListener getOnAddInterestListener(){
-        return new SearchResultsAdapter.OnAddInterestListener() {
+
+
+    private SearchResultsAdapter.SearchResultsAdapterListener getSearchResultsAdapterListener(){
+        return new SearchResultsAdapter.SearchResultsAdapterListener() {
             @Override
-            public void onAddInterest(WikiDataEntryData data) {
+            public void onAddInterest(final WikiDataEntryData data) {
                 //add the interest
                 UserInterestAdder userInterestAdder = new UserInterestAdder();
                 userInterestAdder.findPronunciationAndCategoryThenAdd(data);
-                //change UI
-                if (headerView == null) {
-                    //shouldn't happen
-                    return;
-                }
-                ((TextView) headerView.findViewById(R.id.search_interests_recommendations_title)).setText(
-                        getString(R.string.search_interests_recommendations_title, data.getLabel())
-                );
-                //just want to make sure we aren't adding the header twice
-                if (list.getHeaderViewsCount() == 0) {
-                    list.addHeaderView(headerView);
-                }
+
+                //also to the list we have saved locally
+                userInterests.add(data);
+
+                //reset recommendation count
+                recommendationCt = defaultRecommendationCt;
+
+                //clear the search text
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+
                 //populate list with recommended items
-                populateRecommendations(data.getWikiDataID());
+                populateRecommendations(data);
+            }
+
+            @Override
+            public void onLoadMoreRecommendations(WikiDataEntryData data){
+                recommendationCt += incrementRecommendationCt;
+                //check first if we can still populate the recommendations with
+                //the initial list we grabbed
+                if (savedRecommendations.size() >= recommendationCt){
+                    List<WikiDataEntryData> toDisplay = savedRecommendations.subList(0, recommendationCt);
+                    adapter.showRecommendations(toDisplay);
+                } else {
+                    populateRecommendations(data);
+                }
             }
         };
     }
 
-    private void populateRecommendations(String wikiDataID){
-        //clear first
-        adapter.updateEntries(new ArrayList<WikiDataEntryData>());
-        DatabaseReference recommendationRef = FirebaseDatabase.getInstance().getReference(
+    private void populateRecommendations(WikiDataEntryData data){
+        adapter.setRecommendationWikiDataEntryData(data);
+        final DatabaseReference recommendationRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                        wikiDataID
+                        data.getWikiDataID()
         );
+        //pigeon-hole so we are guaranteed to get recommendations
+        int fetchCt = userInterests.size() + recommendationCt;
         Query recommendationRefQuery = recommendationRef
                 .orderByChild(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT)
-                .limitToLast(recommendationCt);
+                .limitToLast(fetchCt);
         recommendationRefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -231,7 +258,16 @@ public class SearchInterests extends Fragment {
                 // (1,3,5,10, etc)
                 //so we can get the most recommended one on top
                 Collections.reverse(recommendations);
-                adapter.updateEntries(recommendations);
+                recommendations.removeAll(userInterests);
+                savedRecommendations = new ArrayList<>(recommendations);
+                if (recommendations.size() >= recommendationCt) {
+                    List<WikiDataEntryData> toDisplay = recommendations.subList(0, recommendationCt);
+                    adapter.showRecommendations(toDisplay);
+                } else {
+                    adapter.showRecommendations(recommendations);
+                    //hide the show more footer so the user can't load more (there aren't any)
+                    adapter.removeFooter();
+                }
             }
 
             @Override
@@ -317,10 +353,9 @@ public class SearchInterests extends Fragment {
             }
             //the adapter might not be loaded yet
             if (adapter != null){
+                //filter out all of the user's interests
+                result.removeAll(userInterests);
                 adapter.updateEntries(result);
-            }
-            if (headerView != null){
-                list.removeHeaderView(headerView);
             }
         }
     }

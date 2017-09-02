@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:padding="16dp"
+    >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:layout_marginBottom="12dp"
+        android:textSize="21sp"
+        android:textColor="@color/lblue500"
         android:text="@string/search_interests_recommendations_success"/>
     <TextView
         android:id="@+id/search_interests_recommendations_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="17sp"
         android:text="@string/search_interests_recommendations_title"/>
 
 </LinearLayout>
