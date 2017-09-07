@@ -8,6 +8,7 @@ import com.linnca.pelicann.db.datawrappers.LessonData;
 import com.linnca.pelicann.questiongenerator.lessons.NAME_is_DEMONYM;
 import com.linnca.pelicann.questiongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.questiongenerator.lessons.The_DEMONYM_flag_is_COLORS;
+import com.linnca.pelicann.questiongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ public class LessonHierarchyViewer {
         LessonCategory countriesAndPrefecturesCategory = new LessonCategory(ID_COUNTRIES, context.getString(R.string.lesson_category_countries));
         countriesAndPrefecturesCategory.addLesson(new LessonData(The_DEMONYM_flag_is_COLORS.KEY, "国旗の色", null));
         countriesAndPrefecturesCategory.addLesson(new LessonData(NAME_is_DEMONYM.KEY, "国民の名称", null));
+        countriesAndPrefecturesCategory.addLesson(new LessonData(The_emergency_phone_number_of_COUNTRY_is_NUMBER.KEY, "緊急通報用電話番号", null));
         lessonCategories.add(countriesAndPrefecturesCategory);
     }
 

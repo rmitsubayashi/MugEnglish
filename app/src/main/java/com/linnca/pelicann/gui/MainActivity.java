@@ -180,7 +180,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
-        Log.d(TAG, "Called onPrepareOptionsMenu()");
         //to make sure the animation doesn't trigger on launch,
         //the menu is defaulted to invisible
         animateMenuItem(menu.findItem(R.id.app_bar_search), searchIconVisible);
@@ -317,7 +316,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case QuestionTypeMappings.TRUE_FALSE :
                         fragment = new Question_TrueFalse();
                         break;
+                    case QuestionTypeMappings.SPELLING_SUGGESTIVE :
+                        fragment = new Question_Spelling_Suggestive();
+                        break;
                     default:
+                        Log.d(TAG, "Could not find question type");
                         return;
                 }
 
@@ -612,7 +615,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    Log.d(TAG, "Item selected");
                     Fragment userInterestFragment = fragmentManager.findFragmentByTag(FRAGMENT_USER_INTERESTS);
                     if (userInterestFragment != null && userInterestFragment.isVisible()){
                         //since we don't have ids, differentiate the items by position

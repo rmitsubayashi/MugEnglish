@@ -7,15 +7,15 @@ import java.io.Serializable;
 public class LessonData implements Serializable{
     private String key;
     private String title;
-    private String description;
+    private Integer descriptionLayout;
 
     public LessonData(){}
 
     public LessonData(String key, String title,
-                      String description){
+                      Integer descriptionLayout){
         this.key = key;
         this.title = title;
-        this.description = description;
+        this.descriptionLayout = descriptionLayout;
     }
 
     public String getKey(){
@@ -26,8 +26,8 @@ public class LessonData implements Serializable{
         return this.title;
     }
 
-    public String getDescription(){
-        return this.description;
+    public Integer getDescriptionLayout(){
+        return this.descriptionLayout;
     }
 
     public void setKey(String key){
@@ -38,8 +38,8 @@ public class LessonData implements Serializable{
         this.title = title;
     }
 
-    public void setDescription(String description){
-        this.description = description;
+    public void setDescriptionLayout(Integer descriptionLayout){
+        this.descriptionLayout = descriptionLayout;
     }
 
 }
