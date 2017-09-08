@@ -102,10 +102,13 @@
         preferences:number of question attempts
     </string>
     <string name="preferences_questions_numberOfAttemptsPerQuestion_label">
-        問題の解答回数
+        問題ごとの解答回数：%1$d
+    </string>
+    <string name="preferences_questions_numberOfAttemptsPerQuestion_dialog_label">
+        新しい解答回数
     </string>
     <string name="preferences_questions_numberOfAttemptsPerQuestion_description">
-        問題ごとに、何回ミスをしていいか設定できます。\nいろいろ調整してみて、気楽に勉強できる解答回数を探そう。
+        問題を何回間違っていいのか設定できます。\n間違えたらすぐに答えを確認せず、何が間違っているのかじっくり考えてください。
     </string>
     <string name="preferences_first_time_key">preferences:first time</string>
     <string name="preferences_last_selected_lesson_category">preferences: last selected lesson category</string>

@@ -13,8 +13,9 @@
             android:key="@string/preferences_questions_numberOfAttemptsPerQuestion_key"
             android:title="@string/preferences_questions_numberOfAttemptsPerQuestion_label"
             android:summary="@string/preferences_questions_numberOfAttemptsPerQuestion_description"
-            android:inputType="number"
+            android:dialogTitle="@string/preferences_questions_numberOfAttemptsPerQuestion_dialog_label"
             android:defaultValue="1"
+            android:inputType="number"
             />
     </PreferenceCategory>
 

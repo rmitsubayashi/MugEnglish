@@ -41,8 +41,9 @@ dependencies {
     //for puzzle piece question
     compile 'org.apmem.tools:layouts:1.10@aar'
 
-
-    compile 'com.android.support:preference-v14:26.0.1'
+    //since the current android preference library is insufficient,
+    //there is a 'fixed' version
+    compile 'com.takisoft.fix:preference-v7:26.0.2.0'
 }
 
 allprojects {
