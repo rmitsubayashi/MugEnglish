@@ -1,5 +1,8 @@
 package com.linnca.pelicann.questiongenerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QGUtils {
     public static String stripWikidataID(String str){
         int lastIndexID = str.lastIndexOf('/');
@@ -123,6 +126,95 @@ public class QGUtils {
             return numberString;
         }
         return convertIntToWord(number);
+    }
+
+    //can't be integers because numbers with 0s in front will be cut
+    public static List<String> convertPhoneNumberToPhoneNumberWords(String number){
+        String typicalNumber = "";
+        String zeroToOhNumber = "";
+        String zerosToHundredsAndThousandsNumber = "";
+        String zerosToHundredsAndThousandsWithOhNumber = "";
+
+        int zeroCt = 0;
+        char[] numberArray = number.toCharArray();
+        int numberMaxIndex = numberArray.length-1;
+        for (int i=numberMaxIndex; i>=0; i--){
+            char digitChar = numberArray[i];
+            if (!Character.isDigit(digitChar)){
+                //we can interpret any non-digit as a break in the number??
+                for (int j=0; j<zeroCt; j++){
+                    typicalNumber = "zero " + typicalNumber;
+                    zerosToHundredsAndThousandsNumber = "zero " + zerosToHundredsAndThousandsNumber;
+                    //reset
+                    zeroCt = 0;
+                }
+                continue;
+            }
+            int digit = Character.getNumericValue(digitChar);
+            if (digit == 0){
+                zeroCt++;
+            } else {
+                String digitString = ones[digit-1];
+                String typicalNumberToAdd = digitString + " ";
+                String zerosToHundredsAndThousandsNumberToAdd = digitString + " ";
+                if (zeroCt > 0){
+                    for (int j=0; j<zeroCt; j++){
+                        typicalNumberToAdd += "zero ";
+                    }
+
+                    if (zeroCt == 1){
+                        zerosToHundredsAndThousandsNumberToAdd += "zero ";
+                    } else if (zeroCt == 2) {
+                        zerosToHundredsAndThousandsNumberToAdd += "hundred ";
+                    } else if (zeroCt == 3) {
+                        zerosToHundredsAndThousandsNumberToAdd += "thousand ";
+                    } else {
+                        for (int j=0; j<zeroCt; j++){
+                            zerosToHundredsAndThousandsNumberToAdd += "zero ";
+                        }
+                    }
+
+                    //reset
+                    zeroCt = 0;
+                }
+
+                typicalNumber = typicalNumberToAdd + typicalNumber;
+                zerosToHundredsAndThousandsNumber = zerosToHundredsAndThousandsNumberToAdd +
+                        zerosToHundredsAndThousandsNumber;
+            }
+
+        }
+
+        //handle hanging zeroes
+        if (zeroCt > 0) {
+            for (int i = 0; i < zeroCt; i++) {
+                typicalNumber = "zero " + typicalNumber;
+                zerosToHundredsAndThousandsNumber = "zero " + zerosToHundredsAndThousandsNumber;
+            }
+        }
+
+        typicalNumber = typicalNumber.trim();
+        zerosToHundredsAndThousandsNumber = zerosToHundredsAndThousandsNumber.trim();
+
+        List<String> returnList = new ArrayList<>(4);
+        //order is important to know which is which. make sure this is first
+        returnList.add(typicalNumber);
+        if (typicalNumber.contains("zero")){
+            zeroToOhNumber = typicalNumber.replaceAll("zero","oh");
+            returnList.add(zeroToOhNumber);
+        }
+
+        if (!typicalNumber.equals(zerosToHundredsAndThousandsNumber)){
+            returnList.add(zerosToHundredsAndThousandsNumber);
+        }
+
+        if (typicalNumber.contains("zero") && !typicalNumber.equals(zerosToHundredsAndThousandsNumber)) {
+            zerosToHundredsAndThousandsWithOhNumber = zerosToHundredsAndThousandsNumber.replaceAll("zero", "oh");
+            returnList.add(zerosToHundredsAndThousandsWithOhNumber);
+        }
+
+        //can be 1 ~ 4 elements
+        return returnList;
     }
 
     public static boolean containsJapanese(String str){

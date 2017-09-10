@@ -41,7 +41,8 @@
     <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part3_meaning">数字</string>
     <string name="description_the_emergency_phone_number_of_country_is_number_new_word_explanation">ということで、emergency phone numberは緊急通報用電話番号のことです。</string>
     <string name="description_the_emergency_phone_number_of_country_is_number_subheader2">電話番号の言い方</string>
-    <string name="description_the_emergency_phone_number_of_country_is_number_exception">exception</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_exception">電話番号は基本的に一桁ずつ言います。110の場合、one one zero と発音します。\n
+        0は"zero"の他に<b>"oh"</b>とも発音できます。どっちを使うかは人によります。\nまた、0が2桁か3桁続く場合、</string>
 
 
 

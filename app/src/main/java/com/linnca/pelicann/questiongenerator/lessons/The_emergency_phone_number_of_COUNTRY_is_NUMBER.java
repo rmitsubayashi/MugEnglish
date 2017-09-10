@@ -139,7 +139,8 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
                 Node head = allResults.item(i);
                 String phoneNumber = SPARQLDocumentParserHelper.findValueByNodeName(head, "phoneNumberLabel");
                 //since we may return something like 100番
-                //remove all non-digits
+                //remove all non-digits.
+                //we don't need to worry about hyphens because these are all emergency numbers
                 phoneNumber = phoneNumber.replaceAll("[^\\d]", "");
                 phoneNumbers.add(phoneNumber);
             }
@@ -245,25 +246,50 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
     }
 
     private String fillInBlankInput1Answer(QueryResult qr, int phoneNumberIndex){
-        StringBuilder phoneNumberWordsBuilder = new StringBuilder();
-        char[] phoneNumber = qr.phoneNumbers.get(phoneNumberIndex).toCharArray();
-        for (char number : phoneNumber){
-            //numeric value of char ints are the int value (hacky)
-            String numberWord = QGUtils.convertIntToWord(Character.getNumericValue(number));
-            phoneNumberWordsBuilder.append(numberWord);
-            phoneNumberWordsBuilder.append(" ");
-        }
-        return phoneNumberWordsBuilder.substring(0, phoneNumberWordsBuilder.length()-1);
+        String phoneNumber = qr.phoneNumbers.get(phoneNumberIndex);
+        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        return phoneNumberWords.get(0);
+    }
+
+    private List<String> fillInBlankInput1AcceptableAnswers(QueryResult qr, int phoneNumberIndex){
+        String phoneNumber = qr.phoneNumbers.get(phoneNumberIndex);
+        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        //remove the actual answer
+        phoneNumberWords.remove(0);
+        return phoneNumberWords;
     }
 
     private FeedbackPair fillInBlankInput1Feedback(QueryResult qr, int phoneNumberIndex){
         List<String> responses = new ArrayList<>();
         String phoneNumberNumber = qr.phoneNumbers.get(phoneNumberIndex);
         //if the user types nine hundred eleven for 911
-        String phoneNumberWords = QGUtils.convertIntToWord(phoneNumberNumber);
-        responses.add(phoneNumberWords);
-        String feedback = "電話番号は一桁ずつ分けて言います。つまり、 " + phoneNumberWords +
-                " ではなく " + fillInBlankInput1Answer(qr, phoneNumberIndex) + " が正解です。";
+        String numberWords = QGUtils.convertIntToWord(phoneNumberNumber);
+        responses.add(numberWords);
+        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumberNumber);
+        String feedback = "電話番号は一桁ずつ分けて言います。つまり、 " + numberWords +
+                " ではなく " + phoneNumberWords.get(0) + " が正解です。";
+
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
+    }
+
+    private FeedbackPair fillInBlankInput1Feedback2(QueryResult qr, int phoneNumberIndex){
+        //even if the user makes a correct choice,
+        //let him know if there are other options available
+        List<String> responses = new ArrayList<>();
+        String phoneNumber = qr.phoneNumbers.get(phoneNumberIndex);
+        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        if (phoneNumberWords.size() == 1){
+            return null;
+        }
+        String feedback = "正解は複数あります。\n";
+        for (String phoneNumberWord : phoneNumberWords){
+            responses.add(phoneNumberWord);
+            //cleaner alignment
+            feedback += "  " + phoneNumberWord + "\n";
+        }
+        feedback += "詳しい解説は説明文に書いてあります。";
+
+
         return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
     }
 
@@ -275,9 +301,12 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             String question = this.fillInBlankInput1Question(qr, phoneNumberIndex);
 
             String answer = fillInBlankInput1Answer(qr, phoneNumberIndex);
+            List<String> acceptableAnswers = fillInBlankInput1AcceptableAnswers(qr, phoneNumberIndex);
             FeedbackPair feedbackPair = fillInBlankInput1Feedback(qr, phoneNumberIndex);
+            FeedbackPair feedbackPair2 = fillInBlankInput1Feedback2(qr, phoneNumberIndex);
             List<FeedbackPair> feedbackPairs = new ArrayList<>();
             feedbackPairs.add(feedbackPair);
+            feedbackPairs.add(feedbackPair2);
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(super.lessonKey);
@@ -286,7 +315,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             data.setQuestion(question);
             data.setChoices(null);
             data.setAnswer(answer);
-            data.setAcceptableAnswers(null);
+            data.setAcceptableAnswers(acceptableAnswers);
             data.setVocabulary(null);
             data.setFeedback(feedbackPairs);
             questionDataList.add(data);
@@ -296,15 +325,9 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
     }
 
     private String fillInBlankInputQuestion2(QueryResult qr, int phoneNumberIndex){
-        StringBuilder phoneNumberWordsBuilder = new StringBuilder();
-        char[] phoneNumber = qr.phoneNumbers.get(phoneNumberIndex).toCharArray();
-        for (char number : phoneNumber){
-            //numeric value of char ints are the int value (hacky)
-            String numberWord = QGUtils.convertIntToWord(Character.getNumericValue(number));
-            phoneNumberWordsBuilder.append(numberWord);
-            phoneNumberWordsBuilder.append(" ");
-        }
-        String phoneNumberWord = phoneNumberWordsBuilder.substring(0, phoneNumberWordsBuilder.length()-1);
+        String phoneNumber = qr.phoneNumbers.get(phoneNumberIndex);
+        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        String phoneNumberWord = phoneNumberWords.get(0);
         String countryName = GrammarRules.definiteArticleBeforeCountry(qr.countryNameEN);
 
         String sentence1 = "The emergency phone number of " + countryName + " is " + phoneNumberWord + ".";
@@ -318,6 +341,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
 
     private String fillInBlankInputAnswer2(QueryResult qr, int phoneNumberIndex){
+        //no need to worry about non-digits (we removed all of them)
         return qr.phoneNumbers.get(phoneNumberIndex);
     }
 
