@@ -6,6 +6,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +33,11 @@ public class Question_FillInBlank_MultipleChoice extends Question_General {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_question_fill_in_blank_multiple_choice, container, false);
-        parentViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.fragment_question_fill_in_blank_multiple_choice);
-        siblingViewGroupForFeedback = (ViewGroup)view.findViewById(R.id.question_fill_in_blank_multiple_choice_main_layout);
+        parentViewGroupForFeedback = view.findViewById(R.id.fragment_question_fill_in_blank_multiple_choice);
+        siblingViewGroupForFeedback = view.findViewById(R.id.question_fill_in_blank_multiple_choice_main_layout);
 
-        questionTextView = (TextView) view.findViewById(R.id.question_fill_in_blank_multiple_choice_question);
-        choicesLayout = (LinearLayout) view.findViewById(R.id.question_fill_in_blank_multiple_choice_choices_layout);
+        questionTextView = view.findViewById(R.id.question_fill_in_blank_multiple_choice_question);
+        choicesLayout = view.findViewById(R.id.question_fill_in_blank_multiple_choice_choices_layout);
 
         populateQuestion();
         populateButtons(inflater);

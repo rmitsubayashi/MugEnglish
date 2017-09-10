@@ -9,6 +9,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-//sets methods common for all question guis
+//sets methods common for all question GUIs
 public abstract class Question_General extends Fragment {
     private final String TAG = "Question_General";
     public static int UNLIMITED_ATTEMPTS = -1;
@@ -74,7 +75,7 @@ public abstract class Question_General extends Fragment {
         super.onStart();
         questionListener.setToolbarState(
                 new ToolbarState(getContext().getString(R.string.question_title, questionNumber, totalQuestions),
-                        false, questionData.getLessonId())
+                        false, null)
         );
     }
 

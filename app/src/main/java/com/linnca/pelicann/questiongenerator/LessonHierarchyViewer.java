@@ -41,7 +41,7 @@ public class LessonHierarchyViewer {
         LessonCategory countriesAndPrefecturesCategory = new LessonCategory(ID_COUNTRIES, context.getString(R.string.lesson_category_countries));
         countriesAndPrefecturesCategory.addLesson(new LessonData(The_DEMONYM_flag_is_COLORS.KEY, "国旗の色", null));
         countriesAndPrefecturesCategory.addLesson(new LessonData(NAME_is_DEMONYM.KEY, "国民の名称", null));
-        countriesAndPrefecturesCategory.addLesson(new LessonData(The_emergency_phone_number_of_COUNTRY_is_NUMBER.KEY, "緊急通報用電話番号", null));
+        countriesAndPrefecturesCategory.addLesson(new LessonData(The_emergency_phone_number_of_COUNTRY_is_NUMBER.KEY, "緊急通報用電話番号", R.layout.fragment_description_the_emergency_phone_number_of_country_is_number));
         lessonCategories.add(countriesAndPrefecturesCategory);
     }
 

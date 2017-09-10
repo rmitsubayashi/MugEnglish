@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,11 @@ import com.linnca.pelicann.questiongenerator.LessonHierarchyViewer;
 import java.util.ArrayList;
 
 public class LessonDescription extends Fragment {
+    private final String TAG = "LessonDescription";
     public static String BUNDLE_LESSON_KEY = "bundleLessonKey";
+    public static String BUNDLE_SHOW_EXCEPTION = "bundleShowException";
     private LessonDescriptionListener listener;
+    private boolean alwaysShowException = false;
 
     interface LessonDescriptionListener {
         void setToolbarState(ToolbarState state);
@@ -30,6 +34,7 @@ public class LessonDescription extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         String lessonKey = getArguments().getString(BUNDLE_LESSON_KEY);
+        alwaysShowException = getArguments().getBoolean(BUNDLE_SHOW_EXCEPTION);
         LessonHierarchyViewer helper = new LessonHierarchyViewer(getContext());
         Integer layoutID = helper.getLessonData(lessonKey).getDescriptionLayout();
         if (layoutID == null){
@@ -39,11 +44,6 @@ public class LessonDescription extends Fragment {
         }
 
         View view = inflater.inflate(layoutID, container, false);
-        TextView lessonTitleTextView = view.findViewById(R.id.description_lesson_title);
-        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer(getContext());
-        LessonData lessonData = lessonHierarchyViewer.getLessonData(lessonKey);
-        if (lessonData != null)
-            lessonTitleTextView.setText(lessonData.getTitle());
         handleExceptionRules(view);
         return view;
     }
@@ -77,7 +77,7 @@ public class LessonDescription extends Fragment {
         }
     }
 
-    //in the settings, we have an option to hide descriptions containing
+    //in the settings, we have an option to hide parts of the descriptions containing
     // exception rules (for better retention).
     //do that here
     private void handleExceptionRules(View parentView){
@@ -86,23 +86,29 @@ public class LessonDescription extends Fragment {
         //the preference is still stored as a string
         boolean shouldShow = sharedPreferences.getBoolean
                 (getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key), true);
-        ArrayList<View> viewsWithExceptionTag = new ArrayList<>();
-        parentView.findViewsWithText(viewsWithExceptionTag, "<exception>", View.FIND_VIEWS_WITH_TEXT);
-
-        for (View view : viewsWithExceptionTag){
-            if (view instanceof TextView){
-                TextView textView = (TextView)view;
-                String text = textView.getText().toString();
-                if (!shouldShow){
-                    //remove everything within the tags (there may be multiple)
-                    text = text.replaceAll("<exception>([^<]*)</exception>", "");
-                } else {
-                    text = text.replaceAll("<exception>", "");
-                    text = text.replaceAll("</exception>", "");
-                }
-
-                textView.setText(text);
+        if (!shouldShow && !alwaysShowException) {
+            ArrayList<View> viewsWithExceptionTag = getViewsByTag((ViewGroup) parentView, getString(R.string.lesson_description_exception_tag));
+            for (View view : viewsWithExceptionTag) {
+                view.setVisibility(View.GONE);
             }
         }
+    }
+
+    private ArrayList<View> getViewsByTag(ViewGroup root, String tag){
+        ArrayList<View> views = new ArrayList<View>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+
+        }
+        return views;
     }
 }

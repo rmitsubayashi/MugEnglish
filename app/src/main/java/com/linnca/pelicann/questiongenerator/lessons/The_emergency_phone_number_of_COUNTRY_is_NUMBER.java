@@ -209,7 +209,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         String lowercaseCountry = qr.countryNameEN.toLowerCase();
         List<String> responses = new ArrayList<>();
         responses.add(lowercaseCountry);
-        String feedback = "国の名前は大文字で始まります。\n" + qr.countryNameEN;
+        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryNameEN;
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 

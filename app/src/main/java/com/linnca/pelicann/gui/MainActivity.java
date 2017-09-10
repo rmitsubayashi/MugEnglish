@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Fragment lessonDescriptionFragment = new LessonDescription();
                     Bundle bundle = new Bundle();
                     bundle.putString(LessonDescription.BUNDLE_LESSON_KEY, descriptionLessonKey);
-                    lessonDescriptionFragment.setArguments(bundle);
+
                     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
                             0, R.anim.slide_out_bottom
@@ -212,9 +212,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     if (fragmentManager.getBackStackEntryCount() != 0 ){
                         String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
                         fragmentTransaction.addToBackStack(fragmentTag);
+
+                        Fragment resultsFragment = fragmentManager.findFragmentByTag(FRAGMENT_RESULTS);
+                        if (resultsFragment != null && resultsFragment.isVisible()){
+                            //when we are at the results page, we should always show the exception rule
+                            bundle.putBoolean(LessonDescription.BUNDLE_SHOW_EXCEPTION, true);
+                        }
                     } else {
                         fragmentTransaction.addToBackStack(topmostFragmentTag);
                     }
+                    lessonDescriptionFragment.setArguments(bundle);
                     fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonDescriptionFragment, FRAGMENT_LESSON_DESCRIPTION);
                     fragmentTransaction.commit();
                 }

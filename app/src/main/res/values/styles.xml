@@ -36,10 +36,16 @@
         <item name="android:layout_marginBottom">16dp</item>
     </style>
 
-    <style name="description_lesson_title">
+    <style name="description_lesson_subheader">
         <item name="android:textSize">21sp</item>
-        <item name="android:textColor">@color/lblue500</item>
-        <item name="android:layout_marginBottom">32dp</item>
+        <item name="android:textColor">@color/orange500</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
+    <style name="description_lesson_new_word">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/green500</item>
+        <item name="android:layout_marginBottom">8dp</item>
     </style>
 
     <!--setting a window background is apparently the best way to go with splash screens-->

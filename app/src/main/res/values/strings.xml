@@ -102,7 +102,7 @@
     <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_true">表示</string>
     <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_false">非表示</string>
     <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_description_functionality">
-        例外的な文法が出題されるレッスンを学習するとき、レッスン選択画面および問題画面の説明文を表示させるボタンを表示するかどうか、選択できます。非表示にした場合は、問題を間違えた時に表示されるアドバイスと結果画面で文法を学べます（結果画面の説明文ボタンは非表示にはなりません）。
+        例外的な文法が出題されるレッスンを学習するとき、レッスン選択画面の説明文にその文法の説明を載せるかどうか選択できます。非表示にした場合、問題を間違えた際に表示されるアドバイス画面と結果画面で文法を学べます（結果画面の説明文には例外的な文法の説明も表示されます）。
     </string>
     <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_description_reason">
         説明文を隠すので、Pelicannで勉強した事前知識のみで問題を解くことになります。そして当たり前のように例外的な文法に引っ掛かります。\n問題を間違えた後のアドバイスで例外的な文法の説明をします。「こうだったと思ったのに、実はこうだった」という発見ができると思います。事前に説明文を読むとこの発見はできません。\n\n
@@ -210,6 +210,7 @@
 
     <string name="lesson_description_title">説明</string>
     <string name="lesson_description_no_description_available">残念ながらこのレッスンの説明文はありません</string>
+    <string name="lesson_description_exception_tag">exception</string>
 
     <!--user interests list-->
     <string name="user_interests_app_bar_title">お気に入り</string>

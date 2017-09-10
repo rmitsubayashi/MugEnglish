@@ -1,12 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="description_name_is_a_occupation_explanation">注目してほしいのは多くの職業の最後につく<b>-er</b></string>
-    <string name="description_name_is_a_occupation_example1_word">soccer play<b>er</b></string>
-    <string name="description_name_is_a_occupation_example1_explanation">サッカー（<i>soccer</i>）を遊ぶ(<i>play</i>)人(<b>-er</b>) = サッカー選手</string>
-    <string name="description_name_is_a_occupation_example2_word">programm<b>er</b></string>
-    <string name="description_name_is_a_occupation_example2_explanation">プログラミングをする(<i>program</i>)人(<b>-er</b>) = プログラマー</string>
-    <string name="description_name_is_a_occupation_example3_word">firefight<b>er</b></string>
-    <string name="description_name_is_a_occupation_example3_explanation">火事(<i>fire</i>)と戦う(<i>fight</i>)人(<b>-er</b>) = 消防士</string>
-    <string name="description_name_is_a_occupation_explanation2">このように、<b>-er</b>は「～をする人」という意味を持っている。\n
-    もちろん<b>-er</b>のつかない職業もあるけど、目安にするのもいいかも。 </string>
+    <string name="description_template_new_word">新しい単語</string>
+    <string name="description_template_how_to_remember">覚え方</string>
+
+    <string name="description_name_is_a_occupation_subheader">@string/description_template_how_to_remember</string>
+    <string name="description_name_is_a_occupation_explanation_1">注目してほしいのが、多くの職業の単語の最後につく<b>-er</b></string>
+    <string name="description_name_is_a_occupation_example_1_word">soccer play<b>er</b></string>
+    <string name="description_name_is_a_occupation_example_1_explanation">サッカー（<i>soccer</i>）を遊ぶ(<i>play</i>)人(<b>-er</b>) = サッカー選手</string>
+    <string name="description_name_is_a_occupation_example_2_word">programm<b>er</b></string>
+    <string name="description_name_is_a_occupation_example_2_explanation">プログラミングをする(<i>program</i>)人(<b>-er</b>) = プログラマー</string>
+    <string name="description_name_is_a_occupation_example_3_word">firefight<b>er</b></string>
+    <string name="description_name_is_a_occupation_example_3_explanation">火事(<i>fire</i>)と戦う(<i>fight</i>)人(<b>-er</b>) = 消防士</string>
+    <string name="description_name_is_a_occupation_explanation_2">このように、<b>-er</b>は「～をする人」という意味を持っています。\n
+    <b>-er</b>の前に付く単語に注目して覚えましょう！</string>
+    <string name="description_name_is_a_occupation_subheader2">性別で変わる職業について</string>
+    <string name="description_name_is_a_occupation_explanation2_1">日本語では<b>俳優</b>と<b>女優</b>のように性別で区別する職業があると思います。アメリカにも同様に区別する職業がたくさんあります。</string>
+    <string name="description_name_is_a_occupation_table_header_male">男性</string>
+    <string name="description_name_is_a_occupation_table_header_female">女性</string>
+    <string name="description_name_is_a_occupation_table_header_meaning">意味</string>
+    <string name="description_name_is_a_occupation_example2_1_male">actor</string>
+    <string name="description_name_is_a_occupation_example2_1_female">actress</string>
+    <string name="description_name_is_a_occupation_example2_1_meaning">俳優</string>
+    <string name="description_name_is_a_occupation_example2_2_male">salesman</string>
+    <string name="description_name_is_a_occupation_example2_2_female">saleswoman</string>
+    <string name="description_name_is_a_occupation_example2_2_meaning">セールスマン</string>
+    <string name="description_name_is_a_occupation_example2_3_male">waiter</string>
+    <string name="description_name_is_a_occupation_example2_3_female">waitress</string>
+    <string name="description_name_is_a_occupation_example2_3_meaning">ウェイター</string>
+    <string name="description_name_is_a_occupation_explanation2_2">Pelicannではできるだけ性差別がないような名称を採用しています。\n例えば俳優（actor）は日本と同じ感覚で、actorは男女を問わず使えてactressは女性限定の名称になります。この場合actorを採用します。</string>
+    <string name="description_name_is_a_occupation_explanation2_3">性差別があり得るような職業の単語は覚えられなくなりますが、どうぞご了承ください。</string>
+
+
+    <string name="description_the_emergency_phone_number_of_country_is_number_subheader">@string/description_template_new_word</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word">emergency phone number</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part1_word">emergency</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part1_meaning">緊急</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part2_word">phone</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part2_meaning">電話</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part3_word">number</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part3_meaning">数字</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_new_word_explanation">ということで、emergency phone numberは緊急通報用電話番号のことです。</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_subheader2">電話番号の言い方</string>
+    <string name="description_the_emergency_phone_number_of_country_is_number_exception">exception</string>
+
+
+
 </resources>
