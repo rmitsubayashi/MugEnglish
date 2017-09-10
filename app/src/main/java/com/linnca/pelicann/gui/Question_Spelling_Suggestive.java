@@ -92,18 +92,6 @@ public class Question_Spelling_Suggestive extends Question_General {
         return false;
     }
 
-    @Override
-    protected String getFeedback(){
-        String answer = questionData.getAnswer();
-        String spacedOutAnswer = "";
-        for (char answerLetter : answer.toCharArray()){
-            spacedOutAnswer += answerLetter + " ";
-        }
-        spacedOutAnswer = spacedOutAnswer.substring(0, spacedOutAnswer.length()-1);
-        return "正解: " + spacedOutAnswer;
-
-    }
-
     private void populateQuestion(){
         questionTextView.setText(questionData.getQuestion());
         //we are showing the answer as default

@@ -2,7 +2,9 @@ package com.linnca.pelicann.gui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +13,10 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.datawrappers.LessonData;
-import com.linnca.pelicann.gui.widgets.LessonDescriptionLayoutHelper;
 import com.linnca.pelicann.gui.widgets.ToolbarState;
 import com.linnca.pelicann.questiongenerator.LessonHierarchyViewer;
+
+import java.util.ArrayList;
 
 public class LessonDescription extends Fragment {
     public static String BUNDLE_LESSON_KEY = "bundleLessonKey";
@@ -27,10 +30,11 @@ public class LessonDescription extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         String lessonKey = getArguments().getString(BUNDLE_LESSON_KEY);
-        LessonDescriptionLayoutHelper helper = new LessonDescriptionLayoutHelper();
-        Integer layoutID = helper.getLayoutID(lessonKey);
+        LessonHierarchyViewer helper = new LessonHierarchyViewer(getContext());
+        Integer layoutID = helper.getLessonData(lessonKey).getDescriptionLayout();
         if (layoutID == null){
-            //layout if we can't find one (we preemptively handle it either way)
+            //layout if we can't find one (we preemptively handle it by hiding the icon that links to this screen,
+            // but just in case )
             return inflater.inflate(R.layout.fragment_lesson_description_not_found, container, false);
         }
 
@@ -40,6 +44,7 @@ public class LessonDescription extends Fragment {
         LessonData lessonData = lessonHierarchyViewer.getLessonData(lessonKey);
         if (lessonData != null)
             lessonTitleTextView.setText(lessonData.getTitle());
+        handleExceptionRules(view);
         return view;
     }
 
@@ -69,6 +74,35 @@ public class LessonDescription extends Fragment {
             listener = (LessonDescriptionListener) context;
         } catch (ClassCastException e){
             e.printStackTrace();
+        }
+    }
+
+    //in the settings, we have an option to hide descriptions containing
+    // exception rules (for better retention).
+    //do that here
+    private void handleExceptionRules(View parentView){
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        //the preference is still stored as a string
+        boolean shouldShow = sharedPreferences.getBoolean
+                (getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key), true);
+        ArrayList<View> viewsWithExceptionTag = new ArrayList<>();
+        parentView.findViewsWithText(viewsWithExceptionTag, "<exception>", View.FIND_VIEWS_WITH_TEXT);
+
+        for (View view : viewsWithExceptionTag){
+            if (view instanceof TextView){
+                TextView textView = (TextView)view;
+                String text = textView.getText().toString();
+                if (!shouldShow){
+                    //remove everything within the tags (there may be multiple)
+                    text = text.replaceAll("<exception>([^<]*)</exception>", "");
+                } else {
+                    text = text.replaceAll("<exception>", "");
+                    text = text.replaceAll("</exception>", "");
+                }
+
+                textView.setText(text);
+            }
         }
     }
 }

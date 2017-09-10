@@ -17,6 +17,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -36,7 +38,7 @@ import com.linnca.pelicann.db.datawrappers.InstanceRecord;
 import com.linnca.pelicann.db.datawrappers.LessonData;
 import com.linnca.pelicann.db.datawrappers.LessonInstanceData;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
-import com.linnca.pelicann.gui.widgets.LessonDescriptionLayoutHelper;
+import com.linnca.pelicann.gui.widgets.PreferencesListener;
 import com.linnca.pelicann.gui.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.gui.widgets.ToolbarSpinnerItem;
 import com.linnca.pelicann.gui.widgets.ToolbarState;
@@ -53,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Question_General.QuestionListener,
         LessonDetails.LessonDetailsListener,
         Results.ResultsListener,
-        Preferences.PreferencesListener,
+        PreferencesListener,
+        PreferenceFragmentCompat.OnPreferenceStartScreenCallback,
         LessonDescription.LessonDescriptionListener
 {
     private final String TAG = "MainActivity";
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private FragmentManager fragmentManager;
     private boolean navigationItemSelected = false;
     private int selectedNavigationItemID = -1;
-    private LessonDescriptionLayoutHelper lessonDescriptionLayoutHelper = new LessonDescriptionLayoutHelper();
+    private LessonHierarchyViewer lessonHierarchyViewer;
 
     private String topmostFragmentTag = "";
     private final String FRAGMENT_USER_INTERESTS = "userInterests";
@@ -89,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        lessonHierarchyViewer = new LessonHierarchyViewer(this);
+
         toolbar = findViewById(R.id.tool_bar);
         toolbarSpinner = toolbar.findViewById(R.id.tool_bar_spinner);
         setSupportActionBar(toolbar);
@@ -120,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             break;
                         case R.id.main_navigation_drawer_settings :
                             newFragment = new Preferences();
-                            newFragmentTag = FRAGMENT_SETTINGS;
+                            newFragmentTag = getString(R.string.preferences_main_key);
                             break;
                         case R.id.main_navigation_drawer_lesson_work :
                             newFragment = new LessonList();
@@ -283,6 +289,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.commit();
         switchActionBarUpButton();
 
+    }
+
+    @Override
+    public boolean onPreferenceStartScreen(PreferenceFragmentCompat preferenceFragmentCompat,
+                                           PreferenceScreen preferenceScreen) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment;
+        String preferenceKey = preferenceScreen.getKey();
+        if (preferenceKey.equals(getString(R.string.preferences_main_key))) {
+            fragment=new Preferences();
+        } else if (preferenceKey.equals(getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key))){
+            fragment = new PreferencesDescriptionBeforeLessonWithExceptionRule();
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
+                    0, R.anim.slide_out_bottom
+            );
+            preferenceScreen.getTitle();
+        } else {
+            return true;
+        }
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, preferenceScreen.getKey());
+        fragmentTransaction.addToBackStack(preferenceScreen.getKey());
+        fragmentTransaction.commit();
+        switchActionBarUpButton();
+        return true;
     }
 
     @Override
@@ -586,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (descriptionLessonKey == null) {
             descriptionIconVisible = false;
         } else {
-            descriptionIconVisible = lessonDescriptionLayoutHelper.layoutExists(descriptionLessonKey);
+            descriptionIconVisible = lessonHierarchyViewer.layoutExists(descriptionLessonKey);
 
         }
 

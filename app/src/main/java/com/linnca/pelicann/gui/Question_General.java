@@ -18,10 +18,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.datawrappers.FeedbackPair;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
 import com.linnca.pelicann.gui.widgets.ToolbarState;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 //sets methods common for all question guis
@@ -35,10 +38,12 @@ public abstract class Question_General extends Fragment {
     protected QuestionData questionData;
     private int questionNumber;
     private int totalQuestions;
+    private List<String> allWrongResponses = new ArrayList<>();
 
     protected int maxNumberOfAttempts;
     protected int attemptCt = 0;
     protected boolean disableChoiceAfterWrongAnswer;
+
     private BottomSheetBehavior behavior;
     private NestedScrollView feedback;
     private Button nextButton;
@@ -108,9 +113,55 @@ public abstract class Question_General extends Fragment {
 
     }
     //formatting may be different for certain question types, but this should be the base
-    protected String getFeedback(){
+    protected String formatWrongFeedbackString(){
+        //no specific feedback to give to the user
+        if (questionData.getFeedback() != null) {
+            List<FeedbackPair> feedbackPairs = questionData.getFeedback();
+            List<String> implicitAllWrongResponses = null;
+            for (FeedbackPair feedbackPair : feedbackPairs) {
+                List<String> responsesToCompare = feedbackPair.getResponse();
+                if (feedbackPair.getResponseCheckType() == FeedbackPair.IMPLICIT) {
+                    //format the answer and compare
+                    if (implicitAllWrongResponses == null) {
+                        implicitAllWrongResponses = new ArrayList<>();
+                        for (String wrongResponse : allWrongResponses) {
+                            implicitAllWrongResponses.add(formatAnswer(wrongResponse));
+                        }
+                    }
+
+                    for (String responseToCompare : responsesToCompare){
+                        responseToCompare = formatAnswer(responseToCompare);
+                        if (implicitAllWrongResponses.contains(responseToCompare)){
+                            return feedbackPair.getFeedback();
+                        }
+                    }
+                } else if (feedbackPair.getResponseCheckType() == FeedbackPair.EXPLICIT) {
+                    //we should check directly to avoid formatAnswer() hiding the feedback
+                    //we want to macch
+                    if (!Collections.disjoint(responsesToCompare, allWrongResponses)) {
+                        return feedbackPair.getFeedback();
+                    }
+                }
+            }
+        }
+
         String answer = questionData.getAnswer();
         return "正解: " + answer;
+    }
+
+    //same for this
+    protected String formatCorrectFeedbackString(String response){
+        if (questionData.getFeedback() != null){
+            List<FeedbackPair> feedbackPairs = questionData.getFeedback();
+            for (FeedbackPair feedbackPair : feedbackPairs) {
+                List<String> responses = feedbackPair.getResponse();
+                if (responses.contains(response)){
+                    return feedbackPair.getFeedback();
+                }
+            }
+        }
+
+        return null;
     }
 
     private void setMaxNumberOfAttempts(){
@@ -145,7 +196,21 @@ public abstract class Question_General extends Fragment {
         if (questionData.getAcceptableAnswers() != null){
             allAnswers.addAll(questionData.getAcceptableAnswers());
         }
+
+        int answersLength = allAnswers.size();
+        for (int i=0; i<answersLength; i++){
+            allAnswers.set(i, formatAnswer(allAnswers.get(i)));
+        }
+        response = formatAnswer(response);
+
         return allAnswers.contains(response);
+    }
+
+    protected String formatAnswer(String answer){
+        //we still accept technically wrong answers like david beckham
+        //(names should always be capitalized.
+        //this should not be in acceptable answers but rather
+        return answer.toLowerCase();
     }
 
     protected View.OnClickListener getResponseListener(){
@@ -156,12 +221,13 @@ public abstract class Question_General extends Fragment {
                 String answer = getResponse(view);
                 if (checkAnswer(answer)){
                     questionListener.onRecordResponse(answer, true);
-                    openFeedback(true);
+                    openFeedback(true, answer);
                 } else {
                     questionListener.onRecordResponse(answer, false);
+                    allWrongResponses.add(answer);
                     if (attemptCt == maxNumberOfAttempts){
                         //the user used up all his attempts
-                        openFeedback(false);
+                        openFeedback(false, answer);
                     } else {
                         //the user still has attempts remaining
                         final View finalView = view;
@@ -187,7 +253,7 @@ public abstract class Question_General extends Fragment {
                             }
                         });
 
-                        view.startAnimation(wrongAnswerAnimation);
+                        siblingViewGroupForFeedback.startAnimation(wrongAnswerAnimation);
                     }
                 }
 
@@ -211,27 +277,34 @@ public abstract class Question_General extends Fragment {
         parentViewGroupForFeedback.addView(feedback);
     }
 
-    private void openFeedback(boolean correct){
+    private void openFeedback(boolean correct, String response){
         //when we first display the question the bottom sheet is hidden & can be hidden.
         //whether the answer was correct or not,
         //we don't want the user to be able to hide the view because the net button is there
         //so make it non-hide-able
         behavior.setHideable(false);
-
+        TextView feedbackDescription =
+                feedback.findViewById(R.id.question_feedback_description);
         if (correct){
             feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
             nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
         } //else condition is default now
         TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
+        String description;
         if (correct){
             feedbackTitle.setText(R.string.question_feedback_correct);
-            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            description = formatCorrectFeedbackString(response);
         } else {
             feedbackTitle.setText(R.string.question_feedback_incorrect);
-            TextView feedbackDescription =
-                    feedback.findViewById(R.id.question_feedback_description);
-            feedbackDescription.setText(getFeedback());
+            description = formatWrongFeedbackString();
+        }
+
+        if (description != null && description.length() > 0) {
+            feedbackDescription.setText(description);
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+            //we might not have feedback
+            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
 
         //we don't want the user to be able to interact with the background,

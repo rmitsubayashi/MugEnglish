@@ -3,27 +3,31 @@
 if we don't set it here, the bottom sheet comes in from the top??
 -->
 <android.support.v4.widget.NestedScrollView
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:clipToPadding="true"
     android:background="?attr/colorAccent"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    android:layout_gravity="bottom"
     app:behavior_peekHeight="110dp"
     app:behavior_hideable="true"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     >
+    <!--if the linear layout is higher than the parent view height
+    it will stop there and make the text scrollable-->
     <LinearLayout
+        android:id="@+id/question_feedback_text_layout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_margin="16dp">
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:orientation="horizontal"
-                      android:layout_width="match_parent"
-                      android:layout_height="110dp"
-                      android:layout_gravity="center_horizontal"
-                      android:weightSum="1">
+        <LinearLayout
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="110dp"
+              android:layout_gravity="center_horizontal"
+              android:weightSum="1">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -44,7 +48,6 @@ if we don't set it here, the bottom sheet comes in from the top??
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="90dp"
             android:textColor="@color/white"
             android:textSize="17sp"
             android:id="@+id/question_feedback_description"/>

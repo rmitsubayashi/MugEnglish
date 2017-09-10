@@ -13,16 +13,18 @@ public class QuestionData implements Serializable{
     private String answer;
     private List<String> acceptableAnswers;
     private List<String> vocabulary;
+    private List<FeedbackPair> feedback;
 
     public QuestionData(){}
 
-    public QuestionData(String id, String themeId,
+    public QuestionData(String id, String lessonId,
                         String topic, Integer questionType,
                         String question, List<String> choices,
                         String answer, List<String> acceptableAnswers,
-                        List<String> vocabulary) {
+                        List<String> vocabulary,
+                        List<FeedbackPair> feedback) {
         this.id = id;
-        this.lessonId = themeId;
+        this.lessonId = lessonId;
         this.topic = topic;
         this.questionType = questionType;
         this.question = question;
@@ -30,6 +32,7 @@ public class QuestionData implements Serializable{
         this.answer = answer;
         this.acceptableAnswers = acceptableAnswers;
         this.vocabulary = vocabulary;
+        this.feedback = feedback;
     }
 
     public String getId() {
@@ -99,6 +102,14 @@ public class QuestionData implements Serializable{
     public List<String> getAcceptableAnswers() {return acceptableAnswers;}
 
     public void setAcceptableAnswers(List<String> acceptableAnswers){this.acceptableAnswers = acceptableAnswers; }
+
+    public List<FeedbackPair> getFeedback() {
+        return feedback;
+    }
+
+    public void setFeedback(List<FeedbackPair> feedback) {
+        this.feedback = feedback;
+    }
 
     //used in question manager when we want to add question data to a list
     // of review questions

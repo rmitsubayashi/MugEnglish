@@ -57,13 +57,9 @@ public class Question_TrueFalse extends Question_General {
     }
 
     @Override
-    protected String getFeedback(){
-        String answer = questionData.getAnswer();
-        if (answer.equals(QuestionUtils.TRUE_FALSE_QUESTION_TRUE)){
-            return "正解: " + getResources().getString(R.string.question_true_false_true);
-        } else {
-            return "正解: " + getResources().getString(R.string.question_true_false_false);
-        }
+    protected String formatWrongFeedbackString(){
+        //we really don't need feedback for true false questions
+        return null;
     }
 
     private void populateQuestion(){

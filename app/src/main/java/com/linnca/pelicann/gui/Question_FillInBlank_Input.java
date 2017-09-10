@@ -28,6 +28,7 @@ public class Question_FillInBlank_Input extends Question_General {
     private EditText questionInput;
     private TextView questionTextView;
     private Button submitButton;
+    private TextView instructions;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -51,6 +52,7 @@ public class Question_FillInBlank_Input extends Question_General {
         questionTextView = view.findViewById(R.id.question_fill_in_blank_input_question);
         submitButton = view.findViewById(R.id.question_fill_in_blank_input_submit);
         questionInput = view.findViewById(R.id.question_fill_in_blank_input_input);
+        instructions = view.findViewById(R.id.question_fill_in_blank_input_instructions);
         createQuestionLayout();
         inflateFeedback(inflater);
         return view;
@@ -81,9 +83,11 @@ public class Question_FillInBlank_Input extends Question_General {
         if (question.contains(QuestionUtils.FILL_IN_BLANK_NUMBER)){
             questionInput.setInputType(InputType.TYPE_CLASS_NUMBER);
             question = question.replace(QuestionUtils.FILL_IN_BLANK_NUMBER, blank);
+            instructions.setText(R.string.question_fill_in_blank_input_number_instructions);
         } else if (question.contains(QuestionUtils.FILL_IN_BLANK_TEXT)){
             questionInput.setInputType(InputType.TYPE_CLASS_TEXT);
             question = question.replace(QuestionUtils.FILL_IN_BLANK_TEXT, blank);
+            instructions.setText(R.string.question_fill_in_blank_input_text_instructions);
         }
 
         //color underline

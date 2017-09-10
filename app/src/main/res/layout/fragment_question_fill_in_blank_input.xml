@@ -17,9 +17,9 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/question_fill_in_blank_input_main_layout">
         <TextView
+            android:id="@+id/question_fill_in_blank_input_instructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/question_fill_in_blank_input_instructions"
             style="@style/questions_instructions"/>
         <TextView
             android:layout_width="match_parent"

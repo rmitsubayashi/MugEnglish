@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:key="@string/preferences_main_key"
+    >
     <PreferenceCategory
         android:key="@string/preferences_category_questions_key"
-        android:title="@string/preferences_category_questions_label">
-        <CheckBoxPreference
-            android:key="@string/preferences_questions_descriptionBeforeQuestions_key"
-            android:title="@string/preferences_questions_descriptionBeforeQuestions_label"
-            android:summary="@string/preferences_questions_descriptionBeforeQuestions_description"
-            android:defaultValue="true"
-            />
+        android:title="@string/preferences_category_questions_label"
+        >
+        <PreferenceScreen
+            android:key="@string/preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key"
+            android:title="@string/preferences_questions_descriptionBeforeLessonWithExceptionRule_label_long"
+            >
+            <CheckBoxPreference
+                android:key="@string/preferences_questions_descriptionBeforeLessonWithExceptionRule_key"
+                />
+        </PreferenceScreen>
         <EditTextPreference
             android:key="@string/preferences_questions_numberOfAttemptsPerQuestion_key"
             android:title="@string/preferences_questions_numberOfAttemptsPerQuestion_label"

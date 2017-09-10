@@ -46,19 +46,11 @@ public class LessonList extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        Log.d(TAG, "onStart() : " + lessonCategoryID);
         LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer(getContext());
         listener.setToolbarState(
                 new ToolbarState(lessonHierarchyViewer.getLessonCategory(lessonCategoryID).getTitle(),
                         false, null)
             );
-    }
-
-
-    @Override
-    public void onStop(){
-        super.onStop();
-        Log.d(TAG, "onStop()");
     }
 
     @Override

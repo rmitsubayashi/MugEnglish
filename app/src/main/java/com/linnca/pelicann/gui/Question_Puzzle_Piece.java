@@ -102,10 +102,9 @@ public class Question_Puzzle_Piece extends Question_General {
     }
 
     @Override
-    protected String getFeedback(){
+    protected String formatWrongFeedbackString(){
         String answer = questionData.getAnswer();
-        //double space to make it look more like puzzle pieces
-        answer = answer.replace("|", "  ");
+        answer = answer.replace("|", " ");
         return "正解: " + answer;
     }
 

@@ -10,6 +10,7 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 
 import com.linnca.pelicann.db.database2classmappings.QuestionTypeMappings;
 
+import com.linnca.pelicann.db.datawrappers.FeedbackPair;
 import com.linnca.pelicann.db.datawrappers.QuestionData;
 
 import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
@@ -168,6 +169,12 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
             questionSet.add(fillInBlankInputQuestion);
 
+            List<QuestionData> fillInBlankInput1Question = createFillInBlankInputQuestion1(qr);
+            questionSet.add(fillInBlankInput1Question);
+
+            List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
+            questionSet.add(fillInBlankInput2Question);
+
             super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameForeign));
         }
 
@@ -190,6 +197,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
         data.setVocabulary(null);
+        data.setFeedback(null);
 
         List<QuestionData> questionVariations = new ArrayList<>();
         questionVariations.add(data);
@@ -197,49 +205,79 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
     }
 
+    private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
+        String lowercaseCountry = qr.countryNameEN.toLowerCase();
+        List<String> responses = new ArrayList<>();
+        responses.add(lowercaseCountry);
+        String feedback = "国の名前は大文字で始まります。\n" + qr.countryNameEN;
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
 
-    private String The_emergency_phone_number_of_COUNTRY_is(QueryResult qr, int phoneNumberIndex){
+    private List<QuestionData> createFillInBlankInputQuestion(QueryResult qr){
+        String question = qr.countryNameForeign  + "\n\n" + QuestionUtils.FILL_IN_BLANK_TEXT;
+        String answer = qr.countryNameEN;
+        FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
+        List<FeedbackPair> feedbackPairs = new ArrayList<>();
+        feedbackPairs.add(feedbackPair);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(super.lessonKey);
+        data.setTopic(qr.countryNameForeign);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(null);
+        data.setFeedback(feedbackPairs);
+        List<QuestionData> questionDataList = new ArrayList<>();
+        questionDataList.add(data);
+
+        return questionDataList;
+    }
+
+    private String fillInBlankInput1Question(QueryResult qr, int phoneNumberIndex){
+        String phoneNumber = qr.phoneNumbers.get(phoneNumberIndex);
+        String supportingSentence = "英単語を記入してください";
+        String sentence1 = qr.countryNameForeign + "の緊急通報用電話番号は" + phoneNumber + "です。";
+        String sentence2 = "The emergency phone number of " + qr.countryNameEN + " is " + QuestionUtils.FILL_IN_BLANK_TEXT + ".";
+        return supportingSentence + "\n\n" + sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInBlankInput1Answer(QueryResult qr, int phoneNumberIndex){
         StringBuilder phoneNumberWordsBuilder = new StringBuilder();
         char[] phoneNumber = qr.phoneNumbers.get(phoneNumberIndex).toCharArray();
         for (char number : phoneNumber){
             //numeric value of char ints are the int value (hacky)
             String numberWord = QGUtils.convertIntToWord(Character.getNumericValue(number));
             phoneNumberWordsBuilder.append(numberWord);
-            phoneNumberWordsBuilder.append(" - ");
+            phoneNumberWordsBuilder.append(" ");
         }
-        String phoneNumberWord = phoneNumberWordsBuilder.substring(0, phoneNumberWordsBuilder.length()-3);
-        String countryName = GrammarRules.definiteArticleBeforeCountry(qr.countryNameEN);
-
-        return "The emergency phone number of " + countryName + " is " + phoneNumberWord + ".";
-
+        return phoneNumberWordsBuilder.substring(0, phoneNumberWordsBuilder.length()-1);
     }
 
-
-
-    private String fillInBlankInputQuestion(QueryResult qr, int phoneNumberIndex){
-
-        String sentence1 = The_emergency_phone_number_of_COUNTRY_is(qr, phoneNumberIndex);
-
-        String sentence2 = qr.countryNameForeign + "の緊急通報用電話番号は" + QuestionUtils.FILL_IN_BLANK_NUMBER +
-                "です。";
-        return sentence1 + "\n\n" + sentence2;
-
+    private FeedbackPair fillInBlankInput1Feedback(QueryResult qr, int phoneNumberIndex){
+        List<String> responses = new ArrayList<>();
+        String phoneNumberNumber = qr.phoneNumbers.get(phoneNumberIndex);
+        //if the user types nine hundred eleven for 911
+        String phoneNumberWords = QGUtils.convertIntToWord(phoneNumberNumber);
+        responses.add(phoneNumberWords);
+        String feedback = "電話番号は一桁ずつ分けて言います。つまり、 " + phoneNumberWords +
+                " ではなく " + fillInBlankInput1Answer(qr, phoneNumberIndex) + " が正解です。";
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
     }
 
-
-
-    private String fillInBlankInputAnswer(QueryResult qr, int phoneNumberIndex){
-        return qr.phoneNumbers.get(phoneNumberIndex);
-    }
-
-    private List<QuestionData> createFillInBlankInputQuestion(QueryResult qr){
+    private List<QuestionData> createFillInBlankInputQuestion1(QueryResult qr){
         int phoneNumbersSize = qr.phoneNumbers.size();
         List<QuestionData> questionDataList = new ArrayList<>(phoneNumbersSize);
 
         for (int phoneNumberIndex=0; phoneNumberIndex<phoneNumbersSize; phoneNumberIndex++) {
-            String question = this.fillInBlankInputQuestion(qr, phoneNumberIndex);
+            String question = this.fillInBlankInput1Question(qr, phoneNumberIndex);
 
-            String answer = fillInBlankInputAnswer(qr, phoneNumberIndex);
+            String answer = fillInBlankInput1Answer(qr, phoneNumberIndex);
+            FeedbackPair feedbackPair = fillInBlankInput1Feedback(qr, phoneNumberIndex);
+            List<FeedbackPair> feedbackPairs = new ArrayList<>();
+            feedbackPairs.add(feedbackPair);
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(super.lessonKey);
@@ -250,6 +288,58 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
             data.setVocabulary(null);
+            data.setFeedback(feedbackPairs);
+            questionDataList.add(data);
+        }
+        return questionDataList;
+
+    }
+
+    private String fillInBlankInputQuestion2(QueryResult qr, int phoneNumberIndex){
+        StringBuilder phoneNumberWordsBuilder = new StringBuilder();
+        char[] phoneNumber = qr.phoneNumbers.get(phoneNumberIndex).toCharArray();
+        for (char number : phoneNumber){
+            //numeric value of char ints are the int value (hacky)
+            String numberWord = QGUtils.convertIntToWord(Character.getNumericValue(number));
+            phoneNumberWordsBuilder.append(numberWord);
+            phoneNumberWordsBuilder.append(" ");
+        }
+        String phoneNumberWord = phoneNumberWordsBuilder.substring(0, phoneNumberWordsBuilder.length()-1);
+        String countryName = GrammarRules.definiteArticleBeforeCountry(qr.countryNameEN);
+
+        String sentence1 = "The emergency phone number of " + countryName + " is " + phoneNumberWord + ".";
+
+        String sentence2 = qr.countryNameForeign + "の緊急通報用電話番号は" + QuestionUtils.FILL_IN_BLANK_NUMBER +
+                "です。";
+        return sentence1 + "\n\n" + sentence2;
+
+    }
+
+
+
+    private String fillInBlankInputAnswer2(QueryResult qr, int phoneNumberIndex){
+        return qr.phoneNumbers.get(phoneNumberIndex);
+    }
+
+    private List<QuestionData> createFillInBlankInputQuestion2(QueryResult qr){
+        int phoneNumbersSize = qr.phoneNumbers.size();
+        List<QuestionData> questionDataList = new ArrayList<>(phoneNumbersSize);
+
+        for (int phoneNumberIndex=0; phoneNumberIndex<phoneNumbersSize; phoneNumberIndex++) {
+            String question = this.fillInBlankInputQuestion2(qr, phoneNumberIndex);
+
+            String answer = fillInBlankInputAnswer2(qr, phoneNumberIndex);
+            QuestionData data = new QuestionData();
+            data.setId("");
+            data.setLessonId(super.lessonKey);
+            data.setTopic(qr.countryNameForeign);
+            data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+            data.setQuestion(question);
+            data.setChoices(null);
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+            data.setVocabulary(null);
+            data.setFeedback(null);
             questionDataList.add(data);
         }
         return questionDataList;

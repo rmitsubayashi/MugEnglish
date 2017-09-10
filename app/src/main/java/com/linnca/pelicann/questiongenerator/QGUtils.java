@@ -8,67 +8,80 @@ public class QGUtils {
 
     //for converting ints to words
     private static final String[] specialNames = {
-            "",
-            " thousand",
-            " million",
-            " billion",
-            " trillion",
-            " quadrillion",
-            " quintillion"
+            "thousand",
+            "million",
+            "billion",
+            "trillion",
+            "quadrillion",
+            "quintillion"
     };
 
-    private static final String[] tensNames = {
-            "",
-            " ten",
-            " twenty",
-            " thirty",
-            " forty",
-            " fifty",
-            " sixty",
-            " seventy",
-            " eighty",
-            " ninety"
+    private static final String[] tens = {
+            "ten",
+            "twenty",
+            "thirty",
+            "forty",
+            "fifty",
+            "sixty",
+            "seventy",
+            "eighty",
+            "ninety"
     };
 
-    private static final String[] numNames = {
-            "",
-            " one",
-            " two",
-            " three",
-            " four",
-            " five",
-            " six",
-            " seven",
-            " eight",
-            " nine",
-            " ten",
-            " eleven",
-            " twelve",
-            " thirteen",
-            " fourteen",
-            " fifteen",
-            " sixteen",
-            " seventeen",
-            " eighteen",
-            " nineteen"
+    private static final String[] ones = {
+            "one",
+            "two",
+            "three",
+            "four",
+            "five",
+            "six",
+            "seven",
+            "eight",
+            "nine"
+    };
+
+    private static final String[] teens = {
+            "eleven",
+            "twelve",
+            "thirteen",
+            "fourteen",
+            "fifteen",
+            "sixteen",
+            "seventeen",
+            "eighteen",
+            "nineteen"
     };
 
     private static String convertLessThanOneThousand(int number) {
-        String current;
+        String current = "";
 
-        if (number % 100 < 20){
-            current = numNames[number % 100];
+        if (number % 100 > 10 && number % 100 < 20){
+            current = " " + teens[number % 10 - 1];
+            //get hundreds place
             number /= 100;
         }
         else {
-            current = numNames[number % 10];
+            //get ones place
+            boolean onesExists = number % 10 > 0;
+            if (onesExists)
+                current = ones[number % 10 - 1];
             number /= 10;
 
-            current = tensNames[number % 10] + current;
+            //ones and tens
+            if (onesExists && number % 10 > 0)
+                current = " " + tens[number % 10 - 1] + "-" + current;
+            //just tens
+            else if (!onesExists && number % 10 > 0)
+                current = " " + tens[number % 10 - 1];
+            //just ones
+            else if (onesExists && number % 10 == 0)
+                current = " " + current;
             number /= 10;
         }
+        //if we don't need a hundreds place
         if (number == 0) return current;
-        return numNames[number] + " hundred" + current;
+        //we need a hundreds place
+        return " " + ones[number-1] + " hundred" + current;
     }
 
     public static String convertIntToWord(int number) {
@@ -89,13 +102,27 @@ public class QGUtils {
             int n = number % 1000;
             if (n != 0){
                 String s = convertLessThanOneThousand(n);
-                current = s + specialNames[place] + current;
+                if (place != 0)
+                    current = s + " " + specialNames[place-1] + current;
+                else
+                    current = s + current;
             }
             place++;
             number /= 1000;
         } while (number > 0);
 
         return (prefix + current).trim();
+    }
+
+    public static String convertIntToWord(String numberString){
+        int number;
+        try {
+            number = Integer.parseInt(numberString);
+        } catch (ClassCastException e){
+            e.printStackTrace();
+            return numberString;
+        }
+        return convertIntToWord(number);
     }
 
     public static boolean containsJapanese(String str){

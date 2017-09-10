@@ -33,7 +33,7 @@ public class LessonHierarchyViewer {
         lessonCategories.add(greetingsCategory);*/
 
         LessonCategory workCategory = new LessonCategory(ID_WORK, context.getString(R.string.lesson_category_work));
-        workCategory.addLesson(new LessonData(NAME_is_a_OCCUPATION.KEY, "職業", null));
+        workCategory.addLesson(new LessonData(NAME_is_a_OCCUPATION.KEY, "職業", R.layout.fragment_description_name_is_a_occupation));
         //workCategory.addLesson(new LessonData(NAME_plays_SPORT.KEY, "スポーツ選手", null));
 
         lessonCategories.add(workCategory);
@@ -65,5 +65,17 @@ public class LessonHierarchyViewer {
             }
         }
         return null;
+    }
+
+    public boolean layoutExists(String lessonKey){
+        for (LessonCategory category : lessonCategories){
+            for (LessonData lessonData : category.getLessons()){
+                if (lessonData.getKey().equals(lessonKey)){
+                    return lessonData.getDescriptionLayout()  != null;
+                }
+            }
+        }
+
+        return false;
     }
 }

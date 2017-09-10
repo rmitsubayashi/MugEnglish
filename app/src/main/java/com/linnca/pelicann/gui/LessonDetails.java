@@ -71,7 +71,6 @@ public class LessonDetails extends Fragment {
 
             addActionListeners();
             populateData();
-            adjustLayout();
 
         }
         int color = arguments.getInt(BUNDLE_BACKGROUND_COLOR, 0);
@@ -239,15 +238,6 @@ public class LessonDetails extends Fragment {
         appBar.setBackgroundColor(color);
         */
 
-    }
-
-    private void adjustLayout(){
-
-        //only show description if the user has enabled it (default is enabled)
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(LessonDetails.this.getContext());
-        boolean showDescription = sharedPreferences.getBoolean
-                (getString(R.string.preferences_questions_descriptionBeforeQuestions_key), true);
     }
 
     private void addActionListeners(){

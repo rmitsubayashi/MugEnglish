@@ -80,23 +80,33 @@
     <string name="toolbar_description_title">説明</string>
 
     <!--preferences-->
+    <string name="preferences_main_key">Main Preferences</string>
     <string name="preferences_category_questions_label">
         問題
     </string>
     <string name="preferences_category_questions_key">
         preferences:questions
     </string>
-    <string name="preferences_questions_descriptionBeforeQuestions_key">
-        preferences:description before question
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key">
+        preferenceScreen:description before exception question
     </string>
-    <string name="preferences_questions_descriptionBeforeQuestions_label">
-        説明文を表示
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_key">
+        preferences:description before exception question
     </string>
-    <string name="preferences_questions_descriptionBeforeQuestions_description">
-        挑戦するのが一番大事。\n
-        説明文を読まずにいきなりチャレンジしてみるのも正しい勉強法。\n
-        全問間違っても大丈夫です。\n
-        問題が終わったら説明文を表示します。
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_label_short">
+        例外的な文法の説明文
+    </string>
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_label_long">
+        例外的な文法の説明文を表示する
+    </string>
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_true">表示</string>
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_false">非表示</string>
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_description_functionality">
+        例外的な文法が出題されるレッスンを学習するとき、レッスン選択画面および問題画面の説明文を表示させるボタンを表示するかどうか、選択できます。非表示にした場合は、問題を間違えた時に表示されるアドバイスと結果画面で文法を学べます（結果画面の説明文ボタンは非表示にはなりません）。
+    </string>
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_description_reason">
+        説明文を隠すので、Pelicannで勉強した事前知識のみで問題を解くことになります。そして当たり前のように例外的な文法に引っ掛かります。\n問題を間違えた後のアドバイスで例外的な文法の説明をします。「こうだったと思ったのに、実はこうだった」という発見ができると思います。事前に説明文を読むとこの発見はできません。\n\n
+        なぜこの発見が重要なのか。自分の誤りと正しい文法を比べることにより、より効率的にその文法を覚えられます。これは Garden Path Technique (ガーデンパステクニック)といい、何人もの研究者が実証しています。良ければ調べてみてください。（似たような単語に「ガーデンパス現象」がありますが、これは全くの別物です）
     </string>
     <string name="preferences_questions_numberOfAttemptsPerQuestion_key">
         preferences:number of question attempts
@@ -112,6 +122,9 @@
     </string>
     <string name="preferences_first_time_key">preferences:first time</string>
     <string name="preferences_last_selected_lesson_category">preferences: last selected lesson category</string>
+
+    <string name="preferences_subscreen_functionality_title">機能</string>
+    <string name="preferences_subscreen_reason_title">理由</string>
 
     <string name="lesson_category_greetings">あいさつ</string>
     <string name="lesson_category_family">家族</string>
@@ -231,7 +244,8 @@
     <string name="question_true_false_false">嘘</string>
     <string name="question_puzzle_piece_instructions">組み立ててください</string>
     <string name="question_puzzle_piece_submit">確定</string>
-    <string name="question_fill_in_blank_input_instructions">空欄に入る言葉を記入してください</string>
+    <string name="question_fill_in_blank_input_text_instructions">空欄に入る言葉を記入してください</string>
+    <string name="question_fill_in_blank_input_number_instructions">空欄に入る数字を記入してください</string>
     <string name="question_fill_in_blank_input_submit">確定</string>
     <string name="question_fill_in_blank_input_hint">答え</string>
     <string name="question_fill_in_blank_multiple_choice_instructions">空欄に入る言葉を選択してください</string>
