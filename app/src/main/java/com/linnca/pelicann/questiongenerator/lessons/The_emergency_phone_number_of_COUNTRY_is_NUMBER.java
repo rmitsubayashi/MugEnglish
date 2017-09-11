@@ -167,8 +167,8 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             List<QuestionData> spellingSuggestiveQuestion = spellingSuggestiveQuestion(qr);
             questionSet.add(spellingSuggestiveQuestion);
 
-            List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
-            questionSet.add(fillInBlankInputQuestion);
+            List<QuestionData> translateWordQuestion = createTranslateWordQuestion(qr);
+            questionSet.add(translateWordQuestion);
 
             List<QuestionData> fillInBlankInput1Question = createFillInBlankInputQuestion1(qr);
             questionSet.add(fillInBlankInput1Question);
@@ -214,8 +214,8 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
-    private List<QuestionData> createFillInBlankInputQuestion(QueryResult qr){
-        String question = qr.countryNameForeign  + "\n\n" + QuestionUtils.FILL_IN_BLANK_TEXT;
+    private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
+        String question = qr.countryNameForeign;
         String answer = qr.countryNameEN;
         FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
@@ -224,7 +224,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(qr.countryNameForeign);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);

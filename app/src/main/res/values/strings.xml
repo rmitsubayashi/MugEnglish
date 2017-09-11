@@ -253,5 +253,8 @@
     <string name="question_multiple_choice_instructions">正しい解答を選択してください</string>
     <string name="question_spelling_instructions">つづってください</string>
     <string name="question_spelling_submit">確定</string>
+    <string name="question_translate_word_number_instructions">訳してください</string>
+    <string name="question_translate_word_hint">訳</string>
+    <string name="question_translate_word_submit">確定</string>
 
 </resources>

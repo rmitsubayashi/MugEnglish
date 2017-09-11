@@ -2,45 +2,54 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_question_fill_in_blank_input"
+    android:id="@+id/fragment_question_translate_word"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/question_translate_word_main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/question_fill_in_blank_input_main_layout">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <TextView
-            android:id="@+id/question_fill_in_blank_input_instructions"
+            android:id="@+id/question_translate_word_instructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/questions_instructions"/>
+        <!--change text size based on the word-->
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/questions_question"
-            android:id="@+id/question_fill_in_blank_input_question"/>
-        <EditText
+            android:id="@+id/question_translate_word_word_to_translate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center"/>
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_gravity="center"
+            android:tint="@color/lblue300"
+            android:src="@drawable/ic_down_arrow_24dp"
+            />
+        <EditText
+            android:id="@+id/question_translate_word_input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:hint="@string/question_fill_in_blank_input_hint"
-            android:id="@+id/question_fill_in_blank_input_input"/>
+            android:hint="@string/question_translate_word_hint"/>
         <Button
+            android:id="@+id/question_translate_word_submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginEnd="16dp"
             style="@style/questions_submit_button"
-            android:text="@string/question_fill_in_blank_input_submit"
-            android:id="@+id/question_fill_in_blank_input_submit"/>
+            android:text="@string/question_translate_word_submit"/>
 
     </LinearLayout>
 

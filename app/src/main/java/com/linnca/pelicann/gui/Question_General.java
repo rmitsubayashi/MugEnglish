@@ -208,10 +208,11 @@ public abstract class Question_General extends Fragment {
     }
 
     protected String formatAnswer(String answer){
-        //we still accept technically wrong answers like david beckham
-        //(names should always be capitalized.
-        //this should not be in acceptable answers but rather
-        return answer.toLowerCase();
+        //we still accept technically wrong answers for example
+        //names should always be capitalized.
+        //this should be considered correct and
+        //reinforced in the feedback section
+        return answer.toLowerCase().trim();
     }
 
     protected View.OnClickListener getResponseListener(){

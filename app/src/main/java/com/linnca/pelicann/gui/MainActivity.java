@@ -356,6 +356,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case QuestionTypeMappings.SPELLING_SUGGESTIVE :
                         fragment = new Question_Spelling_Suggestive();
                         break;
+                    case QuestionTypeMappings.SPELLING :
+                        fragment = new Question_Spelling();
+                        break;
+                    case QuestionTypeMappings.TRANSLATE_WORD :
+                        fragment = new Question_TranslateWord();
+                        break;
                     default:
                         Log.d(TAG, "Could not find question type");
                         return;
