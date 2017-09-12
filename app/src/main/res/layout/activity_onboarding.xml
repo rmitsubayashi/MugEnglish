@@ -6,9 +6,9 @@
                                                  android:layout_width="match_parent"
                                                  android:layout_height="match_parent"
                                                  android:fitsSystemWindows="true"
-                                                 tools:context="com.linnca.pelicann.gui.Onboarding">
+                                                 tools:context="com.linnca.pelicann.onboarding.Onboarding">
 
-    <com.linnca.pelicann.gui.widgets.ViewPagerCustomDuration
+    <com.linnca.pelicann.onboarding.ViewPagerCustomDuration
         android:id="@+id/onboarding_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

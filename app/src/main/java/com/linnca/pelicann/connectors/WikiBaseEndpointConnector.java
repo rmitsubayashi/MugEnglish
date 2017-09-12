@@ -34,17 +34,17 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	
 	//クエリーの言語設定
 	//@language@を指定言語に置き換える
-	private String language;
+	private final String language;
 	//候補(Constructorに入れる用)
 	static public final String ENGLISH = "en";
 	static public final String JAPANESE = "ja";
 	static public final String LANGUAGE_PLACEHOLDER = "@language@";
 	
-	public WikiBaseEndpointConnector(){
+	WikiBaseEndpointConnector(){
 		this.language = ENGLISH;
 	}
 	
-	public WikiBaseEndpointConnector(String language){
+	WikiBaseEndpointConnector(String language){
 		this.language = language;
 	}
 	
@@ -61,7 +61,7 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	
 	protected abstract String formatURL(String... parameterValue) throws Exception;
 	
-	protected String formatRequestLanguage(String str){
+	String formatRequestLanguage(String str){
 		return str.replace(LANGUAGE_PLACEHOLDER, language);
 	}
 	

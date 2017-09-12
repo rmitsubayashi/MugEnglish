@@ -20,8 +20,8 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
-import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
-import com.linnca.pelicann.questiongenerator.QGUtils;
+import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.questions.QGUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

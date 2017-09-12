@@ -6,7 +6,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                tools:context="com.linnca.pelicann.gui.UserProfile">
+                tools:context="com.linnca.pelicann.userprofile.UserProfile">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/user_profile_tab_layout"

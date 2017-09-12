@@ -8,7 +8,7 @@
           android:minHeight="72dp"
           android:gravity="center_vertical"
           android:weightSum="1.0"
-    >
+              android:baselineAligned="false">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"

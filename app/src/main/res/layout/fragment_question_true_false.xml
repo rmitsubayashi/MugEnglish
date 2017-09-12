@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context="com.linnca.pelicann.gui.Question_TrueFalse">
+    tools:context="com.linnca.pelicann.questions.Question_TrueFalse">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

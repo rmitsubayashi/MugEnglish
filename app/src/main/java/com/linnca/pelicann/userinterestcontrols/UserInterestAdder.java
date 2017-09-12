@@ -12,7 +12,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
-import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -22,8 +22,8 @@ import org.w3c.dom.NodeList;
 //people, places, etc.
 public class UserInterestAdder {
     private WikiDataEntryData dataToAdd;
-    private  PronunciationSearcher pronunciationSearcher = new PronunciationSearcher();
-    private WikiBaseEndpointConnector wikiBaseEndpointConnector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
+    private final PronunciationSearcher pronunciationSearcher = new PronunciationSearcher();
+    private final WikiBaseEndpointConnector wikiBaseEndpointConnector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
 
     public void findPronunciationAndCategoryThenAdd(WikiDataEntryData dataToAdd){
         this.dataToAdd = dataToAdd;

@@ -134,7 +134,6 @@
 
     <!--onboarding pages-->
     <string name="onboarding_skip">スキップ</string>
-    <string name="onboarding_next">次へ</string>
     <string name="onboarding_finish">終了</string>
     <string name="onboarding_introduction1_title">ようこそ！</string>
     <string name="onboarding_introduction1_who_are_you">君だれ？</string>
@@ -160,8 +159,6 @@
     <string name="main_navigation_drawer_lesson_categories_level1">レベル1</string>
 
     <!--Lesson list page -->
-    <string name="lesson_list_app_bar_title">テーマを選択</string>
-    <string name="lesson_list_search_hint">テーマを検索</string>
     <string name="lesson_list_navigation_drawer_open">開く</string>
     <string name="lesson_list_navigation_drawer_close">閉じる</string>
 
@@ -195,13 +192,7 @@
     <string name="facebook_interests_search_locations">行ったことがある場所を検索中</string>
 
     <!--Lesson Details Page-->
-    <string name="lesson_details_lastPlayed">最終プレイ</string>
     <string name="lesson_details_created">作成日</string>
-    <string name="lesson_details_bestScore">Best Score</string>
-    <string name="lesson_details_playButton">スタート</string>
-    <string name="lesson_details_newInstance">新規</string>
-    <string name="lesson_details_app_bar_title">問題を選択</string>
-    <string name="lesson_details_did_not_choose_instance">問題を選択してください</string>
     <string name="lesson_details_item_menu_more_info">詳細</string>
     <string name="lesson_details_item_menu_delete">消去</string>
     <string name="lesson_details_no_items">レッスンがありません\n\n
@@ -213,9 +204,6 @@
     <string name="lesson_description_exception_tag">exception</string>
 
     <!--user interests list-->
-    <string name="user_interests_app_bar_title">お気に入り</string>
-    <string name="user_interests_search_hint">検索</string>
-    <string name="title_activity_fab">fab</string>
     <string name="user_interests_list_item_delete">消去</string>
     <string name="user_interests_list_item_deleted">消去しました</string>
     <string name="user_interests_list_item_deleted_undo">戻す</string>

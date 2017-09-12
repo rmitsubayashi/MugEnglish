@@ -2,7 +2,7 @@ package com.linnca.pelicann.userinterestcontrols;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
-import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,8 +19,8 @@ public class EntitySearcher {
 	* so we have to make another request to the WikiData API to get the
 	* Japanese description
 	* */
-	private EndpointConnectorReturnsXML searchConnector;
-	public static int LIMIT = 50;
+	private final EndpointConnectorReturnsXML searchConnector;
+	public static final int LIMIT = 50;
 
 	public EntitySearcher(WikiDataAPISearchConnector searchConnector){
 		this.searchConnector = searchConnector;

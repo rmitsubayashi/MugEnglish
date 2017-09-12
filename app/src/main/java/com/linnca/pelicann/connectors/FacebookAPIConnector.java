@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 
 public class FacebookAPIConnector implements EndpointConnectorReturnsJSON {
-    public static String SELF_USER_ID = "me";
+    public static final String SELF_USER_ID = "me";
 
     public FacebookAPIConnector(){}
 

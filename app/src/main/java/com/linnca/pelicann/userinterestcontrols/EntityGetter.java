@@ -3,7 +3,7 @@ package com.linnca.pelicann.userinterestcontrols;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiDataAPIGetConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
-import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,14 +13,14 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityGetter {
+class EntityGetter {
     /*
     * The only reason we have two connectors is because the search API
     * for WikiData doesn't return the Japanese description (only Japanese label)
     * so we have to make another request to the WikiData API to get the
     * Japanese description
     * */
-    private EndpointConnectorReturnsXML getConnector;
+    private final EndpointConnectorReturnsXML getConnector;
 
     public EntityGetter(WikiDataAPIGetConnector getConnector){
         this.getConnector = getConnector;

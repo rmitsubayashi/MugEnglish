@@ -11,8 +11,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class PronunciationSearcher {
-    private WikiDataSPARQLConnector connector =
+class PronunciationSearcher {
+    private final WikiDataSPARQLConnector connector =
             new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
 
     public PronunciationSearcher(){}

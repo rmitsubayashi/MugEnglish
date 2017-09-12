@@ -8,7 +8,7 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
-import com.linnca.pelicann.db.datawrappers.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 public class UserInterestRemover {
     public static void removeUserInterest(final WikiDataEntryData data, String userID){

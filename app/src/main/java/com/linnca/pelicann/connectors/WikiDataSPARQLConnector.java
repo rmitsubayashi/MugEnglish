@@ -10,7 +10,7 @@ public class WikiDataSPARQLConnector extends WikiBaseEndpointConnector {
 	 * WikiDataのSPARQLエンドポイントに接続
 	 */
 	public static String ALL_RESULTS_TAG = "results";
-	public static String RESULT_TAG = "result";
+	public static final String RESULT_TAG = "result";
 	
 	public WikiDataSPARQLConnector(){
 		super();
