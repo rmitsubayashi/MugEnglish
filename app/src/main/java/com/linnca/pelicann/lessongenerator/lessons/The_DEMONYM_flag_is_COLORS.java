@@ -5,12 +5,14 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.questions.QGUtils;
+import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -102,7 +104,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
-            countryID = QGUtils.stripWikidataID(countryID);
+            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
             String colorEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "colorEN");
             String colorJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "colorLabel");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
@@ -146,7 +148,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
     private String fillInBlankQuestion(QueryResult qr, String answer, List<String> colorStrings){
         List<String> colorStringsCopy = new ArrayList<>(colorStrings);
         int answerIndex = colorStringsCopy.indexOf(answer);
-        colorStringsCopy.set(answerIndex, QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        colorStringsCopy.set(answerIndex, Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE);
         Collections.shuffle(colorStringsCopy);
         String colorSeries = GrammarRules.commasInASeries(colorStringsCopy, "and");
 
@@ -199,7 +201,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
         List<String> colorStringsEN = new ArrayList<>(colors.size());
         for (QueryResult color : colors){
             if (color.colorEN.equals(answerColorEN)){
-                colorStringsEN.add(QuestionUtils.FILL_IN_BLANK_TEXT);
+                colorStringsEN.add(Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
             } else {
                 colorStringsEN.add(color.colorEN);
             }

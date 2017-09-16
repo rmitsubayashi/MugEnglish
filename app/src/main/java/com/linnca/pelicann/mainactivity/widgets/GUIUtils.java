@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.TypedValue;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
 import com.firebase.ui.auth.AuthUI;
@@ -175,13 +177,16 @@ public class GUIUtils {
         return result;
     }
 
-    public static String createBlank(String answer){
-        //just slightly bigger than the answer
-        int length = answer.length() + 1;
-        StringBuilder builder = new StringBuilder();
-        for (int i=0; i<length; i++){
-            builder.append("_");
+    public static void hideKeyboard(View targetViewOfKeyboard){
+        if (targetViewOfKeyboard == null){
+            return;
         }
-        return builder.toString();
+        targetViewOfKeyboard.clearFocus();
+        InputMethodManager imm = (InputMethodManager) targetViewOfKeyboard.getContext()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(targetViewOfKeyboard.getWindowToken(), 0);
+        }
     }
 }

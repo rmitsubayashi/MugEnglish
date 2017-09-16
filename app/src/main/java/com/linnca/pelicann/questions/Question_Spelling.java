@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

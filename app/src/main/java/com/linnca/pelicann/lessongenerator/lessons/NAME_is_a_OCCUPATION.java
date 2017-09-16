@@ -5,12 +5,13 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.questions.QGUtils;
+import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
 
 import org.w3c.dom.Document;
@@ -86,7 +87,7 @@ public class NAME_is_a_OCCUPATION extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
-            personID = QGUtils.stripWikidataID(personID);
+            personID = LessonGeneratorUtils.stripWikidataID(personID);
             String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
             String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
             String occupationEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationEN");
@@ -176,7 +177,7 @@ public class NAME_is_a_OCCUPATION extends Lesson{
             article = "an";
 
         String sentence = qr.personNameEN + " is " + article + " " +
-                precedingHint + QuestionUtils.FILL_IN_BLANK_TEXT + followingHint + ".";
+                precedingHint + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + followingHint + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }

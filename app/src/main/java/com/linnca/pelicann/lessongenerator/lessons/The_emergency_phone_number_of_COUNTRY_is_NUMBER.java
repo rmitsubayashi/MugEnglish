@@ -13,14 +13,15 @@ import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.questions.QuestionData;
 
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 
-import com.linnca.pelicann.questions.QGUtils;
+import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionUtils;
 
 import com.linnca.pelicann.lessongenerator.Lesson;
 
@@ -108,7 +109,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryName");
 
-            countryID = QGUtils.stripWikidataID(countryID);
+            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
             String countryNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryNameEN");
             String countryNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryNameLabel");
             String phoneNumber = SPARQLDocumentParserHelper.findValueByNodeName(head, "phoneNumberLabel");
@@ -213,19 +214,19 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         String phoneNumber = qr.phoneNumber;
         String supportingSentence = "英単語を記入してください";
         String sentence1 = qr.countryNameForeign + "の緊急通報用電話番号は" + phoneNumber + "です。";
-        String sentence2 = "The emergency phone number of " + qr.countryNameEN + " is " + QuestionUtils.FILL_IN_BLANK_TEXT + ".";
+        String sentence2 = "The emergency phone number of " + qr.countryNameEN + " is " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
         return supportingSentence + "\n\n" + sentence1 + "\n\n" + sentence2;
     }
 
     private String fillInBlankInput1Answer(QueryResult qr){
         String phoneNumber = qr.phoneNumber;
-        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        List<String> phoneNumberWords = LessonGeneratorUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
         return phoneNumberWords.get(0);
     }
 
     private List<String> fillInBlankInput1AcceptableAnswers(QueryResult qr){
         String phoneNumber = qr.phoneNumber;
-        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        List<String> phoneNumberWords = LessonGeneratorUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
         //remove the actual answer
         phoneNumberWords.remove(0);
         return phoneNumberWords;
@@ -235,9 +236,9 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         List<String> responses = new ArrayList<>();
         String phoneNumberNumber = qr.phoneNumber;
         //if the user types nine hundred eleven for 911
-        String numberWords = QGUtils.convertIntToWord(phoneNumberNumber);
+        String numberWords = LessonGeneratorUtils.convertIntToWord(phoneNumberNumber);
         responses.add(numberWords);
-        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumberNumber);
+        List<String> phoneNumberWords = LessonGeneratorUtils.convertPhoneNumberToPhoneNumberWords(phoneNumberNumber);
         String feedback = "電話番号は一桁ずつ分けて言います。つまり、 " + numberWords +
                 " ではなく " + phoneNumberWords.get(0) + " が正解です。";
 
@@ -249,7 +250,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         //let him know if there are other options available
         List<String> responses = new ArrayList<>();
         String phoneNumber = qr.phoneNumber;
-        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        List<String> phoneNumberWords = LessonGeneratorUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
         if (phoneNumberWords.size() == 1){
             return null;
         }
@@ -294,13 +295,13 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
     private String fillInBlankInputQuestion2(QueryResult qr){
         String phoneNumber = qr.phoneNumber;
-        List<String> phoneNumberWords = QGUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
+        List<String> phoneNumberWords = LessonGeneratorUtils.convertPhoneNumberToPhoneNumberWords(phoneNumber);
         String phoneNumberWord = phoneNumberWords.get(0);
         String countryName = GrammarRules.definiteArticleBeforeCountry(qr.countryNameEN);
 
         String sentence1 = "The emergency phone number of " + countryName + " is " + phoneNumberWord + ".";
 
-        String sentence2 = qr.countryNameForeign + "の緊急通報用電話番号は" + QuestionUtils.FILL_IN_BLANK_NUMBER +
+        String sentence2 = qr.countryNameForeign + "の緊急通報用電話番号は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER +
                 "です。";
         return sentence1 + "\n\n" + sentence2;
 

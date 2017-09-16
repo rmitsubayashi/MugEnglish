@@ -2,6 +2,7 @@ package com.linnca.pelicann.mainactivity.widgets;
 
 public class ToolbarState {
     public static final String NO_TITLE_WITH_SPINNER = "no title with spinner";
+    public static final String NO_CHANGE = "no change";
     private String title;
     private boolean searchIcon;
     //null if we wanat the icon to be hidden

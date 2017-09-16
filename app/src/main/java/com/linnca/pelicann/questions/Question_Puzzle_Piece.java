@@ -13,14 +13,13 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
 
 import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.List;
 
 
-public class Question_Puzzle_Piece extends Question_General {
+public class    Question_Puzzle_Piece extends Question_General {
     private FlowLayout answerLayout;
     private FlowLayout choicesLayout;
     private TextView questionTextView;
@@ -108,6 +107,7 @@ public class Question_Puzzle_Piece extends Question_General {
         return "正解: " + answer;
     }
 
+    //no need to enable text to speech because this will always be Japanese??
     private void populateQuestion(){
         questionTextView.setText(questionData.getQuestion());
     }
@@ -119,7 +119,7 @@ public class Question_Puzzle_Piece extends Question_General {
 
 
         //creating a new button every time is expensive?
-        for (String choice : choices){
+        for (final String choice : choices){
             Button choiceButton = (Button)inflater.inflate(buttonLayout, choicesLayout, false);
             choiceButton.setText(choice);
 
@@ -138,7 +138,8 @@ public class Question_Puzzle_Piece extends Question_General {
                             answerLayout.removeView(view);
                         }
                     });
-                    answerButton.setText(((Button)view).getText());
+                    final String answerText = ((Button)view).getText().toString();
+                    answerButton.setText(answerText);
 
                     //when we add the view and try to get coordinates, it doesn't return the right value.
                     //so listen for when the button is about to be drawn and animate it then with
@@ -191,6 +192,13 @@ public class Question_Puzzle_Piece extends Question_General {
                             }
                     );
 
+                    answerButton.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view) {
+                            QuestionUtils.startTextToSpeech(textToSpeech, answerText);
+                            return true;
+                        }
+                    });
                     answerLayout.addView(answerButton);
                     scrollView.postDelayed(new Runnable() {
                         @Override
@@ -198,6 +206,14 @@ public class Question_Puzzle_Piece extends Question_General {
                             scrollView.fullScroll(ScrollView.FOCUS_DOWN);
                         }
                     },1000);
+                }
+            });
+
+            choiceButton.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    QuestionUtils.startTextToSpeech(textToSpeech, choice);
+                    return true;
                 }
             });
 

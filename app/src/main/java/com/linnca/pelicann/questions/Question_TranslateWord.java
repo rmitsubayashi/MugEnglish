@@ -2,6 +2,7 @@ package com.linnca.pelicann.questions;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 
 public class Question_TranslateWord extends Question_General {
     private EditText questionInput;
@@ -68,7 +70,9 @@ public class Question_TranslateWord extends Question_General {
         String answer = questionData.getAnswer();
         instructions.setText(R.string.question_translate_word_number_instructions);
 
-        wordToTranslateTextView.setText(question);
+        wordToTranslateTextView.setText(
+                QuestionUtils.longClickToSpeechTextViewSpannable(wordToTranslateTextView, question, new SpannableString(question), textToSpeech)
+        );
         if (question.length() < 10){
             wordToTranslateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32);
         } else {
@@ -91,15 +95,12 @@ public class Question_TranslateWord extends Question_General {
     //hide keyboard
     @Override
     protected void doSomethingAfterResponse(){
-        questionInput.clearFocus();
-        InputMethodManager imm = (InputMethodManager) questionInput.getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        GUIUtils.hideKeyboard(questionInput);
+    }
 
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(questionInput.getWindowToken(), 0);
-        }
-
-
+    @Override
+    protected void doSomethingAfterFeedbackOpened(){
+        QuestionUtils.disableTextToSpeech(wordToTranslateTextView);
     }
 
     @Override

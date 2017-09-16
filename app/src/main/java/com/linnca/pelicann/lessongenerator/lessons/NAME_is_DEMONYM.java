@@ -5,12 +5,13 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.questions.QGUtils;
+import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionUtils;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -123,7 +124,7 @@ public class NAME_is_DEMONYM extends Lesson {
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
-            personID = QGUtils.stripWikidataID(personID);
+            personID = LessonGeneratorUtils.stripWikidataID(personID);
             String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
             String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
@@ -198,7 +199,7 @@ public class NAME_is_DEMONYM extends Lesson {
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personNameEN + " is " + QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence = qr.personNameEN + " is " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }

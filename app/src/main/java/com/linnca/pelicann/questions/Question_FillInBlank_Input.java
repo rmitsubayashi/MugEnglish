@@ -19,12 +19,13 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
 
 //we only have one blank per question
 //to make it easier for the user to solve
 
 public class Question_FillInBlank_Input extends Question_General {
+    public static final String FILL_IN_BLANK_TEXT = "@blankText@";
+    public  static final String FILL_IN_BLANK_NUMBER = "@blankNum@";
     private EditText questionInput;
     private TextView questionTextView;
     private Button submitButton;
@@ -77,16 +78,16 @@ public class Question_FillInBlank_Input extends Question_General {
         String question = questionData.getQuestion();
         String answer = questionData.getAnswer();
 
-        String blank = GUIUtils.createBlank(answer);
+        String blank = QuestionUtils.createBlank(answer);
 
         //the blanks can either be text or numbers, but only one blank
-        if (question.contains(QuestionUtils.FILL_IN_BLANK_NUMBER)){
+        if (question.contains(FILL_IN_BLANK_NUMBER)){
             questionInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-            question = question.replace(QuestionUtils.FILL_IN_BLANK_NUMBER, blank);
+            question = question.replace(FILL_IN_BLANK_NUMBER, blank);
             instructions.setText(R.string.question_fill_in_blank_input_number_instructions);
-        } else if (question.contains(QuestionUtils.FILL_IN_BLANK_TEXT)){
+        } else if (question.contains(FILL_IN_BLANK_TEXT)){
             questionInput.setInputType(InputType.TYPE_CLASS_TEXT);
-            question = question.replace(QuestionUtils.FILL_IN_BLANK_TEXT, blank);
+            question = question.replace(FILL_IN_BLANK_TEXT, blank);
             instructions.setText(R.string.question_fill_in_blank_input_text_instructions);
         }
 
@@ -102,7 +103,10 @@ public class Question_FillInBlank_Input extends Question_General {
         StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
         stringBuilder.setSpan(boldSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
-        questionTextView.setText(stringBuilder);
+
+        questionTextView.setText(
+                QuestionUtils.longClickToSpeechTextViewSpannable(questionTextView, question, stringBuilder, textToSpeech)
+        );
 
         //slightly larger than the answer
         questionInput.setMinEms(answer.length() + 1);
@@ -112,18 +116,14 @@ public class Question_FillInBlank_Input extends Question_General {
         submitButton.setOnClickListener(getResponseListener());
     }
 
-    //hide keyboard
     @Override
     protected void doSomethingAfterResponse(){
-        questionInput.clearFocus();
-        InputMethodManager imm = (InputMethodManager) questionInput.getContext()
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        GUIUtils.hideKeyboard(questionInput);
+    }
 
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(questionInput.getWindowToken(), 0);
-        }
-
-
+    @Override
+    protected void doSomethingAfterFeedbackOpened(){
+        QuestionUtils.disableTextToSpeech(questionTextView);
     }
 
     @Override

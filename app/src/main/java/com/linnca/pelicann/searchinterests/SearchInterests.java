@@ -92,7 +92,7 @@ public class SearchInterests extends Fragment {
     public void onStart(){
         super.onStart();
         searchInterestsListener.setToolbarState(
-                new ToolbarState(getString(R.string.fragment_search_interests_title), true, null)
+                new ToolbarState("", true, null)
         );
     }
 
@@ -120,6 +120,7 @@ public class SearchInterests extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         searchView = (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
+        searchView.setQueryHint(getString(R.string.search_interests_search_hint));
         //since we are doing real time, we can disable the submit button
         searchView.setSubmitButtonEnabled(false);
         //make it so the user can search without having to tap the search box (UX)

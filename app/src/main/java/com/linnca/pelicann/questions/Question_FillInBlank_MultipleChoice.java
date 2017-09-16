@@ -1,11 +1,13 @@
 package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
 
 import java.util.List;
+import java.util.Locale;
 
 public class Question_FillInBlank_MultipleChoice extends Question_General {
+    public static final String FILL_IN_BLANK_MULTIPLE_CHOICE = "@blankMC@";
     private TextView questionTextView;
     private LinearLayout choicesLayout;
 
@@ -61,14 +65,19 @@ public class Question_FillInBlank_MultipleChoice extends Question_General {
         return true;
     }
 
+    @Override
+    protected void doSomethingAfterFeedbackOpened(){
+        QuestionUtils.disableTextToSpeech(questionTextView);
+    }
+
     private void populateQuestion(){
         String question = questionData.getQuestion();
         String answer = questionData.getAnswer();
-        String blank = GUIUtils.createBlank(answer);
-        question = question.replace(QuestionUtils.FILL_IN_BLANK_MULTIPLE_CHOICE, blank);
+        String blank = QuestionUtils.createBlank(answer);
+        question = question.replace(FILL_IN_BLANK_MULTIPLE_CHOICE, blank);
         //color underline.
         //same code in fill in blank input
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(question);
+        final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(question);
         int startIndex = question.indexOf('_');//Emoji haha
         int endIndex = question.lastIndexOf('_') + 1;
         ForegroundColorSpan colorSpan = new ForegroundColorSpan(
@@ -79,7 +88,10 @@ public class Question_FillInBlank_MultipleChoice extends Question_General {
         StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
         stringBuilder.setSpan(boldSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
-        questionTextView.setText(stringBuilder);
+        questionTextView.setText(
+                QuestionUtils.longClickToSpeechTextViewSpannable(
+                        questionTextView, question, stringBuilder, textToSpeech)
+        );
     }
 
     private void populateButtons(LayoutInflater inflater){
@@ -96,6 +108,16 @@ public class Question_FillInBlank_MultipleChoice extends Question_General {
             choiceButton.setTag(choice);
             choiceButton.setOnClickListener(getResponseListener());
 
+            if (QuestionUtils.isAlphanumeric(choice)) {
+                final String fChoice = choice;
+                choiceButton.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        QuestionUtils.startTextToSpeech(textToSpeech, fChoice);
+                        return true;
+                    }
+                });
+            }
 
             choicesLayout.addView(choiceButton);
 

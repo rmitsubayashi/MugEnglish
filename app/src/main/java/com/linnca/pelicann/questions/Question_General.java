@@ -5,11 +5,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.ArrayList;
@@ -50,6 +53,8 @@ public abstract class Question_General extends Fragment {
 
     private QuestionListener questionListener;
 
+    protected TextToSpeech textToSpeech;
+
     public interface QuestionListener {
         void onNextQuestion();
         void onRecordResponse(String response, boolean correct);
@@ -65,6 +70,7 @@ public abstract class Question_General extends Fragment {
         totalQuestions = args.getInt(BUNDLE_QUESTION_TOTAL_QUESTIONS);
         setMaxNumberOfAttempts();
         disableChoiceAfterWrongAnswer = disableChoiceAfterWrongAnswer();
+        textToSpeech = ((MainActivity)getActivity()).getTextToSpeech();
     }
 
     @Override
@@ -107,11 +113,13 @@ public abstract class Question_General extends Fragment {
     protected abstract boolean disableChoiceAfterWrongAnswer();
     //for example clearing a response, hiding the keyboard, etc.
     //should be overridden if using (not required)
-    void doSomethingAfterResponse(){
+    protected void doSomethingAfterResponse(){}
+    //needed if we have text views that have clickable spans
+    //even if the textViews are not clickable, these events fire
+    protected void doSomethingAfterFeedbackOpened(){};
 
-    }
     //formatting may be different for certain question types, but this should be the base
-    String formatWrongFeedbackString(){
+    protected String formatWrongFeedbackString(){
         //no specific feedback to give to the user
         if (questionData.getFeedback() != null) {
             List<FeedbackPair> feedbackPairs = questionData.getFeedback();
@@ -222,7 +230,7 @@ public abstract class Question_General extends Fragment {
         return answer.toLowerCase().trim();
     }
 
-    View.OnClickListener getResponseListener(){
+    protected View.OnClickListener getResponseListener(){
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,6 +239,7 @@ public abstract class Question_General extends Fragment {
                 if (checkAnswer(answer)){
                     questionListener.onRecordResponse(answer, true);
                     openFeedback(true, answer);
+
                 } else {
                     questionListener.onRecordResponse(answer, false);
                     allWrongResponses.add(answer);
@@ -271,7 +280,7 @@ public abstract class Question_General extends Fragment {
         };
     }
 
-    void inflateFeedback(LayoutInflater inflater){
+    protected void inflateFeedback(LayoutInflater inflater){
         feedback = (NestedScrollView) inflater
                 .inflate(R.layout.inflatable_question_feedback, parentViewGroupForFeedback, false);
         behavior = BottomSheetBehavior.from(feedback);
@@ -317,13 +326,26 @@ public abstract class Question_General extends Fragment {
         }
 
         //we don't want the user to be able to interact with the background,
-        //but we want them ot be able to see it
+        //but we want them to be able to see it
         disableBackground(siblingViewGroupForFeedback);
         siblingViewGroupForFeedback.setAlpha(0.5f);
+        //overridden if we need to do something
+        doSomethingAfterFeedbackOpened();
     }
 
     private void disableBackground(View view) {
         view.setClickable(false);
+        //setting clickable to false doesn't do anything to listeners attached to buttons
+        //we can set the listeners to null but we still can touch the buttons
+        // and they will hover.
+        //setting enabled to false changes some of the buttons' backgrounds so we want to avoid that/
+        //so just intercept all touch events
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
             for (int i = 0; i < viewGroup.getChildCount(); i++) {

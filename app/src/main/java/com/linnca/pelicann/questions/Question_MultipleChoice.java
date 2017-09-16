@@ -1,6 +1,8 @@
 package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
 
 import java.util.List;
 
@@ -57,8 +58,14 @@ public class Question_MultipleChoice extends Question_General {
 
     private void populateQuestion(){
         String question = questionData.getQuestion();
+        questionTextView.setText(
+                QuestionUtils.longClickToSpeechTextViewSpannable(questionTextView,question,new SpannableString(question), textToSpeech)
+        );
+    }
 
-        questionTextView.setText(question);
+    @Override
+    protected void doSomethingAfterFeedbackOpened(){
+        QuestionUtils.disableTextToSpeech(questionTextView);
     }
 
     private void populateButtons(LayoutInflater inflater){
@@ -74,6 +81,16 @@ public class Question_MultipleChoice extends Question_General {
             //for checking answer
             choiceButton.setTag(choice);
             choiceButton.setOnClickListener(getResponseListener());
+            if (QuestionUtils.isAlphanumeric(choice)) {
+                final String fChoice = choice;
+                choiceButton.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        QuestionUtils.startTextToSpeech(textToSpeech, fChoice);
+                        return true;
+                    }
+                });
+            }
             choicesLayout.addView(choiceButton);
 
         }

@@ -1,9 +1,9 @@
-package com.linnca.pelicann.questions;
+package com.linnca.pelicann.lessongenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class QGUtils {
+public class LessonGeneratorUtils {
     public static String stripWikidataID(String str){
         int lastIndexID = str.lastIndexOf('/');
         return str.substring(lastIndexID+1);

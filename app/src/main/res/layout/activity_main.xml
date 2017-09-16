@@ -29,11 +29,16 @@
                 />
         </android.support.v7.widget.Toolbar>
 
+        <!--focusability so we can "clear"(move)
+         the focus of child fragments onto this layout-->
         <FrameLayout
             android:id="@+id/main_activity_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/tool_bar"/>
+            android:layout_below="@id/tool_bar"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            />
 
 
     </RelativeLayout>

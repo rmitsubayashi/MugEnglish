@@ -21,7 +21,7 @@ import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
-import com.linnca.pelicann.questions.QGUtils;
+import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -329,7 +329,7 @@ public class FacebookInterestFinder extends IntentService{
 
             String description = SPARQLDocumentParserHelper.findValueByNodeName(head, identifier + "Description");
             String id = SPARQLDocumentParserHelper.findValueByNodeName(head, identifier);
-            id = QGUtils.stripWikidataID(id);
+            id = LessonGeneratorUtils.stripWikidataID(id);
 
             WikiDataEntryData data = new WikiDataEntryData(label, description, id, label, WikiDataEntryData.CLASSIFICATION_NOT_SET);
             result.add(data);

@@ -1,6 +1,7 @@
 package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.QuestionUtils;
 
 public class Question_TrueFalse extends Question_General {
+    public static final String TRUE_FALSE_QUESTION_TRUE = "true";
+    public static final String TRUE_FALSE_QUESTION_FALSE = "false";
     private TextView questionTextView;
     private Button trueButton;
     private Button falseButton;
@@ -62,13 +64,22 @@ public class Question_TrueFalse extends Question_General {
         return null;
     }
 
+    @Override
+    protected void doSomethingAfterFeedbackOpened(){
+        QuestionUtils.disableTextToSpeech(questionTextView);
+    }
+
     private void populateQuestion(){
-        questionTextView.setText(questionData.getQuestion());
+        String question = questionData.getQuestion();
+        questionTextView.setText(
+                QuestionUtils.longClickToSpeechTextViewSpannable(
+                        questionTextView, question, new SpannableString(question),textToSpeech)
+        );
     }
 
     private void setButtonActionListeners(){
-        trueButton.setTag(QuestionUtils.TRUE_FALSE_QUESTION_TRUE);
-        falseButton.setTag(QuestionUtils.TRUE_FALSE_QUESTION_FALSE);
+        trueButton.setTag(TRUE_FALSE_QUESTION_TRUE);
+        falseButton.setTag(TRUE_FALSE_QUESTION_FALSE);
 
         trueButton.setOnClickListener(getResponseListener());
         falseButton.setOnClickListener(getResponseListener());

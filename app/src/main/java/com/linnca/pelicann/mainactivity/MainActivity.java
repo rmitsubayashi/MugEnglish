@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -33,6 +34,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.lessondetails.LessonData;
@@ -65,6 +67,7 @@ import com.linnca.pelicann.userprofile.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         LessonList.LessonListListener,
@@ -105,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String FRAGMENT_LESSON_DESCRIPTION = "lessonDescription";
 
     private QuestionManager questionManager;
+    //since initialization takes forever, initialize here and use this instance in all questions
+    private TextToSpeech textToSpeech = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -271,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //have to handle this in the activity or it gets really pain-in-the-ass-y.
         //not necessary for a lot of cases, but can't help it
-        hideKeyboard();
+        GUIUtils.hideKeyboard(getCurrentFocus());
 
         Fragment questionFragment = fragmentManager.findFragmentByTag(FRAGMENT_QUESTION);
         if (questionFragment != null && questionFragment.isVisible()){
@@ -284,6 +289,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(questionFragment);
             fragmentTransaction.commit();
+
+            if (textToSpeech != null){
+                textToSpeech.shutdown();
+            }
         }
 
         Fragment resultsFragment = fragmentManager.findFragmentByTag(FRAGMENT_RESULTS);
@@ -420,6 +429,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_RESULTS);
                 fragmentTransaction.commit();
+
+                //although we might use it in the review or subsequent questions,
+                //we should prioritize the resources we can save?
+                if (textToSpeech != null){
+                    textToSpeech.shutdown();
+                    textToSpeech = null;
+                }
             }
 
             @Override
@@ -433,6 +449,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     fragmentTransaction.commit();
                 }
 
+                if (textToSpeech != null){
+                    textToSpeech.shutdown();
+                    textToSpeech = null;
+                }
             }
         };
     }
@@ -637,7 +657,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (toolbarTitle.equals(ToolbarState.NO_TITLE_WITH_SPINNER)){
             addSpinnerAdapter();
         }
-        if (!toolbarTitle.equals("")){
+        if (!toolbarTitle.equals(ToolbarState.NO_CHANGE)){
             setToolbarTitle(toolbarTitle);
         }
 
@@ -792,13 +812,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void hideKeyboard(){
-        // Check if no view has focus:
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            if (inputMethodManager == null)
-                inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+
+    public TextToSpeech getTextToSpeech(){
+        if (textToSpeech == null){
+            textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int i) {
+                    textToSpeech.setLanguage(Locale.US);
+                }
+            });
+        }
+
+        return textToSpeech;
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if (textToSpeech != null){
+            textToSpeech.shutdown();
         }
     }
 }
