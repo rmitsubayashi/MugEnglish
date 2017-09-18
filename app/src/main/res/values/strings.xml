@@ -199,6 +199,13 @@
     +ボタンを押して\n
     レッスンを作成してください</string>
 
+    <string name="lesson_details_instance_details_title">詳細</string>
+    <string name="lesson_details_instance_details_played_number">学習回数</string>
+    <string name="lesson_details_instance_details_average_score">平均正解率</string>
+    <string name="lesson_details_instance_details_last_played">最終学習日</string>
+    <string name="lesson_details_instance_details_last_played_never">なし</string>
+    <string name="lesson_details_instance_details_last_played_score">最終学習正解率</string>
+
     <string name="lesson_description_title">説明</string>
     <string name="lesson_description_no_description_available">残念ながらこのレッスンの説明文はありません</string>
     <string name="lesson_description_exception_tag">exception</string>

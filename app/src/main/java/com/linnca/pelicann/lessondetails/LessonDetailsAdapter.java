@@ -20,7 +20,7 @@ class LessonDetailsAdapter
         extends FirebaseRecyclerAdapter<LessonInstanceData, LessonDetailsViewHolder> {
 
     //context menu doesn't work for recyclerviews
-    private DatabaseReference longClickRef;
+    private LessonInstanceData longClickData;
     //hide loading view once data is initially loaded
     private final ProgressBar loading;
     //update GUI if the list is empty
@@ -40,8 +40,8 @@ class LessonDetailsAdapter
         this.lessonKey = lessonKey;
     }
 
-    public DatabaseReference getLongClickPosition(){
-        return longClickRef;
+    public LessonInstanceData getLongClickPositionData(){
+        return longClickData;
     }
 
     @Override
@@ -71,11 +71,11 @@ class LessonDetailsAdapter
             }
         });
 
-        final DatabaseReference ref = getRef(position);
+        //final DatabaseReference ref = getItem(position);
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                longClickRef = ref;
+                longClickData = data;
                 //returning false so we can catch the onlongclicklistener of the parent
                 return false;
             }

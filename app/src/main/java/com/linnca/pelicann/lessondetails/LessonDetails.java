@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -21,16 +22,30 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
+import com.linnca.pelicann.questions.InstanceRecord;
+import com.linnca.pelicann.questions.QuestionAttempt;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class LessonDetails extends Fragment {
     private final String TAG = "LessonDetails";
+    private FirebaseDatabase db;
+    private String userID;
     public static final String BUNDLE_LESSON_DATA = "lessonData";
     public static final String BUNDLE_BACKGROUND_COLOR = "backgroundColor";
     private LessonData lessonData;
@@ -47,6 +62,13 @@ public class LessonDetails extends Fragment {
     public interface LessonDetailsListener {
         void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData, String lessonKey);
         void setToolbarState(ToolbarState state);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        db = FirebaseDatabase.getInstance();
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     @Override
@@ -172,13 +194,20 @@ public class LessonDetails extends Fragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        DatabaseReference longClickRef = firebaseAdapter.getLongClickPosition();
+        LessonInstanceData longClickData = firebaseAdapter.getLongClickPositionData();
         switch (item.getItemId()) {
             case R.id.lesson_details_item_menu_more_info:
-                //open fragment?
+                //open a dialog with details (access records)
+                getInstanceDetails(longClickData);
                 return true;
             case R.id.lesson_details_item_menu_delete:
-                longClickRef.removeValue();
+                DatabaseReference instanceRef = FirebaseDatabase.getInstance().getReference(
+                        FirebaseDBHeaders.LESSON_INSTANCES + "/"+
+                                userID+"/"+
+                                lessonData.getKey() + "/" +
+                                longClickData.getId()
+                );
+                instanceRef.removeValue();
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -195,8 +224,7 @@ public class LessonDetails extends Fragment {
         iconView.setImageResource(imageID);*/
 
         //grab list of instances
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference lessonInstancesRef = FirebaseDatabase.getInstance().getReference(
+        DatabaseReference lessonInstancesRef = db.getReference(
                 FirebaseDBHeaders.LESSON_INSTANCES + "/"+userID+"/"+ lessonData.getKey());
         list.setLayoutManager(new LinearLayoutManager(getContext()));
         firebaseAdapter = new LessonDetailsAdapter(lessonInstancesRef, noItemTextView, loading, lessonDetailsListener, lessonData.getKey());
@@ -305,6 +333,104 @@ public class LessonDetails extends Fragment {
             lesson.createInstance();
 
         //the list listens for inserts and removes the loading spinner
+    }
+
+    private void getInstanceDetails(final LessonInstanceData instanceData){
+        String instanceID = instanceData.getId();
+        DatabaseReference recordsRef = db.getReference(
+                FirebaseDBHeaders.INSTANCE_RECORDS + "/" +
+                userID + "/" +
+                lessonData.getKey() + "/" +
+                instanceID
+        );
+        recordsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<InstanceRecord> allRecords = new ArrayList<>((int)dataSnapshot.getChildrenCount());
+                for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()){
+                    InstanceRecord record = recordSnapshot.getValue(InstanceRecord.class);
+                    allRecords.add(record);
+                }
+
+                showInstanceDetailDialog(instanceData, allRecords);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void showInstanceDetailDialog(LessonInstanceData instanceData, List<InstanceRecord> allRecords){
+        View dialogView = getLayoutInflater().inflate(R.layout.inflatable_lesson_details_instance_details_dialog, null);
+        TextView lastPlayedTextView = dialogView.findViewById(R.id.lesson_details_instance_details_last_played);
+        TextView lastPlayedScoreTextView = dialogView.findViewById(R.id.lesson_details_instance_details_last_played_score);
+        TextView playedNumberTextView = dialogView.findViewById(R.id.lesson_details_instance_details_played_number);
+        TextView averageScoreTextView = dialogView.findViewById(R.id.lesson_details_instance_details_average_score);
+        if (allRecords == null || allRecords.size() == 0){
+            playedNumberTextView.setText(Integer.toString(0));
+            averageScoreTextView.setText("0%");
+            lastPlayedTextView.setText(R.string.lesson_details_instance_details_last_played_never);
+            lastPlayedScoreTextView.setText("0%");
+        } else {
+            //the records are already in date order by default
+            InstanceRecord lastRecord = allRecords.get(allRecords.size() - 1);
+            List<QuestionAttempt> lastRecordQuestions = lastRecord.getAttempts();
+            //should this be the time completed or time started??
+            long lastPlayedTimestamp = lastRecordQuestions.get(0).getStartTime();
+            DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, Locale.JAPAN);
+            String dateString = dateFormat.format(new Date(lastPlayedTimestamp));
+            lastPlayedTextView.setText(dateString);
+            int correctCt = 0;
+            int totalCt = 0;
+            String tempQuestionID = "";
+            for (QuestionAttempt attempt : lastRecordQuestions) {
+                String questionID = attempt.getQuestionID();
+                //there can only be one correct answer per question.
+                // (there can be multiple incorrect answers)
+                if (attempt.getCorrect())
+                    correctCt++;
+                if (!tempQuestionID.equals(questionID)) {
+                    totalCt++;
+                    tempQuestionID = questionID;
+                }
+            }
+            //out of 100%
+            int lastPlayedPercentage = correctCt * 100 / totalCt;
+            String lastPlayedScore = lastPlayedPercentage + "%";
+            lastPlayedScoreTextView.setText(lastPlayedScore);
+
+            playedNumberTextView.setText(Integer.toString(allRecords.size()));
+
+            //reset
+            correctCt = 0;
+            totalCt = 0;
+            for (InstanceRecord instanceRecord : allRecords) {
+                //reset
+                tempQuestionID = "";
+                List<QuestionAttempt> attempts = instanceRecord.getAttempts();
+                for (QuestionAttempt attempt : attempts) {
+                    String questionID = attempt.getQuestionID();
+                    //there can only be one correct answer per question.
+                    // (there can be multiple incorrect answers)
+                    if (attempt.getCorrect())
+                        correctCt++;
+                    if (!tempQuestionID.equals(questionID)) {
+                        totalCt++;
+                        tempQuestionID = questionID;
+                    }
+                }
+            }
+            int totalAveragePercentage = correctCt * 100 / totalCt;
+            String totalAverageScore = totalAveragePercentage + "%";
+            averageScoreTextView.setText(totalAverageScore);
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(dialogView);
+        builder.create().show();
+
     }
 
     @Override
