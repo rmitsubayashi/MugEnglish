@@ -33,7 +33,11 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.InstanceRecord;
@@ -63,9 +67,13 @@ import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
+import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.userprofile.UserProfile;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -78,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Results.ResultsListener,
         PreferencesListener,
         PreferenceFragmentCompat.OnPreferenceStartScreenCallback,
-        LessonDescription.LessonDescriptionListener
+        LessonDescription.LessonDescriptionListener,
+        UserProfile.UserProfileListener
 {
     private final String TAG = "MainActivity";
-    private InputMethodManager inputMethodManager;
     private boolean searchIconVisible = false;
     private boolean descriptionIconVisible = false;
     private String descriptionLessonKey;
@@ -96,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean navigationItemSelected = false;
     private int selectedNavigationItemID = -1;
     private LessonHierarchyViewer lessonHierarchyViewer;
+    private long startAppTimestamp;
 
     private String topmostFragmentTag = "";
     private final String FRAGMENT_USER_INTERESTS = "userInterests";
@@ -198,6 +207,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         setLessonView();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        startAppTimestamp = System.currentTimeMillis();
+
+        /*
+        DateTime temp1 = DateTime.now();
+        temp1 = temp1.minusMonths(1);
+        DateTime temp2 = DateTime.now();
+        temp2 = temp2.minusMonths(1).plusHours(1);
+        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
+
+        temp1 = temp1.minusMonths(1);
+        temp2 = temp2.minusMonths(1).plusHours(1);
+        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));*/
+
     }
 
     @Override
@@ -827,9 +854,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return textToSpeech;
     }
 
+    //we are assuming a one-activity multiple-fragment structure.
+    //if we ever start another activity from this main activity,
+    //we need to change this
+    private void recordAppUsageLog(AppUsageLog log){
+        Log.d(TAG, "called record app usage log");
+        //we can index by year -> month so
+        //we don't need to fetch the whole log every time
+        long startTime = log.getStartTimeStamp();
+        DateTime dateTime = new DateTime(startTime);
+        int month = dateTime.getMonthOfYear();
+        int year = dateTime.getYear();
+        String key = AppUsageLog.formatKey(month, year);
+
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference logRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.APP_USAGE + "/" +
+                userID + "/" +
+                key
+        );
+        logRef.push().setValue(log);
+
+    }
+
     @Override
-    public void onDestroy(){
+    protected void onStop(){
+        super.onStop();
+        long endAppTimeStamp = System.currentTimeMillis();
+        recordAppUsageLog(new AppUsageLog(startAppTimestamp, endAppTimeStamp));
+    }
+
+    @Override
+    protected void onDestroy(){
         super.onDestroy();
+
         if (textToSpeech != null){
             textToSpeech.shutdown();
         }

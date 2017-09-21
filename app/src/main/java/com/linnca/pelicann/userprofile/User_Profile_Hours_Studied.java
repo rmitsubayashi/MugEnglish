@@ -2,154 +2,133 @@ package com.linnca.pelicann.userprofile;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.questions.InstanceRecord;
+
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class User_Profile_Hours_Studied extends Fragment {
-
-    public User_Profile_Hours_Studied() {
-    }
-
+    private final String TAG = "UserProfileHoursStudied";
+    private CustomCalendarView calendarView;
+    private String userID;
 
     @Override
-    @SuppressWarnings("unchecked")
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_profile_hours_studied, container, false);
-        /*
-        Bundle dataBundle = getArguments();
-        List<InstanceRecord> records = (List<InstanceRecord>)dataBundle.getSerializable(null);
-        //if we fail to read the records
-        if (records == null){
-            return view;
-        }
-
-        //Mon ~ Sun
-        final String[] daysOfTheWeek = getDaysOfTheWeek();
-        float[] lastWeekMinutes = lastWeekMinutes(records);
-        BarChart chart = (BarChart)view.findViewById(R.id.user_profile_hours_studied_chart);
-        //format chart
-        Description description = new Description();
-        description.setText("");
-        chart.setDescription(description);
-        chart.setScaleEnabled(false);
-        //set x-axis label
-        IAxisValueFormatter formatter = new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return daysOfTheWeek[(int) value];
-            }
-        };
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-        xAxis.setValueFormatter(formatter);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-
-        //format y-axis
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setDrawAxisLine(false);
-        leftAxis.setDrawGridLines(false);
-        leftAxis.setDrawZeroLine(true);
-        leftAxis.setDrawLabels(false);
-        YAxis rightAxis = chart.getAxisRight();
-        rightAxis.setDrawAxisLine(true);
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setDrawZeroLine(true);
-        rightAxis.setDrawLabels(true);
-
-
-        List<BarEntry> entries = new ArrayList<>();
-        for (int i=0; i<7; i++){
-            entries.add(new BarEntry(i,lastWeekMinutes[i]));
-        }
-
-        BarDataSet set = new BarDataSet(entries, getResources().getString(R.string.user_profile_hours_studied_bar_label));
-        BarData data = new BarData(set);
-        chart.setData(data);
-        chart.setFitBars(true); // make the x-axis fit exactly all bars
-        chart.invalidate(); // refresh
-        */
+        calendarView = view.findViewById(R.id.user_profile_hours_studied_calendar);
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        setCalendarMinMax();
+        setUsageDataForCurrentMonth();
+        setCalendarListeners();
         return view;
     }
 
-    /*private String[] getDaysOfTheWeek(){
-        String[] MonToSun = getResources().getStringArray(R.array.daysOfTheWeek);
-        //adjust so that the last day is today
-        DateTime dt = new DateTime();
+    private void setCalendarMinMax(){
+        DatabaseReference usageRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.APP_USAGE + "/" +
+                userID
+        );
+        Query minimumMonthRef = usageRef.orderByKey().limitToFirst(1);
+        minimumMonthRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //only loops once
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    DateTime minDate = DateTime.now();
+                    List<AppUsageLog> logs = new ArrayList<>((int) snapshot.getChildrenCount());
+                    for (DataSnapshot logSnapshot : snapshot.getChildren()) {
+                        AppUsageLog log = logSnapshot.getValue(AppUsageLog.class);
+                        DateTime startDateTime = new DateTime(log.getStartTimeStamp());
+                        if (startDateTime.isBefore(minDate)){
+                            minDate = startDateTime;
+                        }
+                    }
+                    calendarView.setMin(minDate);
+                    DateTime now = DateTime.now();
+                    calendarView.setMax(now);
+                }
+            }
 
-        int startIndex = -1;
-        switch (dt.getDayOfWeek()) {
-            case DateTimeConstants.MONDAY:
-                startIndex = 1;
-                break;
-            case DateTimeConstants.TUESDAY:
-                startIndex = 2;
-                break;
-            case DateTimeConstants.WEDNESDAY:
-                startIndex = 3;
-                break;
-            case DateTimeConstants.THURSDAY:
-                startIndex = 4;
-                break;
-            case DateTimeConstants.FRIDAY:
-                startIndex = 5;
-                break;
-            case DateTimeConstants.SATURDAY:
-                startIndex = 6;
-                break;
-            case DateTimeConstants.SUNDAY:
-                startIndex = 0;
-                break;
-            default:
-                break;
-        }
-        String[] result = new String[7];
-        for (int i = 0; i < 6; i++){
-            result[i] = MonToSun[startIndex];
-            startIndex = (startIndex + 1) % 7;
-        }
-        result[6] = getResources().getString(R.string.user_profile_hours_studied_today);
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-        return result;
+            }
+        });
     }
 
-    //add up all instance records from the last week
-    private float[] lastWeekMinutes(List<InstanceRecord> records){
-        DateTime today = new DateTime();
-        float[] result = new float[7];
-        for (int i=0; i<7; i++){
-            result[i] = 0f;
-        }
+    private void setUsageDataForCurrentMonth(){
+        DateTime today = DateTime.now();
+        int month = today.getMonthOfYear();
+        int year = today.getYear();
+        setUsageDataForMonth(month, year, true);
+    }
 
-        for (InstanceRecord record : records){
-            List<QuestionAttempt> attempts = record.getAttempts();
-            DateTime firstAttemptTime = new DateTime(attempts.get(0).getStartTime());
-            int daysBetween = Days.daysBetween(firstAttemptTime.toLocalDate(), today.toLocalDate()).getDays();
-            //if within last week
-            if (daysBetween < 7){
-                int indexToUpdate = 6 - daysBetween;
-                DateTime lastAttemptTime = new DateTime(attempts.get(attempts.size()-1).getEndTime());
-                int instanceTimeInSeconds = Seconds.secondsBetween(firstAttemptTime, lastAttemptTime).getSeconds();
-                result[indexToUpdate] = result[indexToUpdate] + instanceTimeInSeconds;
+    private void setUsageDataForMonth(int month, int year, final boolean initial){
+        int prevMonth = month == 1 ? 12 : month - 1;
+        int prevYear = month == 1 ? year - 1 : year;
+        int nextMonth = month == 12 ? 1 : month + 1;
+        int nextYear = month == 12 ? year + 1 : year;
+
+        String prevKey = AppUsageLog.formatKey(prevMonth, prevYear);
+        String nextKey = AppUsageLog.formatKey(nextMonth, nextYear);
+        DatabaseReference usageRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.APP_USAGE + "/" +
+                        userID + "/"
+        );
+        Query usageRefForThreeMonths = usageRef.orderByKey().startAt(prevKey).endAt(nextKey);
+        usageRefForThreeMonths.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<AppUsageLog> logsForMonth = new ArrayList<>();
+                for (DataSnapshot monthSnapshot : dataSnapshot.getChildren()){
+                    for(DataSnapshot logSnapshot : monthSnapshot.getChildren()) {
+                        AppUsageLog log = logSnapshot.getValue(AppUsageLog.class);
+                        logsForMonth.add(log);
+                    }
+                }
+
+                calendarView.setUsageData(logsForMonth, initial);
             }
-        }
 
-        //fix seconds to minutes
-        for (int i=0; i<7; i++){
-            float seconds = result[i];
-            //minimum should be one minute unless the user did nothing that day (seconds = 0)
-            float minutes = seconds / 60;
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-            result[i] = minutes;
-        }
+            }
+        });
+    }
 
-        return result;
-    }*/
+    private void setCalendarListeners(){
+        CustomCalendarView.CustomCalendarViewListener listener = new CustomCalendarView.CustomCalendarViewListener() {
+            @Override
+            public void onUpdateMonth(int month, int year) {
+                setUsageDataForMonth(month, year, false);
+            }
+
+            @Override
+            public void onClickItem(DateTime clickedDate) {
+
+            }
+        };
+
+        calendarView.setListener(listener);
+    }
 }

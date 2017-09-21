@@ -1,12 +1,51 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="match_parent"
-             android:layout_height="match_parent">
+             android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingLeft="16dp"
+              android:paddingRight="16dp"
+              android:paddingTop="8dp"
+    >
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:padding="16dp"
-        android:id="@+id/user_profile_hours_studied_chart"
+    <com.linnca.pelicann.userprofile.CustomCalendarView
+        android:id="@+id/user_profile_hours_studied_calendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         />
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginTop="24dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:textSize="16sp"
+            android:textColor="@color/lgreen500"
+            android:text="@string/user_profile_hours_studied_legend_objective_completed"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:textSize="16sp"
+            android:textColor="@color/yellow700"
+            android:text="@string/user_profile_hours_studied_legend_objective_incomplete"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/red200"
+            android:text="@string/user_profile_hours_studied_legend_no_record"/>
+
+    </LinearLayout>
+
+</LinearLayout>
+</ScrollView>

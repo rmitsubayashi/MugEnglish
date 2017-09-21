@@ -22,28 +22,10 @@ public class User_Profile_Report_Card extends Fragment {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_profile_report_card, container, false);
-        Bundle dataBundle = getArguments();
-        List<InstanceRecord> records = (List<InstanceRecord>)dataBundle.getSerializable(null);
-        //if we fail to read the records
-        if (records == null){
-            return view;
-        }
-
-        list = view.findViewById(R.id.user_profile_report_card_list);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        list.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(list.getContext(),
-                layoutManager.getOrientation());
-        list.addItemDecoration(dividerItemDecoration);
-
-
-        populateReportCard(records);
-
 
         return view;
     }

@@ -44,6 +44,9 @@ dependencies {
     //since the current android preference library is insufficient,
     //there is a 'fixed' version
     compile 'com.takisoft.fix:preference-v7:26.0.2.0'
+
+    //for time management
+    compile 'joda-time:joda-time:2.9.9'
 }
 
 allprojects {

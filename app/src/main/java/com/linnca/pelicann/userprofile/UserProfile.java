@@ -1,5 +1,7 @@
 package com.linnca.pelicann.userprofile;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
@@ -19,8 +21,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
+import com.linnca.pelicann.userinterests.UserInterests;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +38,16 @@ public class UserProfile extends Fragment{
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
+    private UserProfileListener userProfileListener;
+
+    public interface UserProfileListener {
+        void setToolbarState(ToolbarState state);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            loadUser();
-
-        } else {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             startActivityForResult(
                     GUIUtils.getSignInIntent(GUIUtils.SIGN_IN_PROVIDER_ALL),
                     GUIUtils.REQUEST_CODE_SIGN_IN
@@ -56,16 +61,45 @@ public class UserProfile extends Fragment{
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
         tabLayout = view.findViewById(R.id.user_profile_tab_layout);
         viewPager = view.findViewById(R.id.user_profile_pager);
+
+        loadUser();
         return view;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        userProfileListener.setToolbarState(
+                new ToolbarState(getString(R.string.user_profile_app_bar_title),
+                        false, null)
+        );
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        implementListeners(context);
+    }
+
+    //must implement to account for lower APIs
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        implementListeners(activity);
+    }
+
+    private void implementListeners(Context context){
+        try {
+            userProfileListener = (UserProfileListener) context;
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
     }
 
     private void loadUser(){
 
-        //get user data needed to populate views adn update views
+        //get user data needed to populate views and update views
         populateUserData();
-
-
-
     }
 
     @Override
@@ -83,7 +117,6 @@ public class UserProfile extends Fragment{
 
         // Successfully signed in
         if (resultCode == RESULT_OK){
-
             loadUser();
         } else {
             // Sign in failed

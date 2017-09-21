@@ -223,8 +223,9 @@
     <string name="user_profile_app_bar_title">データ</string>
     <string name="user_profile_tab_hours_studied">勉強時間</string>
     <string name="user_profile_tab_report_card">成績</string>
-    <string name="user_profile_hours_studied_today">今日</string>
-    <string name="user_profile_hours_studied_bar_label">勉強時間（分）</string>
+    <string name="user_profile_hours_studied_legend_objective_completed">目標達成</string>
+    <string name="user_profile_hours_studied_legend_objective_incomplete">未達成</string>
+    <string name="user_profile_hours_studied_legend_no_record">記録なし</string>
     <string name="user_profile_report_card_name">名前</string>
     <string name="user_profile_report_card_accuracy">正解率</string>
     <string name="user_profile_report_card_num_questions">問題数</string>
@@ -251,5 +252,15 @@
     <string name="question_translate_word_number_instructions">訳してください</string>
     <string name="question_translate_word_hint">訳</string>
     <string name="question_translate_word_submit">確定</string>
+
+    <string name="calendar_sunday">日</string>
+    <string name="calendar_monday">月</string>
+    <string name="calendar_tuesday">火</string>
+    <string name="calendar_wednesday">水</string>
+    <string name="calendar_thursday">木</string>
+    <string name="calendar_friday">金</string>
+    <string name="calendar_saturday">土</string>
+    <string name="calendar_left">＜</string>
+    <string name="calendar_right">＞</string>
 
 </resources>
