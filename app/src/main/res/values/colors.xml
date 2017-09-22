@@ -20,7 +20,9 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="gray50">#ECEFF1</color>
+    <color name="gray300">#E0E0E0</color>
     <color name="gray500">#9E9E9E</color>
+    <color name="gray700">#616161</color>
     <!--other colors-->
     <color name="flatButtonFontColor">#19B5FE</color>
     <color name="subtextFontColor">#9E9E9E</color>

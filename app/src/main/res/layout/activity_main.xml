@@ -18,8 +18,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:titleTextColor="@color/white"
-            android:elevation="4dp"
-            style="@style/Base.ThemeOverlay.AppCompat.Dark">
+            android:elevation="4dp">
             <Spinner
                 android:id="@+id/tool_bar_spinner"
                 android:layout_width="wrap_content"

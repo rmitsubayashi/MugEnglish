@@ -2,13 +2,16 @@ package com.linnca.pelicann.userinterests;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +31,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
+import com.linnca.pelicann.userinterestcontrols.UserInterestRemover;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,13 +50,21 @@ public class UserInterests extends Fragment {
     private UserInterestAdapter userInterestListAdapter = null;
     private Snackbar undoSnackBar;
     private RecyclerView.OnItemTouchListener undoOnTouchListener;
-    private ActionMode actionMode;
     private FloatingActionButton searchFAB;
     private UserInterestListener userInterestListener;
+    private String userID;
+    private ActionMode actionMode;
+    private ActionMode.Callback actionModeCallback;
 
     public interface UserInterestListener {
         void userInterestsToSearchInterests();
         void setToolbarState(ToolbarState state);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
 
     @Override
@@ -65,6 +77,7 @@ public class UserInterests extends Fragment {
         if (FirebaseAuth.getInstance().getCurrentUser() != null){
             loadUser();
             populateFABs();
+            actionModeCallback = getActionModeCallback();
         }
         return view;
     }
@@ -99,6 +112,19 @@ public class UserInterests extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.user_interests_item_menu, menu);
+    }
+
+    /*
+    * UserInterestRemover.removeUserInterest(data, userID);
+                showUndoSnackBar(data);
+    * */
+
     //called by the main activity (which has access to the spinner for the filter)
     public void filterUserInterests(int filter){
         if (userInterestListAdapter != null)
@@ -110,56 +136,8 @@ public class UserInterests extends Fragment {
         //populateFABs();
     }
 
-    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-
-        // Called when the action mode is created; startActionMode() was called
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // Inflate a menu resource providing context menu items
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.lesson_details_item_menu, menu);
-            return true;
-        }
-
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false; // Return false if nothing is done
-        }
-
-        // Called when the user selects a contextual menu item
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return true;
-        }
-
-        // Called when the user exits the action mode
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            actionMode = null;
-        }
-    };
-    /*
-    //for search
-    @Override
-    protected void onNewIntent(Intent intent) {
-        setIntent(intent);
-        handleIntent(intent);
-    }
-
-    //for search
-    private void handleIntent(Intent intent) {
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            updateAdapter(query);
-        }
-    } */
-
     private void setAdapter(){
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         userInterestListAdapter = new UserInterestAdapter(
-                userID,
                 getUserInterestAdapterListener()
         );
 
@@ -194,20 +172,8 @@ public class UserInterests extends Fragment {
 
     private void setListListeners(){
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (actionMode != null) {
-                    return false;
-                }
-
-                // Start the CAB using the ActionMode.Callback defined above
-                actionMode = getActivity().startActionMode(mActionModeCallback);
-                view.setSelected(true);
-                return true;
-            }
-        });
         setAdapter();
+        registerForContextMenu(listView);
     }
 
 
@@ -215,6 +181,9 @@ public class UserInterests extends Fragment {
         searchFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (actionMode != null){
+                    actionMode.finish();
+                }
                 userInterestListener.userInterestsToSearchInterests();
             }
         });
@@ -224,13 +193,26 @@ public class UserInterests extends Fragment {
     private UserInterestAdapter.UserInterestAdapterListener getUserInterestAdapterListener(){
         return new UserInterestAdapter.UserInterestAdapterListener() {
             @Override
-            public void onItemRemoved(WikiDataEntryData item) {
-                showUndoSnackBar(item);
+            public void onItemClicked(int position){
+                if (actionMode != null) {
+                    toggleSelection(position);
+                }
+            }
+            @Override
+            public boolean onItemLongClicked(int position){
+                if (actionMode == null) {
+                    actionMode = getActivity().startActionMode(actionModeCallback);
+                }
+
+                toggleSelection(position);
+
+                return true;
+
             }
         };
     }
     
-    private void showUndoSnackBar(final WikiDataEntryData data){
+    private void showUndoSnackBar(final List<WikiDataEntryData> dataToRecover){
         if (undoOnTouchListener != null) {
             listView.removeOnItemTouchListener(undoOnTouchListener);
             undoOnTouchListener = null;
@@ -268,7 +250,9 @@ public class UserInterests extends Fragment {
                     public void onClick(View view) {
                         //undo
                         UserInterestAdder userInterestAdder = new UserInterestAdder();
-                        userInterestAdder.justAdd(data);
+                        for (WikiDataEntryData data : dataToRecover) {
+                            userInterestAdder.justAdd(data);
+                        }
                         if (undoOnTouchListener != null) {
                             listView.removeOnItemTouchListener(undoOnTouchListener);
                             undoOnTouchListener = null;
@@ -278,6 +262,70 @@ public class UserInterests extends Fragment {
         );
 
         undoSnackBar.show();
+    }
+
+    private ActionMode.Callback getActionModeCallback(){
+        return new ActionMode.Callback() {
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate (R.menu.user_interests_item_menu, menu);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    getActivity().getWindow().setStatusBarColor(
+                            ContextCompat.getColor(getContext(), R.color.gray700)
+                    );
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.user_interest_item_menu_delete:
+                        List<WikiDataEntryData> toRemove =
+                                userInterestListAdapter.getSelectedItems();
+                        for (WikiDataEntryData data : toRemove){
+                            UserInterestRemover.removeUserInterest(data, userID);
+                        }
+                        showUndoSnackBar(toRemove);
+                        mode.finish();
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                userInterestListAdapter.clearSelection();
+                actionMode = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                    getActivity().getWindow().setStatusBarColor(
+                            ContextCompat.getColor(getContext(), R.color.lblue700)
+                    );
+                }
+            }
+        };
+
+    }
+
+    private void toggleSelection(int position){
+        userInterestListAdapter.toggleSelection(position);
+        int count = userInterestListAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+
+        }
     }
 
     @Override

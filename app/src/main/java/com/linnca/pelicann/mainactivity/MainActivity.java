@@ -319,6 +319,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             if (textToSpeech != null){
                 textToSpeech.shutdown();
+                textToSpeech = null;
             }
         }
 

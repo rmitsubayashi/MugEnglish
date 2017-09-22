@@ -1,6 +1,7 @@
 package com.linnca.pelicann.userinterests;
 
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,23 +20,22 @@ import java.util.Set;
 class UserInterestAdapter
         extends RecyclerView.Adapter<UserInterestViewHolder>
 {
-    private final String userID;
     private final UserInterestAdapterListener listener;
     private List<WikiDataEntryData> originalList;
     //default to no filter
     private int filter = ToolbarSpinnerAdapter.FILTER_ALL;
     private List<WikiDataEntryData> filteredList = new ArrayList<>();
+    private HashSet<Integer> selectedDataPositions = new HashSet<>();
 
     interface UserInterestAdapterListener {
         //should allow undo-ing
-        void onItemRemoved(WikiDataEntryData item);
+        void onItemClicked(int position);
+        boolean onItemLongClicked(int position);
     }
 
     //Query instead of reference so we can order the data alphabetically
-    UserInterestAdapter(String userID,
-                               UserInterestAdapterListener listener){
+    UserInterestAdapter(UserInterestAdapterListener listener){
         super();
-        this.userID = userID;
         this.listener = listener;
     }
 
@@ -57,19 +57,74 @@ class UserInterestAdapter
     }
 
     @Override
-    public void onBindViewHolder(UserInterestViewHolder holder, int position){
+    public void onBindViewHolder(final UserInterestViewHolder holder, int position){
         final WikiDataEntryData data = filteredList.get(position);
         holder.setLabel(data.getLabel());
         holder.setDescription(data.getDescription());
+        boolean isSelected = isSelected(position);
+        holder.setIcon(data.getClassification(), isSelected);
         holder.setWikiDataEntryData(data);
-        holder.setButtonListener(new View.OnClickListener() {
+
+        if (isSelected){
+            holder.itemView.setBackgroundResource(R.drawable.gray_button);
+        } else {
+            holder.itemView.setBackgroundResource(R.drawable.transparent_button);
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserInterestRemover.removeUserInterest(data, userID);
-                listener.onItemRemoved(data);
+                if (listener != null) {
+                    listener.onItemClicked(holder.getAdapterPosition());
+                }
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (listener != null) {
+                    return listener.onItemLongClicked(holder.getAdapterPosition());
+                }
+                return false;
             }
         });
 
+    }
+
+    private boolean isSelected(int position){
+        return selectedDataPositions.contains(position);
+    }
+
+    int getSelectedItemCount(){
+        return selectedDataPositions.size();
+    }
+
+    void toggleSelection(int position){
+        if (selectedDataPositions.contains(position)){
+            selectedDataPositions.remove(position);
+        } else {
+            selectedDataPositions.add(position);
+        }
+        //update selected/unselected item
+        notifyItemChanged(position);
+    }
+
+    List<WikiDataEntryData> getSelectedItems(){
+        List<WikiDataEntryData> copyList = new ArrayList<>(selectedDataPositions.size());
+        for (Integer selectedItemPosition : selectedDataPositions){
+            WikiDataEntryData selectedItem = filteredList.get(selectedItemPosition);
+            WikiDataEntryData copy = new WikiDataEntryData(selectedItem);
+            copyList.add(copy);
+        }
+        return copyList;
+    }
+
+    void clearSelection(){
+        List<Integer> selectedDataPositionsCopy = new ArrayList<>(selectedDataPositions);
+        selectedDataPositions.clear();
+        for (Integer i : selectedDataPositionsCopy){
+            notifyItemChanged(i);
+        }
     }
 
     void setInterests(List<WikiDataEntryData> updatedList){

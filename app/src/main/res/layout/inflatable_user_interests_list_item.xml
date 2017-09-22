@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,9 +9,11 @@
     android:paddingTop="20dp"
     android:paddingBottom="20dp"
     android:minHeight="72dp"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:baselineAligned="false"
+    >
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_weight="0.8">
@@ -21,24 +24,25 @@
             android:textSize="17sp"
             android:paddingBottom="5dp"
             android:id="@+id/user_interests_list_item_label"/>
-        <!--so is the padding left-->
+        <!--so is the margin left-->
         <TextView
+            android:id="@+id/user_interests_list_item_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"
-            android:textColor="@color/subtextFontColor"
-            android:id="@+id/user_interests_list_item_description"/>
+            android:layout_marginStart="5dp"
+            android:textColor="@color/subtextFontColor"/>
     </LinearLayout>
-    <!--ideally we will remove this button and allow long click listener-->
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/borderlessButtonStyle"
-        android:textColor="@color/orange500"
-        android:text="@string/user_interests_list_item_delete"
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="0.2"
-        android:id="@+id/user_interests_list_item_delete"/>
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/user_interests_list_item_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:tint="@color/gray500"/>
+    </LinearLayout>
 
 </LinearLayout>

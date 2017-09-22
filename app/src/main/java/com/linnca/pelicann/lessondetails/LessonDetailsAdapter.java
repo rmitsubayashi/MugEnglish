@@ -30,7 +30,7 @@ class LessonDetailsAdapter
     //need it for the listener
     private final String lessonKey;
 
-    public LessonDetailsAdapter(DatabaseReference ref, TextView noItems, ProgressBar loading,
+    LessonDetailsAdapter(DatabaseReference ref, TextView noItems, ProgressBar loading,
                                 LessonDetails.LessonDetailsListener lessonDetailsListener, String lessonKey){
         super(LessonInstanceData.class, R.layout.inflatable_lesson_details_instance_list_item,
                 LessonDetailsViewHolder.class, ref);
@@ -40,7 +40,7 @@ class LessonDetailsAdapter
         this.lessonKey = lessonKey;
     }
 
-    public LessonInstanceData getLongClickPositionData(){
+    LessonInstanceData getLongClickPositionData(){
         return longClickData;
     }
 

@@ -23,6 +23,14 @@ public class WikiDataEntryData{
 		this.classification = classification;
 	}
 
+	public WikiDataEntryData(WikiDataEntryData copy){
+		this.label = copy.label;
+		this.description = copy.description;
+		this.wikiDataID = copy.wikiDataID;
+		this.pronunciation = copy.pronunciation;
+		this.classification = copy.classification;
+	}
+
 	public void setLabel(String label){
 		this.label = label;
 	}
