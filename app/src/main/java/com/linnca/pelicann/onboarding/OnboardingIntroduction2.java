@@ -22,8 +22,8 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
+import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

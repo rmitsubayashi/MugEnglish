@@ -12,11 +12,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessondetails.AchievementStars;
+import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
+import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.List;
 
@@ -25,6 +27,8 @@ import java.util.List;
 // and save everything in the database
 
 public class Results extends Fragment {
+    private final String TAG = "Results";
+    private FirebaseAnalytics firebaseLog;
     public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
     private InstanceRecord instanceRecord;
     private ResultsManager resultsManager;
@@ -46,14 +50,13 @@ public class Results extends Fragment {
         super.onCreate(savedInstanceState);
         instanceRecord = (InstanceRecord) getArguments().getSerializable(BUNDLE_INSTANCE_RECORD);
         resultsManager = new ResultsManager(instanceRecord, new ResultsManager.ResultsManagerListener() {
-            @Override
-            public void onAchievementsSaved(AchievementStars existingAchievements, AchievementStars newAchievements) {
-                populateNewStars(existingAchievements, newAchievements);
-            }
+
         });
         //this won't affect when we check for new achievements
         resultsManager.saveInstanceRecord();
-
+        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
+        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
+        firebaseLog.setUserId(FirebaseAuth.getInstance().getCurrentUser().getUid());
     }
 
     @Override
@@ -64,8 +67,6 @@ public class Results extends Fragment {
         correctCtTextView = view.findViewById(R.id.results_questions_correct);
         reviewButton = view.findViewById(R.id.results_review);
         finishButton = view.findViewById(R.id.results_finish);
-        //do this here because this updates the layout
-        resultsManager.identifyAchievements();
         setLayout();
         return view;
     }
@@ -99,48 +100,8 @@ public class Results extends Fragment {
         }
     }
 
-    private void populateNewStars(AchievementStars existingAchievements, AchievementStars newAchievements){
-        boolean show = false;
-        //basically check if old = false and new = true
-        if (!existingAchievements.getFirstInstance() && newAchievements.getFirstInstance()) {
-            show = true;
-            LinearLayout listItem = (LinearLayout)getLayoutInflater()
-                    .inflate(R.layout.inflatable_results_achievement_bubble, newStarsLayout, false);
-            TextView listItemText = listItem.findViewById(R.id.results_achievement_text);
-            listItemText.setText(getString(R.string.results_star_earned_template, getString(R.string.results_star_first_instance)));
-            newStarsLayout.addView(listItem);
-        }
-        if (!existingAchievements.getSecondInstance() && newAchievements.getSecondInstance()) {
-            show = true;
-            LinearLayout listItem = (LinearLayout)getLayoutInflater()
-                    .inflate(R.layout.inflatable_results_achievement_bubble, newStarsLayout, false);
-            TextView listItemText = listItem.findViewById(R.id.results_achievement_text);
-            listItemText.setText(getString(R.string.results_star_earned_template, getString(R.string.results_star_second_instance)));
-            newStarsLayout.addView(listItem);
-        }
-        if (!existingAchievements.getRepeatInstance() && newAchievements.getRepeatInstance()) {
-            show = true;
-            LinearLayout listItem = (LinearLayout)getLayoutInflater()
-                    .inflate(R.layout.inflatable_results_achievement_bubble, newStarsLayout, false);
-            TextView listItemText = listItem.findViewById(R.id.results_achievement_text);
-            listItemText.setText(getString(R.string.results_star_earned_template, getString(R.string.results_star_repeat_instance)));
-            newStarsLayout.addView(listItem);
-        }
-
-        if (show){
-            newStarsLayout.setVisibility(View.VISIBLE);
-        }
-
-    }
-
     private void setLayout(){
         populateCorrectCount();
-        finishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                resultsListener.resultsToLessonCategories();
-            }
-        });
 
         boolean needToReview = false;
         for (QuestionAttempt attempt : instanceRecord.getAttempts()){
@@ -154,6 +115,10 @@ public class Results extends Fragment {
             reviewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Review");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, instanceRecord.getId());
+                    firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
                     resultsListener.resultsToReview(instanceRecord);
                 }
             });
@@ -162,6 +127,24 @@ public class Results extends Fragment {
             finishButton.setBackgroundResource(R.drawable.transparent_button);
             finishButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lblue500));
             finishButton.setText(R.string.results_finish_review);
+            finishButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Finish Instead of Review");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, instanceRecord.getId());
+                    firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
+                    resultsListener.resultsToLessonCategories();
+                }
+            });
+        } else {
+            //we don't log anything
+            finishButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    resultsListener.resultsToLessonCategories();
+                }
+            });
         }
     }
 

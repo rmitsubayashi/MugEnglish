@@ -1,16 +1,10 @@
 package com.linnca.pelicann.mainactivity.widgets;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.BuildConfig;
@@ -18,8 +12,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.TwitterAuthProvider;
 import com.google.firebase.auth.UserInfo;
-import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessondetails.AchievementStars;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,58 +35,6 @@ public class GUIUtils {
         return (int)(TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, num, context.getResources().getDisplayMetrics()));
 
-    }
-
-    public static void populateStarsImageView(List<ImageView> imageViews, AchievementStars achievementStars){
-        int starCt = imageViews.size();
-        List<Boolean> starsEnabled = new ArrayList<>();
-        starsEnabled.add(achievementStars.getFirstInstance());
-        starsEnabled.add(achievementStars.getRepeatInstance());
-        starsEnabled.add(achievementStars.getSecondInstance());
-
-        for(int i=0; i<starCt; i++){
-            ImageView imageView = imageViews.get(i);
-            Boolean starEnabled = starsEnabled.get(i);
-            //should not happen but just in case
-            if (starEnabled == null){
-                imageView.setImageResource(R.drawable.star_disabled);
-            } else if (starEnabled){
-                imageView.setImageResource(R.drawable.star);
-            } else {
-                imageView.setImageResource(R.drawable.star_disabled);
-            }
-        }
-    }
-
-    //with the menu we are only updating one set of stars.
-    //to make it visually pleasing, add a delay between each star update.
-    //this creates a flow? kinda effect
-    public static void populateStarsMenu(List<MenuItem> menuItems, AchievementStars achievementStars, final Activity activity){
-        int starCt = menuItems.size();
-        List<Boolean> starsEnabled = new ArrayList<>();
-        starsEnabled.add(achievementStars.getFirstInstance());
-        starsEnabled.add(achievementStars.getRepeatInstance());
-        starsEnabled.add(achievementStars.getSecondInstance());
-
-        int delayMultiplier = 1;
-        for(int i=0; i<starCt; i++){
-            final MenuItem item = menuItems.get(i);
-            Boolean starEnabled = starsEnabled.get(i);
-            //default icon is disabled
-            //so just change if necessary
-            if (starEnabled) {
-                new Handler().postDelayed(new Runnable(){
-                    @Override
-                    public void run(){
-                        ImageView iv = (ImageView)activity.getLayoutInflater().inflate(R.layout.inflatable_star, null);
-                        Animation rotation = AnimationUtils.loadAnimation(activity, R.anim.star_rotation);
-                        iv.startAnimation(rotation);
-                        item.setActionView(iv);
-                    }
-                },300 * delayMultiplier);
-                delayMultiplier++;
-            }
-        }
     }
 
     public static Intent getSignInIntent(int provider){

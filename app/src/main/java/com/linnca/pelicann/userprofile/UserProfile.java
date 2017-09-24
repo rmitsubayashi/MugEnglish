@@ -21,10 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.userinterests.UserInterests;
 
 import java.util.ArrayList;
 import java.util.List;

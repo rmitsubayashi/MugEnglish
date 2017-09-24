@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessonlist;
 import android.content.Context;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessonlist.LessonCategory;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;

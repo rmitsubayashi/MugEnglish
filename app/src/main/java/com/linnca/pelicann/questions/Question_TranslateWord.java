@@ -1,6 +1,5 @@
 package com.linnca.pelicann.questions;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.util.TypedValue;
@@ -8,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;

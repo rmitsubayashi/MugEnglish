@@ -21,6 +21,7 @@ import android.view.animation.Animation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,12 +29,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
+import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
+
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
+import org.joda.time.Seconds;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,6 +53,7 @@ public class LessonDetails extends Fragment {
     private final String TAG = "LessonDetails";
     private FirebaseDatabase db;
     private String userID;
+    private FirebaseAnalytics firebaseLog;
     public static final String BUNDLE_LESSON_DATA = "lessonData";
     public static final String BUNDLE_BACKGROUND_COLOR = "backgroundColor";
     private LessonData lessonData;
@@ -69,6 +77,9 @@ public class LessonDetails extends Fragment {
         super.onCreate(savedInstanceState);
         db = FirebaseDatabase.getInstance();
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
+        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
+        firebaseLog.setUserId(userID);
     }
 
     @Override
@@ -125,65 +136,6 @@ public class LessonDetails extends Fragment {
         }
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.lesson_details_app_bar_menu, menu);
-        final MenuItem star1 = menu.findItem(R.id.lesson_details_star1);
-        final MenuItem star2 = menu.findItem(R.id.lesson_details_star2);
-        final MenuItem star3 = menu.findItem(R.id.lesson_details_star3);
-        final List<MenuItem> stars = new ArrayList<>(3);
-        stars.add(star1);
-        stars.add(star2);
-        stars.add(star3);
-        final AchievementStars result = new AchievementStars();
-
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            result.setFirstInstance(false);
-            result.setRepeatInstance(false);
-            result.setSecondInstance(false);
-            GUIUtils.populateStarsMenu(stars, result, this);
-            return true;
-        }
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference(FirebaseDBHeaders.ACHIEVEMENTS + "/"
-                + userID + "/" + lessonData.getKey());
-        //want to update it when we've completed an achievement
-        //so listen continuously
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //exists
-                if (dataSnapshot.exists()) {
-                    AchievementStars copy = dataSnapshot.getValue(AchievementStars.class);
-                    result.setFirstInstance(copy.getFirstInstance());
-                    result.setRepeatInstance(copy.getRepeatInstance());
-                    result.setSecondInstance(copy.getSecondInstance());
-                } else {
-                    //doesn't exist so return no stars
-                    result.setFirstInstance(false);
-                    result.setRepeatInstance(false);
-                    result.setSecondInstance(false);
-                }
-
-                GUIUtils.populateStarsMenu(stars, result, LessonDetails.this);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                result.setFirstInstance(false);
-                result.setRepeatInstance(false);
-                result.setSecondInstance(false);
-                GUIUtils.populateStarsMenu(stars, result, LessonDetails.this);
-            }
-        });
-
-        return true;
-    }*/
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
@@ -215,13 +167,6 @@ public class LessonDetails extends Fragment {
     }
 
     private void populateData(){
-        /*LinearLayout titleLayout =
-                (LinearLayout) getLayoutInflater().inflate(R.layout.inflatable_lesson_details_title, list, false);
-        TextView titleTextView = (TextView) titleLayout.findViewById(R.id.lesson_details_title);
-        titleTextView.setText(lessonData.getTitle());
-        ImageView iconView = (ImageView)titleLayout.findViewById(R.id.lesson_details_icon);
-        int imageID = GUIUtils.stringToDrawableID(lessonData.getImage(),this);
-        iconView.setImageResource(imageID);*/
 
         //grab list of instances
         DatabaseReference lessonInstancesRef = db.getReference(
@@ -280,6 +225,7 @@ public class LessonDetails extends Fragment {
         //load lesson class
         Lesson lesson = LessonFactory.parseLesson(lessonData.getKey(),
                 new Lesson.LessonListener() {
+                    private DateTime startTime = DateTime.now();
             @Override
             public void onLessonCreated() {
                 //since these will be called from a separate thread, we want to make sure
@@ -323,14 +269,23 @@ public class LessonDetails extends Fragment {
                         }
                     }
                 });
+
+                DateTime finishTime = DateTime.now();
+                int millisecondsTaken = new Period(startTime, finishTime, PeriodType.millis()).getMillis();
+                Bundle bundle = new Bundle();
+                bundle.putInt(FirebaseAnalytics.Param.VALUE, millisecondsTaken);
+                firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_LOAD, bundle);
+
             }
         });
+
         //first part connects to Firebase
         // thus running on the main UI thread.
         //the second part (connecting to wikidata)
         // runs on an async task
-        if (lesson != null)
+        if (lesson != null) {
             lesson.createInstance();
+        }
 
         //the list listens for inserts and removes the loading spinner
     }

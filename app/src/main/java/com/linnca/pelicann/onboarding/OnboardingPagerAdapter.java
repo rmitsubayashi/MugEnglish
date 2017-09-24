@@ -5,11 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.linnca.pelicann.onboarding.OnboardingIntroduction1;
-import com.linnca.pelicann.onboarding.OnboardingIntroduction2;
-import com.linnca.pelicann.onboarding.OnboardingIntroduction3;
-import com.linnca.pelicann.onboarding.OnboardingIntroduction4;
-
 class OnboardingPagerAdapter extends FragmentPagerAdapter {
     private int maxPageCt = 1;
     private Bundle bundle;

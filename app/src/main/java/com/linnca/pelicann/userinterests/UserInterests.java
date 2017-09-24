@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,6 +30,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 import com.linnca.pelicann.userinterestcontrols.UserInterestRemover;
@@ -43,6 +45,7 @@ import java.util.List;
 * */
 public class UserInterests extends Fragment {
     private final String TAG = "UserInterests";
+    private FirebaseAnalytics firebaseLog;
     private ViewGroup mainLayout;
     private RecyclerView listView;
     private Query userInterestQuery;
@@ -65,6 +68,9 @@ public class UserInterests extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
+        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
+        firebaseLog.setUserId(userID);
     }
 
     @Override
@@ -129,6 +135,10 @@ public class UserInterests extends Fragment {
     public void filterUserInterests(int filter){
         if (userInterestListAdapter != null)
             userInterestListAdapter.setFilter(filter);
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Filter");
+        bundle.putString(FirebaseAnalytics.Param.VALUE, ToolbarSpinnerAdapter.getSpinnerStateIdentifier(filter));
+        firebaseLog.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     private void loadUser(){

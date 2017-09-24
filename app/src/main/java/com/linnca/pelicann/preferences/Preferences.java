@@ -9,7 +9,6 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 
-
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;

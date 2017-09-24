@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,11 +25,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
+import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
 import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
+import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +40,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SearchInterests extends Fragment {
+    private FirebaseAnalytics firebaseLog;
+    private String userID;
     private final String TAG = "SearchInterests";
     private EntitySearcher searcher;
     private SearchView searchView;
@@ -78,6 +82,10 @@ public class SearchInterests extends Fragment {
                 new WikiDataAPISearchConnector(
                         WikiBaseEndpointConnector.JAPANESE)
         );
+        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
+        firebaseLog.setUserId(userID);
     }
 
     @Override
@@ -136,9 +144,6 @@ public class SearchInterests extends Fragment {
 
     private void addSearchFunctionality(){
 
-        //first get all the user's interests so we can filter out duplicate results
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference(
                 FirebaseDBHeaders.USER_INTERESTS + "/" +
@@ -179,10 +184,11 @@ public class SearchInterests extends Fragment {
                                     if (s.length() > 1) {
                                         //search
                                         populateResults(s);
+
                                     }
                                 }
                             }
-                        }, 400);
+                        }, 200);
 
                         return true;
                     }
@@ -205,6 +211,10 @@ public class SearchInterests extends Fragment {
                 //add the interest
                 UserInterestAdder userInterestAdder = new UserInterestAdder();
                 userInterestAdder.findPronunciationAndCategoryThenAdd(data);
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, data.getWikiDataID());
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, data.getLabel());
+                firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ADD_ITEM, bundle);
 
                 //also to the list we have saved locally
                 userInterests.add(data);
@@ -231,6 +241,11 @@ public class SearchInterests extends Fragment {
                 } else {
                     populateRecommendations(data);
                 }
+
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Load More Recommendations");
+                bundle.putInt(FirebaseAnalytics.Param.VALUE, recommendationCt);
+                firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
             }
         };
     }
@@ -367,6 +382,9 @@ public class SearchInterests extends Fragment {
                     result.add(emptyState);
                 }
                 adapter.updateEntries(result);
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, query);
+                firebaseLog.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
             }
         }
     }

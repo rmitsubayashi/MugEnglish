@@ -1,13 +1,11 @@
 package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 
 import java.util.List;
-import java.util.Locale;
 
 public class Question_FillInBlank_MultipleChoice extends Question_General {
     public static final String FILL_IN_BLANK_MULTIPLE_CHOICE = "@blankMC@";

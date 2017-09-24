@@ -1,15 +1,9 @@
 package com.linnca.pelicann.questions;
 
 
-import android.animation.Animator;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
@@ -17,8 +11,6 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
-
-import com.linnca.pelicann.R;
 
 import java.text.BreakIterator;
 import java.util.ArrayList;

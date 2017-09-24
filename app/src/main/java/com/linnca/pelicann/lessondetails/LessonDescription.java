@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
+import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.ArrayList;
 

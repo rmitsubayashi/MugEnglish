@@ -65,4 +65,19 @@ public class ToolbarSpinnerAdapter extends ArrayAdapter<ToolbarSpinnerItem> {
                 state == FILTER_OTHER
                 ;
     }
+
+    public static String getSpinnerStateIdentifier(int state){
+        switch (state){
+            case FILTER_ALL:
+                return "all";
+            case FILTER_PERSON:
+                return "person";
+            case FILTER_PLACE:
+                return "place";
+            case FILTER_OTHER:
+                return "other";
+            default:
+                return "null";
+        }
+    }
 }

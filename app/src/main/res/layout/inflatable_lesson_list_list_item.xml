@@ -14,23 +14,5 @@
     android:layout_height="wrap_content"
     android:textSize="17sp"
     android:id="@+id/lesson_list_item_text"/>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="end">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lesson_list_item_star1"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lesson_list_item_star2"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/lesson_list_item_star3"/>
 
-    </LinearLayout>
 </LinearLayout>
