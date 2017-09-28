@@ -40,6 +40,7 @@ import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.LessonFactory;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.lessonlist.LessonList;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        LessonFactory.saveGenericQuestions();
         lessonHierarchyViewer = new LessonHierarchyViewer();
 
         toolbar = findViewById(R.id.tool_bar);
@@ -346,6 +348,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.addToBackStack(FRAGMENT_LESSON_LIST);
         fragmentTransaction.commit();
         switchActionBarUpButton();
+
+    }
+
+    @Override
+    public void lessonListToReview(String key){
 
     }
 

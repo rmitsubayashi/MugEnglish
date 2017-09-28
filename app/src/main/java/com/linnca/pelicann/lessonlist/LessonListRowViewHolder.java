@@ -70,8 +70,8 @@ class LessonListRowViewHolder extends RecyclerView.ViewHolder {
         col3Bottom = itemView.findViewById(R.id.lesson_list_list_item_col3_bottom);
     }
 
-    void populateRow(LessonListRow row, final View.OnClickListener[] listeners, int[] status) {
-        LessonData[] data = row.getLessons();
+    void populateRow(LessonListRow row, final LessonList.LessonListListener listener, int[] status) {
+        final LessonData[] data = row.getLessons();
         ViewGroup[] colLayouts = new ViewGroup[]{col1Layout, col2Layout, col3Layout};
         TextView[] colTextViews =new TextView[]{col1Text, col2Text, col3Text};
         ImageView[] colIcons = new ImageView[]{col1Icon, col2Icon, col3Icon};
@@ -115,7 +115,12 @@ class LessonListRowViewHolder extends RecyclerView.ViewHolder {
 
                 colLayout.setOnClickListener(
                         colActive ?
-                                listeners[i] : null
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        listener.lessonListToLessonDetails(colData);
+                                    }
+                                } : null
                 );
                 colLayout.setOnTouchListener(null);
                 colText.setText(colData.getTitle());

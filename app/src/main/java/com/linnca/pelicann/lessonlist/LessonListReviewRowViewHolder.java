@@ -16,10 +16,15 @@ class LessonListReviewRowViewHolder extends RecyclerView.ViewHolder {
         button = itemView.findViewById(R.id.lesson_list_list_review_item_button);
     }
 
-    void populateRow(final LessonData data, final View.OnClickListener listener, int status){
+    void populateRow(final LessonData data, final LessonList.LessonListListener listener, int status){
         button.setText(data.getTitle());
         if (status == LessonListAdapter.STATUS_ACTIVE){
-            button.setOnClickListener(listener);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.lessonListToReview(data.getKey());
+                }
+            });
             button.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.orange500));
         } else {
             button.setOnClickListener(null);

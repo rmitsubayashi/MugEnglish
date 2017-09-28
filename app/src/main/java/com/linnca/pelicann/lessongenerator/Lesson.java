@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //from the second time on, we can just read the questions in from the db
 public abstract class Lesson {
 	private static final String TAG = "lesson";
+	protected final String TOPIC_GENERIC_QUESTION = "一般問題";
 	private FirebaseDatabase db;
 	protected String lessonKey;
 	//the lesson instance we will be creating
@@ -87,6 +88,11 @@ public abstract class Lesson {
 	//asynchronous methods act synchronously
 	private void startFlow(){
 		db = FirebaseDatabase.getInstance();
+		//fill generic questions first
+		List<List<String>> genericQuestionSets = getGenericQuestionIDSets();
+		List<String> pickGenericQuestions = pickQuestions(genericQuestionSets);
+		lessonInstanceData.addQuestionIds(pickGenericQuestions);
+		//now populate dynamic questions
 		populateUserInterests();
 	}
 
@@ -252,7 +258,6 @@ public abstract class Lesson {
 		for (WikiDataEntryData interest : interestList){
 			String entityID = interest.getWikiDataID();
 			String query = addEntityToQuery(entityID);
-			//Log.d(TAG,connector.getDOMAsString(query));
 			Document resultDOM = connector.fetchDOMFromGetRequest(query);
 			this.processResultsIntoClassWrappers(resultDOM);
 			//there can be more results than we need.
@@ -530,6 +535,7 @@ public abstract class Lesson {
 	}
 
 	private void saveInstance(){
+		//shouldn't happen
 		if (lessonInstanceData.questionSetCount() == 0){
 			Log.d("TAG","question set count is 0");
 			lessonListener.onLessonCreated();
@@ -568,7 +574,16 @@ public abstract class Lesson {
 		return questionIDs;
 	}
 
+	//override this if we want to add generic questions to the beginning
+	protected List<List<String>> getGenericQuestionIDSets(){
+		return new ArrayList<>(1);
+	}
 
-	
+	//since we are requesting IDs for generic questions, we need some way of having
+	//the question already saved in the DB.
+	//this will be called by the maintenance team to pre-populate
+	//generic questions
+	public void saveGenericQuestions(){}
+
 	
 }

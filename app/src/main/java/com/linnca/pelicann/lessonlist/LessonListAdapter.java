@@ -101,13 +101,8 @@ class LessonListAdapter
                         rowStatus[i] = STATUS_NONE;
                 }
             }
-            View.OnClickListener[] listeners = new View.OnClickListener[3];
-            for (int i=0; i<3; i++) {
-                if (lessonRow.getLessons()[i] != null) {
-                    listeners[i] = debugListener(lessonRow.getLessons()[i].getKey());
-                }
-            }
-            ((LessonListRowViewHolder)holder).populateRow(lessonRow, listeners, rowStatus);
+
+            ((LessonListRowViewHolder)holder).populateRow(lessonRow, listener, rowStatus);
 
             LessonListRow rowBefore = position == 0 ? null : data.get(position - 1);
             LessonListRow rowAfter = position == data.size() - 1 ? null : data.get(position + 1);
@@ -120,7 +115,7 @@ class LessonListAdapter
         } else if (holder instanceof LessonListReviewRowViewHolder){
             LessonData reviewData = lessonRow.getLessons()[1];
             int status = getItemStatus(reviewData);
-            ((LessonListReviewRowViewHolder)holder).populateRow(reviewData, debugListener(reviewData.getKey()), status);
+            ((LessonListReviewRowViewHolder)holder).populateRow(reviewData, listener, status);
         }
     }
 

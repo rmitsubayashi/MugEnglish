@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
@@ -36,9 +37,21 @@ public class LessonFactory {
                         listener
                 );
             }
+            case Hello_my_name_is_NAME.KEY :{
+                return new Hello_my_name_is_NAME(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+
             default:
                 Log.d(TAG, "Could not parse lesson");
                 return null;
         }
+    }
+
+    public static void saveGenericQuestions(){
+        Lesson lesson = new Hello_my_name_is_NAME(null, null);
+        lesson.saveGenericQuestions();
     }
 }

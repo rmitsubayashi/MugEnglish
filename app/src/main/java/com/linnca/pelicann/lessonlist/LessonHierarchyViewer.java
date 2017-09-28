@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
+import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
@@ -51,7 +52,7 @@ public class LessonHierarchyViewer {
         titleCount = new HashMap<>();
 
         row = new LessonListRow();
-        col1Data = new LessonData("greetings1_key", greetings, null, null, R.color.lblue300, greetingsIconID);
+        col1Data = new LessonData(Hello_my_name_is_NAME.KEY, greetings, null, null, R.color.lblue300, greetingsIconID);
         col2Data = new LessonData("people1_key", people, null, null, R.color.lblue700, peopleIconID);
         col3Data = new LessonData("people2_key", people, null, null, R.color.lblue700, peopleIconID);
         row.setCol1(col1Data);
@@ -61,7 +62,7 @@ public class LessonHierarchyViewer {
 
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
-        col1Prerequisites.add("greetings1_key");
+        col1Prerequisites.add(Hello_my_name_is_NAME.KEY);
         col1Data = new LessonData("greetings2_key", greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
         col2Prerequisites = new ArrayList<>(2);
         col2Prerequisites.add("people1_key");
