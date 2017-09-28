@@ -55,7 +55,6 @@ public class LessonDetails extends Fragment {
     private String userID;
     private FirebaseAnalytics firebaseLog;
     public static final String BUNDLE_LESSON_DATA = "lessonData";
-    public static final String BUNDLE_BACKGROUND_COLOR = "backgroundColor";
     private LessonData lessonData;
     private RecyclerView list;
     private FloatingActionButton createButton;
@@ -99,10 +98,8 @@ public class LessonDetails extends Fragment {
 
             addActionListeners();
             populateData();
-
+            setLessonColor(lessonData.getColorID());
         }
-        int color = arguments.getInt(BUNDLE_BACKGROUND_COLOR, 0);
-        setLessonColor(color);
 
         return view;
     }
@@ -192,7 +189,7 @@ public class LessonDetails extends Fragment {
 
     private void setLessonColor(int color){
         //background for whole activity
-        mainLayout.setBackgroundColor(color);
+        mainLayout.setBackgroundColor(ContextCompat.getColor(getContext(), color));
 
         /*
         //status bar (post-lollipop)

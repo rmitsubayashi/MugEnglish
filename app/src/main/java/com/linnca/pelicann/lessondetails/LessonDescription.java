@@ -32,7 +32,7 @@ public class LessonDescription extends Fragment {
                              Bundle savedInstanceState){
         String lessonKey = getArguments().getString(BUNDLE_LESSON_KEY);
         alwaysShowException = getArguments().getBoolean(BUNDLE_SHOW_EXCEPTION);
-        LessonHierarchyViewer helper = new LessonHierarchyViewer(getContext());
+        LessonHierarchyViewer helper = new LessonHierarchyViewer();
         Integer layoutID = helper.getLessonData(lessonKey).getDescriptionLayout();
         if (layoutID == null){
             //layout if we can't find one (we preemptively handle it by hiding the icon that links to this screen,

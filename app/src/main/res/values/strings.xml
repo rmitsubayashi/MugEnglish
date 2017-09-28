@@ -121,16 +121,10 @@
         問題を何回間違っていいのか設定できます。\n間違えたらすぐに答えを確認せず、何が間違っているのかじっくり考えてください。
     </string>
     <string name="preferences_first_time_key">preferences:first time</string>
-    <string name="preferences_last_selected_lesson_category">preferences: last selected lesson category</string>
+    <string name="preferences_last_selected_lesson_level">preferences: last selected lesson level</string>
 
     <string name="preferences_subscreen_functionality_title">機能</string>
     <string name="preferences_subscreen_reason_title">理由</string>
-
-    <string name="lesson_category_greetings">あいさつ</string>
-    <string name="lesson_category_family">家族</string>
-    <string name="lesson_category_work">職業</string>
-    <string name="lesson_category_body">体</string>
-    <string name="lesson_category_countries">国</string>
 
     <!--onboarding pages-->
     <string name="onboarding_skip">スキップ</string>
@@ -155,12 +149,16 @@
     <string name="fragment_search_interests_title">検索</string>
     <string name="fragment_user_data_title">データ</string>
     <string name="fragment_settings_title">設定</string>
+    <string name="fragment_lesson_list_title">勉強</string>
 
-    <string name="main_navigation_drawer_lesson_categories_level1">レベル1</string>
+    <!--navigation-->
+    <string name="navigation_drawer_open">開く</string>
+    <string name="navigation_drawer_close">閉じる</string>
+    <string name="lessons_level1">レベル1</string>
+    <string name="lessons_level2">レベル2</string>
 
     <!--Lesson list page -->
-    <string name="lesson_list_navigation_drawer_open">開く</string>
-    <string name="lesson_list_navigation_drawer_close">閉じる</string>
+
 
     <!--results-->
     <string name="results_app_bar_title">結果</string>

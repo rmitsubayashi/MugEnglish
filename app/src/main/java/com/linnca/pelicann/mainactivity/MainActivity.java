@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lessonHierarchyViewer = new LessonHierarchyViewer(this);
+        lessonHierarchyViewer = new LessonHierarchyViewer();
 
         toolbar = findViewById(R.id.tool_bar);
         toolbarSpinner = toolbar.findViewById(R.id.tool_bar_spinner);
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
-                this,drawerLayout, toolbar, R.string.lesson_list_navigation_drawer_open, R.string.lesson_list_navigation_drawer_close){
+                this,drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
 
             @Override
             public void onDrawerClosed(View drawerView) {
@@ -157,18 +157,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             newFragment = new Preferences();
                             newFragmentTag = getString(R.string.preferences_main_key);
                             break;
-                        case R.id.main_navigation_drawer_lesson_work :
+                        case R.id.main_navigation_drawer_lesson_level1 :
                             newFragment = new LessonList();
-                            bundle.putInt(LessonList.LESSON_CATEGORY_ID, LessonHierarchyViewer.ID_WORK);
+                            bundle.putInt(LessonList.LESSON_LEVEL, 1);
                             newFragment.setArguments(bundle);
-                            setLastSelectedLessonCategory(LessonHierarchyViewer.ID_WORK);
+                            setLastSelectedLessonLevel(1);
                             newFragmentTag = FRAGMENT_LESSON_LIST;
                             break;
-                        case R.id.main_navigation_drawer_lesson_countries :
+                        case R.id.main_navigation_drawer_lesson_level2 :
                             newFragment = new LessonList();
-                            bundle.putInt(LessonList.LESSON_CATEGORY_ID, LessonHierarchyViewer.ID_COUNTRIES);
+                            bundle.putInt(LessonList.LESSON_LEVEL, 1);
                             newFragment.setArguments(bundle);
-                            setLastSelectedLessonCategory(LessonHierarchyViewer.ID_COUNTRIES);
+                            setLastSelectedLessonLevel(1);
                             newFragmentTag = FRAGMENT_LESSON_LIST;
                             break;
                         default:
@@ -336,11 +336,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void lessonListToLessonDetails(LessonData lessonData, int backgroundColor){
+    public void lessonListToLessonDetails(LessonData lessonData){
         Fragment fragment = new LessonDetails();
         Bundle bundle = new Bundle();
         bundle.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonData);
-        bundle.putInt(LessonDetails.BUNDLE_BACKGROUND_COLOR, backgroundColor);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_LESSON_DETAILS);
@@ -497,10 +496,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         questionManager.nextQuestion(false);
     }
 
-    private void setLastSelectedLessonCategory(int lessonCategoryID){
+    private void setLastSelectedLessonLevel(int level){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(getString(R.string.preferences_last_selected_lesson_category), lessonCategoryID);
+        editor.putInt(getString(R.string.preferences_last_selected_lesson_level), level);
         editor.apply();
     }
 
@@ -520,23 +519,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //this is the ID used by the fragment
         //default (the user has never selected an item) is countries for now
-        int lastSelectedLessonCategoryID = preferences.getInt(getString(R.string.preferences_last_selected_lesson_category), LessonHierarchyViewer.ID_COUNTRIES);
+        int lastSelectedLessonLevel = preferences.getInt(getString(R.string.preferences_last_selected_lesson_level), 1);
         //finding the ID of the navigation drawer
         int navigationDrawerItemIDToSelect;
-        switch (lastSelectedLessonCategoryID){
-            case LessonHierarchyViewer.ID_COUNTRIES :
-                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_countries;
+        switch (lastSelectedLessonLevel){
+            case 1 :
+                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level1;
                 break;
-            case LessonHierarchyViewer.ID_WORK :
-                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_work;
+            case 2 :
+                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level2;
                 break;
             default:
-                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_countries;
+                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level1;
         }
         checkNavigationItem(navigationDrawerItemIDToSelect);
         Fragment lessonListFragment = new LessonList();
         Bundle bundle = new Bundle();
-        bundle.putInt(LessonList.LESSON_CATEGORY_ID, lastSelectedLessonCategoryID);
+        bundle.putInt(LessonList.LESSON_LEVEL, lastSelectedLessonLevel);
         lessonListFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonListFragment, FRAGMENT_LESSON_LIST);

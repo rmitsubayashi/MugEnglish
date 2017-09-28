@@ -52,7 +52,7 @@ class UserInterestViewHolder  extends RecyclerView.ViewHolder {
                 icon.setImageResource(R.drawable.ic_other);
                 break;
             default:
-                icon.setImageResource(R.drawable.ic_all);
+                icon.setImageResource(R.drawable.ic_other);
         }
     }
 

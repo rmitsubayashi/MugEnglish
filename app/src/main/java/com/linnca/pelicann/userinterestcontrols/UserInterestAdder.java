@@ -84,6 +84,9 @@ public class UserInterestAdder {
                         classificationSet = true;
                     }
                 }
+                if (!classificationSet){
+                    dataToAdd.setClassification(WikiDataEntryData.CLASSIFICATION_OTHER);
+                }
             } catch (Exception e){
                 e.printStackTrace();
             }

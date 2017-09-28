@@ -18,14 +18,14 @@ import java.util.List;
 
 public class LessonList extends Fragment {
     private final String TAG = "LessonList";
-    public static final String LESSON_CATEGORY_ID = "lessonCategoryID";
+    public static final String LESSON_LEVEL = "lessonLevel";
     private RecyclerView listView;
-    private int lessonCategoryID;
+    private int lessonLevel;
 
     private LessonListListener listener;
 
     public interface LessonListListener {
-        void lessonListToLessonDetails(LessonData lessonData, int backgroundColor);
+        void lessonListToLessonDetails(LessonData lessonData);
         void setToolbarState(ToolbarState state);
     }
 
@@ -34,17 +34,16 @@ public class LessonList extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
         listView = view.findViewById(R.id.lesson_list_list);
-        lessonCategoryID = getArguments().getInt(LESSON_CATEGORY_ID);
-        populateLessonList(lessonCategoryID);
+        lessonLevel = getArguments().getInt(LESSON_LEVEL);
+        populateLessonList(lessonLevel);
         return view;
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer(getContext());
         listener.setToolbarState(
-                new ToolbarState(lessonHierarchyViewer.getLessonCategory(lessonCategoryID).getTitle(),
+                new ToolbarState(getString(R.string.fragment_lesson_list_title),
                         false, null)
             );
     }
@@ -70,11 +69,10 @@ public class LessonList extends Fragment {
         }
     }
 
-    private void populateLessonList(int lessonCategoryID){
-        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer(getContext());
-        LessonCategory lessonCategory = lessonHierarchyViewer.getLessonCategory(lessonCategoryID);
-        List<LessonData> lessonDataList = lessonCategory.getLessons();
-        LessonListAdapter adapter = new LessonListAdapter(lessonDataList, listener);
+    private void populateLessonList(int lessonLevel){
+        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
+        List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
+        LessonListAdapter adapter = new LessonListAdapter(lessonRows, listener);
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
         listView.setAdapter(adapter);
     }

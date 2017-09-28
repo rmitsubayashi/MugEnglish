@@ -8,5 +8,7 @@
     android:layout_height="match_parent"
     android:overScrollMode="never"
     android:paddingTop="8dp"
+    android:paddingBottom="24dp"
+    android:clipToPadding="false"
     />
 
