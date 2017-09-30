@@ -5,14 +5,12 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
-import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
-import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -155,21 +153,20 @@ public class Hello_my_name_is_NAME extends Lesson {
         return questionSets;
     }
 
-    public void saveGenericQuestions(){
+    @Override
+    protected List<QuestionData> getGenericQuestions(){
         QuestionData toSave1 = createSpellingSuggestiveQuestion();
-        String id1 = KEY + "_generic1";
+        String id1 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 1);
         toSave1.setId(id1);
-        FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTIONS + "/" +
-                        id1
-        ).setValue(toSave1);
         QuestionData toSave2 = createSpellingQuestion();
-        String id2 = KEY + "_generic2";
+        String id2 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 2);
         toSave2.setId(id2);
-        FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTIONS + "/" +
-                        id2
-        ).setValue(toSave2);
+
+        List<QuestionData> questions = new ArrayList<>(2);
+        questions.add(toSave1);
+        questions.add(toSave2);
+        return questions;
+
     }
 
     private QuestionData createSpellingSuggestiveQuestion(){

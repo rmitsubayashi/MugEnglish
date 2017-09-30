@@ -250,6 +250,7 @@
     <string name="question_translate_word_number_instructions">訳してください</string>
     <string name="question_translate_word_hint">訳</string>
     <string name="question_translate_word_submit">確定</string>
+    <string name="question_chat_instructions">返信してください</string>
 
     <string name="calendar_sunday">日</string>
     <string name="calendar_monday">月</string>

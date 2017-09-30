@@ -52,13 +52,6 @@ public class Question_TrueFalse extends Question_General {
     }
 
     @Override
-    protected boolean disableChoiceAfterWrongAnswer(){
-        //technically it's true but it doesn't matter because we only need one attempt
-        //before showing the answer
-        return true;
-    }
-
-    @Override
     protected String formatWrongFeedbackString(){
         //we really don't need feedback for true false questions
         return null;
@@ -72,7 +65,7 @@ public class Question_TrueFalse extends Question_General {
     private void populateQuestion(){
         String question = questionData.getQuestion();
         questionTextView.setText(
-                QuestionUtils.longClickToSpeechTextViewSpannable(
+                QuestionUtils.clickToSpeechTextViewSpannable(
                         questionTextView, question, new SpannableString(question),textToSpeech)
         );
     }

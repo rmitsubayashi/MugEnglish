@@ -9,6 +9,7 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
 import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
+import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +64,7 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(Hello_my_name_is_NAME.KEY);
-        col1Data = new LessonData("greetings2_key", greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
+        col1Data = new LessonData(good_morning_afternoon_evening.KEY, greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
         col2Prerequisites = new ArrayList<>(2);
         col2Prerequisites.add("people1_key");
         col2Prerequisites.add("people2_key");
@@ -76,7 +77,7 @@ public class LessonHierarchyViewer {
 
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
-        col1Prerequisites.add("greetings2_key");
+        col1Prerequisites.add(good_morning_afternoon_evening.KEY);
         col1Data = new LessonData("greetings3_key", greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add("numbers1_key");

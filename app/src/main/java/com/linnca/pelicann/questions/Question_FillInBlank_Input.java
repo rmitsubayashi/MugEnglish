@@ -67,11 +67,6 @@ public class Question_FillInBlank_Input extends Question_General {
         return Question_General.UNLIMITED_ATTEMPTS;
     }
 
-    @Override
-    protected boolean disableChoiceAfterWrongAnswer(){
-        return false;
-    }
-
     private void createQuestionLayout(){
         String question = questionData.getQuestion();
         String answer = questionData.getAnswer();
@@ -103,7 +98,7 @@ public class Question_FillInBlank_Input extends Question_General {
 
 
         questionTextView.setText(
-                QuestionUtils.longClickToSpeechTextViewSpannable(questionTextView, question, stringBuilder, textToSpeech)
+                QuestionUtils.clickToSpeechTextViewSpannable(questionTextView, question, stringBuilder, textToSpeech)
         );
 
         //slightly larger than the answer

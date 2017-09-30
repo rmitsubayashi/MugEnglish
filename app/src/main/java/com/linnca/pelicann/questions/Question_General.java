@@ -43,7 +43,6 @@ public abstract class Question_General extends Fragment {
 
     private int maxNumberOfAttempts;
     private int attemptCt = 0;
-    private boolean disableChoiceAfterWrongAnswer;
 
     private BottomSheetBehavior behavior;
     private NestedScrollView feedback;
@@ -69,7 +68,6 @@ public abstract class Question_General extends Fragment {
         questionNumber = args.getInt(BUNDLE_QUESTION_NUMBER);
         totalQuestions = args.getInt(BUNDLE_QUESTION_TOTAL_QUESTIONS);
         setMaxNumberOfAttempts();
-        disableChoiceAfterWrongAnswer = disableChoiceAfterWrongAnswer();
         textToSpeech = ((MainActivity)getActivity()).getTextToSpeech();
     }
 
@@ -108,9 +106,9 @@ public abstract class Question_General extends Fragment {
     //how many chances that are possibly allowed for each question type
     // (t/f is only one, m/c can have more)
     protected abstract int getMaxPossibleAttempts();
-    //whether to disable choice after answer when you have multiple attempts.
+    //we can disable choice after answer when you have multiple attempts.
     //this will be user friendly?
-    protected abstract boolean disableChoiceAfterWrongAnswer();
+    protected void doSomethingAfterWrongAnswer(View clickedView){}
     //for example clearing a response, hiding the keyboard, etc.
     //should be overridden if using (not required)
     protected void doSomethingAfterResponse(){}
@@ -260,9 +258,7 @@ public abstract class Question_General extends Fragment {
 
                             @Override
                             public void onAnimationEnd(Animation animation) {
-                                if (disableChoiceAfterWrongAnswer) {
-                                    finalView.setEnabled(false);
-                                }
+                                doSomethingAfterWrongAnswer(finalView);
                             }
 
                             @Override

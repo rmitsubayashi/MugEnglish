@@ -47,18 +47,19 @@ public class Question_MultipleChoice extends Question_General {
     protected int getMaxPossibleAttempts(){
         //it should be the number of choices - 1 (the last one is obvious)
         int choiceCt = questionData.getChoices().size();
-        return (choiceCt - 1);
+        //if there's one choice, it's intentionally obvious
+        return (choiceCt == 1 ? 1 : choiceCt - 1);
     }
 
     @Override
-    protected boolean disableChoiceAfterWrongAnswer(){
-        return true;
+    protected void doSomethingAfterWrongAnswer(View clickedView){
+        clickedView.setEnabled(false);
     }
 
     private void populateQuestion(){
         String question = questionData.getQuestion();
         questionTextView.setText(
-                QuestionUtils.longClickToSpeechTextViewSpannable(questionTextView,question,new SpannableString(question), textToSpeech)
+                QuestionUtils.clickToSpeechTextViewSpannable(questionTextView,question,new SpannableString(question), textToSpeech)
         );
     }
 

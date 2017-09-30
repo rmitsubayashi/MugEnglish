@@ -58,18 +58,13 @@ public class Question_TranslateWord extends Question_General {
         return Question_General.UNLIMITED_ATTEMPTS;
     }
 
-    @Override
-    protected boolean disableChoiceAfterWrongAnswer(){
-        return false;
-    }
-
     private void createQuestionLayout(){
         String question = questionData.getQuestion();
         String answer = questionData.getAnswer();
         instructions.setText(R.string.question_translate_word_number_instructions);
 
         wordToTranslateTextView.setText(
-                QuestionUtils.longClickToSpeechTextViewSpannable(wordToTranslateTextView, question, new SpannableString(question), textToSpeech)
+                QuestionUtils.clickToSpeechTextViewSpannable(wordToTranslateTextView, question, new SpannableString(question), textToSpeech)
         );
         if (question.length() < 10){
             wordToTranslateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32);

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
+import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.List;
@@ -75,6 +76,7 @@ public class LessonList extends Fragment {
         List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
         LessonListAdapter adapter = new LessonListAdapter(lessonRows, listener);
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter.addClearedLessonKey(Hello_my_name_is_NAME.KEY);
         listView.setAdapter(adapter);
     }
 

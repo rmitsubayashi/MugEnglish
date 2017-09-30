@@ -54,7 +54,11 @@ class LessonDetailsAdapter
             }
             duplicates.add(interestLabel);
         }
-        allInterestsLabel = allInterestsLabel.substring(0,allInterestsLabel.length()-3);
+        if (allInterestsLabel.equals("")){
+            allInterestsLabel = Integer.toString(position + 1);
+        } else {
+            allInterestsLabel = allInterestsLabel.substring(0, allInterestsLabel.length() - 3);
+        }
         holder.setInterestsLabel(allInterestsLabel);
 
         DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, Locale.JAPAN);

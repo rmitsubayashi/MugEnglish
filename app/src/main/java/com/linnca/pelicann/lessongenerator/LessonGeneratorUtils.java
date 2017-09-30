@@ -239,4 +239,8 @@ public class LessonGeneratorUtils {
         }
         return false;
     }
+
+    public static String formatGenericQuestionID(String lessonKey, int questionNumber){
+        return lessonKey + "_generic" + Integer.toString(questionNumber);
+    }
 }

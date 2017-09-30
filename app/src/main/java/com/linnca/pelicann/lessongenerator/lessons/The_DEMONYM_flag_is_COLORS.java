@@ -173,7 +173,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
         //one question for each color in the flag
         for (String color : colorStrings) {
             String question = this.fillInBlankQuestion(qr, color, colorStrings);
-            //add answer t ochoices
+            //add answer to choices
             List<String> choices = fillInBlankChoices(colorStrings);
             choices.add(color);
             QuestionData data = new QuestionData();

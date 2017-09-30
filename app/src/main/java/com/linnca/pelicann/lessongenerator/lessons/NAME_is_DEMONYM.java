@@ -219,7 +219,8 @@ public class NAME_is_DEMONYM extends Lesson {
         optionList.add("Russian");
         optionList.add("British");
         optionList.add("Vietnamese");
-        //remove if it is in the list so we don't choose it
+        //remove if it is in the list so we don't choose it at first.
+        //insert later
         optionList.remove(qr.demonymEN);
         Collections.shuffle(optionList);
         return new LinkedList<>(optionList);

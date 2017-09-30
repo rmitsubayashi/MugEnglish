@@ -19,7 +19,7 @@ import org.apmem.tools.layouts.FlowLayout;
 import java.util.List;
 
 
-public class    Question_Puzzle_Piece extends Question_General {
+public class Question_Puzzle_Piece extends Question_General {
     private FlowLayout answerLayout;
     private FlowLayout choicesLayout;
     private TextView questionTextView;
@@ -93,11 +93,6 @@ public class    Question_Puzzle_Piece extends Question_General {
     protected int getMaxPossibleAttempts(){
         //technically not unlimited but it doesn't matter too much
         return Question_General.UNLIMITED_ATTEMPTS;
-    }
-
-    @Override
-    protected boolean disableChoiceAfterWrongAnswer(){
-        return false;
     }
 
     @Override

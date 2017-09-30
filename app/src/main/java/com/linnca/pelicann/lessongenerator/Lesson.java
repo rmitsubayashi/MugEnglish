@@ -74,6 +74,7 @@ public abstract class Lesson {
 	protected Lesson(WikiBaseEndpointConnector connector, LessonListener lessonListener){
 		this.connector = connector;
 		this.lessonListener = lessonListener;
+		this.db = FirebaseDatabase.getInstance();
 	}
 
 	// 1. check if a question already exists in the database
@@ -87,13 +88,17 @@ public abstract class Lesson {
 	//the next method is inside the previous method so we can make these
 	//asynchronous methods act synchronously
 	private void startFlow(){
-		db = FirebaseDatabase.getInstance();
 		//fill generic questions first
 		List<List<String>> genericQuestionSets = getGenericQuestionIDSets();
 		List<String> pickGenericQuestions = pickQuestions(genericQuestionSets);
 		lessonInstanceData.addQuestionIds(pickGenericQuestions);
-		//now populate dynamic questions
-		populateUserInterests();
+		if (getSPARQLQuery().equals("")){
+			//we have a lesson without any dynamic questions
+			saveInstance();
+		} else {
+			//now populate dynamic questions
+			populateUserInterests();
+		}
 	}
 
 	private void populateUserInterests(){
@@ -536,8 +541,8 @@ public abstract class Lesson {
 
 	private void saveInstance(){
 		//shouldn't happen
-		if (lessonInstanceData.questionSetCount() == 0){
-			Log.d("TAG","question set count is 0");
+		if (lessonInstanceData.questionCount() == 0){
+			Log.d("TAG","question count is 0");
 			lessonListener.onLessonCreated();
 			return;
 		}
@@ -583,7 +588,24 @@ public abstract class Lesson {
 	//the question already saved in the DB.
 	//this will be called by the maintenance team to pre-populate
 	//generic questions
-	public void saveGenericQuestions(){}
+	void saveGenericQuestions(){
+		List<QuestionData> questions = getGenericQuestions();
+		for (QuestionData data : questions){
+			String id = data.getId();
+			if (id == null){
+				Log.d(TAG, "Generic question ID is null");
+				continue;
+			}
+			db.getReference(
+					FirebaseDBHeaders.QUESTIONS + "/" +
+							id
+			).setValue(data);
+		}
+	}
+
+	protected List<QuestionData> getGenericQuestions(){
+		return new ArrayList<>();
+	}
 
 	
 }

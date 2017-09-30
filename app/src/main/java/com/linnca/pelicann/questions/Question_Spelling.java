@@ -79,11 +79,6 @@ public class Question_Spelling extends Question_General {
         return Question_General.UNLIMITED_ATTEMPTS;
     }
 
-    @Override
-    protected boolean disableChoiceAfterWrongAnswer(){
-        return false;
-    }
-
     private void populateQuestion(){
         questionTextView.setText(questionData.getQuestion());
     }

@@ -54,6 +54,7 @@ import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionManager;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
+import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_General;
@@ -419,6 +420,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         break;
                     case QuestionTypeMappings.TRANSLATE_WORD :
                         fragment = new Question_TranslateWord();
+                        break;
+                    case QuestionTypeMappings.CHAT_MULTIPLE_CHOICE :
+                        fragment = new Question_Chat_MultipleChoice();
                         break;
                     default:
                         Log.d(TAG, "Could not find question type");

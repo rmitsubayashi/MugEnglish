@@ -11,6 +11,7 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
 import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
+import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
 public class LessonFactory {
     private static final String TAG = "LessonFactory";
@@ -43,6 +44,12 @@ public class LessonFactory {
                         listener
                 );
             }
+            case good_morning_afternoon_evening.KEY :{
+                return new good_morning_afternoon_evening(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
 
             default:
                 Log.d(TAG, "Could not parse lesson");
@@ -51,7 +58,7 @@ public class LessonFactory {
     }
 
     public static void saveGenericQuestions(){
-        Lesson lesson = new Hello_my_name_is_NAME(null, null);
+        Lesson lesson = new good_morning_afternoon_evening(null, null);
         lesson.saveGenericQuestions();
     }
 }
