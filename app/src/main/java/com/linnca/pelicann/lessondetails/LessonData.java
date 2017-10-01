@@ -1,6 +1,7 @@
 package com.linnca.pelicann.lessondetails;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 //serializable so we can pass it from the lesson list to
@@ -28,6 +29,16 @@ public class LessonData implements Serializable{
         this.prerequisiteKeys = prerequisiteKeys;
         this.colorID = colorID;
         this.iconID = iconID;
+    }
+
+    public LessonData(LessonData copy){
+        this.key = copy.key;
+        this.title = copy.title;
+        this.descriptionLayout = copy.descriptionLayout;
+        this.prerequisiteKeys = new ArrayList<>(prerequisiteKeys);
+        this.prerequisiteLeeway = copy.prerequisiteLeeway;
+        this.colorID = copy.colorID;
+        this.iconID = copy.iconID;
     }
 
     public String getKey(){

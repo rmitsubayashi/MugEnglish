@@ -76,7 +76,7 @@ public class Question_Chat_MultipleChoice extends Question_General {
     }
 
     @Override
-    protected void doSomethingAfterFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(){
         for (TextView toDisable : chatItemTextViews){
             QuestionUtils.disableTextToSpeech(toDisable);
         }

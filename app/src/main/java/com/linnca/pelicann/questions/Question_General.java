@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -17,11 +19,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.mainactivity.MainActivity;
+import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ import java.util.List;
 
 //sets methods common for all question GUIs
 public abstract class Question_General extends Fragment {
-    private final String TAG = "Question_General";
+    protected final String TAG = "Question Fragment";
     static final int UNLIMITED_ATTEMPTS = -1;
     public static final String BUNDLE_QUESTION_DATA = "bundleQuestionData";
     public static final String BUNDLE_QUESTION_NUMBER = "bundleQuestionNumber";
@@ -49,6 +53,7 @@ public abstract class Question_General extends Fragment {
     private Button nextButton;
     ViewGroup parentViewGroupForFeedback;
     ViewGroup siblingViewGroupForFeedback;
+    View keyboardFocusView;
 
     private QuestionListener questionListener;
 
@@ -114,7 +119,7 @@ public abstract class Question_General extends Fragment {
     protected void doSomethingAfterResponse(){}
     //needed if we have text views that have clickable spans
     //even if the textViews are not clickable, these events fire
-    protected void doSomethingAfterFeedbackOpened(){};
+    protected void doSomethingOnFeedbackOpened(){}
 
     //formatting may be different for certain question types, but this should be the base
     protected String formatWrongFeedbackString(){
@@ -292,19 +297,15 @@ public abstract class Question_General extends Fragment {
     }
 
     private void openFeedback(boolean correct, String response){
-        //when we first display the question the bottom sheet is hidden & can be hidden.
-        //whether the answer was correct or not,
-        //we don't want the user to be able to hide the view because the net button is there
-        //so make it non-hide-able
-        behavior.setHideable(false);
-        TextView feedbackDescription =
-                feedback.findViewById(R.id.question_feedback_description);
+        //overridden if we need to do something
+        doSomethingOnFeedbackOpened();
+
         if (correct){
             feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
             nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
         } //else condition is default now
         TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
-        String description;
+        final String description;
         if (correct){
             feedbackTitle.setText(R.string.question_feedback_correct);
             description = formatCorrectFeedbackString(response);
@@ -313,20 +314,47 @@ public abstract class Question_General extends Fragment {
             description = formatWrongFeedbackString();
         }
 
-        if (description != null && description.length() > 0) {
-            feedbackDescription.setText(description);
-            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        if (keyboardFocusView == null) {
+            openFeedbackHelper(description);
         } else {
-            //we might not have feedback
-            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            boolean hideKeyboard = GUIUtils.hideKeyboard(keyboardFocusView);
+            if (hideKeyboard) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        openFeedbackHelper(description);
+                    }
+                }, 700);
+            } else {
+                openFeedbackHelper(description);
+            }
         }
 
         //we don't want the user to be able to interact with the background,
         //but we want them to be able to see it
         disableBackground(siblingViewGroupForFeedback);
         siblingViewGroupForFeedback.setAlpha(0.5f);
-        //overridden if we need to do something
-        doSomethingAfterFeedbackOpened();
+    }
+
+    private void openFeedbackHelper(String description){
+        //when we first display the question the bottom sheet is hidden & can be hidden.
+        //whether the answer was correct or not,
+        //we don't want the user to be able to hide the view because the net button is there
+        //so make it non-hide-able
+        behavior.setHideable(false);
+        final TextView feedbackDescription =
+                feedback.findViewById(R.id.question_feedback_description);
+        if (description != null && description.length() > 0) {
+            feedbackDescription.setText(description);
+            behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+            //we might not have feedback
+            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            //make sure to call this after showing the bottom sheet
+            //or the bottom sheet won't animate properly
+            feedbackDescription.setVisibility(View.GONE);
+
+        }
     }
 
     private void disableBackground(View view) {

@@ -18,19 +18,19 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="16dp"
             android:layout_marginStart="16dp"
             android:textSize="21sp"
             android:id="@+id/results_questions_correct">
         </TextView>
-        <!--hide until we know the user has earned a star-->
-        <LinearLayout
-            android:id="@+id/results_new_star_layout"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/results_first_clear"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone"/>
+            android:layout_marginBottom="32dp"
+            android:visibility="invisible"
+            android:textSize="17sp"
+            android:text="@string/results_first_clear"/>
         <!--only show if the user needs to review-->
         <Button
             android:id="@+id/results_review"

@@ -6,6 +6,6 @@
         android:paddingStart="4dp"
         android:paddingEnd="4dp"
         android:textAllCaps="false"
-        android:background="@drawable/transparent_button"
+        android:background="@drawable/transparent_button_borderless"
         android:textColor="@color/lblue500"
     />

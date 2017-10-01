@@ -11,7 +11,8 @@ if we don't set it here, the bottom sheet comes in from the top??
     android:background="?attr/colorAccent"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
     android:layout_gravity="bottom"
-    app:behavior_peekHeight="110dp"
+    android:elevation="16dp"
+    app:behavior_peekHeight="96dp"
     app:behavior_hideable="true"
     >
     <!--if the linear layout is higher than the parent view height
@@ -20,36 +21,43 @@ if we don't set it here, the bottom sheet comes in from the top??
         android:id="@+id/question_feedback_text_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="16dp">
+        android:orientation="vertical">
+
         <LinearLayout
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="110dp"
-              android:layout_gravity="center_horizontal"
-              android:weightSum="1">
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_margin="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
             <TextView
+                android:id="@+id/question_feedback_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
-                android:textSize="21sp"
                 android:textColor="@color/white"
-                android:id="@+id/question_feedback_title"/>
+                android:textSize="21sp"/>
+
             <Button
+                android:id="@+id/question_feedback_next"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
-                android:text="@string/question_feedback_next"
                 android:background="@drawable/white_button"
-                android:textColor="?attr/colorAccent"
-                android:id="@+id/question_feedback_next"/>
+                android:text="@string/question_feedback_next"
+                android:textColor="?attr/colorAccent"/>
 
         </LinearLayout>
+
         <TextView
+            android:id="@+id/question_feedback_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:textColor="@color/white"
-            android:textSize="17sp"
-            android:id="@+id/question_feedback_description"/>
+            android:textSize="17sp"/>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

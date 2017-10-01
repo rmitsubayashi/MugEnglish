@@ -1,7 +1,6 @@
 package com.linnca.pelicann.questions;
 
 
-import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.text.Spannable;
@@ -9,7 +8,6 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import java.text.BreakIterator;

@@ -40,7 +40,6 @@ import com.linnca.pelicann.questions.QuestionAttempt;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
-import org.joda.time.Seconds;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

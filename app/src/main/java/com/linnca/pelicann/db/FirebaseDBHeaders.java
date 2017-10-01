@@ -3,9 +3,7 @@ package com.linnca.pelicann.db;
 public class FirebaseDBHeaders {
     //top most headers
     public static final String USER_INTERESTS = "userInterests";
-    public static final String USER_EXPERIENCE = "userExperience";
-    public static final String USER_EXPERIENCE_TOTAL = "total";
-    public static final String USER_EXPERIENCE_LESSONS = "lessons";
+    public static final String CLEARED_LESSONS = "clearedLessons";
     public static final String LESSON_INSTANCES = "lessonInstances";
     public static final String QUESTIONS = "questions";
     public static final String QUESTION_SET_IDS_PER_LESSON = "questionSetIDsPerLesson";

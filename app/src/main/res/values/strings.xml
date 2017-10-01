@@ -163,13 +163,7 @@
     <!--results-->
     <string name="results_app_bar_title">結果</string>
     <string name="results_correct_ct">正解数</string>
-    <string name="results_star_earned_template">「%1$s」を獲得しました</string>
-    <string name="results_star_first_instance">初めての一回</string>
-    <string name="results_star_repeat_instance">復習も大事</string>
-    <string name="results_star_second_instance">新たな一面</string>
-    <string name="results_star_first_instance_explanation">レッスンを初めて完了するともらえます</string>
-    <string name="results_star_repeat_instance_explanation">同じレッスンをもう一度完了するともらえます</string>
-    <string name="results_star_second_instance_explanation">初めてのレッスンと違うレッスンを完了するともらえます</string>
+    <string name="results_first_clear">初クリア!</string>
     <string name="results_review">復習する</string>
     <string name="results_finish_review">このまま終了する</string>
     <string name="results_finish_no_review">終了する</string>

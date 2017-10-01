@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_question_chat"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:id="@+id/question_chat_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <TextView
+            android:id="@+id/question_chat_instructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            style="@style/questions_instructions"
+            android:text="@string/question_chat_instructions"/>
+        <TextView
+            android:id="@+id/question_chat_from"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/question_chat_instructions"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:textSize="19sp"/>
+
+
+        <RelativeLayout
+            android:id="@+id/question_chat_chat_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="4dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:elevation="4dp">
+            <ImageButton
+                android:id="@+id/question_chat_submit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:tint="@color/orange500"
+                android:src="@drawable/ic_send"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                />
+            <EditText
+                android:id="@+id/question_chat_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/question_chat_submit"
+                android:inputType="text"
+                />
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/question_chat_chat_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:fillViewport="true"
+            android:layout_below="@id/question_chat_from"
+            android:layout_above="@id/question_chat_chat_box"
+            >
+            <LinearLayout
+                android:id="@+id/question_chat_chat_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                />
+        </ScrollView>
+    </RelativeLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

@@ -1,12 +1,11 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
-import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
+import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
@@ -92,6 +91,8 @@ public class Hello_my_name_is_NAME extends Lesson {
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
+            List<QuestionData> chatQuestion = createChatQuestion(qr);
+            questionSet.add(chatQuestion);
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
@@ -106,6 +107,31 @@ public class Hello_my_name_is_NAME extends Lesson {
 
     private String formatSentenceJP(QueryResult qr){
         return "こんにちは、私の名前は" + qr.personNameJP + "です。";
+    }
+
+    private List<QuestionData> createChatQuestion(QueryResult qr){
+        String from = qr.personNameJP;
+        ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
+        ChatQuestionItem chatItem2 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
+        List<ChatQuestionItem> chatItems = new ArrayList<>(10);
+        chatItems.add(chatItem1);
+        chatItems.add(chatItem2);
+        String question = QuestionUtils.formatChatQuestion(from, chatItems);
+        String answer = "hello";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personNameJP);
+        data.setQuestionType(QuestionTypeMappings.CHAT);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setVocabulary(new ArrayList<String>());
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
     }
 
     //puzzle pieces for sentence puzzle question

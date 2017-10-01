@@ -32,13 +32,6 @@ public class Question_FillInBlank_Input extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
-        //as of now, this is the only way
-        //I can stick the response feedback bottom sheet on the bottom.
-        //(if I have the keyboard open while submitting an answer,
-        //the bottom sheet comes above the keyboard even though
-        //it is closing
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
     }
 
     @Override
@@ -52,6 +45,9 @@ public class Question_FillInBlank_Input extends Question_General {
         submitButton = view.findViewById(R.id.question_fill_in_blank_input_submit);
         questionInput = view.findViewById(R.id.question_fill_in_blank_input_input);
         instructions = view.findViewById(R.id.question_fill_in_blank_input_instructions);
+
+        keyboardFocusView = questionInput;
+
         createQuestionLayout();
         inflateFeedback(inflater);
         return view;
@@ -110,19 +106,7 @@ public class Question_FillInBlank_Input extends Question_General {
     }
 
     @Override
-    protected void doSomethingAfterResponse(){
-        GUIUtils.hideKeyboard(questionInput);
-    }
-
-    @Override
-    protected void doSomethingAfterFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(){
         QuestionUtils.disableTextToSpeech(questionTextView);
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        //change it back to default
-        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED);
     }
 }

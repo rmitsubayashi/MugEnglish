@@ -1,14 +1,8 @@
 package com.linnca.pelicann.lessonlist;
 
-import android.util.Log;
-
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
-import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
-import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
-import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
-import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
 import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
 import java.util.ArrayList;
@@ -260,6 +254,21 @@ public class LessonHierarchyViewer {
         return null;
     }
 
+    private int getLessonLevel(String lessonKey){
+        int levelCt = lessonLevels.size();
+        for (int i=0; i<levelCt; i++) {
+            List<LessonListRow> lessonRows = lessonLevels.get(i);
+            for (LessonListRow row : lessonRows) {
+                for (LessonData lessonData : row.getLessons()) {
+                    if (lessonData.getKey().equals(lessonKey)) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
     public boolean layoutExists(String lessonKey){
         for (List<LessonListRow> lessonRows : lessonLevels) {
             for (LessonListRow row : lessonRows) {
@@ -272,5 +281,38 @@ public class LessonHierarchyViewer {
         }
 
         return false;
+    }
+
+    public List<LessonData> getLessonsUnlockedByClearing(String lessonKey, List<String> allClearedKeys){
+        List<LessonData> unlockedLessons = new ArrayList<>(5);
+        //if the lesson is already cleared,
+        //clearing that lesson shouldn't unlock anything
+        if (allClearedKeys.contains(lessonKey)){
+            return unlockedLessons;
+        }
+        for (List<LessonListRow> lessonRows : lessonLevels) {
+            for (LessonListRow row : lessonRows) {
+                for (LessonData lessonData : row.getLessons()) {
+                    List<String> prerequisites = lessonData.getPrerequisiteKeys();
+                    if (prerequisites.contains(lessonKey)) {
+                        boolean unlocked = true;
+                        for (String prerequisite : prerequisites){
+                            if (prerequisite.equals(lessonKey)){
+                                continue;
+                            }
+                            if (!allClearedKeys.contains(prerequisite)){
+                                unlocked = false;
+                                break;
+                            }
+                        }
+                        if (unlocked){
+                            unlockedLessons.add(new LessonData(lessonData));
+                        }
+                    }
+                }
+            }
+        }
+
+        return unlockedLessons;
     }
 }

@@ -60,5 +60,7 @@ public class LessonFactory {
     public static void saveGenericQuestions(){
         Lesson lesson = new good_morning_afternoon_evening(null, null);
         lesson.saveGenericQuestions();
+        lesson = new Hello_my_name_is_NAME(null, null);
+        lesson.saveGenericQuestions();
     }
 }

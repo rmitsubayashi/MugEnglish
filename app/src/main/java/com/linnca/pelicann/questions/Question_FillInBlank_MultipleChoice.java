@@ -62,7 +62,7 @@ public class Question_FillInBlank_MultipleChoice extends Question_General {
     }
 
     @Override
-    protected void doSomethingAfterFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(){
         QuestionUtils.disableTextToSpeech(questionTextView);
     }
 

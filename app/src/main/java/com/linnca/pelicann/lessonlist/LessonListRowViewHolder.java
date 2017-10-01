@@ -1,8 +1,6 @@
 package com.linnca.pelicann.lessonlist;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
@@ -14,7 +12,6 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 //holder for user interest list cells

@@ -2,6 +2,7 @@ package com.linnca.pelicann.mainactivity.widgets;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.ResultReceiver;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -117,16 +118,17 @@ public class GUIUtils {
         return result;
     }
 
-    public static void hideKeyboard(View targetViewOfKeyboard){
+    public static boolean hideKeyboard(View targetViewOfKeyboard){
         if (targetViewOfKeyboard == null){
-            return;
+            return false;
         }
         targetViewOfKeyboard.clearFocus();
         InputMethodManager imm = (InputMethodManager) targetViewOfKeyboard.getContext()
                 .getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (imm != null) {
-            imm.hideSoftInputFromWindow(targetViewOfKeyboard.getWindowToken(), 0);
+            return imm.hideSoftInputFromWindow(targetViewOfKeyboard.getWindowToken(), 0);
         }
+        return false;
     }
 }

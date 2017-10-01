@@ -13,4 +13,5 @@ public class QuestionTypeMappings {
 	public static final int SPELLING = 7;
 	public static final int TRANSLATE_WORD = 8;
 	public static final int CHAT_MULTIPLE_CHOICE = 9;
+	public static final int CHAT = 10;
 }

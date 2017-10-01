@@ -33,9 +33,9 @@ public class Results extends Fragment {
     private InstanceRecord instanceRecord;
     private ResultsManager resultsManager;
     private TextView correctCtTextView;
-    private LinearLayout newStarsLayout;
     private Button finishButton;
     private Button reviewButton;
+    private TextView firstClearTextView;
 
     private ResultsListener resultsListener;
 
@@ -50,9 +50,17 @@ public class Results extends Fragment {
         super.onCreate(savedInstanceState);
         instanceRecord = (InstanceRecord) getArguments().getSerializable(BUNDLE_INSTANCE_RECORD);
         resultsManager = new ResultsManager(instanceRecord, new ResultsManager.ResultsManagerListener() {
-
+            @Override
+            public void onLessonCleared(){
+                firstClearTextView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        firstClearTextView.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
         });
-        //this won't affect when we check for new achievements
+
         resultsManager.saveInstanceRecord();
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
@@ -63,8 +71,8 @@ public class Results extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_results, container, false);
-        newStarsLayout = view.findViewById(R.id.results_new_star_layout);
         correctCtTextView = view.findViewById(R.id.results_questions_correct);
+        firstClearTextView = view.findViewById(R.id.results_first_clear);
         reviewButton = view.findViewById(R.id.results_review);
         finishButton = view.findViewById(R.id.results_finish);
         setLayout();
@@ -102,8 +110,11 @@ public class Results extends Fragment {
 
     private void setLayout(){
         populateCorrectCount();
+        resultsManager.checkLessonCleared();
 
         boolean needToReview = false;
+        //user needs to review if the user gets a question wrong
+        // (doesn't matter if the user gets it right on following attempts)
         for (QuestionAttempt attempt : instanceRecord.getAttempts()){
             if (!attempt.getCorrect()){
                 needToReview = true;
@@ -149,21 +160,10 @@ public class Results extends Fragment {
     }
 
     private void populateCorrectCount(){
-        String tempQuestionID = "";
-        int correctCt = 0;
-        int totalCt = 0;
-        List<QuestionAttempt> attempts = instanceRecord.getAttempts();
-        for (QuestionAttempt attempt : attempts){
-            String questionID = attempt.getQuestionID();
-            //there can only be one correct answer per question.
-            // (there can be multiple incorrect answers)
-            if (attempt.getCorrect())
-                correctCt++;
-            if (!tempQuestionID.equals(questionID)){
-                totalCt++;
-                tempQuestionID = questionID;
-            }
-        }
+        int[] result = ResultsManager.calculateCorrectCount(instanceRecord.getAttempts());
+        int correctCt = result[0];
+        int totalCt = result[1];
+
         String displayText = Integer.toString(correctCt) + " / " + Integer.toString(totalCt);
         correctCtTextView.setText(displayText);
         //change text color based on accuracy (the user can edit border line??)
