@@ -119,8 +119,8 @@ public class UserInterestAdder {
                         WikiDataEntryData childData = child.getValue(WikiDataEntryData.class);
                         //we don't want to add a recommendation path to the same interest
                         if (!childData.equals(dataToAdd)){
-                            connectRecommendationEdge(childData.getWikiDataID(), dataToAdd);
-                            connectRecommendationEdge(dataToAdd.getWikiDataID(), childData);
+                            connectRecommendationEdge(childData, dataToAdd);
+                            connectRecommendationEdge(dataToAdd, childData);
                         }
                     }
                 }
@@ -134,10 +134,16 @@ public class UserInterestAdder {
         }
     }
 
-    private void connectRecommendationEdge(final String fromInterestID, final WikiDataEntryData toInterest){
+    private void connectRecommendationEdge(final WikiDataEntryData fromInterest, final WikiDataEntryData toInterest){
+        //we have two references.
+        //one is for recommending interests to users.
+        //the other is for searching related interests for lesson generation.
+        //(we need to query by category type and count for lesson generation).
+        //consistency between the two maps isn't of too much importance so
+        //update them separately
         DatabaseReference edgeRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                        fromInterestID + "/" +
+                        fromInterest.getWikiDataID() + "/" +
                         toInterest.getWikiDataID() + "/" +
                         FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
 
@@ -146,11 +152,46 @@ public class UserInterestAdder {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
                 Long edgeWeight = mutableData.getValue(Long.class);
+                //first edge
                 if (edgeWeight == null){
                     mutableData.setValue(1);
                     FirebaseDatabase.getInstance().getReference(
                             FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                                    fromInterestID + "/" +
+                                    fromInterest.getWikiDataID() + "/" +
+                                    toInterest.getWikiDataID() + "/" +
+                                    FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA
+                    ).setValue(toInterest);
+                } else {
+                    mutableData.setValue(edgeWeight + 1);
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
+
+        DatabaseReference edge2Ref = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
+                        fromInterest.getWikiDataID() + "/" +
+                        Integer.toString(toInterest.getClassification()) + "/" +
+                        toInterest.getWikiDataID() + "/" +
+                        FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
+
+        );
+        edge2Ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Long edgeWeight = mutableData.getValue(Long.class);
+                //first edge
+                if (edgeWeight == null){
+                    mutableData.setValue(1);
+                    FirebaseDatabase.getInstance().getReference(
+                            FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
+                                    fromInterest.getWikiDataID() + "/" +
+                                    Integer.toString(toInterest.getClassification()) + "/" +
                                     toInterest.getWikiDataID() + "/" +
                                     FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA
                     ).setValue(toInterest);

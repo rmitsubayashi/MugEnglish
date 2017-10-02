@@ -24,8 +24,8 @@ public class UserInterestRemover {
                     WikiDataEntryData childData = child.getValue(WikiDataEntryData.class);
                     //don't want to remove a recommendation edge to itself (it doesn't exist)
                     if (!childData.equals(data)){
-                        disconnectRecommendationEdge(childData.getWikiDataID(), data);
-                        disconnectRecommendationEdge(data.getWikiDataID(), childData);
+                        disconnectRecommendationEdge(childData, data);
+                        disconnectRecommendationEdge(data, childData);
                     }
                 }
             }
@@ -45,10 +45,11 @@ public class UserInterestRemover {
 
     }
 
-    private static void disconnectRecommendationEdge(final String fromInterestID, final WikiDataEntryData toInterest){
+    private static void disconnectRecommendationEdge(final WikiDataEntryData fromInterest, final WikiDataEntryData toInterest){
+        //remove from two maps
         DatabaseReference edgeRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                        fromInterestID + "/" +
+                        fromInterest.getWikiDataID() + "/" +
                         toInterest.getWikiDataID() + "/" +
                         FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
         );
@@ -61,7 +62,40 @@ public class UserInterestRemover {
                         mutableData.setValue(null);
                         FirebaseDatabase.getInstance().getReference(
                                 FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                                        fromInterestID + "/" +
+                                        fromInterest.getWikiDataID() + "/" +
+                                        toInterest.getWikiDataID()
+                        ).removeValue();
+                    } else {
+                        mutableData.setValue(edgeWeight - 1);
+                    }
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
+
+        DatabaseReference edge2Ref = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
+                        fromInterest.getWikiDataID() + "/" +
+                        Integer.toString(toInterest.getClassification()) + "/" +
+                        toInterest.getWikiDataID() + "/" +
+                        FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
+        );
+        edge2Ref.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Long edgeWeight = mutableData.getValue(Long.class);
+                if (edgeWeight != null){
+                    if (edgeWeight == 1){
+                        mutableData.setValue(null);
+                        FirebaseDatabase.getInstance().getReference(
+                                FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
+                                        fromInterest.getWikiDataID() + "/" +
+                                        Integer.toString(toInterest.getClassification()) + "/" +
                                         toInterest.getWikiDataID()
                         ).removeValue();
                     } else {

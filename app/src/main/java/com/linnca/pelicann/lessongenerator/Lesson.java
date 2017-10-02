@@ -43,10 +43,12 @@ public abstract class Lesson {
 	//question set ids we need to query FireBase to get more information
 	private final List<String> questionSetIDs = Collections.synchronizedList(new ArrayList<String>());
 	//これが出題される問題のトピック
-	//protected Document documentOfTopics = null;
+	//protected Document documentOfTopics = null
+	//all interests (used when we check related interests
+	private Set<WikiDataEntryData> allUserInterests;
 	//interests to search
-	private final Set<WikiDataEntryData> userInterests = new HashSet<>();
-	//interests that we have filled/know we can't fill (so we don't search for them)
+	private Set<WikiDataEntryData> userInterests;
+	//interests that we have checked/know we can't fill (so we don't search for them)
 	//needs to be synchronized
 	private final Set<WikiDataEntryData> userInterestsChecked = Collections.synchronizedSet(new HashSet<WikiDataEntryData>());
 	//makes sure we are not giving duplicate questions
@@ -61,6 +63,8 @@ public abstract class Lesson {
 	//indicates whether we have already searched for interests related to the user.
 	//this prevents an infinite loop
 	private boolean relatedUserInterestsSearched = false;
+	//how many related interests to search for each interest
+	private int relatedUserInterestsToSearch = 3;
 	//what to do after we finish creating an instance
 	private final LessonListener lessonListener;
 
@@ -108,13 +112,20 @@ public abstract class Lesson {
 		ref.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
+				allUserInterests = new HashSet<>((int)dataSnapshot.getChildrenCount());
+				//have the size set to the maximum size after getting related user interests.
+				//we populate this asynchronously when grabbing related user interests
+				userInterests = Collections.synchronizedSet(new HashSet<WikiDataEntryData>((int)dataSnapshot.getChildrenCount() * relatedUserInterestsToSearch));
 				for (DataSnapshot child : dataSnapshot.getChildren()){
 					WikiDataEntryData data = child.getValue(WikiDataEntryData.class);
+					if (data == null)
+						continue;
 					//filter by category so we don't have to search for user interests that are guaranteed not to work
 					if (data.getClassification() == categoryOfQuestion ||
 							data.getClassification() == WikiDataEntryData.CLASSIFICATION_NOT_SET) {
 						userInterests.add(data);
 					}
+					allUserInterests.add(data);
 				}
 				populateUserQuestionHistory();
 			}
@@ -157,6 +168,15 @@ public abstract class Lesson {
 	//pretty expensive because we are grabbing all question set ids for a lesson,
 	// but I can't think of any other way to make this work..
 	private void fillQuestionsFromDatabase(){
+		if (userInterests.size() == 0){
+			//skip trying to fetch questions from db/wikiData.
+			//we still might want to get related interests of interests
+			//that were filtered out, so don't go to
+			//fillRemainingQuestions() yet
+			saveNewQuestions();
+			return;
+		}
+
 		final AtomicInteger questionSetsToPopulateAtomicInt = new AtomicInteger(questionSetsLeftToPopulate);
 		final AtomicInteger userInterestsLooped = new AtomicInteger(0);
 		DatabaseReference questionSetRef = db.getReference(
@@ -192,7 +212,7 @@ public abstract class Lesson {
 						userInterestsChecked.add(userInterest);
 						for (DataSnapshot questionSetIDSnapshot : dataSnapshot.getChildren()){
 							String questionSetID = questionSetIDSnapshot.getValue(String.class);
-							if (!userQuestionHistory.contains(questionSetID)) {
+							if (!userQuestionHistory.contains(questionSetID) && !questionSetIDs.contains(questionSetID)) {
 								questionSetIDs.add(questionSetID);
 								if (questionSetsToPopulateAtomicInt.decrementAndGet() == 0) break;
 							}
@@ -361,8 +381,6 @@ public abstract class Lesson {
 			}
 		}
 
-		//for now don't test this out
-		relatedUserInterestsSearched = true;
 		if (questionSetsLeftToPopulate != 0 && relatedUserInterestsSearched) {
 			fillRemainingQuestions();
 		} else if (questionSetsLeftToPopulate != 0 && !relatedUserInterestsSearched){
@@ -377,10 +395,47 @@ public abstract class Lesson {
 	//we couldn't populate the questions with the user interests so try with relevant interests
 	// that we can grab using the recommendation map
 	private void populateRelatedUserInterests(){
+		relatedUserInterestsSearched = true;
 		//have atomic int & atomic list
 		//for each user interest get related interest and populate
 		//if atomic int == user interest count
 		// copy the atomic list into user interests and re-try populating
+		newQuestions.clear();
+		userInterests.clear();
+		final AtomicInteger relatedInterestsSearched = new AtomicInteger(0);
+		final int allUserInterestCt = allUserInterests.size();
+		for (WikiDataEntryData userInterest : allUserInterests){
+			DatabaseReference relatedInterestRef = db.getReference(
+					FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
+							userInterest.getWikiDataID() + "/" +
+							categoryOfQuestion
+			);
+			Query relatedInterestQuery = relatedInterestRef.orderByChild(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT)
+					.limitToLast(relatedUserInterestsToSearch);
+			relatedInterestQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(DataSnapshot dataSnapshot) {
+					for (DataSnapshot childSnapshot : dataSnapshot.getChildren()){
+						WikiDataEntryData data = childSnapshot.child(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA)
+								.getValue(WikiDataEntryData.class);
+						if (!allUserInterests.contains(data))
+							userInterests.add(data);
+					}
+
+					if (relatedInterestsSearched.incrementAndGet() == allUserInterestCt){
+						for (WikiDataEntryData interest : userInterests){
+							Log.d(TAG, interest.getLabel());
+						}
+						fillQuestionsFromDatabase();
+					}
+				}
+
+				@Override
+				public void onCancelled(DatabaseError databaseError) {
+
+				}
+			});
+		}
 	}
 
 	//this is for if we can't populate the questions with just the user interests
@@ -410,10 +465,14 @@ public abstract class Lesson {
 				//we are ordering by date, so it's likely that a user will get two sets created at the same time
 				// (same user interest) so shuffle them to make sure this won't happen as often
 				Collections.shuffle(questionSetSnapshots);
+				//so far we've only added newly created question ids to the lesson instance data
+				//(the rest are all just IDs that we will need to fetch the whole data later)
+				List<String> newQuestionSetIDs = lessonInstanceData.getQuestionSetIds();
 				for (DataSnapshot questionSetSnapshot : questionSetSnapshots){
 					String questionSetID = questionSetSnapshot.child(FirebaseDBHeaders.RANDOM_QUESTION_SET_ID).getValue(String.class);
 					//if the user hasn't had the question yet and is not in their current question set
-					if (!userQuestionHistory.contains(questionSetID) && !questionSetIDs.contains(questionSetID)) {
+					if (!userQuestionHistory.contains(questionSetID) && !questionSetIDs.contains(questionSetID) &&
+							!newQuestionSetIDs.contains(questionSetID)) {
 						questionSetIDs.add(questionSetID);
 						questionSetsLeftToPopulate--;
 					}
@@ -461,42 +520,6 @@ public abstract class Lesson {
 
 			}
 		});
-
-		/*for (DataSnapshot questionSetIDRef : allQuestionSetIDRefs){
-			for (DataSnapshot questionSet : questionSetIDRef.getChildren()) {
-				String questionSetID = questionSet.getValue(String.class);
-				//we need the label, not the ID
-				//we can either save the label as well in the firebase entry,
-				//but that seems like too much extra data added?
-				//so fetch the name from wikiData
-
-				if (!userQuestionHistory.contains(questionSetID)) {
-					questionSetIDs.add(questionSetID);
-					questionSetsLeftToPopulate--;
-				}
-
-				if (questionSetsLeftToPopulate == 0)
-					break;
-			}
-
-			if (questionSetsLeftToPopulate == 0)
-				break;
-		}
-
-		//last resort, use the user's previous questions.
-		if (questionSetsLeftToPopulate != 0){
-			//make it a list so we can shuffle
-			List<String> userQuestionHistoryList = new ArrayList<>(userQuestionHistory);
-			Collections.shuffle(userQuestionHistoryList);
-			//no need to check if the user's question history is more than the remaining topics
-			//because it is guaranteed to be at least equal
-			for (int i=0; i<questionSetsLeftToPopulate; i++){
-				String questionSetID = userQuestionHistoryList.get(i);
-				questionSetIDs.add(questionSetID);
-			}
-		}
-
-		getQuestionDataFromQuestionSetIDs();*/
 	}
 
 	private void getQuestionDataFromQuestionSetIDs(){
@@ -555,7 +578,6 @@ public abstract class Lesson {
 		String key = lessonInstanceRef.push().getKey();
 		lessonInstanceData.setId(key);
 		lessonInstanceRef.child(key).setValue(lessonInstanceData);
-		Log.d(TAG,"Finished saving instance into the database");
 
 		//end of flow
 		lessonListener.onLessonCreated();

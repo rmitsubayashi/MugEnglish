@@ -317,8 +317,7 @@ public abstract class Question_General extends Fragment {
         if (keyboardFocusView == null) {
             openFeedbackHelper(description);
         } else {
-            boolean hideKeyboard = GUIUtils.hideKeyboard(keyboardFocusView);
-            if (hideKeyboard) {
+            if (GUIUtils.hideKeyboard(keyboardFocusView)) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
