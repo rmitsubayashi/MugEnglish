@@ -10,6 +10,7 @@ import com.facebook.FacebookSdk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.onboarding.Onboarding;
+import com.linnca.pelicann.tutorial.TutorialActivity;
 
 public class Splash extends AppCompatActivity{
     @Override

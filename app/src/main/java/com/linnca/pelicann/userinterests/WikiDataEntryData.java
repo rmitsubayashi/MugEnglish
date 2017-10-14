@@ -1,6 +1,9 @@
 package com.linnca.pelicann.userinterests;
 
-public class WikiDataEntryData{
+import java.io.Serializable;
+
+public class WikiDataEntryData implements Serializable{
+	//everything in Japanese
 	private String label;
 	private String wikiDataID;
 	private String description;

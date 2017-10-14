@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessonlist;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class LessonHierarchyViewer {
         titleCount = new HashMap<>();
 
         row = new LessonListRow();
-        col1Data = new LessonData(Hello_my_name_is_NAME.KEY, greetings, null, null, R.color.lblue300, greetingsIconID);
-        col2Data = new LessonData("people1_key", people, null, null, R.color.lblue700, peopleIconID);
+        col1Data = new LessonData(Hello_my_name_is_NAME.KEY, greetings, R.layout.fragment_description_hello_my_name_is_name, null, R.color.lblue300, greetingsIconID);
+        col2Data = new LessonData(NAME_is_a_GENDER.KEY, people, R.layout.fragment_description_name_is_a_man, null, R.color.lblue700, peopleIconID);
         col3Data = new LessonData("people2_key", people, null, null, R.color.lblue700, peopleIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
@@ -60,7 +61,7 @@ public class LessonHierarchyViewer {
         col1Prerequisites.add(Hello_my_name_is_NAME.KEY);
         col1Data = new LessonData(good_morning_afternoon_evening.KEY, greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
         col2Prerequisites = new ArrayList<>(2);
-        col2Prerequisites.add("people1_key");
+        col2Prerequisites.add(NAME_is_a_GENDER.KEY);
         col2Prerequisites.add("people2_key");
         col2Data = new LessonData("people3_key", people, null, col2Prerequisites, R.color.lblue700, peopleIconID);
         col3Data = new LessonData("numbers1_key", numbers, null, null, R.color.lblue500, numbersIconID);

@@ -78,4 +78,8 @@ public class Question_TrueFalse extends Question_General {
         falseButton.setOnClickListener(getResponseListener());
 
     }
+
+    public static String getTrueFalseString(boolean tf){
+        return tf ? TRUE_FALSE_QUESTION_TRUE : TRUE_FALSE_QUESTION_FALSE;
+    }
 }

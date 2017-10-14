@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.linnca.pelicann">
+    package="com.linnca.pelicann">
 
     <!-- so we can connect to wikiData -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- right to left support tag needed for firebase ui -->
     <application
@@ -14,25 +14,24 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.linnca.pelicann.mainactivity.Splash"
+            android:name=".mainactivity.Splash"
             android:theme="@style/SplashTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
-            android:name="com.linnca.pelicann.userinterestcontrols.FacebookInterestFinder"
-            android:exported="false"/>
+            android:name=".userinterestcontrols.FacebookInterestFinder"
+            android:exported="false" />
 
         <activity
-            android:name="com.linnca.pelicann.onboarding.Onboarding"
-            android:theme="@style/AppTheme">
-        </activity>
-        <activity android:name="com.linnca.pelicann.mainactivity.MainActivity">
-        </activity>
+            android:name=".onboarding.Onboarding"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".mainactivity.MainActivity" />
+        <activity android:name=".tutorial.TutorialActivity" />
     </application>
 
 </manifest>

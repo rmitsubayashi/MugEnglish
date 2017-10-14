@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessonlist;
 
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -190,6 +191,8 @@ class LessonListAdapter
         if (data == null){
             return STATUS_NONE;
         }
+
+        Log.d("lessonListAdapter", data.getTitle());
         if (clearedLessonKeys.contains(data.getKey())){
             return STATUS_CLEARED;
         }

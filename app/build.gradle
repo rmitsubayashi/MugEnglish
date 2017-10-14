@@ -44,7 +44,7 @@ dependencies {
 
     //since the current android preference library is insufficient,
     //there is a 'fixed' version
-    compile 'com.takisoft.fix:preference-v7:26.0.2.0'
+    compile 'com.takisoft.fix:preference-v7:26.1.0.2'
 
     //for time management
     compile 'joda-time:joda-time:2.9.9'
@@ -54,5 +54,11 @@ allprojects {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
     }
+}
+dependencies {
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+}
+dependencies {
+    compile 'com.android.support.constraint:constraint-layout:+'
 }
 apply plugin: 'com.google.gms.google-services'

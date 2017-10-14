@@ -1,0 +1,50 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tutorial_choose_person_main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:animateLayoutChanges="true"
+    android:padding="16dp"
+    android:focusable="true"
+    >
+
+    <TextView
+        android:id="@+id/tutorial_choose_person_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textSize="25sp"
+        android:text="@string/tutorial_choose_person_title"/>
+    
+    <android.support.v7.widget.SearchView
+        android:id="@+id/tutorial_choose_person_searchview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    />
+    <Button
+        android:id="@+id/tutorial_choose_person_search_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/orange_button_color"
+        android:textColor="@color/white"
+        android:text="@string/tutorial_choose_person_search_button"/>
+    <TextView
+        android:id="@+id/tutorial_choose_person_search_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:textSize="17sp"
+        android:textColor="@color/white"/>
+    <ProgressBar
+        android:id="@+id/tutorial_choose_person_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
+</LinearLayout>

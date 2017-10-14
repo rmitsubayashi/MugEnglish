@@ -94,15 +94,15 @@ public class NAME_is_a_GENDER extends Lesson {
             switch (gender){
                 case "Q6581097":
                     genderEN = "man";
-                    genderJP = "男";
+                    genderJP = "男性";
                     break;
                 case "Q6581072":
                     genderEN = "woman";
-                    genderJP = "女";
+                    genderJP = "女性";
                     break;
                 default:
                     genderEN = "man/woman";
-                    genderJP = "男/女";
+                    genderJP = "男性/女性";
             }
 
             QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, genderEN, genderJP);

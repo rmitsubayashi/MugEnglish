@@ -127,29 +127,40 @@
     <string name="preferences_subscreen_reason_title">理由</string>
 
     <!--onboarding pages-->
-    <string name="onboarding_skip">スキップ</string>
-    <string name="onboarding_finish">終了</string>
-    <string name="onboarding_introduction1_title">ようこそ！</string>
-    <string name="onboarding_introduction1_who_are_you">君だれ？</string>
-    <string name="onboarding_introduction1_introduction">Hello! My name is Casey!</string>
-    <string name="onboarding_introduction2_dialogue">Caseyなんて知らん！</string>
-    <string name="onboarding_introduction2_instructions">それよりウィキペディアにのってそうな有名人に案内してもらおう！</string>
-    <!--replace placeholder with person-->
-    <string name="onboarding_introduction3_introduction">Hello! My name is %1$s!</string>
-    <!--replace placeholder with gender-->
-    <string name="onboarding_introduction3_explanation">知ってる人だ！\n
-        しかも%1$sの画像だ！</string>
-    <string name="onboarding_introduction3_great">すごい！</string>
-    <string name="onboarding_introduction4_title">それがMugEnglish！</string>
-    <string name="onboarding_introduction4_description">好きな人や場所、本や映画で英語を楽しく勉強しよう！</string>
-    <string name="onboarding_introduction4_start">始める！</string>
-    <string name="onboarding_choose_interest_title">好みを選ぼう！</string>
+    <string name="tutorial_choose_person_title">突然ですが、彼氏（彼女）にしたい有名人の名前を教えてください</string>
+    <string name="tutorial_choose_person_search_button">検索</string>
+    <string name="tutorial_choose_person_not_found1">誤字がないか確認して、もう一度検索してみてください</string>
+    <string name="tutorial_choose_person_not_found2">もう少し有名な人を検索してみてください</string>
+    <string name="tutorial_confirm_person_title">%1$sですね！\nでは%2$sといっしょに最初のレッスンに進みましょう！</string>
+    <string name="tutorial_confirm_person_gender_male">彼</string>
+    <string name="tutorial_confirm_person_gender_female">彼女</string>
+    <string name="tutorial_confirm_person_start">始める</string>
+    <string name="tutorial_lesson_details_go_to_lesson_description">まずはレッスンの説明文を見て勉強しましょう ↑↑</string>
+    <string name="tutorial_lesson_details_go_to_question">ではレッスンを始めましょう　↑↑</string>
+    <string name="tutorial_final_explanation1_title">お疲れ様です！</string>
+    <string name="tutorial_final_explanation2_title">お気に入り</string>
+    <string name="tutorial_final_explanation3_title">なくてもいいです</string>
+    <string name="tutorial_final_explanation1_description">このように、自分の好きな人や場所が例文に出てきます。\n興味がある内容で英語を楽しく学習しましょう！</string>
+    <string name="tutorial_final_explanation2_description">例文に出てくる人や場所は「お気に入り」で管理できます。</string>
+    <string name="tutorial_final_explanation3_description">お気に入りが少なかったり空っぽでも、問題なく学習できます。</string>
 
+    <string name="onboarding_next">次へ</string>
+    <string name="onboarding_skip">スキップ</string>
+    <string name="onboarding_finish">決定</string>
+    <string name="onboarding1_explanation">「お気に入り」に好きな人や場所を追加すると・・・</string>
+    <string name="onboarding2_explanation">例文に出てきます！</string>
+    <string name="onboarding3_explanation">お気に入りを追加します。\nおすすめセットを選択してください</string>
+    <string name="onboarding3_starter_pack_boy">こども（男性）</string>
+    <string name="onboarding3_starter_pack_girl">こども(女性)</string>
+    <string name="onboarding3_starter_pack_man">大人（男性）</string>
+    <string name="onboarding3_starter_pack_woman">大人（女性）</string>
+    
     <string name="fragment_user_interests_title">お気に入り</string>
     <string name="fragment_search_interests_title">検索</string>
     <string name="fragment_user_data_title">データ</string>
     <string name="fragment_settings_title">設定</string>
     <string name="fragment_lesson_list_title">勉強</string>
+    <string name="fragment_tutorial_lesson_details_title">第一歩</string>
 
     <!--navigation-->
     <string name="navigation_drawer_open">開く</string>
@@ -215,8 +226,7 @@
     <string name="user_profile_app_bar_title">データ</string>
     <string name="user_profile_tab_hours_studied">勉強時間</string>
     <string name="user_profile_tab_report_card">成績</string>
-    <string name="user_profile_hours_studied_legend_objective_completed">目標達成</string>
-    <string name="user_profile_hours_studied_legend_objective_incomplete">未達成</string>
+    <string name="user_profile_hours_studied_legend_studied">勉強した日</string>
     <string name="user_profile_hours_studied_legend_no_record">記録なし</string>
     <string name="user_profile_report_card_name">名前</string>
     <string name="user_profile_report_card_accuracy">正解率</string>
@@ -228,6 +238,7 @@
     <string name="question_feedback_correct">正解</string>
     <string name="question_feedback_incorrect">不正解</string>
     <string name="question_feedback_next">次へ</string>
+    <string name="question_feedback_finish">終わる</string>
     <string name="question_true_false_instructions">本当ですか？</string>
     <string name="question_true_false_true">本当</string>
     <string name="question_true_false_false">嘘</string>

@@ -215,15 +215,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onStart();
         startAppTimestamp = System.currentTimeMillis();
 
+
         /*
         DateTime temp1 = DateTime.now();
-        temp1 = temp1.minusMonths(1);
+        temp1 = temp1.minusDays(1);
         DateTime temp2 = DateTime.now();
-        temp2 = temp2.minusMonths(1).plusHours(1);
+        temp2 = temp2.minusDays(1).plusHours(1);
         recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
 
-        temp1 = temp1.minusMonths(1);
-        temp2 = temp2.minusMonths(1).plusHours(1);
+        temp1 = temp1.minusDays(2);
+        temp2 = temp2.minusDays(2);
+        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
+
+        temp1 = temp1.minusDays(1);
+        temp2 = temp2.minusDays(1);
+        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
+
+        temp1 = temp1.minusDays(1);
+        temp2 = temp2.minusDays(1);
+        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
+
+        temp1 = temp1.minusDays(4);
+        temp2 = temp2.minusDays(4);
         recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));*/
 
     }

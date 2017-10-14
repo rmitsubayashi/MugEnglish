@@ -2,6 +2,15 @@
 <resources>
     <string name="description_template_new_word">新しい単語</string>
     <string name="description_template_how_to_remember">覚え方</string>
+    <string name="description_template_fun_fact">マメ知識</string>
+    <string name="description_template_grammar">文法</string>
+
+    <string name="description_hello_my_name_is_name_subheader">まずはあいさつ！</string>
+    <string name="description_hello_my_name_is_name_introduction">言語学習の第一歩といえばあいさつ。まずは自己紹介をできるようにしましょう。</string>
+    <string name="description_hello_my_name_is_name_word1">hello</string>
+    <string name="description_hello_my_name_is_name_word_meaning1">こんにちは</string>
+    <string name="description_hello_my_name_is_name_word2">my name is</string>
+    <string name="description_hello_my_name_is_name_word_meaning2">私の名前は</string>
 
     <string name="description_name_is_a_occupation_subheader">@string/description_template_how_to_remember</string>
     <string name="description_name_is_a_occupation_explanation_1">注目してほしいのが、多くの職業の単語の最後につく<b>-er</b></string>
@@ -44,6 +53,16 @@
     <string name="description_the_emergency_phone_number_of_country_is_number_exception">電話番号は基本的に一桁ずつ言います。110の場合、one one zero と発音します。\n
         0は"zero"の他に<b>"oh"</b>とも発音できます。どっちを使うかは人によります。\nまた、0が2桁か3桁続く場合、</string>
 
+    <string name="description_name_is_a_man_word1">is</string>
+    <string name="description_name_is_a_man_word_meaning1">~は</string>
+    <string name="description_name_is_a_man_word2">man</string>
+    <string name="description_name_is_a_man_word_meaning2">男性</string>
+    <string name="description_name_is_a_man_word3">woman</string>
+    <string name="description_name_is_a_man_word_meaning3">女性</string>
+    <string name="description_name_is_a_man_grammar_structure">A is B</string>
+    <string name="description_name_is_a_man_grammar_explanation">AはBです</string>
+    <string name="description_name_is_a_man_fun_fact">古英語では<b>man</b>は男性だけでなく人間一般を示していました。
+    男性はwer-<b>man</b>、女性はwif-<b>man</b>でした。しかし、だんだん男性のことをmanと呼ぶことになり、wifmanはそのままwomanへと変化していきました。</string>
 
 
 </resources>
