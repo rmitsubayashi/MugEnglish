@@ -85,6 +85,7 @@ public class LessonList extends Fragment {
 
     private void populateLessonList(int lessonLevel){
         LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
+        //lessonHierarchyViewer.debugUnlockAllLessons();
         List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
         final LessonListAdapter adapter = new LessonListAdapter(lessonRows, listener);
         listView.setLayoutManager(new LinearLayoutManager(getContext()));

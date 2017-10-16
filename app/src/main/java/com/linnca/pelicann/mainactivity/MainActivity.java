@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -41,6 +42,7 @@ import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
+import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.lessonlist.LessonList;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
@@ -210,11 +212,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setLessonView();
     }
 
+    /*
+    class HelperTask extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... urls) {
+            try {
+                SportsHelper helper = new SportsHelper();
+                try {
+                    helper.run();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                return "";
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }*/
+
     @Override
     protected void onStart(){
         super.onStart();
         startAppTimestamp = System.currentTimeMillis();
 
+        //new HelperTask().execute("");
 
         /*
         DateTime temp1 = DateTime.now();

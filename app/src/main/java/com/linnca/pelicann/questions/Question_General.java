@@ -242,7 +242,15 @@ public abstract class Question_General extends Fragment {
         //names should always be capitalized.
         //this should be considered correct and
         //reinforced in the feedback section
-        return answer.toLowerCase().trim();
+
+        //lower case
+        answer = answer.toLowerCase();
+        //remove whitespace
+        answer = answer.trim();
+        //remove last punctuation
+        answer = answer.replaceAll("\\p{Punct}+$", "");
+
+        return answer;
     }
 
     protected View.OnClickListener getResponseListener(){

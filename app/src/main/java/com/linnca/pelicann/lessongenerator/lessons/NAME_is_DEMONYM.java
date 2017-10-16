@@ -98,7 +98,8 @@ public class NAME_is_DEMONYM extends Lesson {
                 " ?demonymEN ?countryLabel " +
                 "WHERE " +
                 "{" +
-                "    ?personName wdt:P31 wd:Q5 . " + //is human
+                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
+                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?personName wdt:P27 ?country . " + //has a country of citizenship
                 "    ?country wdt:P1549 ?demonymEN . " + //and the country has a demonym
                 "    ?personName rdfs:label ?personNameEN . " + //English label

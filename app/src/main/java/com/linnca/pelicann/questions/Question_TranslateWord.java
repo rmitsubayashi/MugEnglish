@@ -43,6 +43,9 @@ public class Question_TranslateWord extends Question_General {
         submitButton = view.findViewById(R.id.question_translate_word_submit);
         questionInput = view.findViewById(R.id.question_translate_word_input);
         instructions = view.findViewById(R.id.question_translate_word_instructions);
+
+        keyboardFocusView = questionInput;
+
         createQuestionLayout();
         inflateFeedback(inflater);
         return view;
@@ -83,12 +86,6 @@ public class Question_TranslateWord extends Question_General {
 
         //set button
         submitButton.setOnClickListener(getResponseListener());
-    }
-
-    //hide keyboard
-    @Override
-    protected void doSomethingAfterResponse(){
-        GUIUtils.hideKeyboard(questionInput);
     }
 
     @Override

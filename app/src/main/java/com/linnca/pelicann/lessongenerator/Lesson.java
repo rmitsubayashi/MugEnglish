@@ -307,7 +307,9 @@ public abstract class Lesson {
 	 * 2. put the saveQuestionsInDB() inside the db listener
 	 * see NAME_plays_SPORT for example
 	 */
-    private void accessDBWhenCreatingQuestions(){
+    protected void accessDBWhenCreatingQuestions(){
+		//do something here
+		//`````````//
 		createQuestionsFromResults();
 		saveNewQuestions();
 	}
@@ -319,7 +321,7 @@ public abstract class Lesson {
 	//but this is so all questions possible for one lesson are created.
 	//if we only create questions for the user, all the rest of the questions
 	//will never be created
-	private void saveNewQuestions(){
+	protected void saveNewQuestions(){
 		DatabaseReference questionRef = db.getReference(FirebaseDBHeaders.QUESTIONS);
 		DatabaseReference questionSetRef = db.getReference(
 				FirebaseDBHeaders.QUESTION_SETS

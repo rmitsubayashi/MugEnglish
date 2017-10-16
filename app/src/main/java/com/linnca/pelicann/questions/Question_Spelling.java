@@ -123,7 +123,8 @@ public class Question_Spelling extends Question_General {
         //first guarantee that all columns/rows will be populated.
         List<Integer> filledPositions = new ArrayList<>();
         char[] letters = questionData.getAnswer().toCharArray();
-        shuffleArray(letters);
+        QuestionUtils.shuffleArray(letters);
+
         int letterMkr = 0;
         Set<Integer> toFillY = new HashSet<>();
         for (int i=0; i<columnCt; i++){
@@ -134,7 +135,6 @@ public class Question_Spelling extends Question_General {
             int y = random.nextInt(columnCt);
             char letter = letters[letterMkr];
             addLetterButton(inflater, x, y, letter);
-
             letterMkr++;
             filledPositions.add(y + x * columnCt);
             toFillY.remove(y);
@@ -143,6 +143,20 @@ public class Question_Spelling extends Question_General {
         //now y
         for (Integer y : toFillY){
             int x = random.nextInt(rowCt);
+            /* for an n column square,
+             * the minimum letters needed to populate X -> populate Y is
+             * 2n - 1,
+             * and the minimum letter requirement for a n column square is
+             * (n-1)^2.
+             * for n=1 and n=2, we might not get to the Y (crash).
+             * not handling n<2 when populating the x will cause cases like
+             *  _______
+             * |_o_|___|
+             * |_d_|___|
+             * but for two letters, it's not significant
+             * */
+            if (letterMkr >= letters.length)
+                break;
             char letter = letters[letterMkr];
             //these are guaranteed not to overlap another letter
             addLetterButton(inflater, x, y, letter);
@@ -263,14 +277,5 @@ public class Question_Spelling extends Question_General {
 
     }
 
-    private void shuffleArray(char[] stringArray){
-        //Fisher-Yates
-        int startIndex = stringArray.length-1;
-        for (int i=startIndex; i>0; i--){
-            int shuffleToIndex = random.nextInt(i+1);
-            char temp = stringArray[i];
-            stringArray[i] = stringArray[shuffleToIndex];
-            stringArray[shuffleToIndex] = temp;
-        }
-    }
+
 }

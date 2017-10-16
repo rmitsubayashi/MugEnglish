@@ -192,7 +192,6 @@ class LessonListAdapter
             return STATUS_NONE;
         }
 
-        Log.d("lessonListAdapter", data.getTitle());
         if (clearedLessonKeys.contains(data.getKey())){
             return STATUS_CLEARED;
         }
