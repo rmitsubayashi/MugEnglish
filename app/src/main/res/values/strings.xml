@@ -256,6 +256,9 @@
     <string name="question_translate_word_hint">訳</string>
     <string name="question_translate_word_submit">確定</string>
     <string name="question_chat_instructions">返信してください</string>
+    <string name="question_choose_correct_spelling_instructions">正しいつづりを選択してください</string>
+    <string name="question_actions_instructions">指示に従ってください</string>
+    <string name="question_actions_start">スタート</string>
 
     <string name="calendar_sunday">日</string>
     <string name="calendar_monday">月</string>

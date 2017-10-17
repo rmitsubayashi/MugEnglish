@@ -15,8 +15,10 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_at_work_He_is_at_EMPL
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_at_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_COUNTRY_CITY;
+import com.linnca.pelicann.lessongenerator.lessons.Stand_up_sit_down;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
 import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
+import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
 import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
 public class LessonFactory {
@@ -92,6 +94,18 @@ public class LessonFactory {
                         listener
                 );
             }
+            case Walk_run.KEY :{
+                return new Walk_run(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case Stand_up_sit_down.KEY :{
+                return new Stand_up_sit_down(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
 
 
             default:
@@ -106,8 +120,12 @@ public class LessonFactory {
         lesson = new Hello_my_name_is_NAME(null, null);
         lesson.saveGenericQuestions();
         lesson = new COMPANY_makes_PRODUCT(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new PLACE_is_a_COUNTRY_CITY(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new Walk_run(null, null);
         lesson.saveGenericQuestions();*/
-        Lesson lesson = new PLACE_is_a_COUNTRY_CITY(null, null);
+        Lesson lesson = new Stand_up_sit_down(null, null);
         lesson.saveGenericQuestions();
     }
 }

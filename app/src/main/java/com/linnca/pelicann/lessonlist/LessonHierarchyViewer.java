@@ -19,6 +19,8 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_at_work_He_is_at_EMPL
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_at_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_COUNTRY_CITY;
+import com.linnca.pelicann.lessongenerator.lessons.Stand_up_sit_down;
+import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
 import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
 import java.util.ArrayList;
@@ -198,7 +200,7 @@ public class LessonHierarchyViewer {
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add("numbers4_key");
         col2Data = new LessonData("numbers6_key", numbers, null, col2Prerequisites, R.color.lblue300, numbersIconID);
-        col3Data = new LessonData("action1_key", action, null, null, R.color.lblue700, actionIConID);
+        col3Data = new LessonData(Stand_up_sit_down.KEY, action, null, null, R.color.lblue700, actionIConID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -209,8 +211,8 @@ public class LessonHierarchyViewer {
         col1Prerequisites.add("body1_key");
         col1Data = new LessonData("body2_key", body, null, col1Prerequisites, R.color.lblue700, bodyIconID);
         col3Prerequisites = new ArrayList<>(1);
-        col3Prerequisites.add("action1_key");
-        col3Data = new LessonData("action2_key", action, null, col3Prerequisites, R.color.lblue700, actionIConID);
+        col3Prerequisites.add(Stand_up_sit_down.KEY);
+        col3Data = new LessonData(Walk_run.KEY, action, null, col3Prerequisites, R.color.lblue700, actionIConID);
         row.setCol1(col1Data);
         row.setCol3(col3Data);
         lessonRows.add(row);

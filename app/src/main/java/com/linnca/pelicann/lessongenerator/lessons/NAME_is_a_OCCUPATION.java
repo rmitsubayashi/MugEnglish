@@ -109,6 +109,9 @@ public class NAME_is_a_OCCUPATION extends Lesson{
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
+            List<QuestionData> chooseCorrectSpellingQuestion = createChooseCorrectSpellingQuestion(qr);
+            questionSet.add(chooseCorrectSpellingQuestion);
+
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
@@ -159,6 +162,25 @@ public class NAME_is_a_OCCUPATION extends Lesson{
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
+        return dataList;
+    }
+
+    private List<QuestionData> createChooseCorrectSpellingQuestion(QueryResult qr){
+        String question = qr.occupationJP;
+        String answer = qr.occupationEN;
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personNameJP);
+        data.setQuestionType(QuestionTypeMappings.CHOOSE_CORRECT_SPELLING);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setVocabulary(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
         return dataList;
     }
 
