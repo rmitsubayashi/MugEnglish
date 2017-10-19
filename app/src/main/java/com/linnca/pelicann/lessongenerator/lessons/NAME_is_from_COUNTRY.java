@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,64 +28,36 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class NAME_is_DEMONYM extends Lesson {
-    public static final String KEY = "NAME_is_DEMONYM";
+public class NAME_is_from_COUNTRY extends Lesson {
+    public static final String KEY = "NAME_is_from_COUNTRY";
 
     private final List<QueryResult> queryResults = new ArrayList<>();
+    //there may be people with multiple citizenship
+    private final Map<String, List<String>> queryResultMap = new HashMap<>();
+
     private class QueryResult {
         private final String personID;
         private final String personNameEN;
         private final String personNameJP;
-        private final String demonymEN;
-        private final String demonymJP;
+        private final String countryEN;
+        private final String countryJP;
 
         private QueryResult(
                 String personID,
                 String personNameEN,
                 String personNameJP,
                 String countryJP,
-                String demonymEN)
+                String countryEN)
         {
             this.personID = personID;
             this.personNameEN = personNameEN;
             this.personNameJP = personNameJP;
-            this.demonymEN = demonymEN;
-            this.demonymJP = convertCountryToDemonym(countryJP);
-        }
-
-        private String convertCountryToDemonym(String country){
-            //first check to make sure it's Japanese
-            Pattern p = Pattern.compile("[a-zA-Z]");
-            Matcher m = p.matcher(country);
-
-            //if it's written in English, return the demonym for English
-            //(the demonym in English is instantiated already)
-            if(m.find()){
-                return demonymEN;
-            } else {
-                boolean katakanaStarted = false;
-                for (int i=0; i<country.length(); i++){
-                    char c = country.charAt(i);
-                    if (isKatakana(c)){
-                        katakanaStarted = true;
-                    } else {
-                        if (katakanaStarted){
-                            country = country.substring(0,i);
-                            break;
-                        }
-                    }
-                }
-
-                return country + "人";
-            }
-        }
-
-        private boolean isKatakana(char c){
-            return (c >= 'ァ' && c <= 'ヿ');
+            this.countryEN = countryEN;
+            this.countryJP = countryJP;
         }
     }
 
-    public NAME_is_DEMONYM(WikiBaseEndpointConnector connector, LessonListener listener){
+    public NAME_is_from_COUNTRY(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
         super.questionSetsLeftToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
@@ -94,25 +67,24 @@ public class NAME_is_DEMONYM extends Lesson {
 
     @Override
     protected String getSPARQLQuery(){
-        //since there aren't that many Japanese demonyms available,
-        //just get the country name and convert it to a demonym by adding "~人"
+        //since there aren't that many Japanese countrys available,
+        //just get the country name and convert it to a country by adding "~人"
         return "SELECT ?personName ?personNameLabel ?personNameEN " +
-                " ?demonymEN ?countryLabel " +
+                " ?country ?countryEN ?countryLabel " +
                 "WHERE " +
                 "{" +
                 "    {?personName wdt:P31 wd:Q5} UNION " + //is human
                 "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?personName wdt:P27 ?country . " + //has a country of citizenship
-                "    ?country wdt:P1549 ?demonymEN . " + //and the country has a demonym
+                "    ?country rdfs:label ?countryEN . " + //English Label
                 "    ?personName rdfs:label ?personNameEN . " + //English label
-                "    FILTER (LANG(?demonymEN) = '" +
-                    WikiBaseEndpointConnector.ENGLISH + "') . " + //just get the English demonym
-                "    FILTER (STR(?demonymEN) != 'United States') . " + //United States is noted as a demonym (can't edit out?)
+                "    FILTER (LANG(?countryEN) = '" +
+                WikiBaseEndpointConnector.ENGLISH + "') . " + //just get the English country
                 "    FILTER (LANG(?personNameEN) = '" +
-                    WikiBaseEndpointConnector.ENGLISH + "') . " +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label {bd:serviceParam wikibase:language '" +
-                    WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
-                    WikiBaseEndpointConnector.ENGLISH + "' } " +
+                WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
+                WikiBaseEndpointConnector.ENGLISH + "' } " +
                 "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
                 "} ";
 
@@ -130,11 +102,22 @@ public class NAME_is_DEMONYM extends Lesson {
             personID = LessonGeneratorUtils.stripWikidataID(personID);
             String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
             String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
+            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
-            String demonymEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "demonymEN");
+            String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, countryJP, demonymEN);
+            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, countryJP, countryEN);
             queryResults.add(qr);
+
+            if (queryResultMap.containsKey(personID)){
+                List<String> value = queryResultMap.get(personID);
+                value.add(countryID);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(countryID);
+                queryResultMap.put(personID, list);
+            }
         }
     }
 
@@ -145,34 +128,38 @@ public class NAME_is_DEMONYM extends Lesson {
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
+            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlankQuestion);
+
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
-            questionSet.add(fillInBlankQuestion);
+            List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
+            questionSet.add(fillInBlankQuestion2);
 
             super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
         }
 
     }
 
-    private String NAME_is_DEMONYM_EN_correct(QueryResult qr){
-        String sentence = qr.personNameEN + " is " + qr.demonymEN + ".";
+    private String NAME_is_from_COUNTRY_EN_correct(QueryResult qr){
+        String sentence = qr.personNameEN + " is from " +
+                GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personNameJP + "は" + qr.demonymJP + "です。";
+        return qr.personNameJP + "は" + qr.countryJP + "の出身です。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personNameEN);
-        pieces.add("is");
-        pieces.add(qr.demonymEN);
+        pieces.add("is from");
+        pieces.add(GrammarRules.definiteArticleBeforeCountry(qr.countryEN));
         return pieces;
     }
 
@@ -201,39 +188,102 @@ public class NAME_is_DEMONYM extends Lesson {
         return dataList;
     }
 
+    private class CountryHelper {
+        private String wikiDataID;
+        private String nameEN;
+        private String nameJP;
+
+        public CountryHelper(String wikiDataID, String nameEN, String nameJP) {
+            this.wikiDataID = wikiDataID;
+            this.nameEN = nameEN;
+            this.nameJP = nameJP;
+
+        }
+    }
+    private Queue<String> fillInBlankOptions(QueryResult qr, boolean english){
+        List<CountryHelper> optionList = new ArrayList<>();
+        optionList.add(new CountryHelper("Q142","France","フランス"));
+        optionList.add(new CountryHelper("Q17","Japan", "日本"));
+        optionList.add(new CountryHelper("Q30","the United States of America","アメリカ合衆国"));
+        optionList.add(new CountryHelper("Q884","South Korea","大韓民国"));
+        optionList.add(new CountryHelper("Q148","China","中華人民共和国"));
+        optionList.add(new CountryHelper("Q183","Germany","ドイツ"));
+        optionList.add(new CountryHelper("Q159","Russia","ロシア"));
+        optionList.add(new CountryHelper("Q145", "the United Kingdom", "イギリス"));
+        optionList.add(new CountryHelper("Q145","Vietnam","ベトナム"));
+        //remove if it is in the list so we don't choose it at first.
+        //insert later
+        List<String> countriesOfCitizenship = queryResultMap.get(qr.personID);
+        for (Iterator<CountryHelper> iterator = optionList.iterator(); iterator.hasNext();){
+            CountryHelper option = iterator.next();
+            if (countriesOfCitizenship.contains(option.wikiDataID)){
+                iterator.remove();
+            }
+        }
+        Collections.shuffle(optionList);
+        LinkedList<String> result = new LinkedList<>();
+        for (CountryHelper option : optionList){
+            if (english)
+                result.add(option.nameEN);
+            else
+                result.add(option.nameJP);
+        }
+        return result;
+    }
+
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personNameEN + " is " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
+        String sentence = NAME_is_from_COUNTRY_EN_correct(qr);
+        String sentence2 = qr.personNameJP + "は" + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                "の出身です。";
+        return sentence + "\n\n" + sentence2;
     }
 
     private String fillInBlankAnswer(QueryResult qr){
-        return qr.demonymEN;
-    }
-
-    private Queue<String> fillInBlankOptions(QueryResult qr){
-        List<String> optionList = new ArrayList<>();
-        optionList.add("French");
-        optionList.add("Japanese");
-        optionList.add("American");
-        optionList.add("Korean");
-        optionList.add("Chinese");
-        optionList.add("German");
-        optionList.add("Russian");
-        optionList.add("British");
-        optionList.add("Vietnamese");
-        //remove if it is in the list so we don't choose it at first.
-        //insert later
-        optionList.remove(qr.demonymEN);
-        Collections.shuffle(optionList);
-        return new LinkedList<>(optionList);
+        return qr.countryJP;
     }
 
     private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
         String question = this.fillInBlankQuestion(qr);
         String answer = fillInBlankAnswer(qr);
         List<QuestionData> questionDataList = new ArrayList<>();
-        Queue<String> options = fillInBlankOptions(qr);
+        Queue<String> options = fillInBlankOptions(qr, false);
+        while (options.size() > 2) {
+            List<String> choices = new ArrayList<>();
+            choices.add(options.remove());
+            choices.add(options.remove());
+            choices.add(answer);
+            QuestionData data = new QuestionData();
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(qr.personNameJP);
+            data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+            data.setQuestion(question);
+            data.setChoices(choices);
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+            data.setVocabulary(null);
+
+            questionDataList.add(data);
+        }
+
+        return questionDataList;
+    }
+
+    private String fillInBlankQuestion2(QueryResult qr){
+        String sentence = qr.personNameEN + " is from " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
+
+    private String fillInBlankAnswer2(QueryResult qr){
+        return GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
+    }
+
+    private List<QuestionData> createFillInBlankQuestion2(QueryResult qr){
+        String question = this.fillInBlankQuestion2(qr);
+        String answer = fillInBlankAnswer2(qr);
+        List<QuestionData> questionDataList = new ArrayList<>();
+        Queue<String> options = fillInBlankOptions(qr, true);
         while (options.size() > 2) {
             List<String> choices = new ArrayList<>();
             choices.add(options.remove());

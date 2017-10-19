@@ -87,7 +87,7 @@ public class LessonGeneratorUtils {
         return " " + ones[number-1] + " hundred" + current;
     }
 
-    private static String convertIntToWord(int number) {
+    public static String convertIntToWord(int number) {
 
         if (number == 0) { return "zero"; }
 

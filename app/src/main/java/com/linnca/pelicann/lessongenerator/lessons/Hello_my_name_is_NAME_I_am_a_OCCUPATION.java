@@ -3,13 +3,16 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
+import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -19,27 +22,36 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hello_my_name_is_NAME extends Lesson {
-    public static final String KEY = "Hello_my_name_is_NAME";
+public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
+    public static final String KEY = "Hello_my_name_is_NAME_I_am_a_OCCUPATION";
 
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
         private final String personNameEN;
         private final String personNameJP;
+        private final String firstNameEN;
+        private final String occupationEN;
+        private final String occupationJP;
 
         private QueryResult(
                 String personID,
                 String personNameEN,
-                String personNameJP)
+                String personNameJP,
+                String firstNameEN,
+                String occupationEN,
+                String occupationJP)
         {
             this.personID = personID;
             this.personNameEN = personNameEN;
             this.personNameJP = personNameJP;
+            this.firstNameEN = firstNameEN;
+            this.occupationEN = occupationEN;
+            this.occupationJP = occupationJP;
         }
     }
 
-    public Hello_my_name_is_NAME(WikiBaseEndpointConnector connector, LessonListener listener){
+    public Hello_my_name_is_NAME_I_am_a_OCCUPATION(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
         super.questionSetsLeftToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
@@ -51,12 +63,21 @@ public class Hello_my_name_is_NAME extends Lesson {
     protected String getSPARQLQuery(){
         //find person name and blood type
         return "SELECT ?personName ?personNameLabel ?personNameEN " +
+                " ?occupationEN ?occupationLabel ?firstNameEN " +
                 "WHERE " +
                 "{" +
                 "    {?personName wdt:P31 wd:Q5} UNION " + //is human
                 "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?personName wdt:P106 ?occupation . " + //has an occupation
+                "    ?personName wdt:P735 ?firstName . " + //has a first name
                 "    ?personName rdfs:label ?personNameEN . " +
+                "    ?firstName rdfs:label ?firstNameEN . " +
+                "    ?occupation rdfs:label ?occupationEN . " +
                 "    FILTER (LANG(?personNameEN) = '" +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
+                "    FILTER (LANG(?firstNameEN) = '" +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
+                "    FILTER (LANG(?occupationEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
@@ -78,8 +99,12 @@ public class Hello_my_name_is_NAME extends Lesson {
             personID = LessonGeneratorUtils.stripWikidataID(personID);
             String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
             String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String firstNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameEN");
+            String occupationEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationEN");
+            occupationEN = TermAdjuster.adjustOccupationEN(occupationEN);
+            String occupationJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationLabel");
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP);
+            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, firstNameEN, occupationEN, occupationJP);
             queryResults.add(qr);
         }
     }
@@ -93,38 +118,44 @@ public class Hello_my_name_is_NAME extends Lesson {
             List<List<QuestionData>> questionSet = new ArrayList<>();
             List<QuestionData> chatQuestion = createChatQuestion(qr);
             questionSet.add(chatQuestion);
+
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
+
+            List<QuestionData> chooseCorrectSpellingQuestion = createChooseCorrectSpellingQuestion(qr);
+            questionSet.add(chooseCorrectSpellingQuestion);
 
             super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
         }
 
     }
 
-    private String formatSentenceEN(QueryResult qr){
-        return "Hello, my name is " + qr.personNameEN + ".";
-    }
-
     private String formatSentenceJP(QueryResult qr){
-        return "こんにちは、私の名前は" + qr.personNameJP + "です。";
+        return "こんにちは、私の名前は" + qr.personNameJP + "です。私は" + qr.occupationJP + "です。";
     }
 
     private List<QuestionData> createChatQuestion(QueryResult qr){
         String from = qr.personNameJP;
-        ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
-        ChatQuestionItem chatItem2 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
-        List<ChatQuestionItem> chatItems = new ArrayList<>(2);
+        ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "Hello my name is " + qr.personNameEN);
+        ChatQuestionItem chatItem2 = new ChatQuestionItem(true, "Hello " + qr.firstNameEN);
+        ChatQuestionItem chatItem3 = new ChatQuestionItem(false, "I am a ...");
+        ChatQuestionItem chatItem4 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
+        List<ChatQuestionItem> chatItems = new ArrayList<>(4);
         chatItems.add(chatItem1);
         chatItems.add(chatItem2);
+        chatItems.add(chatItem3);
+        chatItems.add(chatItem4);
         String question = QuestionUtils.formatChatQuestion(from, chatItems);
-        String answer = "hello";
+        String answer = qr.occupationEN;
+        List<String> choices = new ArrayList<>(1);
+        choices.add(answer);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personNameJP);
-        data.setQuestionType(QuestionTypeMappings.CHAT);
+        data.setQuestionType(QuestionTypeMappings.CHAT_MULTIPLE_CHOICE);
         data.setQuestion(question);
-        data.setChoices(null);
+        data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
         data.setVocabulary(new ArrayList<String>());
@@ -140,6 +171,9 @@ public class Hello_my_name_is_NAME extends Lesson {
         pieces.add("hello");
         pieces.add("my name is");
         pieces.add(qr.personNameEN);
+        pieces.add("I");
+        pieces.add("am");
+        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN));
         return pieces;
     }
 
@@ -167,65 +201,22 @@ public class Hello_my_name_is_NAME extends Lesson {
         return dataList;
     }
 
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(KEY + "_generic1");
-        List<String> questionIDs2 = new ArrayList<>();
-        questionIDs2.add(KEY + "_generic2");
-        List<List<String>> questionSets = new ArrayList<>();
-        questionSets.add(questionIDs);
-        questionSets.add(questionIDs2);
-        return questionSets;
-    }
-
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        QuestionData toSave1 = createSpellingSuggestiveQuestion();
-        String id1 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 1);
-        toSave1.setId(id1);
-        QuestionData toSave2 = createSpellingQuestion();
-        String id2 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 2);
-        toSave2.setId(id2);
-
-        List<QuestionData> questions = new ArrayList<>(2);
-        questions.add(toSave1);
-        questions.add(toSave2);
-        return questions;
-
-    }
-
-    private QuestionData createSpellingSuggestiveQuestion(){
-        String question = "こんにちは";
-        String answer = "hello";
+    private List<QuestionData> createChooseCorrectSpellingQuestion(QueryResult qr){
+        String question = qr.occupationJP;
+        String answer = qr.occupationEN;
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.SPELLING_SUGGESTIVE);
+        data.setTopic(qr.personNameJP);
+        data.setQuestionType(QuestionTypeMappings.CHOOSE_CORRECT_SPELLING);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+        data.setVocabulary(null);
 
-        return data;
-    }
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
 
-    private QuestionData createSpellingQuestion(){
-        String question = "こんにちは";
-        String answer = "hello";
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.SPELLING);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
-
-        return data;
+        return dataList;
     }
 }

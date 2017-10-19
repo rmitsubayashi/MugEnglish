@@ -87,6 +87,10 @@ public class GrammarRules {
 			return "The Gambia";
 		}
 
+		if (countryName.equals("United Kingdom")){
+			return "the United Kingdom";
+		}
+
 		Set<String> pluralExceptions = new HashSet<>();
 		pluralExceptions.add("Saint Kitts and Nevis");
 		pluralExceptions.add("Belarus");
