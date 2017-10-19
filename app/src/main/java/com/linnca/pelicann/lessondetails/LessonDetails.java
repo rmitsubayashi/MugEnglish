@@ -107,7 +107,7 @@ public class LessonDetails extends Fragment {
     public void onStart(){
         super.onStart();
         lessonDetailsListener.setToolbarState(
-                new ToolbarState(lessonData.getTitle(), false, lessonData.getKey())
+                new ToolbarState(lessonData.getTitle(), false, false, lessonData.getKey())
         );
     }
 

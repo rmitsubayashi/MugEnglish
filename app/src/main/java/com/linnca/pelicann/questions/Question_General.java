@@ -93,7 +93,7 @@ public abstract class Question_General extends Fragment {
         super.onStart();
         questionListener.setToolbarState(
                 new ToolbarState(getContext().getString(R.string.question_title, questionNumber, totalQuestions),
-                        false, null)
+                        false, false, null)
         );
     }
 
@@ -131,7 +131,7 @@ public abstract class Question_General extends Fragment {
     protected void doSomethingAfterResponse(){}
     //needed if we have text views that have clickable spans
     //even if the textViews are not clickable, these events fire
-    protected void doSomethingOnFeedbackOpened(){}
+    protected void doSomethingOnFeedbackOpened(boolean correct, String response){}
 
     //formatting may be different for certain question types, but this should be the base
     protected String formatWrongFeedbackString(){
@@ -323,7 +323,7 @@ public abstract class Question_General extends Fragment {
 
     private void openFeedback(boolean correct, String response){
         //overridden if we need to do something
-        doSomethingOnFeedbackOpened();
+        doSomethingOnFeedbackOpened(correct, response);
 
         if (correct){
             feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lgreen500));

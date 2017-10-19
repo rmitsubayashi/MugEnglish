@@ -49,7 +49,7 @@ public class LessonDescription extends Fragment {
     public void onStart(){
         super.onStart();
         listener.setToolbarState(
-                new ToolbarState(getString(R.string.lesson_description_title), false, null)
+                new ToolbarState(getString(R.string.lesson_description_title), false, false, null)
         );
     }
 

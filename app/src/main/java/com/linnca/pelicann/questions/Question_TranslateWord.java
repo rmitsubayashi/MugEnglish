@@ -89,7 +89,7 @@ public class Question_TranslateWord extends Question_General {
     }
 
     @Override
-    protected void doSomethingOnFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(boolean correct, String response){
         QuestionUtils.disableTextToSpeech(wordToTranslateTextView);
     }
 

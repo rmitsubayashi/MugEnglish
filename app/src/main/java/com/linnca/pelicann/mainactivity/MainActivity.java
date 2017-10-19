@@ -134,7 +134,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         toolbar = findViewById(R.id.tool_bar);
         toolbarSpinner = toolbar.findViewById(R.id.tool_bar_spinner);
+        //to make sure the toolbar text view is not null
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
+        setSpinnerAdapter();
 
         fragmentManager = getSupportFragmentManager();
         questionManager = new QuestionManager(getQuestionManagerListener());
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.main_navigation_drawer);
         navigationView.setNavigationItemSelectedListener(this);
 
+        toolbar.setTitle(R.string.fragment_lesson_list_title);
         setLessonView();
     }
 
@@ -734,14 +738,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void setToolbarState(ToolbarState state){
+        boolean spinnerVisible = state.spinnerVisible();
+        toolbarSpinner.setVisibility(spinnerVisible ? View.VISIBLE : View.GONE);
         String toolbarTitle = state.getTitle();
-        if (toolbarTitle.equals(ToolbarState.NO_TITLE_WITH_SPINNER)){
-            addSpinnerAdapter();
-        }
-        if (!toolbarTitle.equals(ToolbarState.NO_CHANGE)){
-            setToolbarTitle(toolbarTitle);
-        }
-
+        toolbar.setTitle(toolbarTitle);
         //icons
         searchIconVisible = state.searchIconVisible();
         descriptionLessonKey = state.getDescriptionLessonKey();
@@ -757,7 +757,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         invalidateOptionsMenu();
     }
 
-    private void addSpinnerAdapter(){
+    private void setSpinnerAdapter(){
         if (toolbarSpinner.getAdapter() == null){
             List<ToolbarSpinnerItem> toolbarSpinnerItems = new ArrayList<>();
             toolbarSpinnerItems.add(
@@ -806,94 +806,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 }
             });
-        }
-    }
-
-    private void setToolbarTitle(final String title){
-        //getSupportActionBar should never be null but just in case
-        final ActionBar actionBar = getSupportActionBar();
-        if (actionBar == null){
-            toolbar.setTitle(title);
-            return;
-        }
-        //don't do anything if the titles are the same
-        if (actionBar.getTitle() != null &&
-                actionBar.getTitle().toString().equals(title)) {
-            return;
-        }
-
-        if (actionBar.getTitle().equals("") && toolbarSpinner.getVisibility() == View.VISIBLE &&
-                title.equals(ToolbarState.NO_TITLE_WITH_SPINNER)){
-            //resetting the spinner.
-            //this doesn't trigger the onItemSelected listener
-            //attached to the spinner
-            toolbarSpinner.setSelection(0);
-            return;
-        }
-
-
-        final View view = getToolbarTextView();
-        //there won't be a TextView if the toolbar doesn't have a title
-        if (view == null && toolbarSpinner.getVisibility() == View.GONE){
-            actionBar.setTitle(title);
         } else {
-            AlphaAnimation fadeOut = new AlphaAnimation(1f, 0f);
-            fadeOut.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-            fadeOut.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    AlphaAnimation fadeIn = new AlphaAnimation(0f, 1f);
-                    fadeIn.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-
-                    if (title.equals(ToolbarState.NO_TITLE_WITH_SPINNER)){
-                        toolbarSpinner.setVisibility(View.VISIBLE);
-                        actionBar.setTitle("");
-
-                        toolbarSpinner.startAnimation(fadeIn);
-                    } else {
-                        actionBar.setTitle(title);
-                        //try grabbing the view again if it was null at first.
-                        //since we are populating the textView, it should exist
-                        if (view == null) {
-                            TextView populatedView = getToolbarTextView();
-                            if (populatedView != null) {
-                                populatedView.startAnimation(fadeIn);
-                            }
-                        } else {
-                            view.startAnimation(fadeIn);
-                        }
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-
-            if (view == null){
-                toolbarSpinner.startAnimation(fadeOut);
-            } else {
-                view.startAnimation(fadeOut);
-            }
-        }
-
-        if (toolbarSpinner.getVisibility() == View.VISIBLE){
-            toolbarSpinner.setVisibility(View.GONE);
-            //resetting the spinner so the next time,
-            //it will start at the default location
-            //this doesn't trigger the onItemSelected listener
-            //attached to the spinner
             toolbarSpinner.setSelection(0);
         }
     }
-
-
 
     public TextToSpeech getTextToSpeech(){
         if (textToSpeech == null){

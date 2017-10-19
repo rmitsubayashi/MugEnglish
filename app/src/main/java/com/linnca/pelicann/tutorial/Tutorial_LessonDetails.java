@@ -43,7 +43,7 @@ public class Tutorial_LessonDetails extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        listener.setToolbarState(new ToolbarState(getString(R.string.fragment_tutorial_lesson_details_title), false, null));
+        listener.setToolbarState(new ToolbarState(getString(R.string.fragment_tutorial_lesson_details_title), false, false, null));
     }
 
     @Override

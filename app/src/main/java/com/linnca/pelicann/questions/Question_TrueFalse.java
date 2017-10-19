@@ -58,7 +58,7 @@ public class Question_TrueFalse extends Question_General {
     }
 
     @Override
-    protected void doSomethingOnFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(boolean correct, String response){
         QuestionUtils.disableTextToSpeech(questionTextView);
     }
 

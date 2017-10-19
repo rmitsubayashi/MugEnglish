@@ -209,15 +209,15 @@ public class LessonFactory {
         lesson.saveGenericQuestions();
         lesson = new Numbers_7_9(null, null);
         lesson.saveGenericQuestions();
-        Lesson lesson = new Numbers_11_19(null, null);
+        lesson = new Numbers_11_19(null, null);
         lesson.saveGenericQuestions();
         lesson = new Numbers_10s(null, null);
         lesson.saveGenericQuestions();
         lesson = new Numbers_21_99(null, null);
-        lesson.saveGenericQuestions();*/
-        Lesson lesson = new Goodbye_bye(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new Goodbye_bye(null, null);
         lesson.saveGenericQuestions();
         lesson = new How_are_you_doing(null, null);
-        lesson.saveGenericQuestions();
+        lesson.saveGenericQuestions();*/
     }
 }
