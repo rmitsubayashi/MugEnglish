@@ -21,7 +21,7 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class User_Profile_Hours_Studied extends Fragment {
+public class UserProfile_HoursStudied extends Fragment {
     private final String TAG = "UserProfileHoursStudied";
     private CustomCalendarView calendarView;
     private String userID;

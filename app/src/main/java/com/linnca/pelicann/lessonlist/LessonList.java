@@ -99,12 +99,13 @@ public class LessonList extends Fragment {
     private void populateLessonList(final int lessonLevel){
         clearedLessonsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                        FirebaseAuth.getInstance().getCurrentUser().getUid() + "/"
+                        FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" +
+                        lessonLevel
         );
         clearedLessonsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Set<String> clearedLessons = new HashSet<>((int)dataSnapshot.getChildrenCount());
+                Set<String> clearedLessons = new HashSet<>((int)dataSnapshot.getChildrenCount()+1);
                 for (DataSnapshot lessonSnapshot : dataSnapshot.getChildren()){
                     String lessonKey = lessonSnapshot.getKey();
                     clearedLessons.add(lessonKey);

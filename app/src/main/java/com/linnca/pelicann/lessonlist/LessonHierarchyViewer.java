@@ -31,6 +31,8 @@ import com.linnca.pelicann.lessongenerator.lessons.Numbers_4_6;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_7_9;
 import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_COUNTRY_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.Stand_up_sit_down;
+import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
+import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
 import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
 import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
@@ -41,6 +43,7 @@ import java.util.Map;
 
 public class LessonHierarchyViewer {
     private final List<List<LessonListRow>> lessonLevels = new ArrayList<>();
+    //so we can go people1 -> people2 -> people3
     private Map<String, Integer> titleCount;
     private final String review = "ふくしゅう";
 
@@ -77,9 +80,9 @@ public class LessonHierarchyViewer {
         titleCount = new HashMap<>();
 
         row = new LessonListRow();
-        col1Data = new LessonData(Hello_my_name_is_NAME.KEY, greetings, R.layout.fragment_description_hello_my_name_is_name, null, R.color.lblue300, greetingsIconID);
-        col2Data = new LessonData(NAME_is_a_GENDER.KEY, people, R.layout.fragment_description_name_is_a_man, null, R.color.lblue700, peopleIconID);
-        col3Data = new LessonData(NAME_is_AGE_years_old.KEY, people, null, null, R.color.lblue700, peopleIconID);
+        col1Data = new LessonData(Hello_my_name_is_NAME.KEY, greetings, R.layout.fragment_description_hello_my_name_is_name, null, 100, R.color.lblue300, greetingsIconID);
+        col2Data = new LessonData(NAME_is_a_GENDER.KEY, people, R.layout.fragment_description_name_is_a_man, null, 100, R.color.lblue700, peopleIconID);
+        col3Data = new LessonData(NAME_is_AGE_years_old.KEY, people, null, null, 100, R.color.lblue700, peopleIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -88,12 +91,12 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(Hello_my_name_is_NAME.KEY);
-        col1Data = new LessonData(good_morning_afternoon_evening.KEY, greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
+        col1Data = new LessonData(good_morning_afternoon_evening.KEY, greetings, null, col1Prerequisites, 100, R.color.lblue300, greetingsIconID);
         col2Prerequisites = new ArrayList<>(2);
         col2Prerequisites.add(NAME_is_a_GENDER.KEY);
         col2Prerequisites.add(NAME_is_AGE_years_old.KEY);
-        col2Data = new LessonData("people3_key", people, null, col2Prerequisites, R.color.lblue700, peopleIconID);
-        col3Data = new LessonData(Numbers_0_3.KEY, numbers, null, null, R.color.lblue500, numbersIconID);
+        col2Data = new LessonData("people3_key", people, null, col2Prerequisites, 100, R.color.lblue700, peopleIconID);
+        col3Data = new LessonData(Numbers_0_3.KEY, numbers, null, null, 100, R.color.lblue500, numbersIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -102,10 +105,10 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(good_morning_afternoon_evening.KEY);
-        col1Data = new LessonData(Goodbye_bye.KEY, greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
+        col1Data = new LessonData(Goodbye_bye.KEY, greetings, null, col1Prerequisites, 100, R.color.lblue300, greetingsIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(Numbers_0_3.KEY);
-        col3Data = new LessonData(Numbers_4_6.KEY, numbers, null, col3Prerequisites, R.color.lblue500, numbersIconID);
+        col3Data = new LessonData(Numbers_4_6.KEY, numbers, null, col3Prerequisites, 100, R.color.lblue500, numbersIconID);
         row.setCol1(col1Data);
         row.setCol2(null);
         row.setCol3(col3Data);
@@ -114,7 +117,7 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(Numbers_4_6.KEY);
-        col3Data = new LessonData(Numbers_7_9.KEY, numbers, null, col3Prerequisites, R.color.lblue500, numbersIconID);
+        col3Data = new LessonData(Numbers_7_9.KEY, numbers, null, col3Prerequisites, 100, R.color.lblue500, numbersIconID);
         row.setCol1(null);
         row.setCol2(null);
         row.setCol3(col3Data);
@@ -126,16 +129,16 @@ public class LessonHierarchyViewer {
         col2Prerequisites.add(Numbers_7_9.KEY);
         col2Prerequisites.add(Goodbye_bye.KEY);
         col2Prerequisites.add("people3_key");
-        col2Data = new LessonData("id_review1", review, null, col2Prerequisites, 0, 0);
+        col2Data = new LessonData("id_review1", review, null, col2Prerequisites, 100, 0, 0);
         row.setCol2(col2Data);
         lessonRows.add(row);
 
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(Goodbye_bye.KEY);
-        col1Data = new LessonData(How_are_you_doing.KEY, greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
-        col2Data = new LessonData(PLACE_is_a_COUNTRY_CITY.KEY, places, null, null, R.color.lblue700, placesIconID);
-        col3Data = new LessonData(NAME_is_a_OCCUPATION.KEY, occupations, null, null, R.color.lblue500, peopleIconID);
+        col1Data = new LessonData(How_are_you_doing.KEY, greetings, null, col1Prerequisites, 100, R.color.lblue300, greetingsIconID);
+        col2Data = new LessonData(PLACE_is_a_COUNTRY_CITY.KEY, places, null, null, 100, R.color.lblue700, placesIconID);
+        col3Data = new LessonData(NAME_is_a_OCCUPATION.KEY, occupations, null, null, 100, R.color.lblue500, peopleIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -144,13 +147,13 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(How_are_you_doing.KEY);
-        col1Data = new LessonData("greetings5_key", greetings, null, col1Prerequisites, R.color.lblue300, greetingsIconID);
+        col1Data = new LessonData("greetings5_key", greetings, null, col1Prerequisites, 100, R.color.lblue300, greetingsIconID);
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(PLACE_is_a_COUNTRY_CITY.KEY);
-        col2Data = new LessonData(NAME_is_from_COUNTRY.KEY, places, null, col2Prerequisites, R.color.lblue700, placesIconID);
+        col2Data = new LessonData(NAME_is_from_COUNTRY.KEY, places, null, col2Prerequisites, 100, R.color.lblue700, placesIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(NAME_is_a_OCCUPATION.KEY);
-        col3Data = new LessonData(Hello_my_name_is_NAME_I_am_a_OCCUPATION.KEY, occupations, null, col3Prerequisites, R.color.lblue500, peopleIconID);
+        col3Data = new LessonData(Hello_my_name_is_NAME_I_am_a_OCCUPATION.KEY, occupations, null, col3Prerequisites, 100, R.color.lblue500, peopleIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -159,10 +162,10 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(NAME_is_from_COUNTRY.KEY);
-        col2Data = new LessonData(NAME_is_from_CITY.KEY, places, null, col2Prerequisites, R.color.lblue700, placesIconID);
+        col2Data = new LessonData(NAME_is_from_CITY.KEY, places, null, col2Prerequisites, 100, R.color.lblue700, placesIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(NAME_is_from_COUNTRY.KEY);
-        col3Data = new LessonData(NAME_is_DEMONYM.KEY, people, null, col3Prerequisites, R.color.lblue700, peopleIconID);
+        col3Data = new LessonData(NAME_is_DEMONYM.KEY, people, null, col3Prerequisites, 100, R.color.lblue700, peopleIconID);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
         lessonRows.add(row);
@@ -173,7 +176,7 @@ public class LessonHierarchyViewer {
         col2Prerequisites.add("greetings5_key");
         col2Prerequisites.add(Hello_my_name_is_NAME_I_am_a_OCCUPATION.KEY);
         col2Prerequisites.add(NAME_is_from_CITY.KEY);
-        col2Data = new LessonData("id_review2", review, null, col2Prerequisites, 0, 0);
+        col2Data = new LessonData("id_review2", review, null, col2Prerequisites, 100, 0, 0);
         col2Data.setPrerequisiteLeeway(1);
         row.setCol2(col2Data);
         lessonRows.add(row);
@@ -181,11 +184,11 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(NAME_plays_SPORT.KEY);
-        col1Data = new LessonData(COMPANY_makes_PRODUCT.KEY, occupations, null, col1Prerequisites, R.color.lblue500, buildIconID);
-        col2Data = new LessonData(NAME_plays_SPORT.KEY, occupations, null, null, R.color.lblue500, peopleIconID);
+        col1Data = new LessonData(COMPANY_makes_PRODUCT.KEY, occupations, null, col1Prerequisites, 100, R.color.lblue500, buildIconID);
+        col2Data = new LessonData(NAME_plays_SPORT.KEY, occupations, null, null, 100, R.color.lblue500, peopleIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(NAME_plays_SPORT.KEY);
-        col3Data = new LessonData(NAME_works_at_EMPLOYER.KEY, occupations, null, col3Prerequisites, R.color.lblue500, peopleIconID);
+        col3Data = new LessonData(NAME_works_at_EMPLOYER.KEY, occupations, null, col3Prerequisites, 100, R.color.lblue500, peopleIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -194,24 +197,24 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(Numbers_10s.KEY);
-        col1Data = new LessonData(Numbers_11_19.KEY, numbers, null, col1Prerequisites, R.color.lblue300, numbersIconID);
+        col1Data = new LessonData(Numbers_11_19.KEY, numbers, null, col1Prerequisites, 100, R.color.lblue300, numbersIconID);
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(Numbers_7_9.KEY);
-        col2Data = new LessonData(Numbers_10s.KEY, numbers, null, col2Prerequisites, R.color.lblue300, numbersIconID);
+        col2Data = new LessonData(Numbers_10s.KEY, numbers, null, col2Prerequisites, 100, R.color.lblue300, numbersIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(NAME_works_at_EMPLOYER.KEY);
-        col3Data = new LessonData(NAME_is_at_work_He_is_at_EMPLOYER.KEY, occupations, null, col3Prerequisites, R.color.lblue500, peopleIconID);
+        col3Data = new LessonData(NAME_is_at_work_He_is_at_EMPLOYER.KEY, occupations, null, col3Prerequisites, 100, R.color.lblue500, peopleIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
         lessonRows.add(row);
 
         row = new LessonListRow();
-        col1Data = new LessonData("body1_key", body, null, null, R.color.lblue700, bodyIconID);
+        col1Data = new LessonData("body1_key", body, null, null, 100, R.color.lblue700, bodyIconID);
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(Numbers_10s.KEY);
-        col2Data = new LessonData(Numbers_21_99.KEY, numbers, null, col2Prerequisites, R.color.lblue300, numbersIconID);
-        col3Data = new LessonData(Stand_up_sit_down.KEY, action, null, null, R.color.lblue700, actionIConID);
+        col2Data = new LessonData(Numbers_21_99.KEY, numbers, null, col2Prerequisites, 100, R.color.lblue300, numbersIconID);
+        col3Data = new LessonData(Stand_up_sit_down.KEY, action, null, null, 100, R.color.lblue700, actionIConID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -220,10 +223,10 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add("body1_key");
-        col1Data = new LessonData("body2_key", body, null, col1Prerequisites, R.color.lblue700, bodyIconID);
+        col1Data = new LessonData("body2_key", body, null, col1Prerequisites, 100, R.color.lblue700, bodyIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(Stand_up_sit_down.KEY);
-        col3Data = new LessonData(Walk_run.KEY, action, null, col3Prerequisites, R.color.lblue700, actionIConID);
+        col3Data = new LessonData(Walk_run.KEY, action, null, col3Prerequisites, 100, R.color.lblue700, actionIConID);
         row.setCol1(col1Data);
         row.setCol3(col3Data);
         lessonRows.add(row);
@@ -232,15 +235,31 @@ public class LessonHierarchyViewer {
         lessonLevels.add(lessonRows);
 
         titleCount.clear();
+        //make sure we don't clear but overwrite the reference
+        lessonRows = new ArrayList<>(50);
 
-        /*
-        new LessonData(NAME_is_a_OCCUPATION.KEY, "職業", R.layout.fragment_description_name_is_a_occupation));
-        //workCategory.addLesson(new LessonData(NAME_plays_SPORT.KEY, "スポーツ選手", null));
+        row = new LessonListRow();
+        col1Data = new LessonData(The_emergency_phone_number_of_COUNTRY_is_NUMBER.KEY, numbers, null, null, 100, R.color.lblue300, numbersIconID);
+        col3Data = new LessonData(The_DEMONYM_flag_is_COLORS.KEY, places, null, null, 100, R.color.lblue700, placesIconID);
+        row.setCol1(col1Data);
+        row.setCol3(col3Data);
+        lessonRows.add(row);
 
-        countriesAndPrefecturesCategory.addLesson(new LessonData(The_DEMONYM_flag_is_COLORS.KEY, "国旗の色", null));
-        countriesAndPrefecturesCategory.addLesson(new LessonData(NAME_is_DEMONYM.KEY, "国民の名称", null));
-        countriesAndPrefecturesCategory.addLesson(new LessonData(The_emergency_phone_number_of_COUNTRY_is_NUMBER.KEY, "緊急通報用電話番号", R.layout.fragment_description_the_emergency_phone_number_of_country_is_number));
-        */
+        row = new LessonListRow();
+        row.setReview(true);
+        col2Prerequisites = new ArrayList<>(2);
+        col2Prerequisites.add(The_DEMONYM_flag_is_COLORS.KEY);
+        col2Prerequisites.add(The_emergency_phone_number_of_COUNTRY_is_NUMBER.KEY);
+        col2Data = new LessonData("id_review1", review, null, col2Prerequisites, 100, 0, 0);
+        row.setCol2(col2Data);
+        lessonRows.add(row);
+
+        adjustRowTitles(lessonRows);
+        lessonLevels.add(lessonRows);
+
+        titleCount.clear();
+
+
     }
 
     public void debugUnlockAllLessons(){
@@ -323,7 +342,7 @@ public class LessonHierarchyViewer {
         return null;
     }
 
-    private int getLessonLevel(String lessonKey){
+    public int getLessonLevel(String lessonKey){
         int levelCt = lessonLevels.size();
         for (int i=0; i<levelCt; i++) {
             List<LessonListRow> lessonRows = lessonLevels.get(i);
@@ -332,7 +351,7 @@ public class LessonHierarchyViewer {
                     if (lessonData == null)
                         continue;
                     if (lessonData.getKey().equals(lessonKey)) {
-                        return i;
+                        return i+1;
                     }
                 }
             }

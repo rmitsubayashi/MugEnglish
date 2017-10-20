@@ -13,6 +13,7 @@ public class LessonData implements Serializable{
     private List<String> prerequisiteKeys;
     //i.e. 4/5 of the prerequisites to unlock
     private int prerequisiteLeeway = 0;
+    private int toClearScore;
     private int colorID;
     private int iconID;
 
@@ -21,12 +22,14 @@ public class LessonData implements Serializable{
     public LessonData(String key, String title,
                       Integer descriptionLayout,
                       List<String> prerequisiteKeys,
+                      int toClearScore,
                       int colorID,
                       int iconID){
         this.key = key;
         this.title = title;
         this.descriptionLayout = descriptionLayout;
         this.prerequisiteKeys = prerequisiteKeys;
+        this.toClearScore = toClearScore;
         this.colorID = colorID;
         this.iconID = iconID;
     }
@@ -37,6 +40,7 @@ public class LessonData implements Serializable{
         this.descriptionLayout = copy.descriptionLayout;
         this.prerequisiteKeys = new ArrayList<>(prerequisiteKeys);
         this.prerequisiteLeeway = copy.prerequisiteLeeway;
+        this.toClearScore = copy.toClearScore;
         this.colorID = copy.colorID;
         this.iconID = copy.iconID;
     }
@@ -71,6 +75,14 @@ public class LessonData implements Serializable{
 
     public void setPrerequisiteKeys(List<String> prerequisiteKeys) {
         this.prerequisiteKeys = prerequisiteKeys;
+    }
+
+    public int getToClearScore() {
+        return toClearScore;
+    }
+
+    public void setToClearScore(int toClearScore) {
+        this.toClearScore = toClearScore;
     }
 
     public int getColorID() {

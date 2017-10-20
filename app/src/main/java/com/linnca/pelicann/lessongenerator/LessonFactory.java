@@ -191,7 +191,7 @@ public class LessonFactory {
     }
 
     public static void saveGenericQuestions(){
-        /*Lesson lesson = new good_morning_afternoon_evening(null, null);
+        Lesson lesson = new good_morning_afternoon_evening(null, null);
         lesson.saveGenericQuestions();
         lesson = new Hello_my_name_is_NAME(null, null);
         lesson.saveGenericQuestions();
@@ -218,6 +218,6 @@ public class LessonFactory {
         lesson = new Goodbye_bye(null, null);
         lesson.saveGenericQuestions();
         lesson = new How_are_you_doing(null, null);
-        lesson.saveGenericQuestions();*/
+        lesson.saveGenericQuestions();
     }
 }

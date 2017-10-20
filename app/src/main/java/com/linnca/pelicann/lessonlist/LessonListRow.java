@@ -2,12 +2,12 @@ package com.linnca.pelicann.lessonlist;
 
 import com.linnca.pelicann.lessondetails.LessonData;
 
-class LessonListRow {
+public class LessonListRow {
     private final int lessonsPerRow = 3;
     private LessonData[] lessons = new LessonData[lessonsPerRow];
     private boolean isReview = false;
 
-    LessonListRow(){}
+    public LessonListRow(){}
 
     void setCol1(LessonData data){
         lessons[0] = data;
@@ -25,7 +25,7 @@ class LessonListRow {
         this.isReview = isReview;
     }
 
-    boolean isReview(){
+    public boolean isReview(){
         return isReview;
     }
 

@@ -20,6 +20,9 @@ public class FirebaseDBHeaders {
     public static final String RECOMMENDATION_MAP_EDGE_DATA = "data";
     public static final String RECOMMENDATION_MAP_FOR_LESSON_GENERATION = "recommendationMapForLessonGeneration";
     public static final String APP_USAGE = "appUsage";
+    public static final String REPORT_CARD = "reportCard";
+    public static final String REPORT_CARD_CORRECT = "correct";
+    public static final String REPORT_CARD_TOTAL = "total";
 
     private FirebaseDBHeaders(){}
 }

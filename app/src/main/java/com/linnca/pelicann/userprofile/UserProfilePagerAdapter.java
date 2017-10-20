@@ -26,11 +26,11 @@ class UserProfilePagerAdapter extends FragmentPagerAdapter {
         bundle.putSerializable(null, (Serializable)records);
         switch (position) {
             case 0:
-                Fragment user_profile_hours_studied = new User_Profile_Hours_Studied();
+                Fragment user_profile_hours_studied = new UserProfile_HoursStudied();
                 user_profile_hours_studied.setArguments(bundle);
                 return user_profile_hours_studied;
             case 1:
-                Fragment user_profile_report_card = new User_Profile_Report_Card();
+                Fragment user_profile_report_card = new UserProfile_ReportCard();
                 user_profile_report_card.setArguments(bundle);
                 return  user_profile_report_card;
             default:

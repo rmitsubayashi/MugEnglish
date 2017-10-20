@@ -122,7 +122,7 @@
     </string>
     <string name="preferences_first_time_key">preferences:first time</string>
     <string name="preferences_last_selected_lesson_level">preferences: last selected lesson level</string>
-
+    <string name="preferences_report_card_last_selected_lesson_level">preferences: report card last selected lesson level</string>
     <string name="preferences_subscreen_functionality_title">機能</string>
     <string name="preferences_subscreen_reason_title">理由</string>
 
@@ -228,10 +228,9 @@
     <string name="user_profile_tab_report_card">成績</string>
     <string name="user_profile_hours_studied_legend_studied">勉強した日</string>
     <string name="user_profile_hours_studied_legend_no_record">記録なし</string>
-    <string name="user_profile_report_card_name">名前</string>
-    <string name="user_profile_report_card_accuracy">正解率</string>
-    <string name="user_profile_report_card_num_questions">問題数</string>
-    <string name="user_profile_report_card_num_answered">回答数</string>
+    <string name="user_profile_report_card_average_score">平均正解率</string>
+    <string name="user_profile_report_card_cleared">合格ライン以上</string>
+    <string name="user_profile_report_card_not_clear">不合格</string>
 
     <!--questions-->
     <string name="question_title">問 %1$d/%2$d</string>

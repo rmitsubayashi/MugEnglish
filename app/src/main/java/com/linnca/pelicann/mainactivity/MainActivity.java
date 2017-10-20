@@ -177,9 +177,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             break;
                         case R.id.main_navigation_drawer_lesson_level2 :
                             newFragment = new LessonList();
-                            bundle.putInt(LessonList.LESSON_LEVEL, 1);
+                            bundle.putInt(LessonList.LESSON_LEVEL, 2);
                             newFragment.setArguments(bundle);
-                            setLastSelectedLessonLevel(1);
+                            setLastSelectedLessonLevel(2);
                             newFragmentTag = FRAGMENT_LESSON_LIST;
                             break;
                         default:
@@ -578,8 +578,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setLessonView(){
         clearBackStack();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        //this is the ID used by the fragment
-        //default (the user has never selected an item) is countries for now
+        //default is lowest level (1)
         int lastSelectedLessonLevel = preferences.getInt(getString(R.string.preferences_last_selected_lesson_level), 1);
         //finding the ID of the navigation drawer
         int navigationDrawerItemIDToSelect;
