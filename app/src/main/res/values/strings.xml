@@ -198,9 +198,8 @@
     <string name="lesson_details_created">作成日</string>
     <string name="lesson_details_item_menu_more_info">詳細</string>
     <string name="lesson_details_item_menu_delete">消去</string>
-    <string name="lesson_details_no_items">レッスンがありません\n\n
-    +ボタンを押して\n
-    レッスンを作成してください</string>
+    <string name="lesson_details_no_items_add_guide">+ボタンを押してレッスンを\n作成してください\n↓↓</string>
+    <string name="lesson_details_no_items_description_guide">↑↑\n合格点、レッスンの説明を見れます</string>
 
     <string name="lesson_details_instance_details_title">詳細</string>
     <string name="lesson_details_instance_details_played_number">学習回数</string>

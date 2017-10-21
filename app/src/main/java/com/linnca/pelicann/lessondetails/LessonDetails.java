@@ -58,7 +58,8 @@ public class LessonDetails extends Fragment {
     private RecyclerView list;
     private FloatingActionButton createButton;
     private ProgressBar createProgressBar;
-    private TextView noItemTextView;
+    private TextView noItemAddTextView;
+    private TextView noItemsDescriptionTextView;
     private ProgressBar loading;
     private ViewGroup mainLayout;
 
@@ -85,7 +86,8 @@ public class LessonDetails extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_lesson_details, container, false);
         list = view.findViewById(R.id.lesson_details_instanceList);
-        noItemTextView = view.findViewById(R.id.lesson_details_no_items);
+        noItemAddTextView = view.findViewById(R.id.lesson_details_no_items_add_guide);
+        noItemsDescriptionTextView = view.findViewById(R.id.lesson_details_no_items_description_guide);
         loading = view.findViewById(R.id.lesson_details_loading);
         mainLayout = view.findViewById(R.id.fragment_lesson_details);
         createButton = view.findViewById(R.id.lesson_details_add);
@@ -168,7 +170,25 @@ public class LessonDetails extends Fragment {
         DatabaseReference lessonInstancesRef = db.getReference(
                 FirebaseDBHeaders.LESSON_INSTANCES + "/"+userID+"/"+ lessonData.getKey());
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        firebaseAdapter = new LessonDetailsAdapter(lessonInstancesRef, noItemTextView, loading, lessonDetailsListener, lessonData.getKey());
+        firebaseAdapter = new LessonDetailsAdapter(lessonInstancesRef,
+                new LessonDetailsAdapter.LessonDetailsAdapterListener() {
+                    @Override
+                    public void onLoad() {
+                        loading.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onItems(){
+                        noItemAddTextView.setVisibility(View.GONE);
+                        noItemsDescriptionTextView.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onNoItems() {
+                        noItemAddTextView.setVisibility(View.VISIBLE);
+                        noItemsDescriptionTextView.setVisibility(View.VISIBLE);
+                    }
+                }, lessonDetailsListener, lessonData.getKey());
         //when we create a new instance, remove the progress spinner
         firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override

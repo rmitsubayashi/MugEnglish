@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -272,6 +274,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.app_bar_menu, menu);
+        //change the icon to white
+        menu.findItem(R.id.app_bar_description).getIcon().setColorFilter(
+                ContextCompat.getColor(this, R.color.white),
+                PorterDuff.Mode.SRC_ATOP
+        );
         return true;
     }
 
@@ -724,20 +731,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         onBackPressed();
     }
 
-    private TextView getToolbarTextView(){
-        int childCount = toolbar.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View child = toolbar.getChildAt(i);
-            if (child instanceof TextView) {
-                return (TextView)child;
-            }
-        }
-        return null;
-    }
-
     @Override
     public void setToolbarState(ToolbarState state){
         boolean spinnerVisible = state.spinnerVisible();
+        if (spinnerVisible){
+            //reset the spinner
+            toolbarSpinner.setSelection(0);
+        }
         toolbarSpinner.setVisibility(spinnerVisible ? View.VISIBLE : View.GONE);
         String toolbarTitle = state.getTitle();
         toolbar.setTitle(toolbarTitle);

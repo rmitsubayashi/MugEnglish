@@ -38,7 +38,7 @@ class UserInterestViewHolder  extends RecyclerView.ViewHolder {
 
     void setIcon(int classification, boolean selected){
         if (selected){
-            icon.setImageResource(R.drawable.ic_check_circle_black_24dp);
+            icon.setImageResource(R.drawable.ic_check_circle);
             return;
         }
         switch (classification){

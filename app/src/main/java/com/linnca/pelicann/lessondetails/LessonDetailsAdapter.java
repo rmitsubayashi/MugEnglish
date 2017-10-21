@@ -21,21 +21,24 @@ class LessonDetailsAdapter
 
     //context menu doesn't work for recyclerviews
     private LessonInstanceData longClickData;
-    //hide loading view once data is initially loaded
-    private final ProgressBar loading;
-    //update GUI if the list is empty
-    private final TextView noItems;
     //so we can click on an item and start questions
     private final LessonDetails.LessonDetailsListener lessonDetailsListener;
     //need it for the listener
     private final String lessonKey;
+    //helps change the UI when items are loaded
+    private LessonDetailsAdapterListener uiListener;
 
-    LessonDetailsAdapter(DatabaseReference ref, TextView noItems, ProgressBar loading,
+    interface LessonDetailsAdapterListener {
+        void onLoad();
+        void onItems();
+        void onNoItems();
+    }
+
+    LessonDetailsAdapter(DatabaseReference ref, LessonDetailsAdapterListener uiListener,
                                 LessonDetails.LessonDetailsListener lessonDetailsListener, String lessonKey){
         super(LessonInstanceData.class, R.layout.inflatable_lesson_details_instance_list_item,
                 LessonDetailsViewHolder.class, ref);
-        this.noItems = noItems;
-        this.loading = loading;
+        this.uiListener = uiListener;
         this.lessonDetailsListener = lessonDetailsListener;
         this.lessonKey = lessonKey;
     }
@@ -88,8 +91,12 @@ class LessonDetailsAdapter
 
     @Override
     public void onDataChanged(){
-        noItems.setVisibility(this.getItemCount() == 0 ? View.VISIBLE : View.INVISIBLE);
-        loading.setVisibility(View.INVISIBLE);
+        if (this.getItemCount() == 0){
+            uiListener.onNoItems();
+        } else {
+            uiListener.onItems();
+        }
+        uiListener.onLoad();
     }
 
 

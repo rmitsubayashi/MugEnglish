@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--the compound drawable doesn't fully support image tinting so do this instead-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:paddingTop="4dp"
-              android:paddingBottom="4dp"
-              android:paddingStart="4dp"
-              android:paddingEnd="20dp"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:paddingStart="4dp"
+    android:paddingEnd="20dp"
     >
     <ImageView
         android:id="@+id/tool_bar_spinner_item_icon"

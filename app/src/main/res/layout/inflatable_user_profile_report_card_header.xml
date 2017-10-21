@@ -26,13 +26,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:textSize="17sp"
+            android:textSize="13sp"
             android:textColor="@color/lblue500"
             android:text="@string/user_profile_report_card_cleared"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
+            android:textSize="13sp"
             android:textColor="@color/gray500"
             android:text="@string/user_profile_report_card_not_clear"/>
     </LinearLayout>

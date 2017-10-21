@@ -31,7 +31,7 @@
             android:layout_height="24dp"
             android:layout_gravity="center"
             android:tint="@color/lblue300"
-            android:src="@drawable/ic_down_arrow_24dp"
+            android:src="@drawable/ic_down_arrow"
             />
         <EditText
             android:id="@+id/question_translate_word_input"
