@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/gray50"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="100dp"
+    android:clipToPadding="false"
+    android:background="@color/gray50"
     >
     <LinearLayout
       android:orientation="vertical"
@@ -10,6 +13,7 @@
       android:layout_height="wrap_content"
       android:padding="16dp"
         >
+        <include layout="@layout/inflatable_lesson_description_to_clear_score"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -20,7 +24,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
+            style="@style/description_lesson_text"
             android:text="@string/description_name_is_a_occupation_explanation_1"/>
         <TableLayout
             android:layout_width="wrap_content"
@@ -144,13 +148,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
+            style="@style/description_lesson_text"
             android:text="@string/description_name_is_a_occupation_explanation2_2"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="17sp"
+            style="@style/description_lesson_text"
             android:text="@string/description_name_is_a_occupation_explanation2_3"/>
     </LinearLayout>
 </ScrollView>

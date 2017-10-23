@@ -211,6 +211,8 @@
     <string name="lesson_description_title">説明</string>
     <string name="lesson_description_no_description_available">残念ながらこのレッスンの説明文はありません</string>
     <string name="lesson_description_exception_tag">exception</string>
+    <string name="lesson_description_to_clear_score_title">合格ライン</string>
+    <string name="lesson_description_to_clear_score_template">%1$d点</string>
 
     <!--user interests list-->
     <string name="user_interests_list_item_delete">消去</string>

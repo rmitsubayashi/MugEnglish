@@ -13,6 +13,7 @@ import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME_I_am_a_
 import com.linnca.pelicann.lessongenerator.lessons.How_are_you_doing;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_AGE_years_old;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_at_work_He_is_at_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_CITY;
@@ -179,6 +180,12 @@ public class LessonFactory {
             }
             case How_are_you_doing.KEY :{
                 return new How_are_you_doing(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_is_a_GENDER.KEY :{
+                return new NAME_is_a_GENDER(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         listener
                 );

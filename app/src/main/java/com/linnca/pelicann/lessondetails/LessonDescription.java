@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
@@ -33,7 +34,8 @@ public class LessonDescription extends Fragment {
         String lessonKey = getArguments().getString(BUNDLE_LESSON_KEY);
         alwaysShowException = getArguments().getBoolean(BUNDLE_SHOW_EXCEPTION);
         LessonHierarchyViewer helper = new LessonHierarchyViewer();
-        Integer layoutID = helper.getLessonData(lessonKey).getDescriptionLayout();
+        LessonData lessonData = helper.getLessonData(lessonKey);
+        Integer layoutID = lessonData.getDescriptionLayout();
         if (layoutID == null){
             //layout if we can't find one (we preemptively handle it by hiding the icon that links to this screen,
             // but just in case )
@@ -41,6 +43,14 @@ public class LessonDescription extends Fragment {
         }
 
         View view = inflater.inflate(layoutID, container, false);
+        TextView toClearScoreTextView = view.findViewById(R.id.lesson_description_to_clear_score);
+        //we might accidentally publish a lesson description xml file without the view
+        if (toClearScoreTextView != null){
+            toClearScoreTextView.setText(
+                    getString(R.string.lesson_description_to_clear_score_template,
+                            lessonData.getToClearScore())
+            );
+        }
         handleExceptionRules(view);
         return view;
     }

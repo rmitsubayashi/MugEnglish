@@ -37,11 +37,11 @@
         <item name="android:layout_marginBottom">16dp</item>
         <item name="android:layout_marginTop">16dp</item>
     </style>
-    <style name="description_lesson_new_word">
+    <style name="description_lesson_text">
         <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@color/green500</item>
-        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginBottom">24dp</item>
     </style>
+
 
     <!--setting a window background is apparently the best way to go with splash screens-->
     <style name="SplashTheme" parent="Theme.AppCompat.Light.DarkActionBar">
