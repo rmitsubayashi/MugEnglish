@@ -138,6 +138,91 @@
     一つはA <b>plays</b> B。もう一つはA <b>does</b> B。\n\n
     playsは球技や団体スポーツに使います。\n（例）香川真司はサッカーをします。(Shinji Kagawa <b>plays</b> soccer.)\n
     doesは個人でやるスポーツに使います。\n（例）マイケルフェルプスは水泳をします。(Michael Phelps <b>does</b> swimming.)</string>
+
+    <string name="description_name_works_at_employer_new_word">work</string>
+    <string name="description_name_works_at_employer_new_meaning">仕事をする</string>
+    <string name="description_name_works_at_employer_grammar">前置詞の<b>at</b>は「その場所、その点」という位置関係を表します。</string>
+
+    <string name="description_numbers_subheader">数字を覚えよう！</string>
+    <string name="description_numbers_word0">zero</string>
+    <string name="description_numbers_meaning0">0</string>
+    <string name="description_numbers_word1">one</string>
+    <string name="description_numbers_meaning1">1</string>
+    <string name="description_numbers_word2">two</string>
+    <string name="description_numbers_meaning2">2</string>
+    <string name="description_numbers_word3">three</string>
+    <string name="description_numbers_meaning3">3</string>
+    <string name="description_numbers_word4">four</string>
+    <string name="description_numbers_meaning4">4</string>
+    <string name="description_numbers_word5">five</string>
+    <string name="description_numbers_meaning5">5</string>
+    <string name="description_numbers_word6">six</string>
+    <string name="description_numbers_meaning6">6</string>
+    <string name="description_numbers_word7">seven</string>
+    <string name="description_numbers_meaning7">7</string>
+    <string name="description_numbers_word8">eight</string>
+    <string name="description_numbers_meaning8">8</string>
+    <string name="description_numbers_word9">nine</string>
+    <string name="description_numbers_meaning9">9</string>
+    <string name="description_numbers_word11">eleven</string>
+    <string name="description_numbers_meaning11">11</string>
+    <string name="description_numbers_word12">twelve</string>
+    <string name="description_numbers_meaning12">12</string>
+    <string name="description_numbers_word13">thirteen</string>
+    <string name="description_numbers_meaning13">13</string>
+    <string name="description_numbers_word14">fourteen</string>
+    <string name="description_numbers_meaning14">14</string>
+    <string name="description_numbers_word15">fifteen</string>
+    <string name="description_numbers_meaning15">15</string>
+    <string name="description_numbers_word16">sixteen</string>
+    <string name="description_numbers_meaning16">16</string>
+    <string name="description_numbers_word17">seventeen</string>
+    <string name="description_numbers_meaning17">17</string>
+    <string name="description_numbers_word18">eighteen</string>
+    <string name="description_numbers_meaning18">18</string>
+    <string name="description_numbers_word19">nineteen</string>
+    <string name="description_numbers_meaning19">19</string>
+    <string name="description_numbers_word10">ten</string>
+    <string name="description_numbers_meaning10">10</string>
+    <string name="description_numbers_word20">twenty</string>
+    <string name="description_numbers_meaning20">20</string>
+    <string name="description_numbers_word30">thirty</string>
+    <string name="description_numbers_meaning30">30</string>
+    <string name="description_numbers_word40">forty</string>
+    <string name="description_numbers_meaning40">40</string>
+    <string name="description_numbers_word50">fifty</string>
+    <string name="description_numbers_meaning50">50</string>
+    <string name="description_numbers_word60">sixty</string>
+    <string name="description_numbers_meaning60">60</string>
+    <string name="description_numbers_word70">seventy</string>
+    <string name="description_numbers_meaning70">70</string>
+    <string name="description_numbers_word80">eighty</string>
+    <string name="description_numbers_meaning80">80</string>
+    <string name="description_numbers_word90">ninety</string>
+    <string name="description_numbers_meaning90">90</string>
+
+    <string name="description_numbers_11_19_fun_fact">なぜ11と12だけ-teenで終わらないのか。\n諸説がありますが、有力なのは、11と12が昔からよく使われていた数字だからです。\n
+        昔は11と12はain-lifとtwa-lifと言いました(ain=1 twa=2 lif=余り)。「10をとって余りが1、余りが2」という意味です。新しい-teenという数字の表し方が出てきた後も、よく使っていた11と12は昔の言葉を使用し、現在のelevenとtwelveに至りました。</string>
+    <string name="description_numbers_21_99_how_to_remember">21から99(10,20,&#8230;を除く)はすべて十の位と一の位を合わせた単語になります。\n
+    21はtwenty + one でtwenty-one、55はfifty + five でfifty-fiveになります。間の「-」は必要ではありませんが、あった方が伝わりやすいです。\n
+    例えばfifty fiveと書くと、50と5なのか55なのかわかりにくいですが、fifty-fiveと書くと一瞬で55だとわかります。</string>
+
+    <string name="description_place_is_a_country_city_word1">city</string>
+    <string name="description_place_is_a_country_city_meaning1">都市</string>
+    <string name="description_place_is_a_country_city_word2">country</string>
+    <string name="description_place_is_a_country_city_meaning2">国</string>
+
+    <string name="description_stand_up_sit_down_explanation">このレッスンでは二つの動作を学びます。\n
+        最後の問題で指示を出しますので、指示に従ってください。今回は<b>sit down</b>（座ってください）と<b>stand up</b>（立ってください）です。\n
+        身動きがとれない場合はイメージしてください。
+    </string>
+
+    <string name="description_walk_run_explanation">今回のレッスンも動作のレッスンです。きちんと指示に従ってくださいね。</string>
+    <string name="description_walk_run_word1">run</string>
+    <string name="description_walk_run_meaning1">走る</string>
+    <string name="description_walk_run_word2">walk</string>
+    <string name="description_walk_run_meaning2">歩く</string>
+
     <string name="description_the_emergency_phone_number_of_country_is_number_subheader">@string/description_template_new_word</string>
     <string name="description_the_emergency_phone_number_of_country_is_number_new_word">emergency phone number</string>
     <string name="description_the_emergency_phone_number_of_country_is_number_new_word_part1_word">emergency</string>
@@ -151,6 +236,24 @@
     <string name="description_the_emergency_phone_number_of_country_is_number_exception">電話番号は基本的に一桁ずつ言います。110の場合、one one zero と発音します。\n
         0は"zero"の他に<b>"oh"</b>とも発音できます。どっちを使うかは人によります。\nまた、0が2桁か3桁続く場合、</string>
 
-
+    <string name="description_the_demonym_flag_is_colors_review">国民の名称を覚えていますか。JapaneseやAmericanなど色々ありましたよね。実はこの名称はそのまま形容詞として「A国の」という風に使えます。\n
+    このレッスンでは「A国の国旗は何色だ」という例文を使って練習していきます。</string>
+    <string name="description_the_demonym_flag_is_colors_subheader">色々な色</string>
+    <string name="description_the_demonym_flag_is_colors_word1">red</string>
+    <string name="description_the_demonym_flag_is_colors_meaning1">赤</string>
+    <string name="description_the_demonym_flag_is_colors_word2">white</string>
+    <string name="description_the_demonym_flag_is_colors_meaning2">白</string>
+    <string name="description_the_demonym_flag_is_colors_word3">blue</string>
+    <string name="description_the_demonym_flag_is_colors_meaning3">青</string>
+    <string name="description_the_demonym_flag_is_colors_word4">green</string>
+    <string name="description_the_demonym_flag_is_colors_meaning4">緑</string>
+    <string name="description_the_demonym_flag_is_colors_word5">orange</string>
+    <string name="description_the_demonym_flag_is_colors_meaning5">オレンジ</string>
+    <string name="description_the_demonym_flag_is_colors_word6">black</string>
+    <string name="description_the_demonym_flag_is_colors_meaning6">黒</string>
+    <string name="description_the_demonym_flag_is_colors_word7">light blue</string>
+    <string name="description_the_demonym_flag_is_colors_meaning7">水色</string>
+    <string name="description_the_demonym_flag_is_colors_word8">yellow</string>
+    <string name="description_the_demonym_flag_is_colors_meaning8">黄色</string>
 
 </resources>
