@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessonlist;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,8 +31,11 @@ import java.util.Set;
 public class LessonList extends Fragment {
     private final String TAG = "LessonList";
     public static final String LESSON_LEVEL = "lessonLevel";
+    private final String SAVED_STATE_LIST_STATE = "listState";
     private RecyclerView listView;
     private int lessonLevel;
+    private RecyclerView.LayoutManager layoutManager;
+    private LessonListAdapter adapter;
     private DatabaseReference clearedLessonsRef;
     private ValueEventListener clearedLessonsListener;
 
@@ -48,6 +52,15 @@ public class LessonList extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_lesson_list, container, false);
         listView = view.findViewById(R.id.lesson_list_list);
+        layoutManager = new LinearLayoutManager(getContext());
+        //restore the list to the state it was in before (better ux)
+        if (savedInstanceState != null &&
+                savedInstanceState.getParcelable(SAVED_STATE_LIST_STATE) != null){
+            layoutManager.onRestoreInstanceState(
+                    savedInstanceState.getParcelable(SAVED_STATE_LIST_STATE)
+            );
+        }
+        listView.setLayoutManager(layoutManager);
         lessonLevel = getArguments().getInt(LESSON_LEVEL);
         return view;
     }
@@ -57,7 +70,7 @@ public class LessonList extends Fragment {
         super.onStart();
         listener.setToolbarState(
                 new ToolbarState(getString(R.string.fragment_lesson_list_title),
-                        false, null)
+                        false, false, null)
             );
         populateLessonList(lessonLevel);
     }
@@ -83,25 +96,34 @@ public class LessonList extends Fragment {
         }
     }
 
-    private void populateLessonList(int lessonLevel){
-        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
-        List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
-        final LessonListAdapter adapter = new LessonListAdapter(lessonRows, listener);
-        listView.setLayoutManager(new LinearLayoutManager(getContext()));
-        listView.setAdapter(adapter);
+    private void populateLessonList(final int lessonLevel){
         clearedLessonsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                        FirebaseAuth.getInstance().getCurrentUser().getUid() + "/"
+                        FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" +
+                        lessonLevel
         );
         clearedLessonsListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Set<String> clearedLessons = new HashSet<>((int)dataSnapshot.getChildrenCount());
+                Set<String> clearedLessons = new HashSet<>((int)dataSnapshot.getChildrenCount()+1);
                 for (DataSnapshot lessonSnapshot : dataSnapshot.getChildren()){
                     String lessonKey = lessonSnapshot.getKey();
                     clearedLessons.add(lessonKey);
                 }
-                adapter.setClearedLessonKeys(clearedLessons);
+                LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
+                //lessonHierarchyViewer.debugUnlockAllLessons();
+                List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
+                if (adapter == null) {
+                    adapter = new LessonListAdapter(lessonRows, listener, clearedLessons);
+                    listView.setAdapter(adapter);
+                } else {
+                    if (listView.getAdapter() == null){
+                        listView.setAdapter(adapter);
+                    } else {
+                        adapter.setClearedLessonKeys(clearedLessons);
+                    }
+                }
+
             }
 
             @Override
@@ -111,6 +133,13 @@ public class LessonList extends Fragment {
         };
         clearedLessonsRef.addValueEventListener(clearedLessonsListener);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        Parcelable listState = layoutManager.onSaveInstanceState();
+        outState.putParcelable(SAVED_STATE_LIST_STATE, listState);
     }
 
     @Override

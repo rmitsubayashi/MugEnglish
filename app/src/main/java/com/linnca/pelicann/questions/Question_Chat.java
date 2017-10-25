@@ -61,7 +61,7 @@ public class Question_Chat extends Question_General {
     }
 
     @Override
-    protected void doSomethingOnFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(boolean correct, String response){
         //disable all tts listeners for the chat items
         for (TextView toDisable : chatItemTextViews){
             QuestionUtils.disableTextToSpeech(toDisable);
@@ -69,7 +69,13 @@ public class Question_Chat extends Question_General {
         //add the answer chat item (to make it look like you responded)
         View answerChatItemView = getLayoutInflater().inflate(R.layout.inflatable_question_chat_item_user, chatItemsLayout, false);
         TextView answerTextView = answerChatItemView.findViewById(R.id.question_chat_item_message);
-        answerTextView.setText(questionData.getAnswer());
+        if (correct){
+            //the user might have typed in an alternate correct answer
+            answerTextView.setText(response);
+        } else {
+            //show the correct answer
+            answerTextView.setText(questionData.getAnswer());
+        }
         chatItemsLayout.addView(answerChatItemView);
     }
 

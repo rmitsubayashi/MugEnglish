@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:id="@+id/main_content"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
-                                                 android:fitsSystemWindows="true"
-                                                 tools:context="com.linnca.pelicann.onboarding.Onboarding">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.linnca.pelicann.onboarding.Onboarding">
 
     <com.linnca.pelicann.onboarding.ViewPagerCustomDuration
         android:id="@+id/onboarding_viewpager"
@@ -14,15 +14,22 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         />
+    <ProgressBar
+        android:id="@+id/onboarding_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"/>
 
-    <!--a line to separate the bottom navigation and main fragment
+    <!--a line to separate the bottom navigation and main fragment-->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="?attr/actionBarSize"
         android:alpha="0.12"
-        android:background="@android:color/white" /> -->
+        android:background="@android:color/white" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -33,13 +40,12 @@
         android:paddingStart="@dimen/activity_horizontal_margin">
         <Button
             android:id="@+id/intro_btn_skip"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:text="@string/onboarding_skip"
-            android:textColor="@android:color/white" />
+            android:background="@drawable/transparent_button"
+            android:textColor="@color/gray500"
+            android:text="@string/onboarding_skip" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,51 +56,43 @@
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/orange_circle" />
+                android:src="@drawable/ic_circle"
+                android:tint="@color/orange500"/>
             <ImageView
                 android:id="@+id/onboarding_indicator2"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/white_circle" />
+                android:src="@drawable/ic_circle"
+                android:tint="@color/gray500"/>
             <ImageView
                 android:id="@+id/onboarding_indicator3"
                 android:layout_width="8dp"
                 android:layout_height="8dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/white_circle" />
-            <ImageView
-                android:id="@+id/onboarding_indicator4"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/white_circle" />
+                android:src="@drawable/ic_circle"
+                android:tint="@color/gray500"/>
         </LinearLayout>
         <!-- This overlaps the next button in the last slide -->
         <Button
             android:id="@+id/onboarding_finish"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:background="@drawable/transparent_button"
             android:text="@string/onboarding_finish"
-            android:textColor="@android:color/white"
+            android:textColor="@color/lblue500"
             android:visibility="gone"/>
-        <!-- don't need a next button
+
         <Button
             android:id="@+id/onboarding_next"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:background="@drawable/transparent_button"
             android:text="@string/onboarding_next"
-            android:textColor="@color/white"/> -->
+            android:textColor="@color/lblue500"
+            />
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -27,6 +27,9 @@ public class FirebaseDBHeaders {
     //make sure this matches the field in the class VocabularyListWord
     public static final String VOCABULARY_LIST_WORD_WORD = "word";
     public static final String VOCABULARY_DETAILS = "vocabularyDetails";
+    public static final String REPORT_CARD = "reportCard";
+    public static final String REPORT_CARD_CORRECT = "correct";
+    public static final String REPORT_CARD_TOTAL = "total";
 
     private FirebaseDBHeaders(){}
 }

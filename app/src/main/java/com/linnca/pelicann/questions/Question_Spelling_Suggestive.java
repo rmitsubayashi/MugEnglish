@@ -171,6 +171,8 @@ public class Question_Spelling_Suggestive extends Question_General {
         //now y
         for (Integer y : toFillY){
             int x = random.nextInt(rowCt);
+            if (letterMkr >= lettersWithIndices.size())
+                break;
             LetterWithIndex letterWithIndex = lettersWithIndices.get(letterMkr);
             //these are guaranteed not to overlap another letter
             addLetterButton(inflater, x, y, letterWithIndex);

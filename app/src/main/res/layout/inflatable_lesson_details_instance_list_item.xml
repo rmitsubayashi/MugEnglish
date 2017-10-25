@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--we want a white background with a ripple effect. we can't set two backgrounds on one linearlayout
-so warp a linear layout in another linear layout-->
+so wrap a linear layout in another linear layout-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
         android:layout_width="match_parent"

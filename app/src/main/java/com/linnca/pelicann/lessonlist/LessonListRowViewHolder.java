@@ -14,7 +14,9 @@ import com.linnca.pelicann.lessondetails.LessonData;
 
 import java.util.List;
 
-//holder for user interest list cells
+//holder for lesson list list cells
+//very similar to the report card list view holders.
+//if changing this, make sure to see if any changes are needed for the report card
 class LessonListRowViewHolder extends RecyclerView.ViewHolder {
     private final ViewGroup col1Layout;
     private final ImageView col1Icon;

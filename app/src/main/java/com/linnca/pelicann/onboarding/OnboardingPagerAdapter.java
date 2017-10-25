@@ -6,26 +6,25 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 class OnboardingPagerAdapter extends FragmentPagerAdapter {
-    private int maxPageCt = 1;
-    private Bundle bundle;
+    private int maxPageCt;
+    private Onboarding3 onboarding3;
 
-    public OnboardingPagerAdapter(FragmentManager fm) {
+    OnboardingPagerAdapter(FragmentManager fm, int maxPageCt) {
         super(fm);
+        this.maxPageCt = maxPageCt;
     }
 
     @Override
     public Fragment getItem(int position) {
         switch (position){
             case 0 :
-                return new OnboardingIntroduction1();
+                return new Onboarding1();
             case 1 :
-                return new OnboardingIntroduction2();
+                return new Onboarding2();
             case 2 :
-                Fragment onboardingIntroduction3 = new OnboardingIntroduction3();
-                onboardingIntroduction3.setArguments(bundle);
-                return onboardingIntroduction3;
-            case 3 :
-                return new OnboardingIntroduction4();
+                //save so we can access the user selection
+                onboarding3 = new Onboarding3();
+                return onboarding3;
             default :
                 return null;
         }
@@ -36,17 +35,10 @@ class OnboardingPagerAdapter extends FragmentPagerAdapter {
         return maxPageCt;
     }
 
-    public void updateMaxPageCount(int pageIndex){
-        int pageCt = pageIndex + 1;
-        if (pageCt > maxPageCt){
-            maxPageCt = pageCt;
-            notifyDataSetChanged();
-        }
+    public int getStarterPackSelection(){
+        if (onboarding3 == null)
+            return -1;
+        return onboarding3.getCurrentSelection();
     }
-
-    public void updateBundle(Bundle bundle){
-        this.bundle = bundle;
-    }
-
 
 }

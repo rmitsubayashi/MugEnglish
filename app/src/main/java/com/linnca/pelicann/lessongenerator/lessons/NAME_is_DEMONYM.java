@@ -20,8 +20,10 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -99,7 +101,8 @@ public class NAME_is_DEMONYM extends Lesson {
                 " ?demonymEN ?countryLabel " +
                 "WHERE " +
                 "{" +
-                "    ?personName wdt:P31 wd:Q5 . " + //is human
+                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
+                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?personName wdt:P27 ?country . " + //has a country of citizenship
                 "    ?country wdt:P1549 ?demonymEN . " + //and the country has a demonym
                 "    ?personName rdfs:label ?personNameEN . " + //English label

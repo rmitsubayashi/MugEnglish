@@ -131,7 +131,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         String from = qr.personNameJP;
         ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
         ChatQuestionItem chatItem2 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
-        List<ChatQuestionItem> chatItems = new ArrayList<>(10);
+        List<ChatQuestionItem> chatItems = new ArrayList<>(2);
         chatItems.add(chatItem1);
         chatItems.add(chatItem2);
         String question = QuestionUtils.formatChatQuestion(from, chatItems);

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 
@@ -55,6 +56,7 @@ class CustomCalendarViewAdapter extends ArrayAdapter<DateTime> {
         ((TextView)view).setTextColor(Color.BLACK);
         view.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.transparent));
         view.setEnabled(true);
+        view.setOnClickListener(null);
 
         if (date.getMonthOfYear() != currentMonth.getMonthOfYear())
         {
@@ -69,12 +71,26 @@ class CustomCalendarViewAdapter extends ArrayAdapter<DateTime> {
             //set background if the user has spent time on the app
             String mapKey = formatUsageDataKey(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
             if (usageData.containsKey(mapKey)) {
-                view.setBackgroundResource(R.drawable.calendar_view_green_cell);
-                ((TextView)view).setTextColor(ContextCompat.getColor(getContext(), R.color.green500));
+                view.setBackgroundResource(R.drawable.calendar_view_cleared);
+                ((TextView)view).setTextColor(ContextCompat.getColor(getContext(), R.color.lblue700));
+                final int minutesSpent = usageData.get(mapKey);
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showTimeSpent(minutesSpent, view.getContext());
+                    }
+                });
+
 
             } else {
-                view.setBackgroundResource(R.drawable.calendar_view_red_cell);
-                ((TextView)view).setTextColor(ContextCompat.getColor(getContext(), R.color.red500));
+                view.setBackgroundResource(R.drawable.calendar_view_not_cleared);
+                ((TextView)view).setTextColor(ContextCompat.getColor(getContext(), R.color.gray700));
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showTimeSpent(0, view.getContext());
+                    }
+                });
             }
         } else {
             view.setEnabled(false);
@@ -130,6 +146,17 @@ class CustomCalendarViewAdapter extends ArrayAdapter<DateTime> {
     void setMax(DateTime date){
         this.maxDate = date;
         notifyDataSetChanged();
+    }
+
+    private void showTimeSpent(int minutes, Context context){
+        String displayString;
+        if (minutes < 60){
+            displayString = Integer.toString(minutes) + "分";
+        } else {
+            int hours = minutes / 60;
+            displayString = Integer.toString(hours) + "時間";
+        }
+        Toast.makeText(context, displayString, Toast.LENGTH_SHORT).show();
     }
 
     private String formatUsageDataKey(int year, int month, int day){

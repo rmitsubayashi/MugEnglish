@@ -1,7 +1,9 @@
 package com.linnca.pelicann.lessongenerator;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class LessonGeneratorUtils {
     public static String stripWikidataID(String str){
@@ -87,7 +89,7 @@ public class LessonGeneratorUtils {
         return " " + ones[number-1] + " hundred" + current;
     }
 
-    private static String convertIntToWord(int number) {
+    public static String convertIntToWord(int number) {
 
         if (number == 0) { return "zero"; }
 
@@ -126,6 +128,23 @@ public class LessonGeneratorUtils {
             return numberString;
         }
         return convertIntToWord(number);
+    }
+
+    public static String convertIntToStringWithCommas(int number){
+        NumberFormat format = NumberFormat.getInstance(Locale.US);
+        return format.format(number);
+    }
+
+    //wikiData gives us a full date even if we only want the year only
+    public static String getYearFromFullISO8601DateTime(String fullISO8601DateTime){
+        if (fullISO8601DateTime == null || fullISO8601DateTime.equals(""))
+            return "";
+        //just in case we put in just a year
+        if (fullISO8601DateTime.length() < 4)
+            return fullISO8601DateTime;
+        //we can assume the first four letters are the date
+        // ex: 1990-01-01T00:00:00Z
+        return fullISO8601DateTime.substring(0,4);
     }
 
     //can't be integers because numbers with 0s in front will be cut

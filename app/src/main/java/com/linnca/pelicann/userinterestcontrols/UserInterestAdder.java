@@ -17,6 +17,8 @@ import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import java.util.Collection;
+
 //search for relevant pronunciation and then add.
 //we are sorting by pronunciation now, but later we might classify more generally like
 //people, places, etc.
@@ -31,12 +33,24 @@ public class UserInterestAdder {
         thread.start();
     }
 
+    public void findPronunciationAndCategoryThenAdd(Collection<WikiDataEntryData> collection){
+        for (WikiDataEntryData data : collection){
+            findPronunciationAndCategoryThenAdd(data);
+        }
+    }
+
     //we don't need to find the pronunciation.
     //for example recommended entries, undo entries
     //already have the right pronunciations
     public void justAdd(WikiDataEntryData dataToAdd){
         this.dataToAdd = dataToAdd;
         saveUserInterest();
+    }
+
+    public void justAdd(Collection<WikiDataEntryData> collection){
+        for (WikiDataEntryData data : collection){
+            justAdd(data);
+        }
     }
 
     private class PronunciationCategorySearchThread extends Thread {

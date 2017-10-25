@@ -106,7 +106,7 @@ public class Question_FillInBlank_Input extends Question_General {
     }
 
     @Override
-    protected void doSomethingOnFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(boolean correct, String response){
         QuestionUtils.disableTextToSpeech(questionTextView);
     }
 }

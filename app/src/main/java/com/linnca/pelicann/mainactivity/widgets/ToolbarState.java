@@ -1,17 +1,18 @@
 package com.linnca.pelicann.mainactivity.widgets;
 
 public class ToolbarState {
-    public static final String NO_TITLE_WITH_SPINNER = "no title with spinner";
-    public static final String NO_CHANGE = "no change";
     private String title;
     private boolean searchIcon;
-    //null if we wanat the icon to be hidden
+    private boolean spinner;
+    //null if we want the icon to be hidden
     private String descriptionLessonKey;
 
     public ToolbarState(String title, boolean searchIcon,
+                        boolean spinner,
                         String descriptionLessonKey) {
         this.title = title;
         this.searchIcon = searchIcon;
+        this.spinner = spinner;
         this.descriptionLessonKey = descriptionLessonKey;
     }
 
@@ -29,6 +30,14 @@ public class ToolbarState {
 
     public void setSearchIcon(boolean visible) {
         this.searchIcon = visible;
+    }
+
+    public boolean spinnerVisible() {
+        return spinner;
+    }
+
+    public void setSpinner(boolean spinner) {
+        this.spinner = spinner;
     }
 
     public String getDescriptionLessonKey() {

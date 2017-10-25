@@ -100,7 +100,7 @@ public class SearchInterests extends Fragment {
     public void onStart(){
         super.onStart();
         searchInterestsListener.setToolbarState(
-                new ToolbarState("", true, null)
+                new ToolbarState("", true, false, null)
         );
     }
 

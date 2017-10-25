@@ -50,6 +50,8 @@
                     android:id="@+id/question_chat_multiple_choice_submit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:tint="@color/orange500"

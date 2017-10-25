@@ -31,6 +31,7 @@ import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 //sets methods common for all question GUIs
 public abstract class Question_General extends Fragment {
@@ -73,7 +74,18 @@ public abstract class Question_General extends Fragment {
         questionNumber = args.getInt(BUNDLE_QUESTION_NUMBER);
         totalQuestions = args.getInt(BUNDLE_QUESTION_TOTAL_QUESTIONS);
         setMaxNumberOfAttempts();
-        textToSpeech = ((MainActivity)getActivity()).getTextToSpeech();
+        try {
+            textToSpeech = ((MainActivity) getActivity()).getTextToSpeech();
+        } catch (ClassCastException e){
+            //if we can't cast the class to MainActivity,
+            //just create a new instance of textToSpeech
+            textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int i) {
+                    textToSpeech.setLanguage(Locale.US);
+                }
+            });
+        }
     }
 
     @Override
@@ -81,7 +93,7 @@ public abstract class Question_General extends Fragment {
         super.onStart();
         questionListener.setToolbarState(
                 new ToolbarState(getContext().getString(R.string.question_title, questionNumber, totalQuestions),
-                        false, null)
+                        false, false, null)
         );
     }
 
@@ -119,7 +131,7 @@ public abstract class Question_General extends Fragment {
     protected void doSomethingAfterResponse(){}
     //needed if we have text views that have clickable spans
     //even if the textViews are not clickable, these events fire
-    protected void doSomethingOnFeedbackOpened(){}
+    protected void doSomethingOnFeedbackOpened(boolean correct, String response){}
 
     //formatting may be different for certain question types, but this should be the base
     protected String formatWrongFeedbackString(){
@@ -230,7 +242,15 @@ public abstract class Question_General extends Fragment {
         //names should always be capitalized.
         //this should be considered correct and
         //reinforced in the feedback section
-        return answer.toLowerCase().trim();
+
+        //lower case
+        answer = answer.toLowerCase();
+        //remove whitespace
+        answer = answer.trim();
+        //remove last punctuation
+        answer = answer.replaceAll("\\p{Punct}+$", "");
+
+        return answer;
     }
 
     protected View.OnClickListener getResponseListener(){
@@ -292,13 +312,18 @@ public abstract class Question_General extends Fragment {
                 questionListener.onNextQuestion();
             }
         });
+        //if last question, better for the user to know that this is the last question
+        // (the user will expect the result screen instead of another question)
+        if (questionNumber == totalQuestions){
+            nextButton.setText(R.string.question_feedback_finish);
+        }
         behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         parentViewGroupForFeedback.addView(feedback);
     }
 
     private void openFeedback(boolean correct, String response){
         //overridden if we need to do something
-        doSomethingOnFeedbackOpened();
+        doSomethingOnFeedbackOpened(correct, response);
 
         if (correct){
             feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lgreen500));

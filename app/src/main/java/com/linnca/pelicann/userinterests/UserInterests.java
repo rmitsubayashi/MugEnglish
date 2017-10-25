@@ -92,8 +92,8 @@ public class UserInterests extends Fragment {
     public void onStart(){
         super.onStart();
         userInterestListener.setToolbarState(
-                new ToolbarState(ToolbarState.NO_TITLE_WITH_SPINNER,
-                        false, null)
+                new ToolbarState("",
+                        false, true, null)
         );
     }
 

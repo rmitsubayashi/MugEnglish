@@ -1,7 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--sub-headers for reuse-->
     <string name="description_template_new_word">新しい単語</string>
     <string name="description_template_how_to_remember">覚え方</string>
+    <string name="description_template_fun_fact">マメ知識</string>
+    <string name="description_template_grammar">文法</string>
+    <string name="description_template_practical">実用</string>
+    <string name="description_template_review">復習</string>
+    <string name="description_template_explanation">説明</string>
+
+    <!--tables for reuse-->
+    <string name="description_table_point_of_view_1">一人称</string>
+    <string name="description_table_point_of_view_meaning_1">話し手</string>
+    <string name="description_table_point_of_view_2">二人称</string>
+    <string name="description_table_point_of_view_meaning_2">聞き手</string>
+    <string name="description_table_point_of_view_3">三人称</string>
+    <string name="description_table_point_of_view_meaning_3">話し手、聞き手以外</string>
+
+
+    <string name="description_company_makes_product_word1">make</string>
+    <string name="description_company_makes_product_meaning1">つくる</string>
+
+    <string name="description_good_bye_bye_subheader">さようなら！</string>
+    <string name="description_good_bye_bye_introduction">出会いのあいさつの後は別れの挨拶。\n日本語でお馴染みの「バイバイ」の語源となる<b>bye</b>と、それに<b>good</b>をつけた<b>goodbye</b>。</string>
+    <string name="description_good_bye_bye_practical">どちらも「さようなら」という意味ですが、<b>bye</b>は一時的な別れによく使われるのに対し、<b>goodbye</b>は永遠の別れによく使われます。\n
+    またすぐ会う相手には<b>bye</b>のほうがいいかも！</string>
+
+    <string name="description_good_morning_afternoon_evening_subheader">おはよう！</string>
+    <string name="description_good_morning_afternoon_evening_introduction">Helloの次は時間帯ごとのあいさつを覚えましょう。</string>
+    <string name="description_good_morning_afternoon_evening_word1">morning</string>
+    <string name="description_good_morning_afternoon_evening_meaning1">朝</string>
+    <string name="description_good_morning_afternoon_evening_word2">afternoon</string>
+    <string name="description_good_morning_afternoon_evening_meaning2">昼</string>
+    <string name="description_good_morning_afternoon_evening_word3">evening</string>
+    <string name="description_good_morning_afternoon_evening_meaning3">夕方</string>
+    <string name="description_good_morning_afternoon_evening_explanation">これらの時間帯の単語の前に<b>good</b>をつけてあいさつします。\n
+    <b>good</b>は「良い」という意味で、「良い朝を！」「良い昼を！」「良い夕方を！」という意味であいさつとして使われています。
+    </string>
+    <string name="description_good_morning_afternoon_evening_word2_1">good morning</string>
+    <string name="description_good_morning_afternoon_evening_meaning2_1">おはよう</string>
+    <string name="description_good_morning_afternoon_evening_word2_2">good afternoon</string>
+    <string name="description_good_morning_afternoon_evening_meaning2_2">こんにちは</string>
+    <string name="description_good_morning_afternoon_evening_word2_3">good evening</string>
+    <string name="description_good_morning_afternoon_evening_meaning2_3">こんばんは</string>
+    <string name="description_good_morning_afternoon_evening_practical">Good afternoonとgood eveningは日本の敬語のように目上の人に使ったり、スピーチなどの公の場で使うことが多いです。
+    日常会話ではhelloで済ませる場合が多いです。\nGood morningは日常会話でもよく使うので絶対覚えておきましょう！\n
+    なお、good morningやgood eveningは<b>good</b>を省略して「morning」「evening」とも使えます。
+    </string>
+
+    <string name="description_hello_my_name_is_name_subheader">まずはあいさつ！</string>
+    <string name="description_hello_my_name_is_name_introduction">言語学習の第一歩といえばあいさつ。まずは自己紹介をできるようにしましょう。</string>
+    <string name="description_hello_my_name_is_name_word1">hello</string>
+    <string name="description_hello_my_name_is_name_word_meaning1">こんにちは</string>
+    <string name="description_hello_my_name_is_name_word2">my name is</string>
+    <string name="description_hello_my_name_is_name_word_meaning2">私の名前は</string>
+
+    <string name="description_hello_my_name_is_name_i_am_a_occupation_introduction">
+        自己紹介＋職業説明をつなげてみましょう。
+    </string>
+    <string name="description_hello_my_name_is_name_i_am_a_occupation_grammar_exception">
+        前回の職業説明は3人称。つまり、話し手と聞き手以外の人物が出てきました。今回は1人称です。つまり人物自身が話し手です。
+        この場合、動詞はisではなく<b>am</b>を使います！
+    </string>
+
+    <string name="description_hi_hey_whats_up_practical">Helloを覚えていますか。「こんにちは」という意味でしたね。日常会話でhelloを多用しても良いですが、helloは実はよそよそしい挨拶なのです。\n
+    友人や知り合いにはhelloではなく、もっと馴れ馴れしい挨拶を使いましょう。今回学ぶのは「hi」「hey」「what\'s up」です。</string>
+
+    <string name="description_how_are_you_doing_introduction">あいさつの次は元気かどうか聞きましょう。</string>
+    <string name="description_how_are_you_doing_word1">how are you doing</string>
+    <string name="description_how_are_you_doing_meaning1">元気ですか</string>
+
+    <string name="description_name_is_a_man_word1">is</string>
+    <string name="description_name_is_a_man_word_meaning1">~は</string>
+    <string name="description_name_is_a_man_word2">man</string>
+    <string name="description_name_is_a_man_word_meaning2">男性</string>
+    <string name="description_name_is_a_man_word3">woman</string>
+    <string name="description_name_is_a_man_word_meaning3">女性</string>
+    <string name="description_name_is_a_man_grammar_structure">A is B</string>
+    <string name="description_name_is_a_man_grammar_explanation">AはBです</string>
+    <string name="description_name_is_a_man_fun_fact">古英語では<b>man</b>は男性だけでなく人間一般を示していました。
+    男性はwer-<b>man</b>、女性はwif-<b>man</b>でした。しかし、だんだん男性のことをmanと呼ぶことになり、wifmanはそのままwomanへと変化していきました。</string>
 
     <string name="description_name_is_a_occupation_subheader">@string/description_template_how_to_remember</string>
     <string name="description_name_is_a_occupation_explanation_1">注目してほしいのが、多くの職業の単語の最後につく<b>-er</b></string>
@@ -30,6 +108,127 @@
     <string name="description_name_is_a_occupation_explanation2_2">Pelicannではできるだけ性差別がないような名称を採用しています。\n例えば俳優（actor）は日本と同じ感覚で、actorは男女を問わず使えてactressは女性限定の名称になります。この場合actorを採用します。</string>
     <string name="description_name_is_a_occupation_explanation2_3">性差別があり得るような職業の単語は覚えられなくなりますが、どうぞご了承ください。</string>
 
+    <string name="description_name_is_age_years_old_subheader">何歳かな</string>
+    <string name="description_name_is_age_years_old_introduction">生年月日から有名人の年齢を計算してみましょう。</string>
+    <string name="description_name_is_age_years_old_word1">is</string>
+    <string name="description_name_is_age_years_old_meaning1">～は</string>
+    <string name="description_name_is_age_years_old_word2">years old</string>
+    <string name="description_name_is_age_years_old_meaning2">～歳</string>
+
+    <string name="description_name_is_age_years_old_name_is_a_gender_review">年齢と性別の例文を合わせてみましょう。\n「Aは~歳です。Aは男/女です。」</string>
+    <string name="description_name_is_age_years_old_name_is_a_gender_exception">前回は男と女の二択でしたが、今回は大人の男、大人の女、男の子、女の子の四択になります。\n
+    それぞれ英語で<b>man woman boy girl</b>と言います。大人であるかの判定はアメリカの成人年齢（18歳）を採用しています。</string>
+
+    <string name="description_name_is_at_work_he_is_at_employer_review"><b>at</b>の仕様を覚えていますか。「その点に」です。よく理解してもらうために、また練習しましょう。</string>
+    <string name="description_name_is_at_work_he_is_at_employer_new_word">workを覚えていますか？A works at B. の例文で出てきました。\n今回は<b>work</b>は動詞ではなくて名詞として出てきます。意味は同じ「仕事」です。</string>
+
+    <string name="description_name_is_demonym_subheader">国の名称</string>
+    <string name="description_name_is_demonym_introduction">国の名前を覚えたところで、今度は国民の名称を覚えましょう。日本語では国の名前の後に「人」をつけて国民の名称が出来上がります。
+    例えば日本＋人で「日本人」、アメリカ＋人で「アメリカ人」です。\n
+    しかし、英語ではややこしくて、<b>ese</b>、<b>ian</b>、<b>i</b>など様々な語尾があります。しかもルールがあやふやなので、マイナーな国になると英語が母国の方も間違えます。</string>
+    <string name="description_name_is_demonym_how_to_remember_introduction">ルールに当てはまらない国も多数存在しますので、あくまで目安にして後は暗記することをお勧めします。
+    </string>
+    <string name="description_name_is_demonym_how_to_remember_suffix1">an, ian</string>
+    <string name="description_name_is_demonym_how_to_remember_guide1">多くの国の名称はどちらかに当てはまります\n（例）アメリカ(America → Americ<b>an</b>)　カナダ(Canada → Canad<b>ian</b>)</string>
+    <string name="description_name_is_demonym_how_to_remember_suffix2">-ese</string>
+    <string name="description_name_is_demonym_how_to_remember_guide2">ヨーロッパが冒険によって発見した国（とくに東アジア）の国民によくつけられます。\n（例）日本人(Japan<b>ese</b>)　中国人(Chin<b>ese</b>)</string>
+    <string name="description_name_is_demonym_how_to_remember_suffix3">-i</string>
+    <string name="description_name_is_demonym_how_to_remember_guide3">中東の国の名称によく使われます\n（例）イラク人(Iraq<b>i</b>)　イスラエル人(Israel<b>i</b>)</string>
+    <string name="description_name_is_demonym_how_to_remember_suffix4">ish</string>
+    <string name="description_name_is_demonym_how_to_remember_guide4">-landで終わる国の名称にたまに使われます\n（例）ポーランド人(Poland → Pol<b>ish</b>)　フィンランド人(Finland → Finn<b>ish</b>)</string>
+
+    <string name="description_name_is_from_city_explanation">今度は国ではなくて都市に注目しましょう。位置関係は国の場合と変わらないので、同じ<b>from</b>を使います。</string>
+
+    <string name="description_name_is_from_country_explanation">出身地を勉強しましょう。「出身」という位置関係を表すには前置詞の<b>from</b>を使います。fromには「もとに位置からどこかに行く」という様子を表します。</string>
+
+    <string name="description_name_plays_sports_introduction">「なになにのスポーツをする」は英語では二通りの言い方があります。\n
+    一つはA <b>plays</b> B。もう一つはA <b>does</b> B。\n\n
+    playsは球技や団体スポーツに使います。\n（例）香川真司はサッカーをします。(Shinji Kagawa <b>plays</b> soccer.)\n
+    doesは個人でやるスポーツに使います。\n（例）マイケルフェルプスは水泳をします。(Michael Phelps <b>does</b> swimming.)</string>
+
+    <string name="description_name_works_at_employer_new_word">work</string>
+    <string name="description_name_works_at_employer_new_meaning">仕事をする</string>
+    <string name="description_name_works_at_employer_grammar">前置詞の<b>at</b>は「その場所、その点」という位置関係を表します。</string>
+
+    <string name="description_numbers_subheader">数字を覚えよう！</string>
+    <string name="description_numbers_word0">zero</string>
+    <string name="description_numbers_meaning0">0</string>
+    <string name="description_numbers_word1">one</string>
+    <string name="description_numbers_meaning1">1</string>
+    <string name="description_numbers_word2">two</string>
+    <string name="description_numbers_meaning2">2</string>
+    <string name="description_numbers_word3">three</string>
+    <string name="description_numbers_meaning3">3</string>
+    <string name="description_numbers_word4">four</string>
+    <string name="description_numbers_meaning4">4</string>
+    <string name="description_numbers_word5">five</string>
+    <string name="description_numbers_meaning5">5</string>
+    <string name="description_numbers_word6">six</string>
+    <string name="description_numbers_meaning6">6</string>
+    <string name="description_numbers_word7">seven</string>
+    <string name="description_numbers_meaning7">7</string>
+    <string name="description_numbers_word8">eight</string>
+    <string name="description_numbers_meaning8">8</string>
+    <string name="description_numbers_word9">nine</string>
+    <string name="description_numbers_meaning9">9</string>
+    <string name="description_numbers_word11">eleven</string>
+    <string name="description_numbers_meaning11">11</string>
+    <string name="description_numbers_word12">twelve</string>
+    <string name="description_numbers_meaning12">12</string>
+    <string name="description_numbers_word13">thirteen</string>
+    <string name="description_numbers_meaning13">13</string>
+    <string name="description_numbers_word14">fourteen</string>
+    <string name="description_numbers_meaning14">14</string>
+    <string name="description_numbers_word15">fifteen</string>
+    <string name="description_numbers_meaning15">15</string>
+    <string name="description_numbers_word16">sixteen</string>
+    <string name="description_numbers_meaning16">16</string>
+    <string name="description_numbers_word17">seventeen</string>
+    <string name="description_numbers_meaning17">17</string>
+    <string name="description_numbers_word18">eighteen</string>
+    <string name="description_numbers_meaning18">18</string>
+    <string name="description_numbers_word19">nineteen</string>
+    <string name="description_numbers_meaning19">19</string>
+    <string name="description_numbers_word10">ten</string>
+    <string name="description_numbers_meaning10">10</string>
+    <string name="description_numbers_word20">twenty</string>
+    <string name="description_numbers_meaning20">20</string>
+    <string name="description_numbers_word30">thirty</string>
+    <string name="description_numbers_meaning30">30</string>
+    <string name="description_numbers_word40">forty</string>
+    <string name="description_numbers_meaning40">40</string>
+    <string name="description_numbers_word50">fifty</string>
+    <string name="description_numbers_meaning50">50</string>
+    <string name="description_numbers_word60">sixty</string>
+    <string name="description_numbers_meaning60">60</string>
+    <string name="description_numbers_word70">seventy</string>
+    <string name="description_numbers_meaning70">70</string>
+    <string name="description_numbers_word80">eighty</string>
+    <string name="description_numbers_meaning80">80</string>
+    <string name="description_numbers_word90">ninety</string>
+    <string name="description_numbers_meaning90">90</string>
+
+    <string name="description_numbers_11_19_fun_fact">なぜ11と12だけ-teenで終わらないのか。\n諸説がありますが、有力なのは、11と12が昔からよく使われていた数字だからです。\n
+        昔は11と12はain-lifとtwa-lifと言いました(ain=1 twa=2 lif=余り)。「10をとって余りが1、余りが2」という意味です。新しい-teenという数字の表し方が出てきた後も、よく使っていた11と12は昔の言葉を使用し、現在のelevenとtwelveに至りました。</string>
+    <string name="description_numbers_21_99_how_to_remember">21から99(10,20,&#8230;を除く)はすべて十の位と一の位を合わせた単語になります。\n
+    21はtwenty + one でtwenty-one、55はfifty + five でfifty-fiveになります。間の「-」は必要ではありませんが、あった方が伝わりやすいです。\n
+    例えばfifty fiveと書くと、50と5なのか55なのかわかりにくいですが、fifty-fiveと書くと一瞬で55だとわかります。</string>
+
+    <string name="description_place_is_a_country_city_word1">city</string>
+    <string name="description_place_is_a_country_city_meaning1">都市</string>
+    <string name="description_place_is_a_country_city_word2">country</string>
+    <string name="description_place_is_a_country_city_meaning2">国</string>
+
+    <string name="description_stand_up_sit_down_explanation">このレッスンでは二つの動作を学びます。\n
+        最後の問題で指示を出しますので、指示に従ってください。今回は<b>sit down</b>（座ってください）と<b>stand up</b>（立ってください）です。\n
+        身動きがとれない場合はイメージしてください。
+    </string>
+
+    <string name="description_walk_run_explanation">今回のレッスンも動作のレッスンです。きちんと指示に従ってくださいね。</string>
+    <string name="description_walk_run_word1">run</string>
+    <string name="description_walk_run_meaning1">走る</string>
+    <string name="description_walk_run_word2">walk</string>
+    <string name="description_walk_run_meaning2">歩く</string>
 
     <string name="description_the_emergency_phone_number_of_country_is_number_subheader">@string/description_template_new_word</string>
     <string name="description_the_emergency_phone_number_of_country_is_number_new_word">emergency phone number</string>
@@ -44,6 +243,24 @@
     <string name="description_the_emergency_phone_number_of_country_is_number_exception">電話番号は基本的に一桁ずつ言います。110の場合、one one zero と発音します。\n
         0は"zero"の他に<b>"oh"</b>とも発音できます。どっちを使うかは人によります。\nまた、0が2桁か3桁続く場合、</string>
 
-
+    <string name="description_the_demonym_flag_is_colors_review">国民の名称を覚えていますか。JapaneseやAmericanなど色々ありましたよね。実はこの名称はそのまま形容詞として「A国の」という風に使えます。\n
+    このレッスンでは「A国の国旗は何色だ」という例文を使って練習していきます。</string>
+    <string name="description_the_demonym_flag_is_colors_subheader">色々な色</string>
+    <string name="description_the_demonym_flag_is_colors_word1">red</string>
+    <string name="description_the_demonym_flag_is_colors_meaning1">赤</string>
+    <string name="description_the_demonym_flag_is_colors_word2">white</string>
+    <string name="description_the_demonym_flag_is_colors_meaning2">白</string>
+    <string name="description_the_demonym_flag_is_colors_word3">blue</string>
+    <string name="description_the_demonym_flag_is_colors_meaning3">青</string>
+    <string name="description_the_demonym_flag_is_colors_word4">green</string>
+    <string name="description_the_demonym_flag_is_colors_meaning4">緑</string>
+    <string name="description_the_demonym_flag_is_colors_word5">orange</string>
+    <string name="description_the_demonym_flag_is_colors_meaning5">オレンジ</string>
+    <string name="description_the_demonym_flag_is_colors_word6">black</string>
+    <string name="description_the_demonym_flag_is_colors_meaning6">黒</string>
+    <string name="description_the_demonym_flag_is_colors_word7">light blue</string>
+    <string name="description_the_demonym_flag_is_colors_meaning7">水色</string>
+    <string name="description_the_demonym_flag_is_colors_word8">yellow</string>
+    <string name="description_the_demonym_flag_is_colors_meaning8">黄色</string>
 
 </resources>

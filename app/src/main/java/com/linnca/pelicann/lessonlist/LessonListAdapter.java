@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessonlist;
 
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,14 +33,15 @@ class LessonListAdapter
     private final List<LessonListRow> data;
     private final Map<String, LessonData> allLessons = new HashMap<>();
     private final Map<String, Integer> allLessonsRowPosition = new HashMap<>();
-    private final Set<String> clearedLessonKeys = new HashSet<>();
+    private final Set<String> clearedLessonKeys;
     private int lastClearedReviewPosition = -1;
     private int nextToClearReviewPosition = -1;
     private final LessonList.LessonListListener listener;
 
-    LessonListAdapter(List<LessonListRow> lessonRows, LessonList.LessonListListener listener){
+    LessonListAdapter(List<LessonListRow> lessonRows, LessonList.LessonListListener listener, Set<String> clearedLessonKeys){
         this.data = lessonRows;
         this.listener = listener;
+        this.clearedLessonKeys = new HashSet<>(clearedLessonKeys);
         populateMap();
         //debugging
         setReviewMargins();
@@ -144,13 +146,13 @@ class LessonListAdapter
         }
     }
 
-    public void addClearedLessonKey(String lessonKey){
+    private void addClearedLessonKey(String lessonKey){
         clearedLessonKeys.add(lessonKey);
         setReviewMargins();
         notifyDataSetChanged();
     }
 
-    public void setClearedLessonKeys(Set<String> clearedLessonKeys){
+    void setClearedLessonKeys(Set<String> clearedLessonKeys){
         this.clearedLessonKeys.clear();
         for (String key : clearedLessonKeys){
             this.clearedLessonKeys.add(key);
@@ -190,6 +192,7 @@ class LessonListAdapter
         if (data == null){
             return STATUS_NONE;
         }
+
         if (clearedLessonKeys.contains(data.getKey())){
             return STATUS_CLEARED;
         }

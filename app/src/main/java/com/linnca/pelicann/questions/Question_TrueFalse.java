@@ -58,7 +58,7 @@ public class Question_TrueFalse extends Question_General {
     }
 
     @Override
-    protected void doSomethingOnFeedbackOpened(){
+    protected void doSomethingOnFeedbackOpened(boolean correct, String response){
         QuestionUtils.disableTextToSpeech(questionTextView);
     }
 
@@ -77,5 +77,9 @@ public class Question_TrueFalse extends Question_General {
         trueButton.setOnClickListener(getResponseListener());
         falseButton.setOnClickListener(getResponseListener());
 
+    }
+
+    public static String getTrueFalseString(boolean tf){
+        return tf ? TRUE_FALSE_QUESTION_TRUE : TRUE_FALSE_QUESTION_FALSE;
     }
 }
