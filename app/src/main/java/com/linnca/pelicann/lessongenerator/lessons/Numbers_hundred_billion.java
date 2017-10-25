@@ -116,7 +116,7 @@ public class Numbers_hundred_billion extends Lesson {
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -137,7 +137,7 @@ public class Numbers_hundred_billion extends Lesson {
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -214,7 +214,7 @@ public class Numbers_hundred_billion extends Lesson {
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(acceptableAnswers);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 

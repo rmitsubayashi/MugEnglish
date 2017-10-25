@@ -90,7 +90,7 @@ public class Numbers_21_99 extends Lesson {
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(acceptableAnswers);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -109,7 +109,7 @@ public class Numbers_21_99 extends Lesson {
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 

@@ -125,7 +125,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
             List<QuestionData> chooseCorrectSpellingQuestion = createChooseCorrectSpellingQuestion(qr);
             questionSet.add(chooseCorrectSpellingQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
     }
@@ -158,7 +158,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -194,7 +194,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -212,7 +212,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

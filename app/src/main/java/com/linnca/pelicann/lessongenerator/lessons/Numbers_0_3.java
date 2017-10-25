@@ -125,7 +125,7 @@ public class Numbers_0_3 extends Lesson {
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -217,7 +217,7 @@ public class Numbers_0_3 extends Lesson {
             data.setChoices(multipleChoiceChoices());
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -270,7 +270,7 @@ public class Numbers_0_3 extends Lesson {
             data.setChoices(null);
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 

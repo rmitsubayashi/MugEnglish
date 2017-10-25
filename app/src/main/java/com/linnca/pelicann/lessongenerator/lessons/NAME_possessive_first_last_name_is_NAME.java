@@ -131,7 +131,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
     }
@@ -218,7 +218,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(new ArrayList<String>());
+
         dataList.add(data);
 
         question = this.formatLastNameSentenceJP(qr);
@@ -234,7 +234,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
+
         dataList.add(data);
         return dataList;
     }
@@ -286,7 +286,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         questionDataList.add(data);
 
@@ -301,7 +301,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         questionDataList.add(data);
 
@@ -345,7 +345,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         questionDataList.add(data);
 
@@ -360,7 +360,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         questionDataList.add(data);
 

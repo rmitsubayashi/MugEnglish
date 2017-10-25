@@ -144,7 +144,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
 
@@ -182,7 +182,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -237,7 +237,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -256,7 +256,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -276,7 +276,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

@@ -152,7 +152,7 @@ public class NAME_plays_SPORT extends Lesson{
             List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
             questionSet.add(spellingQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameForeign));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameForeign, null));
 
         }
     }
@@ -255,7 +255,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setChoices(null);
         data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
         questionDataList.add(data);
 
         List<SimpleQueryResult> falseAnswers = popularSports();
@@ -286,7 +286,7 @@ public class NAME_plays_SPORT extends Lesson{
             data.setChoices(null);
             data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_FALSE);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questionDataList.add(data);
         }
         return questionDataList;
@@ -306,7 +306,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
         questionDataList.add(data);
         return questionDataList;
     }
@@ -322,7 +322,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setChoices(null);
         data.setAnswer(qr.sportNameForeign);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
         questionDataList.add(data);
         return questionDataList;
     }
@@ -338,7 +338,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setChoices(null);
         data.setAnswer(qr.object);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         questionDataList.add(data);
         return questionDataList;
     }

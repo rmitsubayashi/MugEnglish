@@ -120,7 +120,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
             List<QuestionData> translateQuestion2 = createTranslateQuestion2(qr);
             questionSet.add(translateQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.companyID, qr.companyNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.companyID, qr.companyNameJP, null));
         }
 
     }
@@ -161,7 +161,6 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -180,7 +179,6 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -199,7 +197,6 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -236,7 +233,6 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -275,7 +271,6 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -306,7 +301,6 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

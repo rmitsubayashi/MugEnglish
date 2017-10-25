@@ -96,7 +96,7 @@ public class How_are_you_doing extends Lesson {
             List<QuestionData> chatQuestion = createChatQuestion(qr);
             questionSet.add(chatQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
     }
@@ -126,7 +126,7 @@ public class How_are_you_doing extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -196,7 +196,7 @@ public class How_are_you_doing extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -212,7 +212,7 @@ public class How_are_you_doing extends Lesson {
         data.setQuestion(genericQuestionJP());
         data.setChoices(null);
         data.setAnswer(genericAnswerEN());
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

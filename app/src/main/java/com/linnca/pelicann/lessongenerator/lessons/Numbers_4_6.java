@@ -124,7 +124,7 @@ public class Numbers_4_6 extends Lesson {
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -145,7 +145,7 @@ public class Numbers_4_6 extends Lesson {
             data.setQuestion(numbers.get(i) + " = " + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER);
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -167,7 +167,7 @@ public class Numbers_4_6 extends Lesson {
             data.setAnswer(answer);
             data.setChoices(answers);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 

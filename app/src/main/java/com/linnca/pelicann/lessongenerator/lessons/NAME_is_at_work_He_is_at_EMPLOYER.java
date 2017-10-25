@@ -148,7 +148,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
     }
@@ -200,7 +200,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         questionDataList.add(data);
 
@@ -232,7 +232,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
 
         questionDataList.add(data);
 

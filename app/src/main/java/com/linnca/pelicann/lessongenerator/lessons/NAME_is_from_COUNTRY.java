@@ -137,7 +137,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
             List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
             questionSet.add(fillInBlankQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
     }
@@ -180,7 +180,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -261,7 +261,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
             data.setChoices(choices);
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(null);
+
 
             questionDataList.add(data);
         }
@@ -298,7 +298,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
             data.setChoices(choices);
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(null);
+
 
             questionDataList.add(data);
         }

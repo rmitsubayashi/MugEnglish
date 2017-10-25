@@ -111,7 +111,7 @@ public class LessonList extends Fragment {
                     clearedLessons.add(lessonKey);
                 }
                 LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
-                //lessonHierarchyViewer.debugUnlockAllLessons();
+                lessonHierarchyViewer.debugUnlockAllLessons();
                 List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
                 if (adapter == null) {
                     adapter = new LessonListAdapter(lessonRows, listener, clearedLessons);

@@ -131,7 +131,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
             List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
             questionSet.add(fillInBlankInputQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.placeID, qr.placeNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.placeID, qr.placeNameJP, null));
         }
 
 
@@ -167,7 +167,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -201,7 +201,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -228,7 +228,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -255,7 +255,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

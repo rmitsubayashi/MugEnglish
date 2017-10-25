@@ -178,7 +178,7 @@ public class NAME_is_a_OCCUPATION extends Lesson{
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

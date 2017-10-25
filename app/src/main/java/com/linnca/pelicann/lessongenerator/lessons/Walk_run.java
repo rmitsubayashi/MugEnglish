@@ -79,7 +79,7 @@ public class Walk_run extends Lesson {
         //for suggestive, we don't need to lowercase everything
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionVariations = new ArrayList<>();
@@ -100,7 +100,7 @@ public class Walk_run extends Lesson {
         //for suggestive, we don't need to lowercase everything
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionVariations = new ArrayList<>();
@@ -122,7 +122,7 @@ public class Walk_run extends Lesson {
         //for suggestive, we don't need to lowercase everything
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionVariations = new ArrayList<>();

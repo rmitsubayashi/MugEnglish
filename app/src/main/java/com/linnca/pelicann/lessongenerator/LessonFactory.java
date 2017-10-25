@@ -261,7 +261,7 @@ public class LessonFactory {
     }
 
     public static void saveGenericQuestions(){
-        /*
+
         Lesson lesson = new good_morning_afternoon_evening(null, null);
         lesson.saveGenericQuestions();
         lesson = new Hello_my_name_is_NAME(null, null);
@@ -295,8 +295,8 @@ public class LessonFactory {
         lesson = new Numbers_hundred_billion(null, null);
         lesson.saveGenericQuestions();
         lesson = new NAME_possessive_mother_father_is_NAME2(null, null);
-        lesson.saveGenericQuestions();*/
-        Lesson lesson = new COUNTRY_possessive_government_is_a_GOVERNMENT(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new COUNTRY_possessive_government_is_a_GOVERNMENT(null, null);
         lesson.saveGenericQuestions();
         lesson = new COUNTRY_possessive_population_is_POPULATION(null, null);
         lesson.saveGenericQuestions();

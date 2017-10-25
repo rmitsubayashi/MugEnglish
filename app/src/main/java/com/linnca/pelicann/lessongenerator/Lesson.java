@@ -365,12 +365,14 @@ public abstract class Lesson {
 				questionIDs.add(questionIDsForEachVariation);
 
                 List<VocabularyWord> questionSetVocabulary = questionDataWrapper.getVocabulary();
-                for (VocabularyWord word : questionSetVocabulary){
-                    String vocabularyKey = vocabularyRef.push().getKey();
-                    word.setId(vocabularyKey);
-                    vocabularyRef.child(vocabularyKey).setValue(word);
-                    vocabularyIDs.add(vocabularyKey);
-                }
+                if (questionSetVocabulary != null) {
+					for (VocabularyWord word : questionSetVocabulary) {
+						String vocabularyKey = vocabularyRef.push().getKey();
+						word.setId(vocabularyKey);
+						vocabularyRef.child(vocabularyKey).setValue(word);
+						vocabularyIDs.add(vocabularyKey);
+					}
+				}
 
             }
 

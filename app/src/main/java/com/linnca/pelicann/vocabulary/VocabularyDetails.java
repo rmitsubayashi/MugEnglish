@@ -78,7 +78,7 @@ public class VocabularyDetails extends Fragment{
     public void onStart(){
         super.onStart();
         listener.setToolbarState(new ToolbarState(getString(R.string.fragment_vocabulary_details_title),
-                false, null));
+                false, false, null));
     }
 
     private void populateDetails(){

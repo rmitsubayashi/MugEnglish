@@ -84,7 +84,7 @@ public class Hi_hey_whats_up extends Lesson {
             List<String> alternateAnswers = choices();
             alternateAnswers.remove(answer);
             data.setAcceptableAnswers(alternateAnswers);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -135,7 +135,7 @@ public class Hi_hey_whats_up extends Lesson {
             List<FeedbackPair> feedbackPairs = new ArrayList<>();
             feedbackPairs.add(feedbackPair);
             data.setFeedback(feedbackPairs);
-            data.setVocabulary(null);
+
             questions.add(data);
         }
 

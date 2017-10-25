@@ -136,7 +136,7 @@ public class NAME_is_AGE_years_old extends Lesson {
             List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
             questionSet.add(fillInBlankQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
     }
@@ -187,7 +187,7 @@ public class NAME_is_AGE_years_old extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
+
         data.setFeedback(feedbackPairs);
 
         List<QuestionData> dataList = new ArrayList<>();
@@ -231,7 +231,7 @@ public class NAME_is_AGE_years_old extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(alternateAnswers);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

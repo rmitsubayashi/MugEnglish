@@ -143,7 +143,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameJP, null));
         }
 
 
@@ -164,7 +164,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         //for suggestive, we don't need to lowercase everything
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionVariations = new ArrayList<>();
@@ -196,7 +196,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(feedbackPairs);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -229,7 +229,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -263,7 +263,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionDataList = new ArrayList<>();
@@ -285,7 +285,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         //for suggestive, we don't need to lowercase everything
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionVariations = new ArrayList<>();

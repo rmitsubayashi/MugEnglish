@@ -76,7 +76,7 @@ public class VocabularyList extends Fragment {
     public void onStart(){
         super.onStart();
         listener.setToolbarState(new ToolbarState(getString(R.string.fragment_vocabulary_list_title),
-                false, null));
+                false, false, null));
     }
 
     @Override
@@ -223,8 +223,10 @@ public class VocabularyList extends Fragment {
         }
     }
 
+    private void removeVocabularyWord(String key){}
+
     private void removeVocabularyListWord(String key){
-        DatabaseReference wordRef = db
+        //DatabaseReference wordRef = db
     }
 
     public void onDestroy(){

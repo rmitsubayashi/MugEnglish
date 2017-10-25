@@ -83,7 +83,7 @@ public class Goodbye_bye extends Lesson {
             List<String> alternateAnswers = choices();
             alternateAnswers.remove(answer);
             data.setAcceptableAnswers(alternateAnswers);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -114,7 +114,7 @@ public class Goodbye_bye extends Lesson {
             List<String> alternateAnswers = choices();
             alternateAnswers.remove(answer);
             data.setAcceptableAnswers(alternateAnswers);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 

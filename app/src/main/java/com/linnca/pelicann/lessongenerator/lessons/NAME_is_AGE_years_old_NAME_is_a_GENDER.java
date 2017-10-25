@@ -206,7 +206,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
             List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
             questionSet.add(trueFalseQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
         }
 
     }
@@ -257,7 +257,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
+
         data.setFeedback(feedbackPairs);
 
         List<QuestionData> dataList = new ArrayList<>();
@@ -301,7 +301,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(alternateAnswers);
-        data.setVocabulary(null);
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -386,7 +386,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(acceptableAnswers);
             data.setFeedback(feedbackPairs);
-            data.setVocabulary(null);
+
             dataList.add(data);
         }
 
