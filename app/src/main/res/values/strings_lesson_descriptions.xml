@@ -63,6 +63,9 @@
         この場合、動詞はisではなく<b>am</b>を使います！
     </string>
 
+    <string name="description_hi_hey_whats_up_practical">Helloを覚えていますか。「こんにちは」という意味でしたね。日常会話でhelloを多用しても良いですが、helloは実はよそよそしい挨拶なのです。\n
+    友人や知り合いにはhelloではなく、もっと馴れ馴れしい挨拶を使いましょう。今回学ぶのは「hi」「hey」「what\'s up」です。</string>
+
     <string name="description_how_are_you_doing_introduction">あいさつの次は元気かどうか聞きましょう。</string>
     <string name="description_how_are_you_doing_word1">how are you doing</string>
     <string name="description_how_are_you_doing_meaning1">元気ですか</string>
@@ -111,6 +114,10 @@
     <string name="description_name_is_age_years_old_meaning1">～は</string>
     <string name="description_name_is_age_years_old_word2">years old</string>
     <string name="description_name_is_age_years_old_meaning2">～歳</string>
+
+    <string name="description_name_is_age_years_old_name_is_a_gender_review">年齢と性別の例文を合わせてみましょう。\n「Aは~歳です。Aは男/女です。」</string>
+    <string name="description_name_is_age_years_old_name_is_a_gender_exception">前回は男と女の二択でしたが、今回は大人の男、大人の女、男の子、女の子の四択になります。\n
+    それぞれ英語で<b>man woman boy girl</b>と言います。大人であるかの判定はアメリカの成人年齢（18歳）を採用しています。</string>
 
     <string name="description_name_is_at_work_he_is_at_employer_review"><b>at</b>の仕様を覚えていますか。「その点に」です。よく理解してもらうために、また練習しましょう。</string>
     <string name="description_name_is_at_work_he_is_at_employer_new_word">workを覚えていますか？A works at B. の例文で出てきました。\n今回は<b>work</b>は動詞ではなくて名詞として出てきます。意味は同じ「仕事」です。</string>

@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 //the first time around.
 //from the second time on, we can just read the questions in from the db
 public abstract class Lesson {
-	private static final String TAG = "lesson";
+	protected static final String TAG = "lesson";
 	protected final String TOPIC_GENERIC_QUESTION = "一般問題";
 	private FirebaseDatabase db;
 	protected String lessonKey;
@@ -593,7 +593,7 @@ public abstract class Lesson {
 
 	//choose random questions that will be used for this instance
 	private List<String> pickQuestions(List<List<String>> questionSet){
-		Random random = new Random(System.currentTimeMillis());
+		Random random = new Random();
 		List<String> questionIDs = new ArrayList<>();
 		for (List<String> questionVariations : questionSet){
 			int index = random.nextInt(questionVariations.size());

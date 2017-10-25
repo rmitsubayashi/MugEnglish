@@ -6,11 +6,13 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
+import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -20,35 +22,62 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NAME_is_a_GENDER extends Lesson {
-    public static final String KEY = "NAME_is_a_GENDER";
+public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
+    public static final String KEY = "NAME_is_NAME2_possessive_husband_wife";
 
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
         private final String personNameEN;
         private final String personNameJP;
-        private final String genderEN;
-        private final String genderJP;
+        private final String spouseNameEN;
+        private final String spouseNameJP;
+        private final String spouseTitleEN;
+        private final String spouseTitleJP;
 
         private QueryResult(
                 String personID,
                 String personNameEN,
                 String personNameJP,
-                String genderEN,
-                String genderJP)
+                String spouseNameEN,
+                String spouseNameJP,
+                String spouseGenderID)
         {
             this.personID = personID;
             this.personNameEN = personNameEN;
             this.personNameJP = personNameJP;
-            this.genderEN = genderEN;
-            this.genderJP = genderJP;
+            this.spouseNameEN = spouseNameEN;
+            this.spouseNameJP = spouseNameJP;
+            this.spouseTitleEN = getSpouseTitleEN(spouseGenderID);
+            this.spouseTitleJP = getSpouseTitleJP(spouseGenderID);
+        }
+
+        private String getSpouseTitleEN(String id){
+            switch (id){
+                case "Q6581097":
+                    return "husband";
+                case "Q6581072":
+                    return "wife";
+                default:
+                    return "husband";
+            }
+        }
+
+        private String getSpouseTitleJP(String id){
+            switch (id){
+                case "Q6581097":
+                    return "夫";
+                case "Q6581072":
+                    return "妻";
+                default:
+                    return "夫";
+            }
         }
     }
 
-    public NAME_is_a_GENDER(WikiBaseEndpointConnector connector, LessonListener listener){
+    public NAME_is_NAME2_possessive_husband_wife(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsLeftToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
@@ -58,14 +87,19 @@ public class NAME_is_a_GENDER extends Lesson {
     protected String getSPARQLQuery(){
         //find person name and blood type
         return "SELECT ?personName ?personNameLabel ?personNameEN " +
-                " ?gender " +
+                " ?spouseNameEN ?spouseNameLabel " +
+                " ?spouseGender " +
                 "WHERE " +
                 "{" +
                 "    {?personName wdt:P31 wd:Q5} UNION " + //is human
                 "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P21 ?gender . " + //has an gender
+                "    ?personName wdt:P26 ?spouseName . " + //has a spouse
+                "    ?spouseName wdt:P21 ?spouseGender . " + //get spouse gender
                 "    ?personName rdfs:label ?personNameEN . " +
+                "    ?spouseName rdfs:label ?spouseNameEN . " +
                 "    FILTER (LANG(?personNameEN) = '" +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
+                "    FILTER (LANG(?spouseNameEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
@@ -87,25 +121,13 @@ public class NAME_is_a_GENDER extends Lesson {
             personID = LessonGeneratorUtils.stripWikidataID(personID);
             String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
             String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
-            String gender = SPARQLDocumentParserHelper.findValueByNodeName(head, "gender");
-            gender = LessonGeneratorUtils.stripWikidataID(gender);
-            String genderEN;
-            String genderJP;
-            switch (gender){
-                case "Q6581097":
-                    genderEN = "man";
-                    genderJP = "男";
-                    break;
-                case "Q6581072":
-                    genderEN = "woman";
-                    genderJP = "女";
-                    break;
-                default:
-                    genderEN = "man/woman";
-                    genderJP = "男/女";
-            }
-
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, genderEN, genderJP);
+            String spouseNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseNameEN");
+            String spouseNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseNameLabel");
+            String spouseGenderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseGenderEN");
+            spouseGenderID = LessonGeneratorUtils.stripWikidataID(spouseGenderID);
+            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP,
+                    spouseNameEN, spouseNameJP,
+                    spouseGenderID);
             queryResults.add(qr);
         }
     }
@@ -120,8 +142,8 @@ public class NAME_is_a_GENDER extends Lesson {
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
-            List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
-            questionSet.add(spellingQuestion);
+            List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(fillInBlankMultipleChoiceQuestion);
 
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
@@ -131,23 +153,19 @@ public class NAME_is_a_GENDER extends Lesson {
 
     }
 
-    private String NAME_is_gender_EN_correct(QueryResult qr){
-        String sentence = qr.personNameEN + " is a " + qr.genderEN + ".";
-        //no need since all names are capitalized?
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
-    }
-
     private String formatSentenceJP(QueryResult qr){
-        return qr.personNameJP + "は" + qr.genderJP + "です。";
+        return qr.personNameJP + "の" + qr.spouseTitleJP +
+                "は" + qr.spouseNameJP + "です。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personNameEN);
+        pieces.add("'s");
+        pieces.add(qr.spouseTitleEN);
         pieces.add("is");
-        pieces.add("a " + qr.genderEN);
+        pieces.add(qr.spouseNameEN);
         return pieces;
     }
 
@@ -155,10 +173,25 @@ public class NAME_is_a_GENDER extends Lesson {
         return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
     }
 
+    private List<String> puzzlePiecesAcceptableAnswers(QueryResult qr){
+        List<String> pieces = new ArrayList<>();
+        pieces.add(qr.spouseNameEN);
+        pieces.add("is");
+        pieces.add(qr.personNameEN);
+        pieces.add("'s");
+        pieces.add(qr.spouseTitleEN);
+        String answer = QuestionUtils.formatPuzzlePieceAnswer(pieces);
+        List<String> acceptableAnswers = new ArrayList<>(1);
+        acceptableAnswers.add(answer);
+        return acceptableAnswers;
+    }
+
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
+        List<QuestionData> dataList = new ArrayList<>();
         String question = this.formatSentenceJP(qr);
         List<String> choices = this.puzzlePieces(qr);
         String answer = puzzlePiecesAnswer(qr);
+        List<String> acceptableAnswers = puzzlePiecesAcceptableAnswers(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -167,55 +200,70 @@ public class NAME_is_a_GENDER extends Lesson {
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
+        data.setAcceptableAnswers(acceptableAnswers);
         data.setVocabulary(new ArrayList<String>());
-
-        List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
+
         return dataList;
     }
 
-    private List<QuestionData> createSpellingQuestion(QueryResult qr){
-        String question = qr.genderJP;
-        String answer = qr.genderEN;
+    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String sentence = formatSentenceJP(qr);
+        String sentence2 = qr.personNameEN + "'s " +
+                Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " is " + qr.spouseNameEN + ".";
+        return sentence + "\n" + sentence2;
+    }
+
+
+    private String fillInBlankMultipleChoiceAnswerspouseName(QueryResult qr){
+        return qr.spouseTitleEN;
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(2);
+        choices.add("husband");
+        choices.add("wife");
+        return choices;
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
+        List<QuestionData> questionDataList = new ArrayList<>();
+        String question = this.fillInBlankMultipleChoiceQuestion(qr);
+        String answer = fillInBlankMultipleChoiceAnswerspouseName(qr);
+        List<String> choices = fillInBlankMultipleChoiceChoices();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personNameJP);
-        data.setQuestionType(QuestionTypeMappings.SPELLING);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
-        data.setChoices(null);
+        data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+        data.setVocabulary(null);
 
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-        return dataList;
+        questionDataList.add(data);
+
+        return questionDataList;
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-
-        String sentence = qr.personNameEN + " is a " +
-                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        String sentence = qr.personNameEN + "'s " +
+                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+                " is " + qr.spouseNameEN + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }
 
-    private List<String> fillInBlankAlternateAnswers(QueryResult qr){
-
-        if (qr.genderEN.equals("man/woman")){
-            List<String> answers = new ArrayList<>(1);
-            answers.add("man / woman");
-            return answers;
-        }
-        return null;
+    private String fillInBlankAnswer(QueryResult qr){
+        return qr.spouseTitleEN;
     }
 
     private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
+        List<QuestionData> questionDataList = new ArrayList<>();
         String question = this.fillInBlankQuestion(qr);
-        String answer = qr.genderEN;
-        List<String> acceptableAnswers = fillInBlankAlternateAnswers(qr);
+        String answer = fillInBlankAnswer(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -224,12 +272,13 @@ public class NAME_is_a_GENDER extends Lesson {
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(acceptableAnswers);
+        data.setAcceptableAnswers(null);
         data.setVocabulary(null);
 
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
+        questionDataList.add(data);
 
-        return dataList;
+        return questionDataList;
     }
+
+
 }

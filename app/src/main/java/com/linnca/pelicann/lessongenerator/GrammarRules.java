@@ -120,8 +120,9 @@ public class GrammarRules {
 	}
 
 	//this is exception based.
-	//in the futrure use a complete, trie based dictionary such as the one in
+	//in the future use a complete, trie based dictionary such as the one in
 	//https://github.com/EamonNerbonne/a-vs-an/
+	//returns a + the phrase
 	public static String indefiniteArticleBeforeNoun(String phrase) {
 		Pattern pattern;
 		Matcher matcher;
