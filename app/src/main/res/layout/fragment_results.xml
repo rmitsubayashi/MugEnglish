@@ -23,14 +23,6 @@
             android:textSize="21sp"
             android:id="@+id/results_questions_correct">
         </TextView>
-        <TextView
-            android:id="@+id/results_first_clear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:visibility="invisible"
-            android:textSize="17sp"
-            android:text="@string/results_first_clear"/>
         <!--only show if the user needs to review-->
         <Button
             android:id="@+id/results_review"
@@ -47,9 +39,29 @@
             android:id="@+id/results_finish"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/lblue_button"
             android:textColor="@color/white"
             android:text="@string/results_finish_no_review"/>
+
+        <TextView
+            android:id="@+id/results_first_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:visibility="invisible"
+            android:textSize="17sp"
+            android:text="@string/results_first_clear"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="21sp"
+            android:text="@string/results_vocabulary"/>
+        <LinearLayout
+            android:id="@+id/results_vocabulary_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"/>
     </LinearLayout>
 </ScrollView>

@@ -8,6 +8,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
@@ -53,6 +54,27 @@ public class good_morning_afternoon_evening extends Lesson {
 
         return questions;
 
+    }
+
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(3);
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good morning"),
+                "good morning","おはよう","Good morning!","おはよう！", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good afternoon"),
+                "good afternoon","こんにちは","Good afternoon!","こんにちは！", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good evening"),
+                "good evening","こんばんは","Good evening!","こんばんは！", KEY));
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(3);
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good morning"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good afternoon"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good evening"));
+        return ids;
     }
 
     @Override
@@ -106,7 +128,7 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setChoices(multipleChoiceChoices());
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -144,7 +166,7 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setChoices(multipleChoiceChoices());
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 
@@ -166,7 +188,7 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setChoices(null);
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(new ArrayList<String>());
+
             questions.add(data);
         }
 

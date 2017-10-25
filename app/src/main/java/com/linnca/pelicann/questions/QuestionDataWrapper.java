@@ -1,5 +1,7 @@
 package com.linnca.pelicann.questions;
 
+import com.linnca.pelicann.vocabulary.VocabularyWord;
+
 import java.util.List;
 
 //wrapper class for the question data and the related wikiData ID.
@@ -9,11 +11,13 @@ public class QuestionDataWrapper {
     private final List<List<QuestionData>> questionSet;
     private final String wikiDataID;
     private final String interestLabel;
+    private final List<VocabularyWord> vocabulary;
 
-    public QuestionDataWrapper(List<List<QuestionData>> questionSet, String wikiDataID, String interestLabel) {
+    public QuestionDataWrapper(List<List<QuestionData>> questionSet, String wikiDataID, String interestLabel, List<VocabularyWord> vocabulary) {
         this.questionSet = questionSet;
         this.wikiDataID = wikiDataID;
         this.interestLabel = interestLabel;
+        this.vocabulary = vocabulary;
     }
 
     public List<List<QuestionData>> getQuestionSet() {
@@ -26,6 +30,10 @@ public class QuestionDataWrapper {
 
     public String getInterestLabel() {
         return interestLabel;
+    }
+
+    public List<VocabularyWord> getVocabulary() {
+        return vocabulary;
     }
 }
 

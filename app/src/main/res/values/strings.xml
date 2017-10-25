@@ -150,6 +150,8 @@
     <string name="fragment_user_data_title">データ</string>
     <string name="fragment_settings_title">設定</string>
     <string name="fragment_lesson_list_title">勉強</string>
+    <string name="fragment_vocabulary_list_title">単語リスト</string>
+    <string name="fragment_vocabulary_details_title">単語</string>
 
     <!--navigation-->
     <string name="navigation_drawer_open">開く</string>
@@ -167,6 +169,9 @@
     <string name="results_review">復習する</string>
     <string name="results_finish_review">このまま終了する</string>
     <string name="results_finish_no_review">終了する</string>
+    <string name="results_vocabulary">単語リスト</string>
+    <string name="results_vocabulary_item_add">+ 追加</string>
+    <string name="results_vocabulary_item_added">追加済</string>
 
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>
@@ -245,6 +250,13 @@
     <string name="question_translate_word_hint">訳</string>
     <string name="question_translate_word_submit">確定</string>
     <string name="question_chat_instructions">返信してください</string>
+
+    <!--vocabulary-->
+    <string name="vocabulary_list_item_delete">消去</string>
+
+    <string name="vocabulary_details_meaning">意味</string>
+    <string name="vocabulary_details_example_sentence">例文</string>
+    <string name="vocabulary_details_go_to_lesson">レッスンにいく</string>
 
     <string name="calendar_sunday">日</string>
     <string name="calendar_monday">月</string>

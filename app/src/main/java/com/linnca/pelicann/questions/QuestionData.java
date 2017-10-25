@@ -14,7 +14,6 @@ public class QuestionData implements Serializable{
     private List<String> choices;
     private String answer;
     private List<String> acceptableAnswers;
-    private List<String> vocabulary;
     private List<FeedbackPair> feedback;
 
     public QuestionData(){}
@@ -23,7 +22,6 @@ public class QuestionData implements Serializable{
                         String topic, Integer questionType,
                         String question, List<String> choices,
                         String answer, List<String> acceptableAnswers,
-                        List<String> vocabulary,
                         List<FeedbackPair> feedback) {
         this.id = id;
         this.lessonId = lessonId;
@@ -33,7 +31,6 @@ public class QuestionData implements Serializable{
         this.choices = choices;
         this.answer = answer;
         this.acceptableAnswers = acceptableAnswers;
-        this.vocabulary = vocabulary;
         this.feedback = feedback;
     }
 
@@ -91,14 +88,6 @@ public class QuestionData implements Serializable{
 
     public void setAnswer(String answer) {
         this.answer = answer;
-    }
-
-    public List<String> getVocabulary() {
-        return vocabulary;
-    }
-
-    public void setVocabulary(List<String> vocabulary) {
-        this.vocabulary = vocabulary;
     }
 
     public List<String> getAcceptableAnswers() {return acceptableAnswers;}

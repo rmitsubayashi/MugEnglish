@@ -10,6 +10,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -95,8 +96,8 @@ public class Hello_my_name_is_NAME extends Lesson {
             questionSet.add(chatQuestion);
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
-
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, vocabularyWords));
         }
 
     }
@@ -107,6 +108,23 @@ public class Hello_my_name_is_NAME extends Lesson {
 
     private String formatSentenceJP(QueryResult qr){
         return "こんにちは、私の名前は" + qr.personNameJP + "です。";
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord hello = new VocabularyWord("","hello", "こんにちは",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord my = new VocabularyWord("","my", "私の",
+                "My name is " + qr.personNameEN, "私の名前は" + qr.personNameJP + "です。", KEY);
+        VocabularyWord name = new VocabularyWord("", "name","名前",
+                "My name is " + qr.personNameEN, "私の名前は" + qr.personNameJP + "です。", KEY);
+        VocabularyWord is = new VocabularyWord("", "is","~は",
+                "My name is " + qr.personNameEN, "私の名前は" + qr.personNameJP + "です。", KEY);
+        List<VocabularyWord> words = new ArrayList<>(4);
+        words.add(hello);
+        words.add(my);
+        words.add(name);
+        words.add(is);
+        return words;
     }
 
     private List<QuestionData> createChatQuestion(QueryResult qr){
@@ -127,7 +145,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -160,7 +178,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -207,7 +225,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         return data;
     }
@@ -224,7 +242,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(new ArrayList<String>());
+
 
         return data;
     }

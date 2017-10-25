@@ -12,6 +12,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -139,7 +140,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameForeign));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameForeign, new ArrayList<VocabularyWord>()));
         }
 
 
@@ -160,7 +161,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         //for suggestive, we don't need to lowercase everything
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionVariations = new ArrayList<>();
@@ -192,7 +193,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(feedbackPairs);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -275,7 +276,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-        data.setVocabulary(null);
+
         data.setFeedback(feedbackPairs);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -317,7 +318,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setVocabulary(null);
+
         data.setFeedback(null);
 
         List<QuestionData> questionDataList = new ArrayList<>();

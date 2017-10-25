@@ -11,6 +11,7 @@ import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -139,7 +140,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
             List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
             questionSet.add(fillInBlankInputQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, new ArrayList<VocabularyWord>()));
         }
 
     }
@@ -185,7 +186,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
             data.setChoices(choices);
             data.setAnswer(color);
             data.setAcceptableAnswers(null);
-            data.setVocabulary(null);
+
 
             dataList.add(data);
         }
@@ -244,7 +245,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
             data.setQuestion(question);
             data.setChoices(null);
             data.setAnswer(color);
-            data.setVocabulary(null);
+
 
             dataList.add(data);
         }

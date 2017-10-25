@@ -70,6 +70,8 @@ import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
 import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.userprofile.UserProfile;
+import com.linnca.pelicann.vocabulary.VocabularyDetails;
+import com.linnca.pelicann.vocabulary.VocabularyList;
 
 import org.joda.time.DateTime;
 
@@ -87,7 +89,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         PreferencesListener,
         PreferenceFragmentCompat.OnPreferenceStartScreenCallback,
         LessonDescription.LessonDescriptionListener,
-        UserProfile.UserProfileListener
+        UserProfile.UserProfileListener,
+        VocabularyList.VocabularyListListener,
+        VocabularyDetails.VocabularyDetailsListener
 {
     private final String TAG = "MainActivity";
     private boolean searchIconVisible = false;
@@ -113,8 +117,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String FRAGMENT_LESSON_DETAILS = "lessonDetails";
     private final String FRAGMENT_QUESTION = "question";
     private final String FRAGMENT_RESULTS = "results";
+    private final String FRAGMENT_USER_PROFILE = "userProfile";
     private final String FRAGMENT_SEARCH_INTERESTS = "searchInterests";
     private final String FRAGMENT_LESSON_DESCRIPTION = "lessonDescription";
+    private final String FRAGMENT_VOCABULARY_LIST = "vocabularyList";
+    private final String FRAGMENT_VOCABULARY_DETAILS = "vocabularyDetails";
 
     private QuestionManager questionManager;
     //since initialization takes forever, initialize here and use this instance in all questions
@@ -156,6 +163,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             break;
                         case R.id.main_navigation_drawer_data :
                             newFragment = new UserProfile();
+                            newFragmentTag = FRAGMENT_USER_PROFILE;
+                            break;
+                        case R.id.main_navigation_drawer_vocabulary :
+                            newFragment = new VocabularyList();
+                            newFragmentTag = FRAGMENT_VOCABULARY_LIST;
                             break;
                         case R.id.main_navigation_drawer_settings :
                             newFragment = new Preferences();
@@ -214,18 +226,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onStart(){
         super.onStart();
         startAppTimestamp = System.currentTimeMillis();
-
-        /*
-        DateTime temp1 = DateTime.now();
-        temp1 = temp1.minusMonths(1);
-        DateTime temp2 = DateTime.now();
-        temp2 = temp2.minusMonths(1).plusHours(1);
-        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
-
-        temp1 = temp1.minusMonths(1);
-        temp2 = temp2.minusMonths(1).plusHours(1);
-        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));*/
-
     }
 
     @Override
@@ -390,6 +390,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentTransaction.addToBackStack(FRAGMENT_USER_INTERESTS);
         fragmentTransaction.commit();
         switchActionBarUpButton();
+    }
+
+    @Override
+    public void vocabularyListToVocabularyDetails(String key){
+        Fragment fragment = new VocabularyDetails();
+        Bundle bundle = new Bundle();
+        bundle.putString(VocabularyDetails.BUNDLE_VOCABULARY_ID, key);
+        fragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_VOCABULARY_DETAILS);
+        fragmentTransaction.addToBackStack(FRAGMENT_VOCABULARY_LIST);
+        fragmentTransaction.commit();
+        switchActionBarUpButton();
+    }
+
+    @Override
+    public void vocabularyDetailsToLessonDetails(String lessonKey){
+        clearBackStack();
+        //make sure when the user presses the back button after the redirect,
+        //the user goes to the lesson list screen
+        Fragment fragment1 = new LessonList();
+        int lessonLevel = lessonHierarchyViewer.getLessonLevel(lessonKey);
+        Bundle bundle1 = new Bundle();
+        bundle1.putInt(LessonList.LESSON_LEVEL, lessonLevel);
+        fragment1.setArguments(bundle1);
+        topmostFragmentTag = FRAGMENT_LESSON_LIST;
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment1, FRAGMENT_LESSON_LIST);
+        fragmentTransaction.commit();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment fragment2 = new LessonDetails();
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonHierarchyViewer.getLessonData(lessonKey));
+        fragment2.setArguments(bundle2);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment2, FRAGMENT_LESSON_DETAILS);
+        fragmentTransaction.addToBackStack(FRAGMENT_LESSON_LIST);
+        fragmentTransaction.commit();
+
+        //select the proper item in the navigation drawer
+        switch (lessonLevel){
+            case 1 :
+                navigationView.getMenu().findItem(R.id.main_navigation_drawer_lesson_level1).setChecked(true);
+                break;
+            case 2 :
+                navigationView.getMenu().findItem(R.id.main_navigation_drawer_lesson_level2).setChecked(true);
+                break;
+        }
+        navigationView.getMenu().findItem(R.id.main_navigation_drawer_vocabulary).setChecked(false);
+
+
     }
 
     private QuestionManager.QuestionManagerListener getQuestionManagerListener(){
@@ -870,7 +920,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //if we ever start another activity from this main activity,
     //we need to change this
     private void recordAppUsageLog(AppUsageLog log){
-        Log.d(TAG, "called record app usage log");
         //we can index by year -> month so
         //we don't need to fetch the whole log every time
         long startTime = log.getStartTimeStamp();

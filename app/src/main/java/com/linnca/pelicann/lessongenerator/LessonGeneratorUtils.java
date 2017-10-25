@@ -243,4 +243,9 @@ public class LessonGeneratorUtils {
     public static String formatGenericQuestionID(String lessonKey, int questionNumber){
         return lessonKey + "_generic" + Integer.toString(questionNumber);
     }
+
+    public static String formatGenericQuestionVocabularyID(String lessonKey, String word){
+        word = word.replaceAll(" ", "_");
+        return lessonKey + "_generic_" + word;
+    }
 }

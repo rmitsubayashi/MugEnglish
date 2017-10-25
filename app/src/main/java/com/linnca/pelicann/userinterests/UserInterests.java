@@ -126,11 +126,6 @@ public class UserInterests extends Fragment {
         inflater.inflate(R.menu.user_interests_item_menu, menu);
     }
 
-    /*
-    * UserInterestRemover.removeUserInterest(data, userID);
-                showUndoSnackBar(data);
-    * */
-
     //called by the main activity (which has access to the spinner for the filter)
     public void filterUserInterests(int filter){
         if (userInterestListAdapter != null)
@@ -166,6 +161,11 @@ public class UserInterests extends Fragment {
                     userInterests.add(interest);
                 }
 
+                //if the user has something selected while selecting interests
+                //(which shouldn't happen unless working from two devices)
+                //we should de-select everything
+                if (actionMode != null)
+                    actionMode.finish();
                 userInterestListAdapter.setInterests(userInterests);
             }
 

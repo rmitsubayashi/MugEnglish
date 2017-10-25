@@ -16,14 +16,17 @@ import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,6 +41,9 @@ public abstract class Lesson {
 	protected String lessonKey;
 	//the lesson instance we will be creating
 	private final LessonInstanceData lessonInstanceData = new LessonInstanceData();
+	//vocabulary words for the lesson instance
+	//(we have these in a separate location in the db)
+	private final List<String> lessonInstanceVocabularyWordIDs = new ArrayList<>();
 	//where we will populate new questions for this instance (from each inherited class)
 	protected final List<QuestionDataWrapper> newQuestions = new ArrayList<>();
 	//question set ids we need to query FireBase to get more information
@@ -96,6 +102,8 @@ public abstract class Lesson {
 		List<List<String>> genericQuestionSets = getGenericQuestionIDSets();
 		List<String> pickGenericQuestions = pickQuestions(genericQuestionSets);
 		lessonInstanceData.addQuestionIds(pickGenericQuestions);
+		List<String> genericQuestionVocabularyIDs = getGenericQuestionVocabularyIDs();
+		lessonInstanceVocabularyWordIDs.addAll(genericQuestionVocabularyIDs);
 		if (getSPARQLQuery().equals("")){
 			//we have a lesson without any dynamic questions
 			saveInstance();
@@ -316,9 +324,7 @@ public abstract class Lesson {
 	// and the question ID list we have for this instance.
 	//called after QuestionData is populated.
 	//we may create more questions than the user will be getting,
-	//but this is so all questions possible for one lesson are created.
-	//if we only create questions for the user, all the rest of the questions
-	//will never be created
+	//but this is so all questions possible for one lesson are created for future use
 	private void saveNewQuestions(){
 		DatabaseReference questionRef = db.getReference(FirebaseDBHeaders.QUESTIONS);
 		DatabaseReference questionSetRef = db.getReference(
@@ -332,11 +338,15 @@ public abstract class Lesson {
 				FirebaseDBHeaders.RANDOM_QUESTION_SET_IDS + "/" +
 						lessonKey
 		);
+		DatabaseReference vocabularyRef = db.getReference(
+				FirebaseDBHeaders.VOCABULARY
+		);
 		//we are looping through each question set.
 		// (questionDataWrapper has an extra field to store the wikiData ID
 		// associated with the question set)
 		for (QuestionDataWrapper questionDataWrapper : newQuestions){
 			List<List<String>> questionIDs = new ArrayList<>();
+			List<String> vocabularyIDs = new ArrayList<>();
 			//save each question in the database
 			for (List<QuestionData> question : questionDataWrapper.getQuestionSet()) {
 				List<String> questionIDsForEachVariation = new ArrayList<>();
@@ -351,6 +361,15 @@ public abstract class Lesson {
 					questionIDsForEachVariation.add(questionKey);
 				}
 				questionIDs.add(questionIDsForEachVariation);
+
+				List<VocabularyWord> questionSetVocabulary = questionDataWrapper.getVocabulary();
+				for (VocabularyWord word : questionSetVocabulary){
+					String vocabularyKey = vocabularyRef.push().getKey();
+					word.setId(vocabularyKey);
+					vocabularyRef.child(vocabularyKey).setValue(word);
+					vocabularyIDs.add(vocabularyKey);
+				}
+
 			}
 
 			String questionSetWikiDataID = questionDataWrapper.getWikiDataID();
@@ -360,6 +379,8 @@ public abstract class Lesson {
 					.setValue(questionIDs);
 			questionSetRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_LABEL)
 					.setValue(questionDataWrapper.getInterestLabel());
+			questionSetRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_VOCABULARY)
+					.setValue(vocabularyIDs);
 
 			//save the id reference of the question set we just created
 			questionSetIDsPerLessonRef.child(questionSetWikiDataID).push().setValue(questionSetKey);
@@ -377,6 +398,7 @@ public abstract class Lesson {
 				lessonInstanceData.addQuestionIds(instanceQuestions);
 				lessonInstanceData.addQuestionSetId(questionSetKey);
 				lessonInstanceData.addInterestLabel(questionDataWrapper.getInterestLabel());
+				lessonInstanceVocabularyWordIDs.addAll(vocabularyIDs);
 				questionSetsLeftToPopulate--;
 			}
 		}
@@ -423,9 +445,6 @@ public abstract class Lesson {
 					}
 
 					if (relatedInterestsSearched.incrementAndGet() == allUserInterestCt){
-						for (WikiDataEntryData interest : userInterests){
-							Log.d(TAG, interest.getLabel());
-						}
 						fillQuestionsFromDatabase();
 					}
 				}
@@ -545,10 +564,16 @@ public abstract class Lesson {
 					List<List<String>> allQuestions = dataSnapshot.child(FirebaseDBHeaders.QUESTION_SETS_QUESTION_IDS)
 							.getValue(type);
 					List<String> questions = pickQuestions(allQuestions);
+					GenericTypeIndicator<List<String>> type2 =
+							new GenericTypeIndicator<List<String>>() {};
+					List<String> vocabularyWordIDs = dataSnapshot.child(FirebaseDBHeaders.QUESTION_SETS_VOCABULARY)
+							.getValue(type2);
 					//these are synchronized so no worrying about concurrency issues
 					lessonInstanceData.addQuestionSetId(dataSnapshot.getKey());
 					lessonInstanceData.addQuestionIds(questions);
 					lessonInstanceData.addInterestLabel(interestLabel);
+					if (vocabularyWordIDs != null)
+						lessonInstanceVocabularyWordIDs.addAll(vocabularyWordIDs);
 					if (questionSetsRetrieved.incrementAndGet() == questionSetIDs.size()){
 						//all listeners have completed so continue
 						saveInstance();
@@ -577,7 +602,12 @@ public abstract class Lesson {
 				FirebaseDBHeaders.LESSON_INSTANCES + "/" + userID + "/" + lessonKey);
 		String key = lessonInstanceRef.push().getKey();
 		lessonInstanceData.setId(key);
-		lessonInstanceRef.child(key).setValue(lessonInstanceData);
+
+		Map<String, Object> consistentUpdate = new HashMap<>();
+		consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCES + "/" + userID + "/" + lessonKey + "/" + key, lessonInstanceData);
+		consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCE_VOCABULARY + "/" + key, lessonInstanceVocabularyWordIDs);
+
+		db.getReference().updateChildren(consistentUpdate);
 
 		//end of flow
 		lessonListener.onLessonCreated();
@@ -601,10 +631,15 @@ public abstract class Lesson {
 		return questionIDs;
 	}
 
-	//override this if we want to add generic questions to the beginning
+	//override these if we want to add generic questions to the beginning
 	protected List<List<String>> getGenericQuestionIDSets(){
 		return new ArrayList<>(1);
 	}
+	protected List<QuestionData> getGenericQuestions(){
+		return new ArrayList<>(1);
+	}
+	protected List<String> getGenericQuestionVocabularyIDs(){return new ArrayList<>(1);}
+	protected List<VocabularyWord> getGenericQuestionVocabulary(){return new ArrayList<>(1);}
 
 	//since we are requesting IDs for generic questions, we need some way of having
 	//the question already saved in the DB.
@@ -623,11 +658,19 @@ public abstract class Lesson {
 							id
 			).setValue(data);
 		}
-	}
 
-	protected List<QuestionData> getGenericQuestions(){
-		return new ArrayList<>();
+		List<VocabularyWord> vocabularyWords = getGenericQuestionVocabulary();
+		for (VocabularyWord word : vocabularyWords){
+			String id = word.getId();
+			if (id == null){
+				Log.d(TAG, "Generic question ID is null");
+				continue;
+			}
+			db.getReference(
+					FirebaseDBHeaders.VOCABULARY + "/" +
+							id
+			).setValue(word);
+		}
 	}
-
 	
 }

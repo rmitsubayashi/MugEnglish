@@ -254,14 +254,14 @@ public class LessonHierarchyViewer {
         return null;
     }
 
-    private int getLessonLevel(String lessonKey){
+    public int getLessonLevel(String lessonKey){
         int levelCt = lessonLevels.size();
         for (int i=0; i<levelCt; i++) {
             List<LessonListRow> lessonRows = lessonLevels.get(i);
             for (LessonListRow row : lessonRows) {
                 for (LessonData lessonData : row.getLessons()) {
                     if (lessonData.getKey().equals(lessonKey)) {
-                        return i;
+                        return i+1;
                     }
                 }
             }
