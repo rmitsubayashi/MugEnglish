@@ -49,7 +49,6 @@ import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerItem;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.preferences.Preferences;
 import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExceptionRule;
-import com.linnca.pelicann.preferences.PreferencesListener;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionManager;
