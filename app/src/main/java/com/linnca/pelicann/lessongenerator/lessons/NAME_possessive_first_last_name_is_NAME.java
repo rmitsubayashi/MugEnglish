@@ -28,8 +28,8 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
         private final String firstNameEN;
         private final String firstNameJP;
         private final String lastNameEN;
@@ -37,16 +37,16 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
+                String personEN,
+                String personJP,
                 String firstNameEN,
                 String firstNameJP,
                 String lastNameEN,
                 String lastNameJP)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
             this.firstNameEN = firstNameEN;
             this.firstNameJP = firstNameJP;
             this.lastNameEN = lastNameEN;
@@ -65,19 +65,19 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
     @Override
     protected String getSPARQLQuery(){
         //find person name and blood type
-        return "SELECT ?personName ?personNameLabel ?personNameEN " +
+        return "SELECT ?person ?personLabel ?personEN " +
                 " ?firstNameEN ?firstNameLabel " +
                 " ?lastNameEN ?lastNameLabel " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P735 ?firstName . " + //has an first name
-                "    ?personName wdt:P734 ?lastName . " + //has an last name
-                "    ?personName rdfs:label ?personNameEN . " +
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P735 ?firstName . " + //has an first name
+                "    ?person wdt:P734 ?lastName . " + //has an last name
+                "    ?person rdfs:label ?personEN . " +
                 "    ?firstName rdfs:label ?firstNameEN . " +
                 "    ?lastName rdfs:label ?lastNameEN . " +
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?firstNameEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
@@ -86,7 +86,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
                 WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -99,16 +99,16 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String firstNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameEN");
             String firstNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameLabel");
             String lastNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "lastNameEN");
             String lastNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "lastNameLabel");
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP,
+            QueryResult qr = new QueryResult(personID, personEN, personJP,
                     firstNameEN, firstNameJP,
                     lastNameEN, lastNameJP);
             queryResults.add(qr);
@@ -131,23 +131,23 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
 
     private String formatFirstNameSentenceJP(QueryResult qr){
-        return qr.personNameJP + "の名は" + qr.firstNameJP + "です。";
+        return qr.personJP + "の名は" + qr.firstNameJP + "です。";
     }
 
     private String formatLastNameSentenceJP(QueryResult qr){
-        return qr.personNameJP + "の姓は" + qr.lastNameJP + "です。";
+        return qr.personJP + "の姓は" + qr.lastNameJP + "です。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePiecesFirstName(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("'s");
         pieces.add("first");
         pieces.add("name");
@@ -164,7 +164,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.firstNameEN);
         pieces.add("is");
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("'s");
         pieces.add("first");
         pieces.add("name");
@@ -176,7 +176,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
 
     private List<String> puzzlePiecesLastName(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("'s");
         pieces.add("last");
         pieces.add("name");
@@ -193,7 +193,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.lastNameEN);
         pieces.add("is");
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("'s");
         pieces.add("last");
         pieces.add("name");
@@ -212,7 +212,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -228,7 +228,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -241,7 +241,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
 
     private String fillInBlankMultipleChoiceQuestionFirstName(QueryResult qr){
         String sentence = formatFirstNameSentenceJP(qr);
-        String sentence2 = qr.personNameEN + "'s " +
+        String sentence2 = qr.personEN + "'s " +
                 Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
                 " is " + qr.firstNameEN + ".";
         return sentence + "\n" + sentence2;
@@ -254,7 +254,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
 
     private String fillInBlankMultipleChoiceQuestionLastName(QueryResult qr){
         String sentence = formatFirstNameSentenceJP(qr);
-        String sentence2 = qr.personNameEN + "'s " +
+        String sentence2 = qr.personEN + "'s " +
                 Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
                 " is " + qr.lastNameEN + ".";
         return sentence + "\n" + sentence2;
@@ -280,7 +280,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -295,7 +295,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -309,7 +309,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
     }
 
     private String fillInBlankQuestionLastName(QueryResult qr){
-        String sentence = qr.personNameEN + "'s " +
+        String sentence = qr.personEN + "'s " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " is " + qr.lastNameEN + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
@@ -321,7 +321,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
     }
 
     private String fillInBlankQuestionFirstName(QueryResult qr){
-        String sentence = qr.personNameEN + "'s " +
+        String sentence = qr.personEN + "'s " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " is " + qr.firstNameEN + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
@@ -339,7 +339,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
@@ -354,7 +354,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

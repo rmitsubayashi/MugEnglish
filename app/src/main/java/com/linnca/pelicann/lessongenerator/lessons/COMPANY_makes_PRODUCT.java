@@ -27,21 +27,21 @@ public class COMPANY_makes_PRODUCT extends Lesson{
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String companyID;
-        private final String companyNameEN;
-        private final String companyNameJP;
+        private final String companyEN;
+        private final String companyJP;
         private final String productEN;
         private final String productJP;
 
         private QueryResult(
                 String companyID,
-                String companyNameEN,
-                String companyNameJP,
+                String companyEN,
+                String companyJP,
                 String productEN,
                 String productJP)
         {
             this.companyID = companyID;
-            this.companyNameEN = companyNameEN;
-            this.companyNameJP = companyNameJP;
+            this.companyEN = companyEN;
+            this.companyJP = companyJP;
             this.productEN = productEN;
             this.productJP = productJP;
         }
@@ -58,22 +58,22 @@ public class COMPANY_makes_PRODUCT extends Lesson{
     @Override
     protected String getSPARQLQuery(){
         //find company name and blood type
-        return "SELECT ?companyName ?companyNameLabel ?companyNameEN " +
+        return "SELECT ?company ?companyLabel ?companyEN " +
                 " ?productEN ?productLabel " +
                 "WHERE " +
                 "{" +
-                "    ?companyName wdt:P31 wd:Q4830453 . " + //is a business enterprise
-                "    ?companyName wdt:P1056 ?product . " + //makes a product/material
-                "    ?companyName rdfs:label ?companyNameEN . " +
+                "    ?company wdt:P31 wd:Q4830453 . " + //is a business enterprise
+                "    ?company wdt:P1056 ?product . " + //makes a product/material
+                "    ?company rdfs:label ?companyEN . " +
                 "    ?product rdfs:label ?productEN . " +
-                "    FILTER (LANG(?companyNameEN) = '" +
+                "    FILTER (LANG(?companyEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?productEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
                 WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-                "    BIND (wd:%s as ?companyName) . " + //binding the ID of entity as ?company
+                "    BIND (wd:%s as ?company) . " + //binding the ID of entity as ?company
                 "} ";
 
     }
@@ -86,14 +86,14 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String companyID = SPARQLDocumentParserHelper.findValueByNodeName(head, "companyName");
+            String companyID = SPARQLDocumentParserHelper.findValueByNodeName(head, "company");
             companyID = LessonGeneratorUtils.stripWikidataID(companyID);
-            String companyNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "companyNameEN");
-            String companyNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "companyNameLabel");
+            String companyEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "companyEN");
+            String companyJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "companyLabel");
             String productEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "productEN");
             String productJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "productLabel");
 
-            QueryResult qr = new QueryResult(companyID, companyNameEN, companyNameJP, productEN, productJP);
+            QueryResult qr = new QueryResult(companyID, companyEN, companyJP, productEN, productJP);
             queryResults.add(qr);
         }
     }
@@ -120,7 +120,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
             List<QuestionData> translateQuestion2 = createTranslateQuestion2(qr);
             questionSet.add(translateQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.companyID, qr.companyNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.companyID, qr.companyJP, null));
         }
 
     }
@@ -128,7 +128,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.companyNameEN);
+        pieces.add(qr.companyEN);
         pieces.add("makes");
         pieces.add(qr.productEN);
         return pieces;
@@ -136,11 +136,11 @@ public class COMPANY_makes_PRODUCT extends Lesson{
 
     private String formatSentenceJP(QueryResult qr){
         //作る/造る distinction impossible to determine?
-        return qr.companyNameJP + "は" + qr.productJP + "をつくります。";
+        return qr.companyJP + "は" + qr.productJP + "をつくります。";
     }
 
     private String formatSentenceEN(QueryResult qr){
-        String sentence = qr.companyNameEN + " makes " + qr.productEN + ".";
+        String sentence = qr.companyEN + " makes " + qr.productEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
@@ -155,7 +155,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.companyNameJP);
+        data.setTopic(qr.companyJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -173,7 +173,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.companyNameJP);
+        data.setTopic(qr.companyJP);
         data.setQuestionType(QuestionTypeMappings.SPELLING);
         data.setQuestion(question);
         data.setChoices(null);
@@ -191,7 +191,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.companyNameJP);
+        data.setTopic(qr.companyJP);
         data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
         data.setQuestion(question);
         data.setChoices(null);
@@ -205,7 +205,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.companyNameEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence = qr.companyEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " " + qr.productEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
@@ -227,7 +227,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.companyNameJP);
+        data.setTopic(qr.companyJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
@@ -251,7 +251,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
 
     //accept 'make' instead of 'makes'
     private List<String> translateAcceptableAnswers2(QueryResult qr){
-        String acceptableAnswer = qr.productEN + " make " + qr.companyNameEN + ".";
+        String acceptableAnswer = qr.productEN + " make " + qr.companyEN + ".";
         acceptableAnswer = GrammarRules.uppercaseFirstLetterOfSentence(acceptableAnswer);
         List<String> acceptableAnswers = new ArrayList<>(1);
         acceptableAnswers.add(acceptableAnswer);
@@ -265,7 +265,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.companyNameJP);
+        data.setTopic(qr.companyJP);
         data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
         data.setQuestion(question);
         data.setChoices(null);

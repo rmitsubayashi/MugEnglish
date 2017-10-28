@@ -359,9 +359,11 @@ public abstract class Lesson {
 					//set ID in data
 					data.setId(questionKey);
 					//save in db
-					questionRef.child(questionKey).setValue(data);
+					DatabaseReference singleQuestionRef = questionRef.child(questionKey);
+					singleQuestionRef.setValue(data);
 					questionIDsForEachVariation.add(questionKey);
 				}
+
 				questionIDs.add(questionIDsForEachVariation);
 
                 List<VocabularyWord> questionSetVocabulary = questionDataWrapper.getVocabulary();

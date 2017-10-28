@@ -15,6 +15,7 @@ import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME_I_am_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.Hi_hey_whats_up;
 import com.linnca.pelicann.lessongenerator.lessons.How_are_you_doing;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_creates_art;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_AGE_years_old;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_AGE_years_old_NAME_is_a_GENDER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
@@ -25,9 +26,16 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_at_work_He_is_at_EMPL
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_COUNTRY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT_SPORT_is_a_individual_team_sport;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT_SPORT_is_a_water_sport;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_first_last_name_is_NAME;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_mother_father_is_NAME2;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_at_EMPLOYER;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_EMPLOYER;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_the_government_He_is_a_politician;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_books;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_music;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_0_3;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_10s;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_11_19;
@@ -37,6 +45,7 @@ import com.linnca.pelicann.lessongenerator.lessons.Numbers_7_9;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_hundred_billion;
 import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_COUNTRY_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.Stand_up_sit_down;
+import com.linnca.pelicann.lessongenerator.lessons.TEAM_is_a_SPORT_team;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
 import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
 import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
@@ -253,6 +262,60 @@ public class LessonFactory {
                         listener
                 );
             }
+            case NAME_writes_books.KEY : {
+                return new NAME_writes_books(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_writes_music.KEY : {
+                return new NAME_writes_music(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_creates_art.KEY : {
+                return new NAME_creates_art(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_works_for_the_government_He_is_a_politician.KEY : {
+                return new NAME_works_for_the_government_He_is_a_politician(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_works_for_EMPLOYER.KEY : {
+                return new NAME_works_for_EMPLOYER(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_plays_SPORT_SPORT_is_a_water_sport.KEY : {
+                return new NAME_plays_SPORT_SPORT_is_a_water_sport(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_plays_SPORT_SPORT_is_a_individual_team_sport.KEY : {
+                return new NAME_plays_SPORT_SPORT_is_a_individual_team_sport(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case TEAM_is_a_SPORT_team.KEY : {
+                return new TEAM_is_a_SPORT_team(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION.KEY : {
+                return new NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
 
             default:
                 Log.d(TAG, "Could not parse lesson");
@@ -261,7 +324,7 @@ public class LessonFactory {
     }
 
     public static void saveGenericQuestions(){
-
+        /*
         Lesson lesson = new good_morning_afternoon_evening(null, null);
         lesson.saveGenericQuestions();
         lesson = new Hello_my_name_is_NAME(null, null);
@@ -301,6 +364,12 @@ public class LessonFactory {
         lesson = new COUNTRY_possessive_population_is_POPULATION(null, null);
         lesson.saveGenericQuestions();
         lesson = new COUNTRY_possessive_area_is_AREA(null, null);
+        lesson.saveGenericQuestions();*/
+        Lesson lesson = new NAME_works_for_the_government_He_is_a_politician(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new NAME_plays_SPORT_SPORT_is_a_water_sport(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new NAME_plays_SPORT_SPORT_is_a_individual_team_sport(null, null);
         lesson.saveGenericQuestions();
 
     }

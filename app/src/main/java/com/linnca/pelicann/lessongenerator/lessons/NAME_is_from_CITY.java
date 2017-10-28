@@ -33,22 +33,22 @@ public class NAME_is_from_CITY extends Lesson{
     private final Map<String, QueryResult> queryResultMap = new HashMap<>();
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
         private final String cityEN;
         private final String cityJP;
         private final List<String> cityJPAlt = new ArrayList<>();
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
+                String personEN,
+                String personJP,
                 String cityEN,
                 String cityJP)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
             this.cityEN = cityEN;
             this.cityJP = cityJP;
         }
@@ -69,27 +69,27 @@ public class NAME_is_from_CITY extends Lesson{
     @Override
     protected String getSPARQLQuery(){
         //find person name and blood type
-        return "SELECT DISTINCT ?personName ?personNameLabel ?personNameEN " +
+        return "SELECT DISTINCT ?person ?personLabel ?personEN " +
                 " ?cityEN ?cityLabel ?cityAltJP " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P19 ?city . " + //has a place of birth
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P19 ?city . " + //has a place of birth
                 "    ?city wdt:P31/wdt:P279* wd:Q515 . " + //is a city
                 "    OPTIONAL { ?city skos:altLabel ?cityAltJP . } " + //any alternative names for city
-                "    ?personName rdfs:label ?personNameEN . " +
+                "    ?person rdfs:label ?personEN . " +
                 "    ?city rdfs:label ?cityEN . " +
                 "    FILTER (LANG(?cityAltJP) = '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "') . " +
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?cityEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
                 WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -102,15 +102,15 @@ public class NAME_is_from_CITY extends Lesson{
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
 
             String cityEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "cityEN");
             String cityJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "cityLabel");
             String cityAlt = SPARQLDocumentParserHelper.findValueByNodeName(head, "cityAltJP");
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, cityEN, cityJP);
+            QueryResult qr = new QueryResult(personID, personEN, personJP, cityEN, cityJP);
             //we are assuming people weren't born in two places
             if (queryResultMap.containsKey(personID)){
                 QueryResult value = queryResultMap.get(personID);
@@ -145,7 +145,7 @@ public class NAME_is_from_CITY extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
@@ -153,18 +153,18 @@ public class NAME_is_from_CITY extends Lesson{
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("is from");
         pieces.add(qr.cityEN);
         return pieces;
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personNameJP + "は" + qr.cityJP + "から来ました。";
+        return qr.personJP + "は" + qr.cityJP + "から来ました。";
     }
 
     private String formatSentenceEN(QueryResult qr){
-        String sentence = qr.personNameEN + " is from " + qr.cityEN + ".";
+        String sentence = qr.personEN + " is from " + qr.cityEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
@@ -179,7 +179,7 @@ public class NAME_is_from_CITY extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -198,7 +198,7 @@ public class NAME_is_from_CITY extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SPELLING);
         data.setQuestion(question);
         data.setChoices(null);
@@ -237,7 +237,7 @@ public class NAME_is_from_CITY extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
         data.setQuestion(question);
         data.setChoices(null);
@@ -252,7 +252,7 @@ public class NAME_is_from_CITY extends Lesson{
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personNameEN + " is " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence = qr.personEN + " is " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " " + qr.cityEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
@@ -267,7 +267,7 @@ public class NAME_is_from_CITY extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

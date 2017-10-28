@@ -37,23 +37,23 @@ public class NAME_works_at_EMPLOYER extends Lesson {
 
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
         private final String employerID;
         private final String employerEN;
         private final String employerJP;
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
+                String personEN,
+                String personJP,
                 String employerID,
                 String employerEN,
                 String employerJP)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
             this.employerID = employerID;
             this.employerEN = employerEN;
             this.employerJP = employerJP;
@@ -72,23 +72,23 @@ public class NAME_works_at_EMPLOYER extends Lesson {
     protected String getSPARQLQuery(){
         //since there aren't that many Japanese employers available,
         //just get the employer name and convert it to a employer by adding "~人"
-        return "SELECT ?personName ?personNameLabel ?personNameEN " +
+        return "SELECT ?person ?personLabel ?personEN " +
                 " ?employer ?employerEN ?employerLabel " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P108 ?employer . " + //has an employer
-                "    ?personName rdfs:label ?personNameEN . " + //English label
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P108 ?employer . " + //has an employer
+                "    ?person rdfs:label ?personEN . " + //English label
                 "    ?employer rdfs:label ?employerEN . " + //English label
                 "    FILTER (LANG(?employerEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label {bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
                 WikiBaseEndpointConnector.ENGLISH + "' } " +
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -101,10 +101,10 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String employerID = SPARQLDocumentParserHelper.findValueByNodeName(head, "employerName");
             employerID = LessonGeneratorUtils.stripWikidataID(employerID);
             String employerJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "employerLabel");
@@ -120,7 +120,7 @@ public class NAME_works_at_EMPLOYER extends Lesson {
                 queryResultMap.put(personID, list);
             }
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, employerID, employerEN, employerJP);
+            QueryResult qr = new QueryResult(personID, personEN, personJP, employerID, employerEN, employerJP);
             queryResults.add(qr);
         }
     }
@@ -138,7 +138,7 @@ public class NAME_works_at_EMPLOYER extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
@@ -151,7 +151,7 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         //use the definite article before school name ( ~ of ~)
         //for better accuracy.
         //still there are a lot of employers that will need 'the'
-        String sentence = qr.personNameEN + " works at " +
+        String sentence = qr.personEN + " works at " +
                 GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN) + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
@@ -159,11 +159,11 @@ public class NAME_works_at_EMPLOYER extends Lesson {
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personNameJP + "は" + qr.employerJP + "で働いています。";
+        return qr.personJP + "は" + qr.employerJP + "で働いています。";
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
-        String sentence = qr.personNameEN + " works at " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence = qr.personEN + " works at " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
@@ -212,7 +212,7 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -227,7 +227,7 @@ public class NAME_works_at_EMPLOYER extends Lesson {
 
     private String fillInBlankQuestion(QueryResult qr){
         String sentence = formatSentenceJP(qr);
-        String sentence2 = qr.personNameEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " " + qr.employerEN + ".";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence + "\n\n" + sentence2;
@@ -251,7 +251,7 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

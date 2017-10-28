@@ -31,21 +31,21 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     private class QueryResult {
 
         private final String countryID;
-        private final String countryNameEN;
-        private final String countryNameJP;
+        private final String countryEN;
+        private final String countryJP;
         //highest area is 1.4 bil (ints can go up to 2~ bil)
         private final int area;
 
         private QueryResult(
                 String countryID,
-                String countryNameEN,
-                String countryNameJP,
+                String countryEN,
+                String countryJP,
                 int area
         ) {
 
             this.countryID = countryID;
-            this.countryNameEN = countryNameEN;
-            this.countryNameJP = countryNameJP;
+            this.countryEN = countryEN;
+            this.countryJP = countryJP;
             this.area = area;
         }
     }
@@ -103,12 +103,12 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
 
             countryID = LessonGeneratorUtils.stripWikidataID(countryID);
-            String countryNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
-            String countryNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
+            String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
+            String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String areaString = SPARQLDocumentParserHelper.findValueByNodeName(head, "area");
             //since most of the area has decimal, convert it to a double first
             int area = (int)Double.parseDouble(areaString);
-            QueryResult qr = new QueryResult(countryID, countryNameEN, countryNameJP, area);
+            QueryResult qr = new QueryResult(countryID, countryEN, countryJP, area);
 
             queryResults.add(qr);
 
@@ -138,7 +138,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, null));
         }
 
 
@@ -146,23 +146,23 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     }
 
     private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
-        String lowercaseCountry = qr.countryNameEN.toLowerCase();
+        String lowercaseCountry = qr.countryEN.toLowerCase();
         List<String> responses = new ArrayList<>();
         responses.add(lowercaseCountry);
-        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryNameEN;
+        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryEN;
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
     private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
-        String question = qr.countryNameJP;
-        String answer = qr.countryNameEN;
+        String question = qr.countryJP;
+        String answer = qr.countryEN;
         FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
         feedbackPairs.add(feedbackPair);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
         data.setQuestion(question);
         data.setChoices(null);
@@ -177,9 +177,9 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     }
 
     private String fillInBlankInputQuestion1(QueryResult qr){
-        String sentence1 = qr.countryNameJP + "の面積は" + Integer.toString(qr.area) + " km²です。";
+        String sentence1 = qr.countryJP + "の面積は" + Integer.toString(qr.area) + " km²です。";
 
-        String sentence2 = qr.countryNameEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence2 = qr.countryEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " is " + LessonGeneratorUtils.convertIntToStringWithCommas(qr.area) + " km².";
         return sentence1 + "\n\n" + sentence2;
     }
@@ -195,7 +195,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
@@ -210,9 +210,9 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     }
 
     private String fillInBlankInputQuestion2(QueryResult qr){
-        String sentence1 = qr.countryNameEN + "'s area is " +
+        String sentence1 = qr.countryEN + "'s area is " +
                 LessonGeneratorUtils.convertIntToWord(qr.area) + " km².";
-        String sentence2 = qr.countryNameJP + "の面積は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " km²です。";
+        String sentence2 = qr.countryJP + "の面積は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " km²です。";
         return sentence1 + "\n\n" + sentence2;
     }
 
@@ -228,7 +228,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

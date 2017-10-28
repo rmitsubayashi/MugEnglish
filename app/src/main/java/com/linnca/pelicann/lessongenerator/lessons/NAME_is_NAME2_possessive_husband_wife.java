@@ -28,49 +28,49 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
-        private final String spouseNameEN;
-        private final String spouseNameJP;
-        private final String spouseTitleEN;
-        private final String spouseTitleJP;
+        private final String personEN;
+        private final String personJP;
+        private final String spouseEN;
+        private final String spouseJP;
+        private final String personTitleEN;
+        private final String personTitleJP;
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
-                String spouseNameEN,
-                String spouseNameJP,
-                String spouseGenderID)
+                String personEN,
+                String personJP,
+                String spouseEN,
+                String spouseJP,
+                String personGenderID)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
-            this.spouseNameEN = spouseNameEN;
-            this.spouseNameJP = spouseNameJP;
-            this.spouseTitleEN = getSpouseTitleEN(spouseGenderID);
-            this.spouseTitleJP = getSpouseTitleJP(spouseGenderID);
+            this.personEN = personEN;
+            this.personJP = personJP;
+            this.spouseEN = spouseEN;
+            this.spouseJP = spouseJP;
+            this.personTitleEN = getPersonTitleEN(personGenderID);
+            this.personTitleJP = getPersonTitleJP(personGenderID);
         }
 
-        private String getSpouseTitleEN(String id){
+        private String getPersonTitleEN(String id){
             switch (id){
                 case "Q6581097":
                     return "husband";
                 case "Q6581072":
                     return "wife";
                 default:
-                    return "husband";
+                    return "none";
             }
         }
 
-        private String getSpouseTitleJP(String id){
+        private String getPersonTitleJP(String id){
             switch (id){
                 case "Q6581097":
                     return "夫";
                 case "Q6581072":
                     return "妻";
                 default:
-                    return "夫";
+                    return "none";
             }
         }
     }
@@ -86,25 +86,25 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
     @Override
     protected String getSPARQLQuery(){
         //find person name and blood type
-        return "SELECT ?personName ?personNameLabel ?personNameEN " +
-                " ?spouseNameEN ?spouseNameLabel " +
-                " ?spouseGender " +
+        return "SELECT ?person ?personLabel ?personEN " +
+                " ?spouseEN ?spouseLabel " +
+                " ?personGender " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P26 ?spouseName . " + //has a spouse
-                "    ?spouseName wdt:P21 ?spouseGender . " + //get spouse gender
-                "    ?personName rdfs:label ?personNameEN . " +
-                "    ?spouseName rdfs:label ?spouseNameEN . " +
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P26 ?spouse . " + //has a spouse
+                "    ?person wdt:P21 ?personGender . " + //get person gender
+                "    ?person rdfs:label ?personEN . " +
+                "    ?spouse rdfs:label ?spouseEN . " +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
-                "    FILTER (LANG(?spouseNameEN) = '" +
+                "    FILTER (LANG(?spouseEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
                 WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -117,17 +117,17 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
-            String spouseNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseNameEN");
-            String spouseNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseNameLabel");
-            String spouseGenderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseGenderEN");
-            spouseGenderID = LessonGeneratorUtils.stripWikidataID(spouseGenderID);
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP,
-                    spouseNameEN, spouseNameJP,
-                    spouseGenderID);
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
+            String spouseEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseEN");
+            String spouseJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "spouseLabel");
+            String personGenderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personGender");
+            personGenderID = LessonGeneratorUtils.stripWikidataID(personGenderID);
+            QueryResult qr = new QueryResult(personID, personEN, personJP,
+                    spouseEN, spouseJP,
+                    personGenderID);
             queryResults.add(qr);
         }
     }
@@ -148,24 +148,24 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personNameJP + "の" + qr.spouseTitleJP +
-                "は" + qr.spouseNameJP + "です。";
+        return qr.personJP + "は" + qr.spouseJP +
+                "の" + qr.personTitleJP + "です。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personNameEN);
-        pieces.add("'s");
-        pieces.add(qr.spouseTitleEN);
+        pieces.add(qr.personEN);
         pieces.add("is");
-        pieces.add(qr.spouseNameEN);
+        pieces.add(qr.spouseEN);
+        pieces.add("'s");
+        pieces.add(qr.personTitleEN);
         return pieces;
     }
 
@@ -175,11 +175,11 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
 
     private List<String> puzzlePiecesAcceptableAnswers(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.spouseNameEN);
-        pieces.add("is");
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.spouseEN);
         pieces.add("'s");
-        pieces.add(qr.spouseTitleEN);
+        pieces.add(qr.personTitleEN);
+        pieces.add("is");
+        pieces.add(qr.personEN);
         String answer = QuestionUtils.formatPuzzlePieceAnswer(pieces);
         List<String> acceptableAnswers = new ArrayList<>(1);
         acceptableAnswers.add(answer);
@@ -195,7 +195,7 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -209,15 +209,16 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
         String sentence = formatSentenceJP(qr);
-        String sentence2 = qr.personNameEN + "'s " +
+        String sentence2 = qr.personEN + " is " +
+                qr.spouseEN + "'s " +
                 Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
-                " is " + qr.spouseNameEN + ".";
+                ".";
         return sentence + "\n" + sentence2;
     }
 
 
-    private String fillInBlankMultipleChoiceAnswerspouseName(QueryResult qr){
-        return qr.spouseTitleEN;
+    private String fillInBlankMultipleChoiceAnswer(QueryResult qr){
+        return qr.personTitleEN;
     }
 
     private List<String> fillInBlankMultipleChoiceChoices(){
@@ -230,12 +231,12 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
     private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
         List<QuestionData> questionDataList = new ArrayList<>();
         String question = this.fillInBlankMultipleChoiceQuestion(qr);
-        String answer = fillInBlankMultipleChoiceAnswerspouseName(qr);
+        String answer = fillInBlankMultipleChoiceAnswer(qr);
         List<String> choices = fillInBlankMultipleChoiceChoices();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -249,15 +250,16 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personNameEN + "'s " +
+        String sentence = qr.personEN + " is " +
+                qr.spouseEN + "'s " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
-                " is " + qr.spouseNameEN + ".";
+                ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }
 
     private String fillInBlankAnswer(QueryResult qr){
-        return qr.spouseTitleEN;
+        return qr.personTitleEN;
     }
 
     private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
@@ -267,7 +269,7 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

@@ -26,16 +26,16 @@ public class How_are_you_doing extends Lesson {
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
-        private final String personNameJP;
+        private final String personJP;
         private final String firstNameEN;
 
         private QueryResult(
                 String personID,
-                String personNameJP,
+                String personJP,
                 String firstNameEN)
         {
             this.personID = personID;
-            this.personNameJP = personNameJP;
+            this.personJP = personJP;
             this.firstNameEN = firstNameEN;
         }
     }
@@ -51,19 +51,19 @@ public class How_are_you_doing extends Lesson {
     @Override
     protected String getSPARQLQuery(){
         //find person name and blood type
-        return "SELECT ?personName ?personNameLabel ?firstNameEN " +
+        return "SELECT ?person ?personLabel ?firstNameEN " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P735 ?firstName . " + //has a first name
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P735 ?firstName . " + //has a first name
                 "    ?firstName rdfs:label ?firstNameEN . " +
                 "    FILTER (LANG(?firstNameEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
                 WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -76,12 +76,12 @@ public class How_are_you_doing extends Lesson {
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String firstNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameEN");
 
-            QueryResult qr = new QueryResult(personID, personNameJP, firstNameEN);
+            QueryResult qr = new QueryResult(personID, personJP, firstNameEN);
             queryResults.add(qr);
         }
     }
@@ -96,13 +96,13 @@ public class How_are_you_doing extends Lesson {
             List<QuestionData> chatQuestion = createChatQuestion(qr);
             questionSet.add(chatQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
 
     private List<QuestionData> createChatQuestion(QueryResult qr){
-        String from = qr.personNameJP;
+        String from = qr.personJP;
         ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
         ChatQuestionItem chatItem2 = new ChatQuestionItem(true, "hello " + qr.firstNameEN);
         ChatQuestionItem chatItem3 = new ChatQuestionItem(false, "how are you doing");
@@ -120,7 +120,7 @@ public class How_are_you_doing extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.CHAT_MULTIPLE_CHOICE);
         data.setQuestion(question);
         data.setChoices(choices);

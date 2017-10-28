@@ -33,8 +33,8 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
     private class QueryResult {
 
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
         private final String parentNameEN;
         private final String parentNameJP;
         private final String parentTypeEN;
@@ -42,16 +42,16 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
+                String personEN,
+                String personJP,
                 String parentNameEN,
                 String parentNameJP,
                 boolean isFather
         ) {
 
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
             this.parentNameEN = parentNameEN;
             this.parentNameJP = parentNameJP;
             this.parentTypeEN = isFather ? "father" : "mother";
@@ -71,22 +71,22 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
     @Override
     protected String getSPARQLQuery(){
-        return "SELECT ?personName ?personNameEN ?personNameLabel " +
+        return "SELECT ?person ?personEN ?personLabel " +
                 " ?parentEN ?parentLabel ?instance " +
                 " WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    {?personName wdt:P22 ?parent . " +
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    {?person wdt:P22 ?parent . " +
                 "    BIND ('father' as ?instance) ." +
                 "    ?parent rdfs:label ?parentEN " + //this NEEDS to be in the union
                 "    } UNION " + //is a father
-                "    {?personName wdt:P25 ?parent . " +
+                "    {?person wdt:P25 ?parent . " +
                 "    BIND ('mother' as ?instance) . " +
                 "    ?parent rdfs:label ?parentEN " + //this NEEDS to be in the union
                 "    } . " + //or mother
-                "    ?personName rdfs:label ?personNameEN . " +
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    ?person rdfs:label ?personEN . " +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?parentEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
@@ -94,7 +94,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //JP label if possible
                 "    '" + WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
 
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as person
 
                 "} ";
 
@@ -110,16 +110,16 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++) {
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
 
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String parentNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "parentEN");
             String parentNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "parentLabel");
             String fatherOrMotherString = SPARQLDocumentParserHelper.findValueByNodeName(head, "instance");
             boolean isFather = fatherOrMotherString.equals("father");
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, parentNameEN, parentNameJP, isFather);
+            QueryResult qr = new QueryResult(personID, personEN, personJP, parentNameEN, parentNameJP, isFather);
 
             queryResults.add(qr);
 
@@ -144,7 +144,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
 
@@ -158,15 +158,15 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
     private List<String> fillInBlankMultipleChoiceChoices(QueryResult qr){
         List<String> choices = new ArrayList<>(4);
-        choices.add(qr.personNameEN + "'s");
-        choices.add(qr.personNameEN);
-        choices.add(qr.personNameEN + "s'");
-        choices.add(qr.personNameEN + "s");
+        choices.add(qr.personEN + "'s");
+        choices.add(qr.personEN);
+        choices.add(qr.personEN + "s'");
+        choices.add(qr.personEN + "s");
         return choices;
     }
 
     private String fillInBlankMultipleChoiceAnswer(QueryResult qr){
-        return qr.personNameEN + "'s";
+        return qr.personEN + "'s";
     }
 
     private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
@@ -176,7 +176,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -198,7 +198,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("'s");
         pieces.add(qr.parentTypeEN);
         pieces.add("is");
@@ -214,7 +214,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.parentNameEN);
         pieces.add("is");
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("'s");
         pieces.add(qr.parentTypeEN);
         String answer = QuestionUtils.formatPuzzlePieceAnswer(pieces);
@@ -231,7 +231,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);

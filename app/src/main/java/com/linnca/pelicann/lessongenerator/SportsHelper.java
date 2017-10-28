@@ -102,17 +102,7 @@ public class SportsHelper {
 			String id = SPARQLDocumentParserHelper.findValueByNodeName(n, "sport");
 			int lastIndexID = id.lastIndexOf('/');
 			id = id.substring(lastIndexID+1);
-			//remove the "women's" part (feminist?)
-			name = name.replace("women\'s ", "");
-			//~sport ie water sport
-			//should always be pluralized??
-			//not dancesport
-			if(name.length() > 5 && (name.substring(name.length()-6)).equals(" sport") )
-				name += "s";
-			//other exceptions
-			if (name.equals("association football"))
-				name = "soccer";
-			
+			name = TermAdjuster.adjustSportsEN(name);
 			//decide verb
 			//get # of the word 'played' in the Wikipedia page
 			//to see if the sport should use 'play' as the verb

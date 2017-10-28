@@ -22,33 +22,27 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NAME_is_a_OCCUPATION extends Lesson{
-    public static final String KEY = "NAME_is_a_OCCUPATION";
+public class NAME_creates_art extends Lesson{
+    public static final String KEY = "NAME_creates_art";
 
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
         private final String personEN;
         private final String personJP;
-        private final String occupationEN;
-        private final String occupationJP;
 
         private QueryResult(
                 String personID,
                 String personEN,
-                String personJP,
-                String occupationEN,
-                String occupationJP)
+                String personJP)
         {
             this.personID = personID;
             this.personEN = personEN;
             this.personJP = personJP;
-            this.occupationEN = occupationEN;
-            this.occupationJP = occupationJP;
         }
     }
 
-    public NAME_is_a_OCCUPATION(WikiBaseEndpointConnector connector, LessonListener listener){
+    public NAME_creates_art(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
         super.questionSetsLeftToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
@@ -58,22 +52,18 @@ public class NAME_is_a_OCCUPATION extends Lesson{
 
     @Override
     protected String getSPARQLQuery(){
-        return "SELECT ?person ?personLabel ?personEN " +
-                " ?occupationEN ?occupationLabel " +
+        return "SELECT DISTINCT ?person ?personLabel ?personEN " +
                 "WHERE " +
                 "{" +
                 "    {?person wdt:P31 wd:Q5} UNION " + //is human
                 "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?person wdt:P106 ?occupation . " + //has an occupation
+                "    ?person wdt:P106/wdt:P279* wd:Q483501 . " + //is an artist
                 "    ?person rdfs:label ?personEN . " +
-                "    ?occupation rdfs:label ?occupationEN . " +
                 "    FILTER (LANG(?personEN) = '" +
-                    WikiBaseEndpointConnector.ENGLISH + "') . " +
-                "    FILTER (LANG(?occupationEN) = '" +
-                    WikiBaseEndpointConnector.ENGLISH + "') . " +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
-                    WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
-                    WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
+                WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
+                WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
                 "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
@@ -91,11 +81,7 @@ public class NAME_is_a_OCCUPATION extends Lesson{
             personID = LessonGeneratorUtils.stripWikidataID(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
-            String occupationEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationEN");
-            occupationEN = TermAdjuster.adjustOccupationEN(occupationEN);
-            String occupationJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationLabel");
-
-            QueryResult qr = new QueryResult(personID, personEN, personJP, occupationEN, occupationJP);
+            QueryResult qr = new QueryResult(personID, personEN, personJP);
             queryResults.add(qr);
         }
     }
@@ -110,9 +96,6 @@ public class NAME_is_a_OCCUPATION extends Lesson{
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
-            List<QuestionData> chooseCorrectSpellingQuestion = createChooseCorrectSpellingQuestion(qr);
-            questionSet.add(chooseCorrectSpellingQuestion);
-
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
@@ -121,24 +104,16 @@ public class NAME_is_a_OCCUPATION extends Lesson{
 
     }
 
-    private String NAME_is_OCCUPATION_EN_correct(QueryResult qr){
-        String indefiniteArticle = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
-        String sentence = qr.personEN + " is " + indefiniteArticle + ".";
-        //no need since all names are capitalized?
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
-    }
-
     private String formatSentenceJP(QueryResult qr){
-        return qr.personJP + "は" + qr.occupationJP + "です。";
+        return qr.personJP + "は芸術品を作ります。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personEN);
-        pieces.add("is");
-        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN));
+        pieces.add("creates");
+        pieces.add("art");
         return pieces;
     }
 
@@ -166,61 +141,29 @@ public class NAME_is_a_OCCUPATION extends Lesson{
         return dataList;
     }
 
-    private List<QuestionData> createChooseCorrectSpellingQuestion(QueryResult qr){
-        String question = qr.occupationJP;
-        String answer = qr.occupationEN;
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.CHOOSE_CORRECT_SPELLING);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    //give a hint (first 1 or 2 characters, depending on length of word)
-    private final int hintBorder = 7;
     private String fillInBlankQuestion(QueryResult qr){
-        int hintCt = qr.occupationEN.length() > hintBorder ? 2 : 1;
-        String precedingHint = qr.occupationEN.substring(0,hintCt);
-        String followingHint = qr.occupationEN.substring(qr.occupationEN.length()-hintCt);
-        String indefiniteArticle = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
-        String article;
-        //remove article
-        if (indefiniteArticle.substring(0,2).equals("a "))
-            article = "a";
-        else
-            article = "an";
-
-        String sentence = qr.personEN + " is " + article + " " +
-                precedingHint + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + followingHint + ".";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " " +
+                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + "\n\n" + sentence2;
     }
 
-    private String fillInBlankAnswer(QueryResult qr){
-        int hintCt = qr.occupationEN.length() > hintBorder ? 2 : 1;
-        return qr.occupationEN.substring(hintCt, qr.occupationEN.length()-hintCt);
+    private String fillInBlankAnswer(){
+        return "creates art";
     }
 
-    //in case the user types the whole thing in
-    private List<String> fillInBlankAlternateAnswers(QueryResult qr){
+    //plural/singular
+    private List<String> fillInBlankAlternateAnswers(){
         List<String> answers = new ArrayList<>(1);
-        answers.add(qr.occupationEN);
+        answers.add("create art");
         return answers;
     }
 
     private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
         String question = this.fillInBlankQuestion(qr);
-        String answer = fillInBlankAnswer(qr);
-        List<String> acceptableAnswers = fillInBlankAlternateAnswers(qr);
+        String answer = fillInBlankAnswer();
+        List<String> acceptableAnswers = fillInBlankAlternateAnswers();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);

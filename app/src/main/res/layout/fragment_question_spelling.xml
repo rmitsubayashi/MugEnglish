@@ -35,7 +35,7 @@
                     android:id="@+id/question_spelling_answer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="21sp"
+                    android:textSize="25sp"
                     android:textColor="@color/orange500"
                     />
                 <ImageButton

@@ -34,21 +34,21 @@ public class NAME_is_DEMONYM extends Lesson {
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
         private final String demonymEN;
         private final String demonymJP;
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
+                String personEN,
+                String personJP,
                 String countryJP,
                 String demonymEN)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
             this.demonymEN = demonymEN;
             this.demonymJP = convertCountryToDemonym(countryJP);
         }
@@ -97,24 +97,24 @@ public class NAME_is_DEMONYM extends Lesson {
     protected String getSPARQLQuery(){
         //since there aren't that many Japanese demonyms available,
         //just get the country name and convert it to a demonym by adding "~人"
-        return "SELECT ?personName ?personNameLabel ?personNameEN " +
+        return "SELECT ?person ?personLabel ?personEN " +
                 " ?demonymEN ?countryLabel " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P27 ?country . " + //has a country of citizenship
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P27 ?country . " + //has a country of citizenship
                 "    ?country wdt:P1549 ?demonymEN . " + //and the country has a demonym
-                "    ?personName rdfs:label ?personNameEN . " + //English label
+                "    ?person rdfs:label ?personEN . " + //English label
                 "    FILTER (LANG(?demonymEN) = '" +
                     WikiBaseEndpointConnector.ENGLISH + "') . " + //just get the English demonym
                 "    FILTER (STR(?demonymEN) != 'United States') . " + //United States is noted as a demonym (can't edit out?)
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    FILTER (LANG(?personEN) = '" +
                     WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label {bd:serviceParam wikibase:language '" +
                     WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
                     WikiBaseEndpointConnector.ENGLISH + "' } " +
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -127,14 +127,14 @@ public class NAME_is_DEMONYM extends Lesson {
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String demonymEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "demonymEN");
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, countryJP, demonymEN);
+            QueryResult qr = new QueryResult(personID, personEN, personJP, countryJP, demonymEN);
             queryResults.add(qr);
         }
     }
@@ -152,26 +152,26 @@ public class NAME_is_DEMONYM extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, new ArrayList<VocabularyWord>()));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
         }
 
     }
 
     private String NAME_is_DEMONYM_EN_correct(QueryResult qr){
-        String sentence = qr.personNameEN + " is " + qr.demonymEN + ".";
+        String sentence = qr.personEN + " is " + qr.demonymEN + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personNameJP + "は" + qr.demonymJP + "です。";
+        return qr.personJP + "は" + qr.demonymJP + "です。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("is");
         pieces.add(qr.demonymEN);
         return pieces;
@@ -188,7 +188,7 @@ public class NAME_is_DEMONYM extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -203,7 +203,7 @@ public class NAME_is_DEMONYM extends Lesson {
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personNameEN + " is " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence = qr.personEN + " is " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }
@@ -243,7 +243,7 @@ public class NAME_is_DEMONYM extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(qr.personNameJP);
+            data.setTopic(qr.personJP);
             data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
             data.setQuestion(question);
             data.setChoices(choices);

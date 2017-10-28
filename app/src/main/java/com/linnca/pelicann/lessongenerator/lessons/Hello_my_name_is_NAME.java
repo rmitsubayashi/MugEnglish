@@ -26,17 +26,17 @@ public class Hello_my_name_is_NAME extends Lesson {
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP)
+                String personEN,
+                String personJP)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
         }
     }
 
@@ -51,18 +51,18 @@ public class Hello_my_name_is_NAME extends Lesson {
     @Override
     protected String getSPARQLQuery(){
         //find person name and blood type
-        return "SELECT ?personName ?personNameLabel ?personNameEN " +
+        return "SELECT ?person ?personLabel ?personEN " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName rdfs:label ?personNameEN . " +
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person rdfs:label ?personEN . " +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
                 WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -75,12 +75,12 @@ public class Hello_my_name_is_NAME extends Lesson {
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP);
+            QueryResult qr = new QueryResult(personID, personEN, personJP);
             queryResults.add(qr);
         }
     }
@@ -97,28 +97,28 @@ public class Hello_my_name_is_NAME extends Lesson {
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, vocabularyWords));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
     private String formatSentenceEN(QueryResult qr){
-        return "Hello, my name is " + qr.personNameEN + ".";
+        return "Hello, my name is " + qr.personEN + ".";
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return "こんにちは、私の名前は" + qr.personNameJP + "です。";
+        return "こんにちは、私の名前は" + qr.personJP + "です。";
     }
 
     private List<VocabularyWord> getVocabularyWords(QueryResult qr){
         VocabularyWord hello = new VocabularyWord("","hello", "こんにちは",
                 formatSentenceEN(qr), formatSentenceJP(qr), KEY);
         VocabularyWord my = new VocabularyWord("","my", "私の",
-                "My name is " + qr.personNameEN, "私の名前は" + qr.personNameJP + "です。", KEY);
+                "My name is " + qr.personEN, "私の名前は" + qr.personJP + "です。", KEY);
         VocabularyWord name = new VocabularyWord("", "name","名前",
-                "My name is " + qr.personNameEN, "私の名前は" + qr.personNameJP + "です。", KEY);
+                "My name is " + qr.personEN, "私の名前は" + qr.personJP + "です。", KEY);
         VocabularyWord is = new VocabularyWord("", "is","~は",
-                "My name is " + qr.personNameEN, "私の名前は" + qr.personNameJP + "です。", KEY);
+                "My name is " + qr.personEN, "私の名前は" + qr.personJP + "です。", KEY);
         List<VocabularyWord> words = new ArrayList<>(4);
         words.add(hello);
         words.add(my);
@@ -128,7 +128,7 @@ public class Hello_my_name_is_NAME extends Lesson {
     }
 
     private List<QuestionData> createChatQuestion(QueryResult qr){
-        String from = qr.personNameJP;
+        String from = qr.personJP;
         ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
         ChatQuestionItem chatItem2 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
         List<ChatQuestionItem> chatItems = new ArrayList<>(2);
@@ -139,7 +139,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.CHAT);
         data.setQuestion(question);
         data.setChoices(null);
@@ -157,7 +157,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         List<String> pieces = new ArrayList<>();
         pieces.add("hello");
         pieces.add("my name is");
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         return pieces;
     }
 
@@ -172,7 +172,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);

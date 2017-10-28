@@ -29,22 +29,22 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     private class QueryResult {
 
         private final String countryID;
-        private final String countryNameEN;
-        private final String countryNameJP;
+        private final String countryEN;
+        private final String countryJP;
         private final String governmentEN;
         private final String governmentJP;
 
         private QueryResult(
                 String countryID,
-                String countryNameEN,
-                String countryNameJP,
+                String countryEN,
+                String countryJP,
                 String governmentEN,
                 String governmentJP
         ) {
 
             this.countryID = countryID;
-            this.countryNameEN = countryNameEN;
-            this.countryNameJP = countryNameJP;
+            this.countryEN = countryEN;
+            this.countryJP = countryJP;
             this.governmentEN = governmentEN;
             this.governmentJP = governmentJP;
         }
@@ -63,15 +63,15 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
     @Override
     protected String getSPARQLQuery(){
-        return "SELECT ?countryName ?countryNameEN ?countryNameLabel " +
+        return "SELECT ?country ?countryEN ?countryLabel " +
                 " ?governmentEN ?governmentLabel " +
                 "WHERE " +
                 "{" +
-                "    ?countryName wdt:P31 wd:Q6256 . " + //is a country
-                "    ?countryName wdt:P122 ?government . " + //has a basic form of gov
-                "    ?countryName rdfs:label ?countryNameEN . " +
+                "    ?country wdt:P31 wd:Q6256 . " + //is a country
+                "    ?country wdt:P122 ?government . " + //has a basic form of gov
+                "    ?country rdfs:label ?countryEN . " +
                 "    ?government rdfs:label ?governmentEN . " +
-                "    FILTER (LANG(?countryNameEN) = '" +
+                "    FILTER (LANG(?countryEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?governmentEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
@@ -79,7 +79,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //JP label if possible
                 "    '" + WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
 
-                "    BIND (wd:%s as ?countryName) . " + //binding the ID of entity as ?country
+                "    BIND (wd:%s as ?country) . " + //binding the ID of entity as ?country
 
                 "} ";
 
@@ -103,15 +103,15 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         //ie 110 & 119
         for (int i=0; i<resultLength; i++) {
             Node head = allResults.item(i);
-            String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryName");
+            String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
 
             countryID = LessonGeneratorUtils.stripWikidataID(countryID);
-            String countryNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryNameEN");
-            String countryNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryNameLabel");
+            String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
+            String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String governmentEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "governmentEN");
             String governmentJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "governmentLabel");
             
-            QueryResult qr = new QueryResult(countryID, countryNameEN, countryNameJP, governmentEN, governmentJP);
+            QueryResult qr = new QueryResult(countryID, countryEN, countryJP, governmentEN, governmentJP);
 
             queryResults.add(qr);
 
@@ -143,7 +143,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, null));
         }
 
 
@@ -151,13 +151,13 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     }
 
     private List<QuestionData> spellingQuestion(QueryResult qr){
-        String question = qr.countryNameJP;
+        String question = qr.countryJP;
 
-        String answer = qr.countryNameEN;
+        String answer = qr.countryEN;
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.SPELLING);
         data.setQuestion(question);
         data.setChoices(null);
@@ -174,23 +174,23 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     }
 
     private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
-        String lowercaseCountry = qr.countryNameEN.toLowerCase();
+        String lowercaseCountry = qr.countryEN.toLowerCase();
         List<String> responses = new ArrayList<>();
         responses.add(lowercaseCountry);
-        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryNameEN;
+        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryEN;
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
     private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
-        String question = qr.countryNameJP;
-        String answer = qr.countryNameEN;
+        String question = qr.countryJP;
+        String answer = qr.countryEN;
         FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
         feedbackPairs.add(feedbackPair);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
         data.setQuestion(question);
         data.setChoices(null);
@@ -205,9 +205,9 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     }
 
     private String fillInBlankInputQuestion1(QueryResult qr){
-        String sentence1 = qr.countryNameJP + "の政治体制は" + qr.governmentJP + "です。";
+        String sentence1 = qr.countryJP + "の政治体制は" + qr.governmentJP + "です。";
         String government = GrammarRules.indefiniteArticleBeforeNoun(qr.governmentEN);
-        String sentence2 = qr.countryNameEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence2 = qr.countryEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " is " + government + ".";
         return sentence1 + "\n\n" + sentence2;
     }
@@ -223,7 +223,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
@@ -238,7 +238,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     }
 
     private String fillInBlankInputQuestion2(QueryResult qr){
-        String sentence1 = qr.countryNameJP + "の政治体制は" + qr.governmentJP + "です。";
+        String sentence1 = qr.countryJP + "の政治体制は" + qr.governmentJP + "です。";
         String government = GrammarRules.indefiniteArticleBeforeNoun(qr.governmentEN);
         String sentence2 = Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " government is " + government + ".";
@@ -248,7 +248,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
 
     private String fillInBlankInputAnswer2(QueryResult qr){
-        return qr.countryNameEN + "'s";
+        return qr.countryEN + "'s";
     }
 
     private List<QuestionData> createFillInBlankInputQuestion2(QueryResult qr){
@@ -257,7 +257,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

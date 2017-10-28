@@ -34,21 +34,21 @@ public class NAME_is_AGE_years_old extends Lesson {
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
         private final int age;
         private boolean singular;
         private final String birthday;
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
+                String personEN,
+                String personJP,
                 String birthdayString)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
             this.age = getAge(birthdayString);
             this.birthday = getBirthday(birthdayString);
         }
@@ -84,21 +84,21 @@ public class NAME_is_AGE_years_old extends Lesson {
     @Override
     protected String getSPARQLQuery(){
         //find person with birthday and is alive
-        return "SELECT ?personName ?personNameLabel ?personNameEN " +
+        return "SELECT ?person ?personLabel ?personEN " +
                 " ?birthday " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P569 ?birthday . " + //has a birthday
-                "    FILTER NOT EXISTS { ?personName wdt:P570 ?dateDeath } . " + //but not a death date
-                "    ?personName rdfs:label ?personNameEN . " +
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P569 ?birthday . " + //has a birthday
+                "    FILTER NOT EXISTS { ?person wdt:P570 ?dateDeath } . " + //but not a death date
+                "    ?person rdfs:label ?personEN . " +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
                 WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -111,13 +111,13 @@ public class NAME_is_AGE_years_old extends Lesson {
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String birthday = SPARQLDocumentParserHelper.findValueByNodeName(head, "birthday");
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, birthday);
+            QueryResult qr = new QueryResult(personID, personEN, personJP, birthday);
             queryResults.add(qr);
         }
     }
@@ -136,7 +136,7 @@ public class NAME_is_AGE_years_old extends Lesson {
             List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
             questionSet.add(fillInBlankQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
@@ -144,10 +144,10 @@ public class NAME_is_AGE_years_old extends Lesson {
     private String fillInBlankQuestion(QueryResult qr){
         //one year old vs two years old
         String yearString = qr.singular ? "year" : "years";
-        String sentence = qr.personNameEN + " is " +
+        String sentence = qr.personEN + " is " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " " + yearString + " old.";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        String sentence2 = "ヒント：" + qr.personNameJP + "の誕生日は" + qr.birthday + "です";
+        String sentence2 = "ヒント：" + qr.personJP + "の誕生日は" + qr.birthday + "です";
 
         return sentence + "\n\n" + sentence2;
     }
@@ -181,7 +181,7 @@ public class NAME_is_AGE_years_old extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
@@ -197,8 +197,8 @@ public class NAME_is_AGE_years_old extends Lesson {
     }
 
     private String fillInBlankQuestion2(QueryResult qr){
-        String sentence = qr.personNameJP + "は" + Integer.toString(qr.age) + "歳です。";
-        String sentence2 = qr.personNameEN + " is " + Integer.toString(qr.age) + " " +
+        String sentence = qr.personJP + "は" + Integer.toString(qr.age) + "歳です。";
+        String sentence2 = qr.personEN + " is " + Integer.toString(qr.age) + " " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence + "\n\n" + sentence2;
@@ -225,7 +225,7 @@ public class NAME_is_AGE_years_old extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

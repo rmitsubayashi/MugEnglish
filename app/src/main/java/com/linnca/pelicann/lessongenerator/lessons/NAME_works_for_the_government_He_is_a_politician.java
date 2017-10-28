@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
@@ -29,8 +30,8 @@ import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
-    public static final String KEY = "NAME_is_at_work_He_is_at_EMPLOYER";
+public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
+    public static final String KEY = "NAME_works_for_the government_He_is_a_politician";
 
     private final List<QueryResult> queryResults = new ArrayList<>();
 
@@ -38,9 +39,6 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         private final String personID;
         private final String personEN;
         private final String personJP;
-        private final String employerID;
-        private final String employerEN;
-        private final String employerJP;
         private final String genderEN;
         private final String genderJP;
 
@@ -48,26 +46,20 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
                 String personID,
                 String personEN,
                 String personJP,
-                String employerID,
-                String employerEN,
-                String employerJP,
                 boolean isMale
-                )
+        )
         {
             this.personID = personID;
             this.personEN = personEN;
             this.personJP = personJP;
-            this.employerID = employerID;
-            this.employerEN = employerEN;
-            this.employerJP = employerJP;
             this.genderEN = isMale ? "he" : "she";
             this.genderJP = isMale ? "彼" : "彼女";
         }
     }
 
-    public NAME_is_at_work_He_is_at_EMPLOYER(WikiBaseEndpointConnector connector, LessonListener listener){
+    public NAME_works_for_the_government_He_is_a_politician(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsLeftToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
@@ -75,21 +67,15 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
 
     @Override
     protected String getSPARQLQuery(){
-        //since there aren't that many Japanese employers available,
-        //just get the employer name and convert it to a employer by adding "~人"
         return "SELECT ?person ?personLabel ?personEN " +
-                " ?employer ?employerEN ?employerLabel " +
                 " ?gender " +
                 "WHERE " +
                 "{" +
                 "    {?person wdt:P31 wd:Q5} UNION " + //is human
                 "    {?person wdt:P31 wd:Q15632617} . " + //or fictional human
                 "    ?person wdt:P21 ?gender . " + //has gender
-                "    ?person wdt:P108 ?employer . " + //has an employer
+                "    ?person wdt:P106 wd:Q82955 . " + //is a politician
                 "    ?person rdfs:label ?personEN . " + //English label
-                "    ?employer rdfs:label ?employerEN . " + //English label
-                "    FILTER (LANG(?employerEN) = '" +
-                WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label {bd:serviceParam wikibase:language '" +
@@ -112,10 +98,6 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
             personID = LessonGeneratorUtils.stripWikidataID(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
-            String employerID = SPARQLDocumentParserHelper.findValueByNodeName(head, "employerName");
-            employerID = LessonGeneratorUtils.stripWikidataID(employerID);
-            String employerJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "employerLabel");
-            String employerEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "employerEN");
             String genderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "gender");
             genderID = LessonGeneratorUtils.stripWikidataID(genderID);
             boolean isMale;
@@ -130,7 +112,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
                     isMale = true;
             }
 
-            QueryResult qr = new QueryResult(personID, personEN, personJP, employerID, employerEN, employerJP, isMale);
+            QueryResult qr = new QueryResult(personID, personEN, personJP, isMale);
             queryResults.add(qr);
         }
     }
@@ -145,7 +127,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
             List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);
             questionSet.add(fillInBlankMultipleChoiceQuestion);
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
+            List<QuestionData> fillInBlankQuestion = createFillInBlankMultipleChoiceQuestion2(qr);
             questionSet.add(fillInBlankQuestion);
 
             super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
@@ -153,24 +135,13 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
 
     }
 
-    /* Note that some of these employers may need the article 'the' before it.
-     * We can't guarantee that all of them will be accurate...
-     * Just make sure to let the user be aware that there may be some mistakes
-     * */
-    private String NAME_is_at_work_EN(QueryResult qr){
-        String sentence = qr.personEN + " is at work.";
-        //no need since all names are capitalized?
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
-    }
-
     private String formatSentenceJP(QueryResult qr){
-        return qr.personJP + "は働いています。"+qr.genderJP+"は"+qr.employerJP+"にいます。";
+        return qr.personJP + "は政府で働いています。" + qr.genderJP + "は政治家です。";
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
-        String sentence = NAME_is_at_work_EN(qr);
-        String sentence2 = Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " is at " + qr.employerEN + ".";
+        String sentence = qr.personEN + " works for the government.";
+        String sentence2 = Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " is a politician.";
         return sentence + "\n" + sentence2;
     }
 
@@ -179,7 +150,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         return GrammarRules.uppercaseFirstLetterOfSentence(qr.genderEN);
     }
 
-    private List<String> fillInBlankMultipleChoiceChoices(QueryResult qr){
+    private List<String> fillInBlankMultipleChoiceChoices(){
         List<String> choices = new ArrayList<>(2);
         choices.add("He");
         choices.add("She");
@@ -190,7 +161,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         String question = this.fillInBlankMultipleChoiceQuestion(qr);
         String answer = fillInBlankMultipleChoiceAnswer(qr);
         List<QuestionData> questionDataList = new ArrayList<>();
-        List<String> choices = fillInBlankMultipleChoiceChoices(qr);
+        List<String> choices = fillInBlankMultipleChoiceChoices();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -207,39 +178,142 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         return questionDataList;
     }
 
-    private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personEN + " is " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
-        String sentence2 = qr.genderEN + " is at " + qr.employerEN + ".";
+    private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String sentence = qr.personEN + " works " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence2 = qr.genderEN + " is a politician.";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence + "\n" + sentence2;
     }
 
-    private String fillInBlankAnswer(){
-        return "at work";
+    private String fillInBlankMultipleChoiceAnswer2(){
+        return "for the government";
     }
 
-    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
-        String question = this.fillInBlankQuestion(qr);
-        String answer = fillInBlankAnswer();
+    private List<String> fillInBlankMultipleChoiceChoices2(){
+        List<String> choices = new ArrayList<>(3);
+        choices.add("at the government");
+        choices.add("for the government");
+        choices.add("from the government");
+
+        return choices;
+    }
+
+    private FeedbackPair fillInBlankMultipleChoiceFeedback2(){
+        String response = "at the government";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        String feedback = "atは特定な場所を指すときに使います。政府（government）は具体的な政府機関ではないので、atは使いません。";
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion2(qr);
+        String answer = fillInBlankMultipleChoiceAnswer2();
+        List<String> choices = fillInBlankMultipleChoiceChoices2();
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(fillInBlankMultipleChoiceFeedback2());
         List<QuestionData> questionDataList = new ArrayList<>();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
-        data.setChoices(null);
+        data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-
+        data.setFeedback(allFeedback);
 
         questionDataList.add(data);
 
         return questionDataList;
     }
 
+    private List<QuestionData> createTranslateQuestionGeneric(){
+        String question = "政府";
+        String answer = "government";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
 
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
 
-    //TODO preposition question
+        return dataList;
+    }
+
+    private List<QuestionData> createSpellingQuestionGeneric(){
+        String question = "政治家";
+        String answer = "politician";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(QuestionTypeMappings.CHOOSE_CORRECT_SPELLING);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private List<QuestionData> createSpellingQuestionGeneric2(){
+        String question = "政治家";
+        String answer = "politician";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(QuestionTypeMappings.SPELLING);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    @Override
+    protected List<List<String>> getGenericQuestionIDSets(){
+        List<List<String>> set = new ArrayList<>(3);
+        for (int index=1; index<=3; index++){
+            List<String> questionIDs = new ArrayList<>(1);
+            questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, index));
+            set.add(questionIDs);
+        }
+        return set;
+    }
+
+    @Override
+    protected List<QuestionData> getGenericQuestions(){
+        List<QuestionData> toSaveSet1 = createTranslateQuestionGeneric();
+        List<QuestionData> toSaveSet2 = createSpellingQuestionGeneric();
+        List<QuestionData> toSaveSet3 = createSpellingQuestionGeneric2();
+        List<QuestionData> questions = new ArrayList<>(3);
+        questions.addAll(toSaveSet1);
+        questions.addAll(toSaveSet2);
+        questions.addAll(toSaveSet3);
+        int questionSize = questions.size();
+        for (int i=1; i<= questionSize; i++){
+            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i);
+            questions.get(i-1).setId(id);
+        }
+
+        return questions;
+
+    }
 }

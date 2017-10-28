@@ -30,22 +30,22 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
     private class QueryResult {
 
         private final String placeID;
-        private final String placeNameEN;
-        private final String placeNameJP;
+        private final String placeEN;
+        private final String placeJP;
         private final String countryCityEN;
         private final String countryCityJP;
         private final boolean isCountry;
 
         private QueryResult(
                 String placeID,
-                String placeNameEN,
-                String placeNameJP,
+                String placeEN,
+                String placeJP,
                 boolean isCountry
         ) {
 
             this.placeID = placeID;
-            this.placeNameEN = placeNameEN;
-            this.placeNameJP = placeNameJP;
+            this.placeEN = placeEN;
+            this.placeJP = placeJP;
             this.countryCityEN = isCountry ? "country" : "city";
             this.countryCityJP = isCountry ? "国" : "都市";
             this.isCountry = isCountry;
@@ -65,21 +65,21 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
 
     @Override
     protected String getSPARQLQuery(){
-        return "SELECT DISTINCT ?placeName ?placeNameEN ?placeNameLabel ?instance " +
+        return "SELECT DISTINCT ?place ?placeEN ?placeLabel ?instance " +
                 " WHERE " +
                 "{" +
-                "    {?placeName wdt:P31 wd:Q6256 . " +
+                "    {?place wdt:P31 wd:Q6256 . " +
                 "    BIND ('country' as ?instance)} UNION " + //is a country
-                "    {?placeName wdt:P31/wdt:P279* wd:Q515 . " +
+                "    {?place wdt:P31/wdt:P279* wd:Q515 . " +
                 "    BIND ('city' as ?instance)} . " + //or city
-                "    ?placeName rdfs:label ?placeNameEN . " +
-                "    FILTER (LANG(?placeNameEN) = '" +
+                "    ?place rdfs:label ?placeEN . " +
+                "    FILTER (LANG(?placeEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //JP label if possible
                 "    '" + WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
 
-                "    BIND (wd:%s as ?placeName) . " + //binding the ID of entity as place
+                "    BIND (wd:%s as ?place) . " + //binding the ID of entity as place
 
                 "} ";
 
@@ -99,14 +99,14 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
 
         for (int i=0; i<resultLength; i++) {
             Node head = allResults.item(i);
-            String placeID = SPARQLDocumentParserHelper.findValueByNodeName(head, "placeName");
+            String placeID = SPARQLDocumentParserHelper.findValueByNodeName(head, "place");
 
             placeID = LessonGeneratorUtils.stripWikidataID(placeID);
-            String placeNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "placeNameEN");
-            String placeNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "placeNameLabel");
+            String placeEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "placeEN");
+            String placeJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "placeLabel");
             String cityOrCountryString = SPARQLDocumentParserHelper.findValueByNodeName(head, "instance");
             boolean isCountry = cityOrCountryString.equals("country");
-            QueryResult qr = new QueryResult(placeID, placeNameEN, placeNameJP, isCountry);
+            QueryResult qr = new QueryResult(placeID, placeEN, placeJP, isCountry);
 
             queryResults.add(qr);
 
@@ -131,7 +131,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
             List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
             questionSet.add(fillInBlankInputQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.placeID, qr.placeNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.placeID, qr.placeJP, null));
         }
 
 
@@ -139,11 +139,11 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
-        String placeName = qr.placeNameEN;
+        String place = qr.placeEN;
         if (qr.isCountry){
-            placeName = GrammarRules.definiteArticleBeforeCountry(placeName);
+            place = GrammarRules.definiteArticleBeforeCountry(place);
         }
-        String sentence = placeName + " is a " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence = place + " is a " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
@@ -161,7 +161,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.placeNameJP);
+        data.setTopic(qr.placeJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -176,11 +176,11 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
     }
 
     private String fillInBlankInputQuestion(QueryResult qr){
-        String placeName = qr.placeNameEN;
+        String place = qr.placeEN;
         if (qr.isCountry){
-            placeName = GrammarRules.definiteArticleBeforeCountry(placeName);
+            place = GrammarRules.definiteArticleBeforeCountry(place);
         }
-        String sentence = placeName + " is a " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        String sentence = place + " is a " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
@@ -195,7 +195,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.placeNameJP);
+        data.setTopic(qr.placeJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

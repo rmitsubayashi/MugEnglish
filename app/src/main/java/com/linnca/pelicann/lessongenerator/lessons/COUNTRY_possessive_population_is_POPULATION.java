@@ -29,23 +29,23 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     private class QueryResult {
 
         private final String countryID;
-        private final String countryNameEN;
-        private final String countryNameJP;
+        private final String countryEN;
+        private final String countryJP;
         //highest population is 1.4 bil (ints can go up to 2~ bil)
         private final int population;
         private final String yearString;
 
         private QueryResult(
                 String countryID,
-                String countryNameEN,
-                String countryNameJP,
+                String countryEN,
+                String countryJP,
                 int population,
                 String yearString
         ) {
 
             this.countryID = countryID;
-            this.countryNameEN = countryNameEN;
-            this.countryNameJP = countryNameJP;
+            this.countryEN = countryEN;
+            this.countryJP = countryJP;
             this.population = population;
             this.yearString = yearString;
         }
@@ -106,14 +106,14 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
 
             countryID = LessonGeneratorUtils.stripWikidataID(countryID);
-            String countryNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
-            String countryNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
+            String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
+            String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String populationString = SPARQLDocumentParserHelper.findValueByNodeName(head, "populationCt");
             int population = Integer.parseInt(populationString);
             //optional
             String year = SPARQLDocumentParserHelper.findValueByNodeName(head, "year");
             year = LessonGeneratorUtils.getYearFromFullISO8601DateTime(year);
-            QueryResult qr = new QueryResult(countryID, countryNameEN, countryNameJP, population, year);
+            QueryResult qr = new QueryResult(countryID, countryEN, countryJP, population, year);
 
             queryResults.add(qr);
 
@@ -143,7 +143,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, null));
         }
 
 
@@ -151,23 +151,23 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     }
 
     private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
-        String lowercaseCountry = qr.countryNameEN.toLowerCase();
+        String lowercaseCountry = qr.countryEN.toLowerCase();
         List<String> responses = new ArrayList<>();
         responses.add(lowercaseCountry);
-        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryNameEN;
+        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryEN;
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
     private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
-        String question = qr.countryNameJP;
-        String answer = qr.countryNameEN;
+        String question = qr.countryJP;
+        String answer = qr.countryEN;
         FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
         feedbackPairs.add(feedbackPair);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
         data.setQuestion(question);
         data.setChoices(null);
@@ -182,9 +182,9 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     }
 
     private String fillInBlankInputQuestion1(QueryResult qr){
-        String sentence1 = qr.countryNameJP + "の人口は" + Integer.toString(qr.population) + "です。";
+        String sentence1 = qr.countryJP + "の人口は" + Integer.toString(qr.population) + "です。";
 
-        String sentence2 = qr.countryNameEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence2 = qr.countryEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " is " + LessonGeneratorUtils.convertIntToStringWithCommas(qr.population) + ".";
         String sentence3 = "";
         if (!qr.yearString.equals("")){
@@ -204,7 +204,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);
@@ -219,9 +219,9 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     }
 
     private String fillInBlankInputQuestion2(QueryResult qr){
-        String sentence1 = qr.countryNameEN + "'s population is " +
+        String sentence1 = qr.countryEN + "'s population is " +
                 LessonGeneratorUtils.convertIntToWord(qr.population) + ".";
-        String sentence2 = qr.countryNameJP + "の人口は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + "です。";
+        String sentence2 = qr.countryJP + "の人口は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + "です。";
         String sentence3 = "";
         if (!qr.yearString.equals("")){
             sentence3 = "\n(" + qr.yearString + ")";
@@ -241,7 +241,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryNameJP);
+        data.setTopic(qr.countryJP);
         data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
         data.setQuestion(question);
         data.setChoices(null);

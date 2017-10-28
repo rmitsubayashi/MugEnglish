@@ -18,6 +18,7 @@ import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME_I_am_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.Hi_hey_whats_up;
 import com.linnca.pelicann.lessongenerator.lessons.How_are_you_doing;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_creates_art;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_AGE_years_old;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_AGE_years_old_NAME_is_a_GENDER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
@@ -28,9 +29,16 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_at_work_He_is_at_EMPL
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_COUNTRY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT_SPORT_is_a_individual_team_sport;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT_SPORT_is_a_water_sport;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_first_last_name_is_NAME;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_mother_father_is_NAME2;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_at_EMPLOYER;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_EMPLOYER;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_the_government_He_is_a_politician;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_books;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_music;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_0_3;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_10s;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_11_19;
@@ -40,6 +48,7 @@ import com.linnca.pelicann.lessongenerator.lessons.Numbers_7_9;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_hundred_billion;
 import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_COUNTRY_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.Stand_up_sit_down;
+import com.linnca.pelicann.lessongenerator.lessons.TEAM_is_a_SPORT_team;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
 import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
 import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
@@ -74,7 +83,7 @@ public class LessonHierarchyViewer {
         final String body = "からだ";
         final int bodyIconID = R.drawable.ic_body;
         final String action = "どうさ";
-        final int actionIConID = R.drawable.ic_action;
+        final int actionIconID = R.drawable.ic_action;
 
         List<LessonListRow> lessonRows;
         LessonListRow row;
@@ -219,7 +228,7 @@ public class LessonHierarchyViewer {
         lessonRows.add(row);
 
         row = new LessonListRow();
-        col1Data = new LessonData(Stand_up_sit_down.KEY, action, R.layout.description_stand_up_sit_down, null, 100, R.color.lblue700, actionIConID);
+        col1Data = new LessonData(Stand_up_sit_down.KEY, action, R.layout.description_stand_up_sit_down, null, 100, R.color.lblue700, actionIconID);
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(Numbers_10s.KEY);
         col2Data = new LessonData(Numbers_21_99.KEY, numbers, R.layout.description_numbers_21_99, col2Prerequisites, 100, R.color.lblue300, numbersIconID);
@@ -230,7 +239,7 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(Stand_up_sit_down.KEY);
-        col1Data = new LessonData(Walk_run.KEY, action, R.layout.description_walk_run, col1Prerequisites, 100, R.color.lblue700, actionIConID);
+        col1Data = new LessonData(Walk_run.KEY, action, R.layout.description_walk_run, col1Prerequisites, 100, R.color.lblue700, actionIconID);
         row.setCol1(col1Data);
         lessonRows.add(row);
 
@@ -252,7 +261,7 @@ public class LessonHierarchyViewer {
         col2Prerequisites = new ArrayList<>(2);
         col2Prerequisites.add(Numbers_21_99.KEY);
         col2Prerequisites.add(Numbers_11_19.KEY);
-        col2Data = new LessonData(Numbers_hundred_billion.KEY, action, null, col2Prerequisites, 100, R.color.lblue300, numbersIconID);
+        col2Data = new LessonData(Numbers_hundred_billion.KEY, numbers, null, col2Prerequisites, 100, R.color.lblue300, numbersIconID);
         col3Data = new LessonData(COUNTRY_possessive_government_is_a_GOVERNMENT.KEY, places, null, null, 100, R.color.lblue700, placesIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
@@ -289,6 +298,95 @@ public class LessonHierarchyViewer {
         col2Prerequisites.add(COUNTRY_possessive_area_is_AREA.KEY);
         col2Data = new LessonData("id_review4", review, null, col2Prerequisites, 100, 0, 0);
         col2Data.setPrerequisiteLeeway(0);
+        row.setCol2(col2Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        col1Data = new LessonData(NAME_writes_books.KEY, occupations, null, null, 100, R.color.lblue300, peopleIconID);
+        col2Data = new LessonData(NAME_plays_SPORT_SPORT_is_a_water_sport.KEY, occupations, null, null, 100, R.color.lblue300, peopleIconID);
+        col3Data = new LessonData(NAME_works_for_the_government_He_is_a_politician.KEY, occupations, null, null, 100, R.color.lblue300, peopleIconID);
+        row.setCol1(col1Data);
+        row.setCol2(col2Data);
+        row.setCol3(col3Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        col1Prerequisites = new ArrayList<>(1);
+        col1Prerequisites.add(NAME_writes_books.KEY);
+        col1Data = new LessonData(NAME_writes_music.KEY, occupations, null, col1Prerequisites, 100, R.color.lblue300, peopleIconID);
+        col2Prerequisites = new ArrayList<>(1);
+        col2Prerequisites.add(NAME_plays_SPORT_SPORT_is_a_water_sport.KEY);
+        col2Data = new LessonData(NAME_plays_SPORT_SPORT_is_a_individual_team_sport.KEY, occupations, null, col2Prerequisites, 100, R.color.lblue300, peopleIconID);
+        col3Prerequisites = new ArrayList<>(1);
+        col3Prerequisites.add(NAME_works_for_the_government_He_is_a_politician.KEY);
+        col3Data = new LessonData(NAME_works_for_EMPLOYER.KEY, occupations, null, col3Prerequisites, 100, R.color.lblue300, peopleIconID);
+        row.setCol1(col1Data);
+        row.setCol2(col2Data);
+        row.setCol3(col3Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        col1Prerequisites = new ArrayList<>(1);
+        col1Prerequisites.add(NAME_writes_music.KEY);
+        col1Data = new LessonData(NAME_creates_art.KEY, occupations, null, col1Prerequisites, 100, R.color.lblue300, peopleIconID);
+        col2Prerequisites = new ArrayList<>(1);
+        col2Prerequisites.add(NAME_plays_SPORT_SPORT_is_a_individual_team_sport.KEY);
+        col2Data = new LessonData(TEAM_is_a_SPORT_team.KEY, occupations, null, col2Prerequisites, 100, R.color.lblue300, peopleIconID);
+        row.setCol1(col1Data);
+        row.setCol2(col2Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        row.setReview(true);
+        col2Prerequisites = new ArrayList<>(3);
+        col2Prerequisites.add(NAME_creates_art.KEY);
+        col2Prerequisites.add(TEAM_is_a_SPORT_team.KEY);
+        col2Prerequisites.add(NAME_works_for_EMPLOYER.KEY);
+        col2Data = new LessonData("id_review5", review, null, col2Prerequisites, 100, 0, 0);
+        row.setCol2(col2Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        col1Data = new LessonData("key1", action, null, null, 100, R.color.lblue300, actionIconID);
+        col2Data = new LessonData("key2", people, null, null, 100, R.color.lblue500, peopleIconID);
+        col3Data = new LessonData("key3", action, null, null, 100, R.color.lblue300, actionIconID);
+        row.setCol1(col1Data);
+        row.setCol2(col2Data);
+        row.setCol3(col3Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        col1Data = new LessonData("key4", greetings, null, null, 100, R.color.lblue500, greetingsIconID);
+        col2Prerequisites = new ArrayList<>(3);
+        col2Prerequisites.add("key1");
+        col2Prerequisites.add("key2");
+        col2Prerequisites.add("key3");
+        col2Data = new LessonData("key5", places, null, col2Prerequisites, 100, R.color.lblue300, placesIconID);
+        col3Data = new LessonData("key6", people, null, null, 100, R.color.lblue500, peopleIconID);
+        row.setCol1(col1Data);
+        row.setCol2(col2Data);
+        row.setCol3(col3Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        col1Data = new LessonData("key7", people, null, null, 100, R.color.lblue700, peopleIconID);
+        col2Data = new LessonData("key8", places, null, null, 100, R.color.lblue300, peopleIconID);
+        col3Data = new LessonData(NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION.KEY, occupations, null, null, 100, R.color.lblue700, peopleIconID);
+        row.setCol1(col1Data);
+        row.setCol2(col2Data);
+        row.setCol3(col3Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        row.setReview(true);
+        col2Prerequisites = new ArrayList<>(6);
+        col2Prerequisites.add("key4");
+        col2Prerequisites.add("key5");
+        col2Prerequisites.add("key6");
+        col2Prerequisites.add("key7");
+        col2Prerequisites.add("key8");
+        col2Prerequisites.add(NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION.KEY);
+        col2Data = new LessonData("id_review6", review, null, col2Prerequisites, 100, 0, 0);
         row.setCol2(col2Data);
         lessonRows.add(row);
 

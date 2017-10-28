@@ -37,21 +37,21 @@ public class NAME_is_from_COUNTRY extends Lesson {
 
     private class QueryResult {
         private final String personID;
-        private final String personNameEN;
-        private final String personNameJP;
+        private final String personEN;
+        private final String personJP;
         private final String countryEN;
         private final String countryJP;
 
         private QueryResult(
                 String personID,
-                String personNameEN,
-                String personNameJP,
+                String personEN,
+                String personJP,
                 String countryJP,
                 String countryEN)
         {
             this.personID = personID;
-            this.personNameEN = personNameEN;
-            this.personNameJP = personNameJP;
+            this.personEN = personEN;
+            this.personJP = personJP;
             this.countryEN = countryEN;
             this.countryJP = countryJP;
         }
@@ -69,23 +69,23 @@ public class NAME_is_from_COUNTRY extends Lesson {
     protected String getSPARQLQuery(){
         //since there aren't that many Japanese countrys available,
         //just get the country name and convert it to a country by adding "~人"
-        return "SELECT ?personName ?personNameLabel ?personNameEN " +
+        return "SELECT ?person ?personLabel ?personEN " +
                 " ?country ?countryEN ?countryLabel " +
                 "WHERE " +
                 "{" +
-                "    {?personName wdt:P31 wd:Q5} UNION " + //is human
-                "    {?personName wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?personName wdt:P27 ?country . " + //has a country of citizenship
+                "    {?person wdt:P31 wd:Q5} UNION " + //is human
+                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+                "    ?person wdt:P27 ?country . " + //has a country of citizenship
                 "    ?country rdfs:label ?countryEN . " + //English Label
-                "    ?personName rdfs:label ?personNameEN . " + //English label
+                "    ?person rdfs:label ?personEN . " + //English label
                 "    FILTER (LANG(?countryEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " + //just get the English country
-                "    FILTER (LANG(?personNameEN) = '" +
+                "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label {bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
                 WikiBaseEndpointConnector.ENGLISH + "' } " +
-                "    BIND (wd:%s as ?personName) . " + //binding the ID of entity as ?person
+                "    BIND (wd:%s as ?person) . " + //binding the ID of entity as ?person
                 "} ";
 
     }
@@ -98,16 +98,16 @@ public class NAME_is_from_COUNTRY extends Lesson {
         int resultLength = allResults.getLength();
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
-            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "personName");
+            String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = LessonGeneratorUtils.stripWikidataID(personID);
-            String personNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameEN");
-            String personNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personNameLabel");
+            String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
             countryID = LessonGeneratorUtils.stripWikidataID(countryID);
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
 
-            QueryResult qr = new QueryResult(personID, personNameEN, personNameJP, countryJP, countryEN);
+            QueryResult qr = new QueryResult(personID, personEN, personJP, countryJP, countryEN);
             queryResults.add(qr);
 
             if (queryResultMap.containsKey(personID)){
@@ -137,13 +137,13 @@ public class NAME_is_from_COUNTRY extends Lesson {
             List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
             questionSet.add(fillInBlankQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personNameJP, null));
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
 
     private String NAME_is_from_COUNTRY_EN_correct(QueryResult qr){
-        String sentence = qr.personNameEN + " is from " +
+        String sentence = qr.personEN + " is from " +
                 GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
@@ -151,13 +151,13 @@ public class NAME_is_from_COUNTRY extends Lesson {
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personNameJP + "は" + qr.countryJP + "の出身です。";
+        return qr.personJP + "は" + qr.countryJP + "の出身です。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personNameEN);
+        pieces.add(qr.personEN);
         pieces.add("is from");
         pieces.add(GrammarRules.definiteArticleBeforeCountry(qr.countryEN));
         return pieces;
@@ -174,7 +174,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personNameJP);
+        data.setTopic(qr.personJP);
         data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -233,7 +233,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
 
     private String fillInBlankQuestion(QueryResult qr){
         String sentence = NAME_is_from_COUNTRY_EN_correct(qr);
-        String sentence2 = qr.personNameJP + "は" + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+        String sentence2 = qr.personJP + "は" + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
                 "の出身です。";
         return sentence + "\n\n" + sentence2;
     }
@@ -255,7 +255,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(qr.personNameJP);
+            data.setTopic(qr.personJP);
             data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
             data.setQuestion(question);
             data.setChoices(choices);
@@ -270,7 +270,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
     }
 
     private String fillInBlankQuestion2(QueryResult qr){
-        String sentence = qr.personNameEN + " is from " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence = qr.personEN + " is from " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
     }
@@ -292,7 +292,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(qr.personNameJP);
+            data.setTopic(qr.personJP);
             data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
             data.setQuestion(question);
             data.setChoices(choices);
