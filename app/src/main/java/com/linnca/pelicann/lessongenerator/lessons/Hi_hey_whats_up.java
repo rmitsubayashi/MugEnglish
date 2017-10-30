@@ -36,7 +36,7 @@ public class Hi_hey_whats_up extends Lesson {
 
     @Override
     protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(4);
+        List<QuestionData> questions = new ArrayList<>(6);
         List<QuestionData> chatMultipleChoiceQuestions = chatMultipleChoiceQuestions();
         questions.addAll(chatMultipleChoiceQuestions);
         List<QuestionData> chatQuestions = chatQuestions();
@@ -92,7 +92,7 @@ public class Hi_hey_whats_up extends Lesson {
     }
 
     private List<String> choices(){
-        List<String> choices = new ArrayList<>(2);
+        List<String> choices = new ArrayList<>(3);
         choices.add("hi");
         choices.add("hey");
         choices.add("what's up");

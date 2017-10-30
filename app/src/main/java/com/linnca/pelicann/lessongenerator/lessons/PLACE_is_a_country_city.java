@@ -24,8 +24,8 @@ import java.util.List;
 
 
 
-public class PLACE_is_a_COUNTRY_CITY extends Lesson {
-    public static final String KEY = "PLACE_is_a_COUNTRY_CITY";
+public class PLACE_is_a_country_city extends Lesson {
+    public static final String KEY = "PLACE_is_a_country_city";
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
 
@@ -54,7 +54,7 @@ public class PLACE_is_a_COUNTRY_CITY extends Lesson {
 
 
 
-    public PLACE_is_a_COUNTRY_CITY(WikiBaseEndpointConnector connector, LessonListener listener){
+    public PLACE_is_a_country_city(WikiBaseEndpointConnector connector, LessonListener listener){
 
         super(connector, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;

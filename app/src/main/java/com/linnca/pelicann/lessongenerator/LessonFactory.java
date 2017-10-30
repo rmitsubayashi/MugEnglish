@@ -1,21 +1,27 @@
 package com.linnca.pelicann.lessongenerator;
 
-//create an instance of the required class
+//create an instance of the required lesson class
 
 import android.util.Log;
 
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.lessongenerator.lessons.COMPANY_makes_PRODUCT;
+import com.linnca.pelicann.lessongenerator.lessons.COUNTRY_drives_on_the_left_right;
 import com.linnca.pelicann.lessongenerator.lessons.COUNTRY_possessive_area_is_AREA;
 import com.linnca.pelicann.lessongenerator.lessons.COUNTRY_possessive_government_is_a_GOVERNMENT;
 import com.linnca.pelicann.lessongenerator.lessons.COUNTRY_possessive_population_is_POPULATION;
+import com.linnca.pelicann.lessongenerator.lessons.Find_stand_sit_on_a_bed;
 import com.linnca.pelicann.lessongenerator.lessons.Goodbye_bye;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME_I_am_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.Hi_hey_whats_up;
 import com.linnca.pelicann.lessongenerator.lessons.How_are_you_doing;
+import com.linnca.pelicann.lessongenerator.lessons.I_turned_left_right;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_created_art;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_creates_art;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_drives_a_car;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_drove_from_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_AGE_years_old;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_AGE_years_old_NAME_is_a_GENDER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_DEMONYM;
@@ -25,17 +31,23 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_at_work_He_is_at_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_COUNTRY;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_played_SPORT;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT_SPORT_is_a_individual_team_sport;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT_SPORT_is_a_water_sport;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_first_last_name_is_NAME;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_possessive_mother_father_is_NAME2;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_speaks_LANGUAGE;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_spoke_at_TED;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_was_a_OCCUPATION;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_worked_for_the_government_He_was_a_politician;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_at_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_the_government_He_is_a_politician;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_books;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_music;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_wrote_a_book;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_0_3;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_10s;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_11_19;
@@ -43,11 +55,15 @@ import com.linnca.pelicann.lessongenerator.lessons.Numbers_21_99;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_4_6;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_7_9;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_hundred_billion;
-import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_COUNTRY_CITY;
+import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_country_city;
+import com.linnca.pelicann.lessongenerator.lessons.PLACE_is_a_city_town;
 import com.linnca.pelicann.lessongenerator.lessons.Stand_up_sit_down;
 import com.linnca.pelicann.lessongenerator.lessons.TEAM_is_a_SPORT_team;
+import com.linnca.pelicann.lessongenerator.lessons.Thanks_no_problem;
 import com.linnca.pelicann.lessongenerator.lessons.The_DEMONYM_flag_is_COLORS;
 import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of_COUNTRY_is_NUMBER;
+import com.linnca.pelicann.lessongenerator.lessons.The_man_woman_reads_a_book;
+import com.linnca.pelicann.lessongenerator.lessons.Turn_left_right_go_straight;
 import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
 import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
@@ -118,8 +134,8 @@ public class LessonFactory {
                         listener
                 );
             }
-            case PLACE_is_a_COUNTRY_CITY.KEY :{
-                return new PLACE_is_a_COUNTRY_CITY(
+            case PLACE_is_a_country_city.KEY :{
+                return new PLACE_is_a_country_city(
                         new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
                         listener
                 );
@@ -316,6 +332,102 @@ public class LessonFactory {
                         listener
                 );
             }
+            case NAME_speaks_LANGUAGE.KEY : {
+                return new NAME_speaks_LANGUAGE(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case Find_stand_sit_on_a_bed.KEY : {
+                return new Find_stand_sit_on_a_bed(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case Turn_left_right_go_straight.KEY : {
+                return new Turn_left_right_go_straight(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_drives_a_car.KEY : {
+                return new NAME_drives_a_car(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case COUNTRY_drives_on_the_left_right.KEY : {
+                return new COUNTRY_drives_on_the_left_right(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case The_man_woman_reads_a_book.KEY : {
+                return new The_man_woman_reads_a_book(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case Thanks_no_problem.KEY : {
+                return new Thanks_no_problem(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case PLACE_is_a_city_town.KEY : {
+                return new PLACE_is_a_city_town(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case I_turned_left_right.KEY : {
+                return new I_turned_left_right(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_spoke_at_TED.KEY : {
+                return new NAME_spoke_at_TED(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_drove_from_CITY.KEY : {
+                return new NAME_drove_from_CITY(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_wrote_a_book.KEY : {
+                return new NAME_wrote_a_book(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_created_art.KEY : {
+                return new NAME_created_art(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_played_SPORT.KEY : {
+                return new NAME_played_SPORT(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_was_a_OCCUPATION.KEY : {
+                return new NAME_was_a_OCCUPATION(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
+            case NAME_worked_for_the_government_He_was_a_politician.KEY : {
+                return new NAME_worked_for_the_government_He_was_a_politician(
+                        new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
+                        listener
+                );
+            }
 
             default:
                 Log.d(TAG, "Could not parse lesson");
@@ -331,7 +443,7 @@ public class LessonFactory {
         lesson.saveGenericQuestions();
         lesson = new COMPANY_makes_PRODUCT(null, null);
         lesson.saveGenericQuestions();
-        lesson = new PLACE_is_a_COUNTRY_CITY(null, null);
+        lesson = new PLACE_is_a_country_city(null, null);
         lesson.saveGenericQuestions();
         lesson = new Walk_run(null, null);
         lesson.saveGenericQuestions();
@@ -364,12 +476,30 @@ public class LessonFactory {
         lesson = new COUNTRY_possessive_population_is_POPULATION(null, null);
         lesson.saveGenericQuestions();
         lesson = new COUNTRY_possessive_area_is_AREA(null, null);
-        lesson.saveGenericQuestions();*/
-        Lesson lesson = new NAME_works_for_the_government_He_is_a_politician(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new NAME_works_for_the_government_He_is_a_politician(null, null);
         lesson.saveGenericQuestions();
         lesson = new NAME_plays_SPORT_SPORT_is_a_water_sport(null, null);
         lesson.saveGenericQuestions();
         lesson = new NAME_plays_SPORT_SPORT_is_a_individual_team_sport(null, null);
+        lesson.saveGenericQuestions();
+        lesson lesson = new Find_stand_sit_on_a_bed(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new Turn_left_right_go_straight(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new COUNTRY_drives_on_the_left_right(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new NAME_drives_a_car(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new The_man_woman_reads_a_book(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new Thanks_no_problem(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new PLACE_is_a_city_town(null, null);
+        lesson.saveGenericQuestions();*/
+        Lesson lesson = new I_turned_left_right(null, null);
+        lesson.saveGenericQuestions();
+        lesson = new NAME_worked_for_the_government_He_was_a_politician(null, null);
         lesson.saveGenericQuestions();
 
     }

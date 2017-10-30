@@ -71,8 +71,8 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
             this.sportNameJP = sportNameJP;
             this.occupationEN = occupationEN;
             this.occupationJP = occupationJP;
-            this.personTitleEN = getpersonTitleEN(personGenderID);
-            this.personTitleJP = getpersonTitleJP(personGenderID);
+            this.personTitleEN = getPersonTitleEN(personGenderID);
+            this.personTitleJP = getPersonTitleJP(personGenderID);
             this.genderPronounEN = getPersonPronounEN(personGenderID);
             this.genderPronounJP = getPersonPronounJP(personGenderID);
             //temporary. will update by connecting to db
@@ -81,7 +81,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
             this.object = sportNameEN;
         }
 
-        private String getpersonTitleEN(String id){
+        private String getPersonTitleEN(String id){
             switch (id){
                 case "Q6581097":
                     return "husband";
@@ -92,7 +92,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
             }
         }
 
-        private String getpersonTitleJP(String id){
+        private String getPersonTitleJP(String id){
             switch (id){
                 case "Q6581097":
                     return "夫";

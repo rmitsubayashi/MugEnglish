@@ -31,11 +31,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class NAME_plays_SPORT extends Lesson{
-    public static final String KEY = "NAME_plays_SPORT";
+public class NAME_played_SPORT extends Lesson{
+    public static final String KEY = "NAME_played_SPORT";
 
     private List<QueryResult> queryResults = new ArrayList<>();
-    //to record all sports a person plays
+    //to record all sports a person played
     private final Map<String, List<QueryResult>> queryResultMap = new HashMap<>();
 
     private class QueryResult {
@@ -64,7 +64,7 @@ public class NAME_plays_SPORT extends Lesson{
         }
     }
 
-    public NAME_plays_SPORT(WikiBaseEndpointConnector connector, LessonListener listener){
+    public NAME_played_SPORT(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
         super.questionSetsLeftToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
@@ -81,17 +81,17 @@ public class NAME_plays_SPORT extends Lesson{
                         "		{ " +
                         "           {?person wdt:P31 wd:Q5} UNION " + //is human
                         "           {?person wdt:P31 wd:Q15632617} ." + //or fictional human
-                        "			?person wdt:P641 ?sport . " + //plays sport
-                        "		    FILTER NOT EXISTS { ?person wdt:P570 ?dateDeath } . " +//死んでいない（played ではなくてplays）
+                        "			?person wdt:P641 ?sport . " + //played sport
+                        "		    ?person wdt:P570 ?dateDeath . " +//is dead
                         "           ?person rdfs:label ?personEN . " + //English label
                         "           ?sport rdfs:label ?sportEN . " + //English label
                         "           FILTER (LANG(?personEN) = '" +
-                                    WikiBaseEndpointConnector.ENGLISH + "') . " +
+                        WikiBaseEndpointConnector.ENGLISH + "') . " +
                         "           FILTER (LANG(?sportEN) = '" +
-                                    WikiBaseEndpointConnector.ENGLISH + "') . " +
+                        WikiBaseEndpointConnector.ENGLISH + "') . " +
                         "           SERVICE wikibase:label {bd:serviceParam wikibase:language '" +
-                                    WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
-                                    WikiBaseEndpointConnector.ENGLISH + "' } " +
+                        WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "','" +
+                        WikiBaseEndpointConnector.ENGLISH + "' } " +
                         "           BIND (wd:%s as ?person) " +
                         "		}";
     }
@@ -195,19 +195,19 @@ public class NAME_plays_SPORT extends Lesson{
         });
     }
 
-    private String NAME_plays_SPORT_EN_correct(QueryResult qr){
-        String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
+    private String NAME_played_SPORT_EN_correct(QueryResult qr){
+        String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PAST);
         return qr.personEN + " " + verbObject + ".";
     }
 
     private String formatSentenceForeign(QueryResult qr){
-        return qr.personForeign + "は" + qr.sportNameForeign + "をします。";
+        return qr.personForeign + "は" + qr.sportNameForeign + "をしました。";
     }
 
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personEN);
-        String verb = SportsHelper.inflectVerb(qr.verb, SportsHelper.PRESENT3RD);
+        String verb = SportsHelper.inflectVerb(qr.verb, SportsHelper.PAST);
         pieces.add(verb);
         if (!qr.object.equals(""))
             pieces.add(qr.object);
@@ -260,13 +260,13 @@ public class NAME_plays_SPORT extends Lesson{
 
     private String formatFalseAnswer(QueryResult qr, SimpleQueryResult sqr){
         //all the sports are 'play'
-        String verbObject = SportsHelper.getVerbObject(sqr.verb, sqr.sportEN, SportsHelper.PRESENT3RD);
+        String verbObject = SportsHelper.getVerbObject(sqr.verb, sqr.sportEN, SportsHelper.PAST);
         return qr.personEN + " " + verbObject + ".";
     }
 
     private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
         List<QuestionData> questionDataList = new ArrayList<>(3);
-        String question = this.NAME_plays_SPORT_EN_correct(qr);
+        String question = this.NAME_played_SPORT_EN_correct(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
