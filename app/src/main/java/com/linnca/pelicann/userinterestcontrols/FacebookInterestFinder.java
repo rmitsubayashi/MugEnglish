@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.facebook.AccessToken;
+//import com.facebook.AccessToken;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +36,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class FacebookInterestFinder extends IntentService{
+public class FacebookInterestFinder {//extends IntentService{
+    /*
     private static String TAG = "FacebookInterestFinder";
     public static final int SHALLOW_SEARCH = 1;
     public static final int DEEP_SEARCH = 2;
@@ -173,11 +174,11 @@ public class FacebookInterestFinder extends IntentService{
         return ct;
     }
 
-    /* first check the facebook url
-     * then the official site link? then name?
-     * not sure about the order of the last two, but we should do the facebook url first
-     * since it has the most guaranteed match rate
-     * */
+     // first check the facebook url
+     // then the official site link? then name?
+     // not sure about the order of the last two, but we should do the facebook url first
+     // since it has the most guaranteed match rate
+     //
     //facebook query type is for when we query wikiData.
     //wikiData divides up the facebook ids into peoples/organizations and location id
     private WikiDataEntryData findWikiDataEntry(String name, String facebookID, String facebookQueryType) throws Exception{
@@ -538,5 +539,5 @@ public class FacebookInterestFinder extends IntentService{
         return result;
     }
 
-
+    */
 }

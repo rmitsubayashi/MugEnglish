@@ -21,6 +21,7 @@ import android.view.animation.Animation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -111,6 +112,8 @@ public class LessonDetails extends Fragment {
         lessonDetailsListener.setToolbarState(
                 new ToolbarState(lessonData.getTitle(), false, false, lessonData.getKey())
         );
+        if (firebaseAdapter != null)
+            firebaseAdapter.startListening();
     }
 
     @Override
@@ -169,8 +172,11 @@ public class LessonDetails extends Fragment {
         //grab list of instances
         DatabaseReference lessonInstancesRef = db.getReference(
                 FirebaseDBHeaders.LESSON_INSTANCES + "/"+userID+"/"+ lessonData.getKey());
+        FirebaseRecyclerOptions<LessonInstanceData> options = new FirebaseRecyclerOptions.Builder<LessonInstanceData>()
+                .setQuery(lessonInstancesRef, LessonInstanceData.class)
+                .build();
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        firebaseAdapter = new LessonDetailsAdapter(lessonInstancesRef,
+        firebaseAdapter = new LessonDetailsAdapter(options,
                 new LessonDetailsAdapter.LessonDetailsAdapterListener() {
                     @Override
                     public void onLoad() {
@@ -408,7 +414,7 @@ public class LessonDetails extends Fragment {
     public void onDestroy(){
         super.onDestroy();
         if (firebaseAdapter != null)
-            firebaseAdapter.cleanup();
+            firebaseAdapter.stopListening();
     }
 
 }

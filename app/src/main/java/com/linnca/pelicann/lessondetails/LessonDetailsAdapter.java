@@ -1,11 +1,14 @@
 package com.linnca.pelicann.lessondetails;
 
 
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.linnca.pelicann.R;
 
@@ -34,10 +37,9 @@ class LessonDetailsAdapter
         void onNoItems();
     }
 
-    LessonDetailsAdapter(DatabaseReference ref, LessonDetailsAdapterListener uiListener,
-                                LessonDetails.LessonDetailsListener lessonDetailsListener, String lessonKey){
-        super(LessonInstanceData.class, R.layout.inflatable_lesson_details_instance_list_item,
-                LessonDetailsViewHolder.class, ref);
+    LessonDetailsAdapter(FirebaseRecyclerOptions<LessonInstanceData> options, LessonDetailsAdapterListener uiListener,
+                         LessonDetails.LessonDetailsListener lessonDetailsListener, String lessonKey){
+        super(options);
         this.uiListener = uiListener;
         this.lessonDetailsListener = lessonDetailsListener;
         this.lessonKey = lessonKey;
@@ -48,7 +50,14 @@ class LessonDetailsAdapter
     }
 
     @Override
-    public void populateViewHolder(final LessonDetailsViewHolder holder, final LessonInstanceData data, int position) {
+    public LessonDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.inflatable_lesson_details_instance_list_item, parent, false);
+        return new LessonDetailsViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(final LessonDetailsViewHolder holder, int position, final LessonInstanceData data) {
         String allInterestsLabel = "";
         Set<String> duplicates = new HashSet<>(data.getInterestLabels().size());
         for (String interestLabel : data.getInterestLabels()) {

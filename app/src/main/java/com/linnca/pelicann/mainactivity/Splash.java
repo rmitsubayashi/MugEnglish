@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.facebook.FacebookSdk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.onboarding.Onboarding;
-import com.linnca.pelicann.tutorial.TutorialActivity;
 
 public class Splash extends AppCompatActivity{
     @Override
@@ -20,7 +18,7 @@ public class Splash extends AppCompatActivity{
         //AddLesson.runAll();
         //we initialize the sdk so if the user signs in with fb
         //the token will automatically be saved
-        FacebookSdk.sdkInitialize(this.getApplicationContext());
+        //FacebookSdk.sdkInitialize(this.getApplicationContext());
         if (FirebaseAuth.getInstance().getCurrentUser() == null){
             FirebaseAuth.getInstance().signInAnonymously();
         }

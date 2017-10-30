@@ -491,6 +491,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return new QuestionManager.QuestionManagerListener() {
             @Override
             public void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion) {
+                if (questionData == null){
+                    goToErrorPage();
+                    return;
+                }
                 Fragment fragment;
                 switch (questionData.getQuestionType()){
                     case QuestionTypeMappings.FILL_IN_BLANK_INPUT :
@@ -892,6 +896,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         logRef.push().setValue(log);
 
     }
+
+    private void goToErrorPage(){}
 
     @Override
     protected void onStop(){

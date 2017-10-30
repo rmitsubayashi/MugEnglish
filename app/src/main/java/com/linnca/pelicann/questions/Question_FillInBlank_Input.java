@@ -85,7 +85,7 @@ public class Question_FillInBlank_Input extends Question_General {
         int startIndex = question.indexOf('_');//Emoji haha
         int endIndex = question.lastIndexOf('_') + 1;
         ForegroundColorSpan colorSpan = new ForegroundColorSpan(
-                ContextCompat.getColor(getContext(),R.color.linkColor)
+                ContextCompat.getColor(getContext(),R.color.lblue700)
         );
         stringBuilder.setSpan(colorSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 

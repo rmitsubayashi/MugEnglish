@@ -18,6 +18,7 @@ import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.userinterestcontrols.FacebookInterestFinder;
 
 public class FacebookInterests extends AppCompatActivity {
+    /*
     private static final String TAG = "FacebookInterests";
     private TextView progressStringTV;
     private TextView progressWordTV;
@@ -120,5 +121,5 @@ public class FacebookInterests extends AppCompatActivity {
             progressBar.setProgress((int) value);
         }
 
-    }
+    }*/
 }
