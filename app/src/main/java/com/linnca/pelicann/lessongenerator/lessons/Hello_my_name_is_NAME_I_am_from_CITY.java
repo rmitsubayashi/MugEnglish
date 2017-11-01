@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class NAME_is_from_CITY extends Lesson{
-    public static final String KEY = "NAME_is_from_CITY";
+public class Hello_my_name_is_NAME_I_am_from_CITY extends Lesson{
+    public static final String KEY = "Hello_my_name_is_NAME_I_am_from_CITY";
     private final List<QueryResult> queryResults = new ArrayList<>();
     private final Map<String, QueryResult> queryResultMap = new HashMap<>();
     private class QueryResult {
@@ -58,7 +58,7 @@ public class NAME_is_from_CITY extends Lesson{
         }
     }
 
-    public NAME_is_from_CITY(WikiBaseEndpointConnector connector, LessonListener listener){
+    public Hello_my_name_is_NAME_I_am_from_CITY(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
         super.questionSetsLeftToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
@@ -153,19 +153,25 @@ public class NAME_is_from_CITY extends Lesson{
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
+        pieces.add("hello");
+        pieces.add("my name");
+        pieces.add("is");
         pieces.add(qr.personEN);
-        pieces.add("is from");
+        pieces.add("I");
+        pieces.add("am");
+        pieces.add("from");
         pieces.add(qr.cityEN);
         return pieces;
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personJP + "は" + qr.cityJP + "から来ました。";
+        return "こんにちは、私の名前は" + qr.personJP + "です。私は" + qr.cityJP + "から来ました。";
     }
 
     private String formatSentenceEN(QueryResult qr){
-        String sentence = qr.personEN + " is from " + qr.cityEN + ".";
-        return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        String sentence1 = "Hello my name is " + qr.personEN + ".";
+        String sentence2 = "I am from " + qr.cityEN + ".";
+        return sentence1 +"\n"+ sentence2;
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){
@@ -252,7 +258,7 @@ public class NAME_is_from_CITY extends Lesson{
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personEN + " is " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence = "I am " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " " + qr.cityEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }

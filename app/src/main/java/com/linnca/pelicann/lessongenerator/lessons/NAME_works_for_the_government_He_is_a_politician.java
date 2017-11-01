@@ -14,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -130,9 +131,27 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankMultipleChoiceQuestion2(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord politician = new VocabularyWord("","politician", "政治家",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(politician);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        String sentence1 = qr.personEN + " works for the government.";
+        String sentence2 = qr.genderEN + " is a politician.";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + "\n" + sentence2;
     }
 
     private String formatSentenceJP(QueryResult qr){

@@ -9,6 +9,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
@@ -61,6 +62,27 @@ public class Hi_hey_whats_up extends Lesson {
         }
 
         return questionSet;
+    }
+
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(3);
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hi"),
+                "hi","こんにちは","Hi!","こんにちは！", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hey"),
+                "hey","こんにちは","Hey!","こんにちは！", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "what\'s up"),
+                "what\'s up","こんにちは","What\'s up!","こんにちは！", KEY));
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(3);
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hi"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hey"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "what\'s up"));
+        return ids;
     }
 
     //every choice is correct

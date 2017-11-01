@@ -9,6 +9,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
@@ -65,6 +66,24 @@ public class Thanks_no_problem extends Lesson {
         }
 
         return questionSet;
+    }
+
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "thanks"),
+                "thanks","ありがとう","Thanks! No problem.","ありがとう！どういたしまして。", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "no problem"),
+                "no problem","どういたしまして","Thanks! No problem.","ありがとう！どういたしまして。", KEY));
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(2);
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "bye"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "goodbye"));
+        return ids;
     }
 
     //only one choice

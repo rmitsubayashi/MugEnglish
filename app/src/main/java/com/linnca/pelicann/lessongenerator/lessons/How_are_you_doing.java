@@ -12,6 +12,7 @@ import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -99,6 +100,24 @@ public class How_are_you_doing extends Lesson {
             super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
         }
 
+    }
+
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"),
+                "How are you doing?","元気ですか","How are you doing?\nGood.","元気ですか。元気です。", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good"),
+                "good","元気です","How are you doing?\nGood.","元気ですか。元気です。", KEY));
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(2);
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good"));
+        return ids;
     }
 
     private List<QuestionData> createChatQuestion(QueryResult qr){

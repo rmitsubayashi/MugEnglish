@@ -309,6 +309,14 @@ public abstract class Question_General extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //prevent multiple clicks
+                nextButton.setOnClickListener(null);
+                nextButton.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View view, MotionEvent motionEvent) {
+                        return true;
+                    }
+                });
                 questionListener.onNextQuestion();
             }
         });

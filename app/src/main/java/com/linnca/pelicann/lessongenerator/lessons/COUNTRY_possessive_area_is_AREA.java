@@ -15,6 +15,7 @@ import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -138,11 +139,33 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
         }
 
+    }
 
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord area = new VocabularyWord("","area", "面積",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord country = new VocabularyWord("", qr.countryEN,qr.countryJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
 
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(area);
+        words.add(country);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        String sentence = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "\'s area is " +
+                LessonGeneratorUtils.convertIntToStringWithCommas(qr.area) + " km².";
+        return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+    }
+
+    private String formatSentenceJP(QueryResult qr){
+        return qr.countryJP + "の面積は" + Integer.toString(qr.area) + " km²です。";
     }
 
     private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
@@ -179,9 +202,9 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     private String fillInBlankInputQuestion1(QueryResult qr){
         String sentence1 = qr.countryJP + "の面積は" + Integer.toString(qr.area) + " km²です。";
 
-        String sentence2 = qr.countryEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence2 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " is " + LessonGeneratorUtils.convertIntToStringWithCommas(qr.area) + " km².";
-        return sentence1 + "\n\n" + sentence2;
+        return sentence1 + "\n\n" + GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
     }
 
     private String fillInBlankInputAnswer1(){
@@ -210,10 +233,10 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     }
 
     private String fillInBlankInputQuestion2(QueryResult qr){
-        String sentence1 = qr.countryEN + "'s area is " +
+        String sentence1 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s area is " +
                 LessonGeneratorUtils.convertIntToWord(qr.area) + " km².";
         String sentence2 = qr.countryJP + "の面積は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " km²です。";
-        return sentence1 + "\n\n" + sentence2;
+        return GrammarRules.uppercaseFirstLetterOfSentence(sentence1) + "\n\n" + sentence2;
     }
 
 
@@ -244,7 +267,6 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
     private List<QuestionData> spellingQuestionGeneric(){
         String question = "面積";
-
         String answer = "area";
         QuestionData data = new QuestionData();
         data.setId("");

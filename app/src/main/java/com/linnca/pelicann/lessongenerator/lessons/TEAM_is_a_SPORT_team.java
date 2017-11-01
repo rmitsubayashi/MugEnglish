@@ -111,9 +111,31 @@ public class TEAM_is_a_SPORT_team extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.teamID, qr.teamJP, new ArrayList<VocabularyWord>()));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.teamID, qr.teamJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord team = new VocabularyWord("","team", "チーム",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord sport = new VocabularyWord("", qr.sportEN, qr.sportJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord teamName = new VocabularyWord("", qr.teamEN, qr.teamJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(3);
+        words.add(team);
+        words.add(sport);
+        words.add(teamName);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        return qr.teamEN + " is " + GrammarRules.indefiniteArticleBeforeNoun(qr.sportEN) +
+                " team.";
     }
 
     private String formatSentenceJP(QueryResult qr){

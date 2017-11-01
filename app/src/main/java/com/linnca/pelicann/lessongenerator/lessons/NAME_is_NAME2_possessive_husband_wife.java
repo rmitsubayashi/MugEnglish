@@ -14,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -148,9 +149,25 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord spouse = new VocabularyWord("",qr.personTitleEN, qr.personTitleJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(spouse);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        return qr.personEN + " is " + qr.spouseEN + "\'s " +
+                qr.personTitleEN + ".";
     }
 
     private String formatSentenceJP(QueryResult qr){

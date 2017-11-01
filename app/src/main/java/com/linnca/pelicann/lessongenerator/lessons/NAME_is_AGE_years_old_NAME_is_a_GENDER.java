@@ -14,7 +14,9 @@ import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
@@ -143,7 +145,6 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         super.questionSetsLeftToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
     }
 
     @Override
@@ -206,9 +207,31 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
             List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
             questionSet.add(trueFalseQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord gender = new VocabularyWord("", qr.genderEN, qr.genderJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(gender);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        String yearString = qr.singular ? "year" : "years";
+        return qr.personEN + " is " + Integer.toString(qr.age) + yearString + " old.\n" +
+                qr.personEN + " is a " + qr.genderEN + ".";
+    }
+
+    private String formatSentenceJP(QueryResult qr){
+        return qr.personJP + "は" + Integer.toString(qr.age) + "歳です。\n" +
+                qr.personJP + "は" + qr.genderJP + "です。";
     }
 
     private String fillInBlankQuestion(QueryResult qr){
@@ -218,8 +241,11 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
                 Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " " + yearString + " old.";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         String sentence2 = "ヒント：" + qr.personJP + "の誕生日は" + qr.birthday + "です";
+        DateTimeFormatter birthdayFormat = DateTimeFormat.forPattern("yyyy年M月d日");
+        String today = birthdayFormat.print(DateTime.now());
+        String sentence3 = "(" + today + "現在)";
 
-        return sentence + "\n\n" + sentence2;
+        return sentence + "\n\n" + sentence2 + "\n" + sentence3;
     }
 
     private String fillInBlankAnswer(QueryResult qr){

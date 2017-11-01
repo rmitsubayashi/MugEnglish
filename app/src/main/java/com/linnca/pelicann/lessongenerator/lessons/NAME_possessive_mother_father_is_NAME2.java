@@ -17,6 +17,7 @@ import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -144,11 +145,29 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
+    }
 
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord parentType = new VocabularyWord("",qr.parentTypeEN, qr.parentTypeJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
 
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(parentType);
+        return words;
+    }
 
+    private String formatSentenceEN(QueryResult qr){
+        return qr.personEN + "\'s " + qr.parentTypeEN + " is " +
+                qr.parentNameEN + ".";
+    }
+
+    private String formatSentenceJP(QueryResult qr){
+        return qr.parentNameJP + "の" + qr.parentTypeJP + "は" +
+                qr.parentNameJP + "です。";
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
@@ -188,11 +207,6 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         questionDataList.add(data);
         return questionDataList;
 
-    }
-
-    private String formatSentenceJP(QueryResult qr){
-        return qr.parentNameJP + "の" + qr.parentTypeJP + "は" +
-                qr.parentNameJP + "です。";
     }
 
     //puzzle pieces for sentence puzzle question

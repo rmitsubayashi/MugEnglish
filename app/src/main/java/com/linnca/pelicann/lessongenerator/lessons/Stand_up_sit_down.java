@@ -12,6 +12,7 @@ import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_General;
 import com.linnca.pelicann.questions.Question_MultipleChoice;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
@@ -65,6 +66,24 @@ public class Stand_up_sit_down extends Lesson {
         }
 
         return questionSet;
+    }
+
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand up"),
+                "stand up","立つ","Stand up.","立ってください。", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit down"),
+                "sit down","座る","Sit down.","座ってください。", KEY));
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(2);
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand up"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit down"));
+        return ids;
     }
 
     private String multipleChoiceQuestionQuestion1(){

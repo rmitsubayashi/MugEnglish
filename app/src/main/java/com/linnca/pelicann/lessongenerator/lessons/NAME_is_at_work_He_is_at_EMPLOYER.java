@@ -13,6 +13,7 @@ import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -148,9 +149,21 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord work = new VocabularyWord("","work", "仕事",
+                NAME_is_at_work_EN(qr), qr.personJP + "は働いています。", KEY);
+        VocabularyWord employer = new VocabularyWord("",qr.employerEN, qr.employerJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(work);
+        words.add(employer);
+        return words;
     }
 
     /* Note that some of these employers may need the article 'the' before it.
@@ -162,6 +175,13 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         return sentence;
+    }
+
+    private String formatSentenceEN(QueryResult qr) {
+        String sentence1 = NAME_is_at_work_EN(qr);
+        String sentence2 = qr.genderEN + " is at " + qr.employerEN + ".";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + "\n" + sentence2;
     }
 
     private String formatSentenceJP(QueryResult qr){

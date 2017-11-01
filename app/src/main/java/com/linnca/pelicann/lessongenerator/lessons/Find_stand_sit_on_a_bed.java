@@ -12,6 +12,7 @@ import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_General;
 import com.linnca.pelicann.questions.Question_MultipleChoice;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
@@ -69,6 +70,30 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         }
 
         return questionSet;
+    }
+
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(4);
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "bed"),
+                "bed","ベッド","Sit on the bed.","ベッドに座ってください", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "find"),
+                "find","探す","Find a bed.","ベッドを探してください", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit"),
+                "sit","座る","Sit on the bed.","ベッドに座ってください", KEY));
+        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand"),
+                "stand","立つ","Stand on the bed.","ベッドの上で立ってください", KEY));
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(4);
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "find"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "bed"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand"));
+        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit"));
+        return ids;
     }
 
     private String multipleChoiceQuestionQuestion1(){

@@ -13,6 +13,7 @@ import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -138,16 +139,28 @@ public class NAME_works_at_EMPLOYER extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord work = new VocabularyWord("","work", "仕事をする",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord employer = new VocabularyWord("",qr.employerEN, qr.employerJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(work);
+        words.add(employer);
+        return words;
     }
 
     /* Note that some of these employers may need the article 'the' before it.
      * We can't guarantee that all of them will be accurate...
      * Just make sure to let the user be aware that there may be some mistakes
      * */
-    private String NAME_works_at_EMPLOYER_EN_correct(QueryResult qr){
+    private String formatSentenceEN(QueryResult qr){
         //use the definite article before school name ( ~ of ~)
         //for better accuracy.
         //still there are a lot of employers that will need 'the'

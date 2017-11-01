@@ -127,12 +127,26 @@ public class NAME_is_a_GENDER extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
-    private String NAME_is_gender_EN_correct(QueryResult qr){
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord gender = new VocabularyWord("",qr.genderEN, qr.genderJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord is = new VocabularyWord("", "is","~は",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(is);
+        words.add(gender);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
         String sentence = qr.personEN + " is a " + qr.genderEN + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);

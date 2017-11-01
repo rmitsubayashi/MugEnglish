@@ -8,6 +8,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
@@ -84,6 +85,30 @@ public class Numbers_4_6 extends Lesson {
         }
 
         return questionSet;
+    }
+
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(3);
+        List<String> wordList = english();
+        List<String> translationList = numbers();
+        for (int i=0; i<3; i++) {
+            String word = wordList.get(i);
+            String translation = translationList.get(i);
+            words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word),
+                    word, translation, "", "", KEY));
+        }
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(3);
+        List<String> wordList = english();
+        for (String word : wordList) {
+            ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word));
+        }
+        return ids;
     }
 
     private List<String> japanese(){

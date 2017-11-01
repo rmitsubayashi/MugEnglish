@@ -21,6 +21,18 @@
     <string name="description_company_makes_product_word1">make</string>
     <string name="description_company_makes_product_meaning1">つくる</string>
 
+    <string name="description_country_possessive_area_is_area_review">今回のレッスンも大きい数字と「\'s」の復習です。国の面積（<b>area</b>）で練習しましょう。</string>
+
+    <string name="description_country_possessive_government_is_a_government_grammar">「AのB」とAがBを所有している関係を表したい場合、所有主であるAの単語の語尾に「\'s」を付けます。\n
+    「AのBはCです」は「A\'s B is C」となります。</string>
+    <string name="description_country_possessive_government_is_a_government_new_word">このレッスンは政治について学びます。苦手な人は<b>government</b>(政治、政治体制)だけを覚えましょう。\n
+    政治が好きな人はどんどん政治用語を覚えていきましょう。</string>
+
+    <string name="description_country_possessive_population_is_population_review">前回学んだ大きな数字と「\'s」を復習しましょう。\n
+    各国の人口を英単語で表します。</string>
+    <string name="description_country_possessive_population_is_population_practical">大きな数字をそのまま英単語で表示しているのは練習のためだけです。実際は省略して表現します。\n
+    例）2,234,002\nこのレッスンではtwo million two hundred thirty-four thousand two と書きますが、実際は2.2 millionと表現したり正確性を求めるなら数字そのままで表現します。</string>
+
     <string name="description_good_bye_bye_subheader">さようなら！</string>
     <string name="description_good_bye_bye_introduction">出会いのあいさつの後は別れの挨拶。\n日本語でお馴染みの「バイバイ」の語源となる<b>bye</b>と、それに<b>good</b>をつけた<b>goodbye</b>。</string>
     <string name="description_good_bye_bye_practical">どちらも「さようなら」という意味ですが、<b>bye</b>は一時的な別れによく使われるのに対し、<b>goodbye</b>は永遠の別れによく使われます。\n
@@ -121,6 +133,10 @@
 
     <string name="description_name_is_at_work_he_is_at_employer_review"><b>at</b>の仕様を覚えていますか。「その点に」です。よく理解してもらうために、また練習しましょう。</string>
     <string name="description_name_is_at_work_he_is_at_employer_new_word">workを覚えていますか？A works at B. の例文で出てきました。\n今回は<b>work</b>は動詞ではなくて名詞として出てきます。意味は同じ「仕事」です。</string>
+    <string name="description_name_is_at_work_he_is_at_employer_new_word1">he</string>
+    <string name="description_name_is_at_work_he_is_at_employer_new_meaning1">彼</string>
+    <string name="description_name_is_at_work_he_is_at_employer_new_word2">she</string>
+    <string name="description_name_is_at_work_he_is_at_employer_new_meaning2">彼女</string>
 
     <string name="description_name_is_demonym_subheader">国の名称</string>
     <string name="description_name_is_demonym_introduction">国の名前を覚えたところで、今度は国民の名称を覚えましょう。日本語では国の名前の後に「人」をつけて国民の名称が出来上がります。
@@ -145,6 +161,24 @@
     一つはA <b>plays</b> B。もう一つはA <b>does</b> B。\n\n
     playsは球技や団体スポーツに使います。\n（例）香川真司はサッカーをします。(Shinji Kagawa <b>plays</b> soccer.)\n
     doesは個人でやるスポーツに使います。\n（例）マイケルフェルプスは水泳をします。(Michael Phelps <b>does</b> swimming.)</string>
+
+    <string name="description_name_possessive_father_mother_is_name2_grammar">「AのB」とAがBを所有している関係を表したい場合、所有主であるAの単語の語尾に「\'s」を付けます。\n
+    「AのBはCです」は「A\'s B is C」となります。</string>
+    <string name="description_name_possessive_father_mother_is_name2_new_words">今回は色々な人の父母の例文で勉強しましょう。Aを子、Bを親とした場合、父は <b>A\'s father is B.</b> となり、母は <b>A\'s mother is B.</b> となります。</string>
+
+    <string name="description_name_possessive_first_last_name_is_name_review">前回のレッスンで学んだ「\'s」を復習しましょう。今回は名前（<b>name</b>）で勉強しましょう。\n
+    <b>first</b>は最初、<b>last</b>は最後という意味です。first nameは名前の最初の部分だから姓で、last nameは名前の最後の部分だから名。。。\n
+    と思いがちですが、英語の名前は名を先に言うのでfirst nameが名で、last nameです。</string>
+    <string name="description_name_possessive_first_last_name_is_name_word1">first name</string>
+    <string name="description_name_possessive_first_last_name_is_name_meaning1">名</string>
+    <string name="description_name_possessive_first_last_name_is_name_word2">last name</string>
+    <string name="description_name_possessive_first_last_name_is_name_meaning2">姓</string>
+
+    <string name="description_name_is_name2_possessive_husband_wife_review">今回も復習です。しっかりと勉強して身につけましょう。今回はA\'s B is Cではなく、C is A\'s Bのパターンで勉強しましょう。</string>
+    <string name="description_name_is_name2_possessive_husband_wife_word1">husband</string>
+    <string name="description_name_is_name2_possessive_husband_wife_meaning1">夫</string>
+    <string name="description_name_is_name2_possessive_husband_wife_word2">wife</string>
+    <string name="description_name_is_name2_possessive_husband_wife_meaning2">妻</string>
 
     <string name="description_name_works_at_employer_new_word">work</string>
     <string name="description_name_works_at_employer_new_meaning">仕事をする</string>
@@ -213,6 +247,22 @@
     <string name="description_numbers_21_99_how_to_remember">21から99(10,20,&#8230;を除く)はすべて十の位と一の位を合わせた単語になります。\n
     21はtwenty + one でtwenty-one、55はfifty + five でfifty-fiveになります。間の「-」は必要ではありませんが、あった方が伝わりやすいです。\n
     例えばfifty fiveと書くと、50と5なのか55なのかわかりにくいですが、fifty-fiveと書くと一瞬で55だとわかります。</string>
+    <string name="description_numbers_hundred_billion_introduction">一気に大きな数字を覚えましょう。まずは新しい単語。</string>
+    <string name="description_numbers_hundred_billion_word1">hundred</string>
+    <string name="description_numbers_hundred_billion_meaning1">百</string>
+    <string name="description_numbers_hundred_billion_word2">thousand</string>
+    <string name="description_numbers_hundred_billion_meaning2">千</string>
+    <string name="description_numbers_hundred_billion_word3">million</string>
+    <string name="description_numbers_hundred_billion_meaning3">100万</string>
+    <string name="description_numbers_hundred_billion_word4">billion</string>
+    <string name="description_numbers_hundred_billion_meaning4">10億</string>
+    <string name="description_numbers_hundred_billion_how_to_remember">英語の数字は日本とは違い、3桁ごとに位を変えます。\n
+        日本では\n一万→十万→百万→千万→一億\nと4桁ごとに位を変えるところ、英語は\n一万→十万→百万→一億\nと3桁ごとに変えます。\n
+        つまりone hundred → one thousand → ten thousand → hundred thousand → one million →→→ one billion となります。\n
+        単語を直訳して暗記するより数字の考え方を理解するほうがわかりやすいですよ。
+    </string>
+    <string name="description_numbers_hundred_billion_how_to_remember2">大きな数を数字で表すとき、英語では3桁ごとに区切りをつけます。\n
+    2 millionだと2,000,000、2 billionだと2,000,000,000と表します。この区切りを目安に正しい英単語を作ってください。</string>
 
     <string name="description_place_is_a_country_city_word1">city</string>
     <string name="description_place_is_a_country_city_meaning1">都市</string>

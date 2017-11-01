@@ -22,8 +22,8 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NAME_writes_music extends Lesson{
-    public static final String KEY = "NAME_writes_music";
+public class NAME_writes_songs extends Lesson{
+    public static final String KEY = "NAME_writes_songs";
 
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
@@ -42,7 +42,7 @@ public class NAME_writes_music extends Lesson{
         }
     }
 
-    public NAME_writes_music(WikiBaseEndpointConnector connector, LessonListener listener){
+    public NAME_writes_songs(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
         super.questionSetsLeftToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
@@ -99,13 +99,30 @@ public class NAME_writes_music extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
-        }
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
+        }
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord write = new VocabularyWord("","write", "書く",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord song = new VocabularyWord("", "song", "曲",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(write);
+        words.add(song);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        return qr.personEN + " writes songs.";
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personJP + "は歌を書きます。";
+        return qr.personJP + "は曲を書きます。";
     }
 
     //puzzle pieces for sentence puzzle question
@@ -113,7 +130,7 @@ public class NAME_writes_music extends Lesson{
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personEN);
         pieces.add("writes");
-        pieces.add("music");
+        pieces.add("songs");
         return pieces;
     }
 
@@ -150,13 +167,14 @@ public class NAME_writes_music extends Lesson{
     }
 
     private String fillInBlankAnswer(){
-        return "writes music";
+        return "writes songs";
     }
 
     //plural/singular
     private List<String> fillInBlankAlternateAnswers(){
-        List<String> answers = new ArrayList<>(1);
-        answers.add("write music");
+        List<String> answers = new ArrayList<>(2);
+        answers.add("write songs");
+        answers.add("writes song");
         return answers;
     }
 

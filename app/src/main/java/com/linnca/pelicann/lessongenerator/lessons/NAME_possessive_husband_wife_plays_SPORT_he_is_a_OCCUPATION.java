@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends Lesson{
     public static final String KEY = "NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION";
@@ -45,6 +46,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
         private final String spouseEN;
         private final String spouseJP;
         private final String sportID;
+        private final String sportNameEN;
         private final String sportNameJP;
         private final String personTitleEN;
         private final String personTitleJP;
@@ -68,6 +70,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
             this.spouseEN = spouseEN;
             this.spouseJP = spouseJP;
             this.sportID = sportID;
+            this.sportNameEN = sportNameEN;
             this.sportNameJP = sportNameJP;
             this.occupationEN = occupationEN;
             this.occupationJP = occupationJP;
@@ -183,6 +186,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
             sportID = LessonGeneratorUtils.stripWikidataID(sportID);
             String sportNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "sportLabel");
             String sportNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "sportEN");
+            sportNameEN = TermAdjuster.adjustSportsEN(sportNameEN);
             String genderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "gender");
             genderID = LessonGeneratorUtils.stripWikidataID(genderID);
             String occupationJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "occupationLabel");
@@ -219,9 +223,30 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
             List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
             questionSet.add(spellingQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
 
         }
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord sport = new VocabularyWord("",qr.sportNameEN, qr.sportNameJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord occupation = new VocabularyWord("", qr.occupationEN, qr.occupationJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(3);
+        words.add(sport);
+        words.add(occupation);
+
+        if (qr.object.equals("")) {
+            VocabularyWord additionalWord = new VocabularyWord("", qr.verb, qr.sportNameJP + "をする",
+                    formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+            words.add(additionalWord);
+        }
+
+        return words;
     }
 
     //we want to read from the database and then create the questions
@@ -260,7 +285,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
         });
     }
 
-    private String NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION_EN_correct(QueryResult qr){
+    private String formatSentenceEN(QueryResult qr){
         String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
         String occupation = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
         String sentence1 = qr.spouseEN + "'s " + qr.personTitleEN + " " + verbObject + ".";

@@ -32,7 +32,7 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_NAME2_possessive_husb
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_OCCUPATION;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_at_work_He_is_at_EMPLOYER;
-import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_CITY;
+import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME_I_am_from_CITY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_from_COUNTRY;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_played_SPORT;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_plays_SPORT;
@@ -49,7 +49,7 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_works_at_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_EMPLOYER;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_works_for_the_government_He_is_a_politician;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_books;
-import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_music;
+import com.linnca.pelicann.lessongenerator.lessons.NAME_writes_songs;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_wrote_a_book;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_0_3;
 import com.linnca.pelicann.lessongenerator.lessons.Numbers_10s;
@@ -196,7 +196,7 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(NAME_is_from_COUNTRY.KEY);
-        col2Data = new LessonData(NAME_is_from_CITY.KEY, places, R.layout.description_name_is_from_city, col2Prerequisites, 100, R.color.lblue700, placesIconID);
+        col2Data = new LessonData(Hello_my_name_is_NAME_I_am_from_CITY.KEY, places, R.layout.description_name_is_from_city, col2Prerequisites, 100, R.color.lblue700, placesIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(NAME_is_from_COUNTRY.KEY);
         col3Data = new LessonData(NAME_is_DEMONYM.KEY, people, R.layout.description_name_is_demonym, col3Prerequisites, 100, R.color.lblue700, peopleIconID);
@@ -209,7 +209,7 @@ public class LessonHierarchyViewer {
         col2Prerequisites = new ArrayList<>(3);
         col2Prerequisites.add(Hi_hey_whats_up.KEY);
         col2Prerequisites.add(Hello_my_name_is_NAME_I_am_a_OCCUPATION.KEY);
-        col2Prerequisites.add(NAME_is_from_CITY.KEY);
+        col2Prerequisites.add(Hello_my_name_is_NAME_I_am_from_CITY.KEY);
         col2Data = new LessonData("id_review2", review, null, col2Prerequisites, 100, 0, 0);
         col2Data.setPrerequisiteLeeway(1);
         row.setCol2(col2Data);
@@ -273,12 +273,12 @@ public class LessonHierarchyViewer {
         lessonRows.add(row);
 
         row = new LessonListRow();
-        col1Data = new LessonData(NAME_possessive_mother_father_is_NAME2.KEY, people, null, null, 100, R.color.lblue700, peopleIconID);
+        col1Data = new LessonData(NAME_possessive_mother_father_is_NAME2.KEY, people, R.layout.description_name_possessive_father_mother_is_name2, null, 100, R.color.lblue700, peopleIconID);
         col2Prerequisites = new ArrayList<>(2);
         col2Prerequisites.add(Numbers_21_99.KEY);
         col2Prerequisites.add(Numbers_11_19.KEY);
-        col2Data = new LessonData(Numbers_hundred_billion.KEY, numbers, null, col2Prerequisites, 100, R.color.lblue300, numbersIconID);
-        col3Data = new LessonData(COUNTRY_possessive_government_is_a_GOVERNMENT.KEY, places, null, null, 100, R.color.lblue700, placesIconID);
+        col2Data = new LessonData(Numbers_hundred_billion.KEY, numbers, R.layout.description_numbers_hundred_billion, col2Prerequisites, 100, R.color.lblue300, numbersIconID);
+        col3Data = new LessonData(COUNTRY_possessive_government_is_a_GOVERNMENT.KEY, places, R.layout.description_country_possessive_government_is_a_government, null, 100, R.color.lblue700, placesIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -287,11 +287,11 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(NAME_possessive_mother_father_is_NAME2.KEY);
-        col1Data = new LessonData(NAME_possessive_first_last_name_is_NAME.KEY, people, null, col1Prerequisites, 100, R.color.lblue700, peopleIconID);
+        col1Data = new LessonData(NAME_possessive_first_last_name_is_NAME.KEY, people, R.layout.description_name_possessive_first_last_name_is_name, col1Prerequisites, 100, R.color.lblue700, peopleIconID);
         col3Prerequisites = new ArrayList<>(2);
         col3Prerequisites.add(COUNTRY_possessive_government_is_a_GOVERNMENT.KEY);
         col3Prerequisites.add(Numbers_hundred_billion.KEY);
-        col3Data = new LessonData(COUNTRY_possessive_population_is_POPULATION.KEY, places, null, col3Prerequisites, 100, R.color.lblue700, placesIconID);
+        col3Data = new LessonData(COUNTRY_possessive_population_is_POPULATION.KEY, places, R.layout.description_country_possessive_population_is_population, col3Prerequisites, 100, R.color.lblue700, placesIconID);
         row.setCol1(col1Data);
         row.setCol3(col3Data);
         lessonRows.add(row);
@@ -299,10 +299,10 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(NAME_possessive_first_last_name_is_NAME.KEY);
-        col1Data = new LessonData(NAME_is_NAME2_possessive_husband_wife.KEY, people, null, col1Prerequisites, 100, R.color.lblue700, peopleIconID);
+        col1Data = new LessonData(NAME_is_NAME2_possessive_husband_wife.KEY, people, R.layout.description_name_is_name_possessive_husband_wife, col1Prerequisites, 100, R.color.lblue700, peopleIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(COUNTRY_possessive_population_is_POPULATION.KEY);
-        col3Data = new LessonData(COUNTRY_possessive_area_is_AREA.KEY, places, null, col3Prerequisites, 100, R.color.lblue700, placesIconID);
+        col3Data = new LessonData(COUNTRY_possessive_area_is_AREA.KEY, places, R.layout.description_country_possessive_area_is_area, col3Prerequisites, 100, R.color.lblue700, placesIconID);
         row.setCol1(col1Data);
         row.setCol3(col3Data);
         lessonRows.add(row);
@@ -329,7 +329,7 @@ public class LessonHierarchyViewer {
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
         col1Prerequisites.add(NAME_writes_books.KEY);
-        col1Data = new LessonData(NAME_writes_music.KEY, occupations, null, col1Prerequisites, 100, R.color.lblue300, peopleIconID);
+        col1Data = new LessonData(NAME_writes_songs.KEY, occupations, null, col1Prerequisites, 100, R.color.lblue300, peopleIconID);
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(NAME_plays_SPORT_SPORT_is_a_water_sport.KEY);
         col2Data = new LessonData(NAME_plays_SPORT_SPORT_is_a_individual_team_sport.KEY, occupations, null, col2Prerequisites, 100, R.color.lblue300, peopleIconID);
@@ -343,7 +343,7 @@ public class LessonHierarchyViewer {
 
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
-        col1Prerequisites.add(NAME_writes_music.KEY);
+        col1Prerequisites.add(NAME_writes_songs.KEY);
         col1Data = new LessonData(NAME_creates_art.KEY, occupations, null, col1Prerequisites, 100, R.color.lblue300, peopleIconID);
         col2Prerequisites = new ArrayList<>(1);
         col2Prerequisites.add(NAME_plays_SPORT_SPORT_is_a_individual_team_sport.KEY);

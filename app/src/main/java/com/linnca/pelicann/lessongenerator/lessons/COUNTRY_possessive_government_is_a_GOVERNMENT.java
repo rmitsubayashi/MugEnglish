@@ -13,6 +13,7 @@ import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -143,11 +144,38 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
         }
 
 
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord government = new VocabularyWord("","government", "政治体制",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord country = new VocabularyWord("", qr.countryEN,qr.countryJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord govType = new VocabularyWord("", qr.governmentEN,qr.governmentJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(3);
+        words.add(government);
+        words.add(country);
+        words.add(govType);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        String sentence = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "\'s government is " +
+                GrammarRules.indefiniteArticleBeforeNoun(qr.governmentEN) + ".";
+        return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+    }
+
+    private String formatSentenceJP(QueryResult qr){
+        return qr.countryJP + "の政治体制は" + qr.governmentJP + "です。";
     }
 
     private List<QuestionData> spellingQuestion(QueryResult qr){
@@ -207,9 +235,9 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     private String fillInBlankInputQuestion1(QueryResult qr){
         String sentence1 = qr.countryJP + "の政治体制は" + qr.governmentJP + "です。";
         String government = GrammarRules.indefiniteArticleBeforeNoun(qr.governmentEN);
-        String sentence2 = qr.countryEN + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence2 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " is " + government + ".";
-        return sentence1 + "\n\n" + sentence2;
+        return sentence1 + "\n\n" + GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
     }
 
     private String fillInBlankInputAnswer1(){
@@ -251,9 +279,20 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         return qr.countryEN + "'s";
     }
 
+    private List<String> fillInBlankInputAlternateAnswer2(QueryResult qr){
+        List<String> alternateAnswers = new ArrayList<>(1);
+        String definiteArticleString = GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
+        if (!definiteArticleString.equals(qr.countryEN)){
+            alternateAnswers.add(definiteArticleString);
+        }
+
+        return alternateAnswers;
+    }
+
     private List<QuestionData> createFillInBlankInputQuestion2(QueryResult qr){
         String question = this.fillInBlankInputQuestion2(qr);
         String answer = fillInBlankInputAnswer2(qr);
+        List<String> acceptableAnswers = fillInBlankInputAlternateAnswer2(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
@@ -262,7 +301,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
+        data.setAcceptableAnswers(acceptableAnswers);
 
         data.setFeedback(null);
 

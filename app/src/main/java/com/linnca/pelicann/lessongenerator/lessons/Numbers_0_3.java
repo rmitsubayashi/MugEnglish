@@ -8,6 +8,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
@@ -93,6 +94,30 @@ public class Numbers_0_3 extends Lesson {
         return questionSet;
     }
 
+    @Override
+    protected List<VocabularyWord> getGenericQuestionVocabulary(){
+        List<VocabularyWord> words = new ArrayList<>(4);
+        List<String> wordList = translateAnswers();
+        List<String> translationList = translateNumbers();
+        for (int i=0; i<4; i++) {
+            String word = wordList.get(i);
+            String translation = translationList.get(i);
+            words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word),
+                    word, translation, "", "", KEY));
+        }
+        return words;
+    }
+
+    @Override
+    protected List<String> getGenericQuestionVocabularyIDs(){
+        List<String> ids =new ArrayList<>(4);
+        List<String> wordList = translateAnswers();
+        for (String word : wordList) {
+            ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word));
+        }
+        return ids;
+    }
+
     private List<String> translateAnswers(){
         List<String> choices = new ArrayList<>(4);
         choices.add("zero");
@@ -153,10 +178,10 @@ public class Numbers_0_3 extends Lesson {
         questions.add("zero - zero = ");
         questions.add("three - three = ");
         //multiplication
-        questions.add("two x one = ");
-        questions.add("one x zero = ");
-        questions.add("one x three = ");
-        questions.add("one x one = ");
+        questions.add("two × one = ");
+        questions.add("one × zero = ");
+        questions.add("one × three = ");
+        questions.add("one × one = ");
         
         return questions;
         

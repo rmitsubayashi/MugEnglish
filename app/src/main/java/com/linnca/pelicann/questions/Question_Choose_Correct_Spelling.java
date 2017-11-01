@@ -68,7 +68,11 @@ public class Question_Choose_Correct_Spelling extends Question_General {
         //the longer the word, the more variations allowed.
         //we might have more difficulty generating misspelled words of shorter length
         int answerLength = questionData.getAnswer().length();
-        if (answerLength < 5)
+        if (answerLength == 1) //just in case
+            choiceCt = 1;
+        else if (answerLength == 2) //just in case
+            choiceCt = 2;
+        else if (answerLength < 5)
             choiceCt = 3;
         else
             choiceCt = 4;
@@ -81,7 +85,7 @@ public class Question_Choose_Correct_Spelling extends Question_General {
         choices.add(answer);
         //odds can be the length of the string
         List<String> misspelledChoices = QuestionUtils.createMisspelledWords(
-                answer, answer.length(), choiceCt-1
+                answer, 2, choiceCt-1
         );
         choices.addAll(misspelledChoices);
         QuestionUtils.shuffle(choices);

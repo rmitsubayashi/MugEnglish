@@ -13,6 +13,7 @@ import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -120,9 +121,23 @@ public class COMPANY_makes_PRODUCT extends Lesson{
             List<QuestionData> translateQuestion2 = createTranslateQuestion2(qr);
             questionSet.add(translateQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.companyID, qr.companyJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.companyID, qr.companyJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord make = new VocabularyWord("", "make", "つくる",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord product = new VocabularyWord("", qr.productEN, qr.productJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(make);
+        words.add(product);
+        return words;
     }
 
     //puzzle pieces for sentence puzzle question

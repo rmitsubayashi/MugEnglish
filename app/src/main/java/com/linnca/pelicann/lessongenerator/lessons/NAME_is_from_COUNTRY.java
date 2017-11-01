@@ -12,6 +12,7 @@ import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -137,12 +138,23 @@ public class NAME_is_from_COUNTRY extends Lesson {
             List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
             questionSet.add(fillInBlankQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
-    private String NAME_is_from_COUNTRY_EN_correct(QueryResult qr){
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord country = new VocabularyWord("",qr.countryEN, qr.countryJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(country);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
         String sentence = qr.personEN + " is from " +
                 GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + ".";
         //no need since all names are capitalized?
@@ -232,7 +244,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = NAME_is_from_COUNTRY_EN_correct(qr);
+        String sentence = formatSentenceEN(qr);
         String sentence2 = qr.personJP + "は" + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
                 "の出身です。";
         return sentence + "\n\n" + sentence2;

@@ -13,7 +13,9 @@ import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
@@ -136,9 +138,32 @@ public class NAME_is_AGE_years_old extends Lesson {
             List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
             questionSet.add(fillInBlankQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord is = new VocabularyWord( "", "is","~は",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        VocabularyWord yearsOld = new VocabularyWord("","years old", "～歳",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(is);
+        words.add(yearsOld);
+
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        return qr.personEN + " is " + qr.age + " years old.";
+    }
+
+    private String formatSentenceJP(QueryResult qr){
+        return qr.personJP + "は" + qr.age + "歳です。";
     }
 
     private String fillInBlankQuestion(QueryResult qr){
@@ -147,9 +172,12 @@ public class NAME_is_AGE_years_old extends Lesson {
         String sentence = qr.personEN + " is " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " " + yearString + " old.";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        String sentence2 = "ヒント：" + qr.personJP + "の誕生日は" + qr.birthday + "です";
+        String sentence2 = "ヒント：" + qr.personJP + "の誕生日:" + qr.birthday + "\n";
+        DateTimeFormatter birthdayFormat = DateTimeFormat.forPattern("yyyy年M月d日");
+        String today = birthdayFormat.print(DateTime.now());
+        String sentence3 = "(" + today + "現在)";
 
-        return sentence + "\n\n" + sentence2;
+        return sentence + "\n\n" + sentence2 + "\n" + sentence3;
     }
 
     private String fillInBlankAnswer(QueryResult qr){

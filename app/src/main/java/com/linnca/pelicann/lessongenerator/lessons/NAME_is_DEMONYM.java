@@ -152,12 +152,23 @@ public class NAME_is_DEMONYM extends Lesson {
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
-    private String NAME_is_DEMONYM_EN_correct(QueryResult qr){
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord demonym = new VocabularyWord("",qr.demonymEN, qr.demonymJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(demonym);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
         String sentence = qr.personEN + " is " + qr.demonymEN + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);

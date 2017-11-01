@@ -116,12 +116,26 @@ public class NAME_speaks_LANGUAGE extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
-    private String NAME_is_language_EN_correct(QueryResult qr){
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord speak = new VocabularyWord("", "speak", "話す",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord language = new VocabularyWord("", qr.languageEN, qr.languageJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(speak);
+        words.add(language);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
         String sentence = qr.personEN + " speaks " + qr.languageEN + ".";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);

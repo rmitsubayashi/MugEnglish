@@ -99,9 +99,26 @@ public class NAME_creates_art extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
-        }
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
+        }
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord create = new VocabularyWord("","create", "作る",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord art = new VocabularyWord("", "art","芸術品",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(create);
+        words.add(art);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        return qr.personEN + " creates art.";
     }
 
     private String formatSentenceJP(QueryResult qr){

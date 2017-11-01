@@ -99,12 +99,26 @@ public class NAME_writes_books extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
-    private String NAME_is_OCCUPATION_EN_correct(QueryResult qr){
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord write = new VocabularyWord("","write", "書く",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord book = new VocabularyWord("", "book", "本",
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(write);
+        words.add(book);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
         String sentence = qr.personEN + " writes books.";
         //no need since all names are capitalized?
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);

@@ -14,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -131,11 +132,31 @@ public class PLACE_is_a_country_city extends Lesson {
             List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
             questionSet.add(fillInBlankInputQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.placeID, qr.placeJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.placeID, qr.placeJP, vocabularyWords));
         }
 
+    }
 
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord countryCity = new VocabularyWord("",qr.countryCityEN, qr.countryCityJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        VocabularyWord place = new VocabularyWord("", qr.placeEN, qr.placeJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
 
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(place);
+        words.add(countryCity);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
+        return qr.placeEN + " is a " + qr.countryCityEN + ".";
+    }
+
+    private String formatSentenceJP(QueryResult qr){
+        return qr.placeJP + "は" + qr.countryCityJP + "です。";
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){

@@ -14,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -131,9 +132,23 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord firstName = new VocabularyWord("","first name", "名",
+                formatFirstNameSentenceEN(qr), formatFirstNameSentenceJP(qr), KEY);
+        VocabularyWord lastName = new VocabularyWord("","last name", "姓",
+                formatLastNameSentenceEN(qr), formatLastNameSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(2);
+        words.add(firstName);
+        words.add(lastName);
+        return words;
     }
 
     private String formatFirstNameSentenceJP(QueryResult qr){
@@ -142,6 +157,14 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
 
     private String formatLastNameSentenceJP(QueryResult qr){
         return qr.personJP + "の姓は" + qr.lastNameJP + "です。";
+    }
+
+    private String formatFirstNameSentenceEN(QueryResult qr){
+        return qr.personEN + "\'s first name is " + qr.firstNameEN + ".";
+    }
+
+    private String formatLastNameSentenceEN(QueryResult qr){
+        return qr.personEN + "\'s last name is " + qr.lastNameEN + ".";
     }
 
     //puzzle pieces for sentence puzzle question
