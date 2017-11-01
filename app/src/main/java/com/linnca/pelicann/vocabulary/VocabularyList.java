@@ -36,7 +36,6 @@ public class VocabularyList extends Fragment {
     private String userID;
     private FirebaseDatabase db;
     private FirebaseAnalytics firebaseLog;
-    private ViewGroup mainLayout;
     private RecyclerView listView;
     private VocabularyListListener listener;
     private VocabularyListAdapter adapter;
@@ -57,18 +56,14 @@ public class VocabularyList extends Fragment {
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
+        db = FirebaseDatabase.getInstance();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                       Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_vocabulary_list, container, false);
-        mainLayout = view.findViewById(R.id.vocabulary_list_layout);
         listView = view.findViewById(R.id.vocabulary_list_list);
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            populateList();
-            actionModeCallback = getActionModeCallback();
-        }
         return view;
     }
 
@@ -77,6 +72,11 @@ public class VocabularyList extends Fragment {
         super.onStart();
         listener.setToolbarState(new ToolbarState(getString(R.string.fragment_vocabulary_list_title),
                 false, false, null));
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+            populateList();
+            actionModeCallback = getActionModeCallback();
+        }
     }
 
     @Override
@@ -215,7 +215,6 @@ public class VocabularyList extends Fragment {
 
     private void removeSelectedVocabularyWords(){
         List<VocabularyListWord> wordsToRemove = adapter.getSelectedItems();
-        int toRemoveWordCount = wordsToRemove.size();
         for (VocabularyListWord word : wordsToRemove){
             String key = word.getKey();
             removeVocabularyWord(key);
@@ -223,14 +222,27 @@ public class VocabularyList extends Fragment {
         }
     }
 
-    private void removeVocabularyWord(String key){}
-
-    private void removeVocabularyListWord(String key){
-        //DatabaseReference wordRef = db
+    private void removeVocabularyWord(String key){
+        DatabaseReference wordRef = db.getReference(
+                FirebaseDBHeaders.VOCABULARY_DETAILS + "/" +
+                        userID + "/" +
+                        key
+        );
+        wordRef.removeValue();
     }
 
-    public void onDestroy(){
-        super.onDestroy();
+    private void removeVocabularyListWord(String key){
+        DatabaseReference wordRef = db.getReference(
+                FirebaseDBHeaders.VOCABULARY_LIST + "/" +
+                        userID + "/" +
+                        key
+        );
+        wordRef.removeValue();
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
         if (vocabularyRef != null && vocabularyEventListener != null){
             vocabularyRef.removeEventListener(vocabularyEventListener);
         }

@@ -226,17 +226,21 @@ public class QuestionUtils {
         List<String> results = new ArrayList<>(ct);
         for (int i=0; i<ct; i++) {
             String result = word;
-            int tempOdds = odds;
+            int maxLoopCt = word.length();
             while ( (result.equals(word) || results.contains(result))
-                    && tempOdds != 0) {
+                    && maxLoopCt != 0) {
                 result = createMisspelledWordHelper(word, odds);
-                tempOdds--;
+                maxLoopCt--;
             }
 
-            if (result.equals(word)) {
-                char[] letters = word.toCharArray();
-                shuffleArray(letters);
-                result = String.valueOf(letters);
+            if (result.equals(word) || results.contains(result)) {
+                String shuffleWord = word;
+                while (shuffleWord.equals(word) || results.contains(shuffleWord)) {
+                    char[] letters = word.toCharArray();
+                    shuffleArray(letters);
+                    shuffleWord = String.valueOf(letters);
+                }
+                result = shuffleWord;
             }
             results.add(result);
         }
@@ -292,6 +296,7 @@ public class QuestionUtils {
         //switch similar letters
         //i  <-> y
         //t  <-> th
+        //th <-> d
         //o  <-> oh
         //ck <-> k
         //r  <-> l
@@ -319,10 +324,17 @@ public class QuestionUtils {
                     char nextLetter = tempWord.charAt(i+1);
                     nextRandom = random.nextInt(odds);
                     if (nextLetter == 'h'){
-                        //th -> t
                         if (nextRandom == 0){
-                            builder.deleteCharAt(i+1 + changeCt);
-                            changeCt--;
+                            nextRandom = random.nextInt(2);
+                            if (nextRandom == 0) {
+                                //th -> t
+                                builder.deleteCharAt(i + 1 + changeCt);
+                                changeCt--;
+                            } else {
+                                //th -> d
+                                builder.replace(i+changeCt, i+changeCt+2, "d");
+                                changeCt--;
+                            }
                         }
                     } else {
                         //t -> th
@@ -330,6 +342,12 @@ public class QuestionUtils {
                             builder.insert(i+1+ changeCt, 'h');
                         }
                     }
+                }
+            } else if (letter == 'd'){
+                nextRandom =random.nextInt(odds);
+                if (nextRandom == 0){
+                    builder.replace(i+changeCt, i+changeCt+1, "th");
+                    changeCt++;
                 }
             }
 

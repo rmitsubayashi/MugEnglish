@@ -8,30 +8,36 @@
 
     <!-- right to left support tag needed for firebase ui -->
     <application
+        android:name=".mainactivity.CustomApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="false"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        >
         <activity
             android:name=".mainactivity.Splash"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <!--
         <service
             android:name=".userinterestcontrols.FacebookInterestFinder"
             android:exported="false" />
-
+        -->
         <activity
             android:name=".onboarding.Onboarding"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".mainactivity.MainActivity" />
-        <activity android:name=".tutorial.TutorialActivity" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".mainactivity.MainActivity"
+                  android:screenOrientation="portrait"/>
+        <activity android:name=".tutorial.TutorialActivity"
+                  android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

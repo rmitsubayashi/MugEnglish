@@ -242,7 +242,6 @@ public class Results extends Fragment {
                 allWords.add(word);
 
                 if (vocabularyFetched.incrementAndGet() == vocabularyToFetch){
-                    Log.d(TAG, "populating vocabulary");
                     populateVocabularyItems(allWords);
                 } else {
                     Log.d(TAG, ""+vocabularyFetched.get());
@@ -258,7 +257,7 @@ public class Results extends Fragment {
 
     private class VocabularyComparator implements Comparator<VocabularyWord>{
         public int compare(VocabularyWord word1, VocabularyWord word2){
-            return word1.getWord().compareTo(word2.getWord());
+            return word1.getWord().toLowerCase().compareTo(word2.getWord().toLowerCase());
         }
     }
 

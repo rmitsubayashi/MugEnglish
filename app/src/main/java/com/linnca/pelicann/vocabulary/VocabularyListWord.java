@@ -58,6 +58,6 @@ public class VocabularyListWord implements Comparable<VocabularyListWord>{
 
     @Override
     public int compareTo(@NonNull VocabularyListWord word2){
-        return this.word.compareTo(word2.getWord());
+        return this.word.toLowerCase().compareTo(word2.getWord().toLowerCase());
     }
 }

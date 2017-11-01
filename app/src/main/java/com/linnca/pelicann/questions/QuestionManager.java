@@ -101,7 +101,6 @@ public class QuestionManager{
 		if (questionsStarted) {
 			//if we are done with the questions
 			if (questionMkr == lessonInstanceData.questionCount()) {
-				Log.d(TAG, "questions finished");
 				instanceRecord.setCompleted(true);
 				questionManagerListener.onQuestionsFinished(instanceRecord);
 				//make sure to call this last because this resets the instance record
@@ -124,7 +123,7 @@ public class QuestionManager{
 
 				@Override
 				public void onCancelled(DatabaseError databaseError) {
-
+					Log.d(TAG, "Error" + databaseError.getMessage());
 				}
 			});
 		}
