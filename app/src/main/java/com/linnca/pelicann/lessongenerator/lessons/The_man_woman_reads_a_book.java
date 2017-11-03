@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
-import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
@@ -13,7 +12,6 @@ import com.linnca.pelicann.vocabulary.VocabularyWord;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class The_man_woman_reads_a_book extends Lesson {

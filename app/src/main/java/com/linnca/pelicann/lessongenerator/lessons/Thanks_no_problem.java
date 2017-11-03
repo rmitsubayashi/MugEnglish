@@ -8,13 +8,11 @@ import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
-import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Thanks_no_problem extends Lesson {

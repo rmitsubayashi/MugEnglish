@@ -2,7 +2,6 @@ package com.linnca.pelicann.mainactivity.widgets;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.ResultReceiver;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;

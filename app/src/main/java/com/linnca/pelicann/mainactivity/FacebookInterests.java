@@ -1,21 +1,6 @@
 package com.linnca.pelicann.mainactivity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.userinterestcontrols.FacebookInterestFinder;
 
 public class FacebookInterests extends AppCompatActivity {
     /*

@@ -1,14 +1,7 @@
 package com.linnca.pelicann.results;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.questions.InstanceRecord;

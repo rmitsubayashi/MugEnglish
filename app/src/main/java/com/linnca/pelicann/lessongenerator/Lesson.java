@@ -16,8 +16,8 @@ import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.vocabulary.VocabularyWord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 

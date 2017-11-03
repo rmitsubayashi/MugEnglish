@@ -10,13 +10,11 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 
 //we only have one blank per question
 //to make it easier for the user to solve

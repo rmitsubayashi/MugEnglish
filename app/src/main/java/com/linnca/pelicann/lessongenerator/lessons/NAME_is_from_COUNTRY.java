@@ -26,8 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class NAME_is_from_COUNTRY extends Lesson {
     public static final String KEY = "NAME_is_from_COUNTRY";

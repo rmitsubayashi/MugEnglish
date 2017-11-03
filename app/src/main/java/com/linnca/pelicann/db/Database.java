@@ -2,7 +2,6 @@ package com.linnca.pelicann.db;
 
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
-import com.linnca.pelicann.vocabulary.VocabularyListWord;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import java.util.List;

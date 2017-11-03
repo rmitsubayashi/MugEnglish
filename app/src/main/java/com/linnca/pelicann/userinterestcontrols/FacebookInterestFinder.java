@@ -1,39 +1,6 @@
 package com.linnca.pelicann.userinterestcontrols;
 
-import android.app.IntentService;
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-
 //import com.facebook.AccessToken;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
-import com.linnca.pelicann.R;
-import com.linnca.pelicann.connectors.FacebookAPIConnector;
-import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
-import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
-import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class FacebookInterestFinder {//extends IntentService{

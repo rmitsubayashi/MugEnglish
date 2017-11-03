@@ -3,21 +3,14 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
-import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
-import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_Actions;
-import com.linnca.pelicann.questions.Question_FillInBlank_Input;
-import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
-import com.linnca.pelicann.questions.Question_General;
-import com.linnca.pelicann.questions.Question_MultipleChoice;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Find_stand_sit_on_a_bed extends Lesson {

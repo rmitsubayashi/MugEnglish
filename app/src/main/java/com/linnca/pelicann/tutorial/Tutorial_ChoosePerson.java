@@ -2,7 +2,6 @@ package com.linnca.pelicann.tutorial;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,7 +29,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Tutorial_ChoosePerson extends Fragment {

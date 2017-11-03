@@ -10,18 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
-import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
-import com.linnca.pelicann.lessonlist.LessonListRow;
-import com.linnca.pelicann.questions.InstanceRecord;
-import com.linnca.pelicann.questions.QuestionAttempt;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class UserProfile_ReportCard extends Fragment {

@@ -21,7 +21,6 @@ import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.userinterestcontrols.StarterPacks;
-import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import java.util.ArrayList;

@@ -7,13 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.lessonlist.LessonListRow;

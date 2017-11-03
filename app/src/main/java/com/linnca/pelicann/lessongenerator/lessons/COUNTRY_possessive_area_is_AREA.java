@@ -1,8 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 
-import android.util.Log;
-
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;

@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +17,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 
 import java.util.List;
 

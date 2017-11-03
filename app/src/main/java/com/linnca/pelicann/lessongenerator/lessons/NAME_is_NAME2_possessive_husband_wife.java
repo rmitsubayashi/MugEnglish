@@ -6,7 +6,6 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
-import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionTypeMappings;

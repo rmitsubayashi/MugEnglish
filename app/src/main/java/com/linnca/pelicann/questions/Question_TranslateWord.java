@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 
 public class Question_TranslateWord extends Question_General {
     private EditText questionInput;
