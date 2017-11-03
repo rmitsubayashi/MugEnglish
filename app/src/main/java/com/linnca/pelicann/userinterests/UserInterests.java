@@ -22,20 +22,13 @@ import android.view.ViewGroup;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
-import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
-import com.linnca.pelicann.userinterestcontrols.UserInterestRemover;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -46,10 +39,9 @@ import java.util.List;
 public class UserInterests extends Fragment {
     private final String TAG = "UserInterests";
     private FirebaseAnalytics firebaseLog;
+    private Database db;
     private ViewGroup mainLayout;
     private RecyclerView listView;
-    private Query userInterestQuery;
-    private ValueEventListener userInterestQueryListener;
     private UserInterestAdapter userInterestListAdapter = null;
     private Snackbar undoSnackBar;
     private RecyclerView.OnItemTouchListener undoOnTouchListener;
@@ -71,6 +63,7 @@ public class UserInterests extends Fragment {
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
+        db = new FirebaseDB();
     }
 
     @Override
@@ -80,11 +73,8 @@ public class UserInterests extends Fragment {
         mainLayout = view.findViewById(R.id.user_interests_layout);
         listView = view.findViewById(R.id.user_interests_list);
         searchFAB = view.findViewById(R.id.user_interests_search_fab);
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            loadUser();
-            populateFABs();
-            actionModeCallback = getActionModeCallback();
-        }
+        actionModeCallback = getActionModeCallback();
+        populateFABs();
         return view;
     }
 
@@ -95,6 +85,7 @@ public class UserInterests extends Fragment {
                 new ToolbarState("",
                         false, true, null)
         );
+        populateUserInterests();
     }
 
     @Override
@@ -136,51 +127,28 @@ public class UserInterests extends Fragment {
         firebaseLog.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
-    private void loadUser(){
-        setListListeners();
-        //populateFABs();
-    }
-
     private void setAdapter(){
         userInterestListAdapter = new UserInterestAdapter(
                 getUserInterestAdapterListener()
         );
+        listView.setAdapter(userInterestListAdapter);
 
-        DatabaseReference userInterestRef = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBHeaders.USER_INTERESTS + "/" +
-                        userID);
-        //order alphabetically
-        userInterestQuery = userInterestRef.orderByChild("pronunciation");
-
-        userInterestQueryListener = new ValueEventListener() {
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<WikiDataEntryData> userInterests = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    WikiDataEntryData interest = snapshot.getValue(WikiDataEntryData.class);
-                    userInterests.add(interest);
-                }
-
-                //if the user has something selected while selecting interests
+            public void onUserInterestsQueried(List<WikiDataEntryData> userInterests) {
+                //if the user has something selected while updating interests
                 //(which shouldn't happen unless working from two devices)
-                //we should de-select everything
+                //we should de-select everything first
                 if (actionMode != null)
                     actionMode.finish();
                 userInterestListAdapter.setInterests(userInterests);
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         };
-        userInterestQuery.addValueEventListener(userInterestQueryListener);
 
-
-        listView.setAdapter(userInterestListAdapter);
+        db.getUserInterests(onResultListener);
     }
 
-    private void setListListeners(){
+    private void populateUserInterests(){
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
         setAdapter();
         registerForContextMenu(listView);
@@ -259,14 +227,16 @@ public class UserInterests extends Fragment {
                     @Override
                     public void onClick(View view) {
                         //undo
-                        UserInterestAdder userInterestAdder = new UserInterestAdder();
-                        for (WikiDataEntryData data : dataToRecover) {
-                            userInterestAdder.justAdd(data);
-                        }
-                        if (undoOnTouchListener != null) {
-                            listView.removeOnItemTouchListener(undoOnTouchListener);
-                            undoOnTouchListener = null;
-                        }
+                        OnResultListener onResultListener = new OnResultListener() {
+                            @Override
+                            public void onUserInterestsRemoved() {
+                                if (undoOnTouchListener != null) {
+                                    listView.removeOnItemTouchListener(undoOnTouchListener);
+                                    undoOnTouchListener = null;
+                                }
+                            }
+                        };
+                        db.addUserInterests(dataToRecover, onResultListener);
                     }
                 }
         );
@@ -294,16 +264,19 @@ public class UserInterests extends Fragment {
             }
 
             @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.user_interest_item_menu_delete:
-                        List<WikiDataEntryData> toRemove =
+                        final List<WikiDataEntryData> toRemove =
                                 userInterestListAdapter.getSelectedItems();
-                        for (WikiDataEntryData data : toRemove){
-                            UserInterestRemover.removeUserInterest(data, userID);
-                        }
-                        showUndoSnackBar(toRemove);
-                        mode.finish();
+                        OnResultListener onResultListener = new OnResultListener() {
+                            @Override
+                            public void onUserInterestsRemoved() {
+                                showUndoSnackBar(toRemove);
+                                mode.finish();
+                            }
+                        };
+                        db.removeUserInterests(toRemove, onResultListener);
                         return true;
 
                     default:
@@ -339,9 +312,8 @@ public class UserInterests extends Fragment {
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
-        if (userInterestQuery != null && userInterestQueryListener != null)
-            userInterestQuery.removeEventListener(userInterestQueryListener);
+    public void onStop(){
+        super.onStop();
+        db.cleanup();
     }
 }

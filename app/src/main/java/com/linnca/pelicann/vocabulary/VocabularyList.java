@@ -23,7 +23,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.ArrayList;
@@ -34,13 +37,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class VocabularyList extends Fragment {
     private final String TAG = "VocabularyList";
     private String userID;
-    private FirebaseDatabase db;
+    private Database db;
     private FirebaseAnalytics firebaseLog;
     private RecyclerView listView;
     private VocabularyListListener listener;
     private VocabularyListAdapter adapter;
-    private DatabaseReference vocabularyRef;
-    private ValueEventListener vocabularyEventListener;
     private ActionMode actionMode;
     private ActionMode.Callback actionModeCallback;
 
@@ -56,7 +57,7 @@ public class VocabularyList extends Fragment {
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
-        db = FirebaseDatabase.getInstance();
+        db = new FirebaseDB();
     }
 
     @Override
@@ -102,31 +103,16 @@ public class VocabularyList extends Fragment {
 
     private void populateList(){
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
-        vocabularyRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                        userID
-        );
-        vocabularyEventListener = new ValueEventListener() {
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<VocabularyListWord> words = new ArrayList<>((int)dataSnapshot.getChildrenCount());
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()){
-                    VocabularyListWord word = childSnapshot.getValue(VocabularyListWord.class);
-                    words.add(word);
-                }
+            public void onVocabularyListQueried(List<VocabularyListWord> vocabularyList) {
                 //alphabetical order
-                Collections.sort(words);
-                adapter = new VocabularyListAdapter(getVocabularyListAdapterListener(), words);
+                Collections.sort(vocabularyList);
+                adapter = new VocabularyListAdapter(getVocabularyListAdapterListener(), vocabularyList);
                 listView.setAdapter(adapter);
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         };
-
-        vocabularyRef.addValueEventListener(vocabularyEventListener);
+        db.getVocabularyList(onResultListener);
     }
 
     private VocabularyListAdapter.VocabularyListAdapterListener getVocabularyListAdapterListener(){
@@ -215,36 +201,23 @@ public class VocabularyList extends Fragment {
 
     private void removeSelectedVocabularyWords(){
         List<VocabularyListWord> wordsToRemove = adapter.getSelectedItems();
+        List<String> keys = new ArrayList<>(wordsToRemove.size());
         for (VocabularyListWord word : wordsToRemove){
             String key = word.getKey();
-            removeVocabularyWord(key);
-            removeVocabularyListWord(key);
+            keys.add(key);
         }
-    }
-
-    private void removeVocabularyWord(String key){
-        DatabaseReference wordRef = db.getReference(
-                FirebaseDBHeaders.VOCABULARY_DETAILS + "/" +
-                        userID + "/" +
-                        key
-        );
-        wordRef.removeValue();
-    }
-
-    private void removeVocabularyListWord(String key){
-        DatabaseReference wordRef = db.getReference(
-                FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                        userID + "/" +
-                        key
-        );
-        wordRef.removeValue();
+        OnResultListener onResultListener = new OnResultListener() {
+            @Override
+            public void onVocabularyListItemsRemoved() {
+                //show the undo bar
+            }
+        };
+        db.removeVocabularyListItems(keys, onResultListener);
     }
 
     @Override
     public void onStop(){
         super.onStop();
-        if (vocabularyRef != null && vocabularyEventListener != null){
-            vocabularyRef.removeEventListener(vocabularyEventListener);
-        }
+        db.cleanup();
     }
 }

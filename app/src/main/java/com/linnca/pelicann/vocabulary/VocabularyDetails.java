@@ -19,8 +19,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+
+import java.util.List;
 
 public class VocabularyDetails extends Fragment{
     private final String TAG = "VocabularyDetails";
@@ -31,6 +36,8 @@ public class VocabularyDetails extends Fragment{
     private LinearLayout mainLayout;
     VocabularyDetailsListener listener;
 
+    private Database db;
+
     public interface VocabularyDetailsListener {
         void setToolbarState(ToolbarState state);
         void vocabularyDetailsToLessonDetails(String lessonKey);
@@ -39,6 +46,7 @@ public class VocabularyDetails extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        db = new FirebaseDB();
     }
 
     @Override
@@ -48,8 +56,6 @@ public class VocabularyDetails extends Fragment{
         mainLayout = view.findViewById(R.id.vocabulary_details_main_layout);
         wordTextView = view.findViewById(R.id.vocabulary_details_word);
         key = getArguments().getString(BUNDLE_VOCABULARY_ID);
-        Log.d(TAG, key);
-        populateDetails();
         return view;
     }
 
@@ -79,29 +85,20 @@ public class VocabularyDetails extends Fragment{
         super.onStart();
         listener.setToolbarState(new ToolbarState(getString(R.string.fragment_vocabulary_details_title),
                 false, false, null));
+        populateDetails();
     }
 
     private void populateDetails(){
-        DatabaseReference detailsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.VOCABULARY_DETAILS + "/" +
-                        FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" +
-                        key
-        );
-        detailsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()){
-                    VocabularyWord word = childSnapshot.getValue(VocabularyWord.class);
+            public void onVocabularyWordQueried(List<VocabularyWord> wordCluster) {
+                for (VocabularyWord word : wordCluster) {
                     setTitle(word);
                     setDetailItem(word);
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        };
+        db.getVocabularyDetails(key, onResultListener);
     }
 
     private void setTitle(VocabularyWord word){
@@ -133,6 +130,12 @@ public class VocabularyDetails extends Fragment{
         });
 
         mainLayout.addView(wordView);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        db.cleanup();
     }
 
 }

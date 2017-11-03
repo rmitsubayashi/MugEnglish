@@ -3,6 +3,8 @@ package com.linnca.pelicann.vocabulary;
 import java.io.Serializable;
 
 public class VocabularyWord implements Serializable {
+    //a word may have multiple instances of this class,
+    //since a word may have multiple meanings
     private String id;
     private String word;
     private String meaning;

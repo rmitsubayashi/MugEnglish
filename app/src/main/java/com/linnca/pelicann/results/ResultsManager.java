@@ -6,7 +6,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
@@ -15,8 +18,7 @@ import java.util.List;
 
 //this manages the results displayed to the user
 class ResultsManager {
-    private final FirebaseDatabase db;
-    private final String userID;
+    private final Database db = new FirebaseDB();
     private final InstanceRecord instanceRecord;
     private final ResultsManagerListener resultsManagerListener;
 
@@ -25,64 +27,31 @@ class ResultsManager {
     }
 
     ResultsManager(InstanceRecord instanceRecord, ResultsManagerListener listener){
-        db = FirebaseDatabase.getInstance();
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         this.instanceRecord = instanceRecord;
         this.resultsManagerListener = listener;
     }
 
     void saveInstanceRecord(){
-        DatabaseReference instanceRecordRef = db.getReference(
-                FirebaseDBHeaders.INSTANCE_RECORDS + "/" + userID + "/" +
-                instanceRecord.getLessonId() + "/" + instanceRecord.getInstanceId() +"/" + instanceRecord.getId());
-        instanceRecordRef.setValue(instanceRecord);
-        
+        OnResultListener instanceRecordOnResultListener = new OnResultListener() {
+            @Override
+            public void onInstanceRecordAdded(String generatedRecordKey) {
+                super.onInstanceRecordAdded(generatedRecordKey);
+            }
+        };
+        db.addInstanceRecord(instanceRecord, instanceRecordOnResultListener);
+
+        //also save correct count for displaying the report card
+        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
+        String lessonKey = instanceRecord.getLessonId();
+        int level = lessonHierarchyViewer.getLessonLevel(lessonKey);
         final int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
-        final DatabaseReference correctCtRef = db.getReference(
-                FirebaseDBHeaders.REPORT_CARD + "/" +
-                userID + "/" +
-                instanceRecord.getLessonId() + "/" +
-                FirebaseDBHeaders.REPORT_CARD_CORRECT
-        );
-        correctCtRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        OnResultListener reportCartOnResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Long currentVal = dataSnapshot.getValue(Long.class);
-                if (currentVal == null){
-                    currentVal = 0L;
-                }
-                long newVal = currentVal + correctCt[0];
-                correctCtRef.setValue(newVal);
-                
+            public void onReportCardAdded() {
+                super.onReportCardAdded();
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        final DatabaseReference totalCtRef = db.getReference(
-                FirebaseDBHeaders.REPORT_CARD + "/" +
-                        userID + "/" +
-                        instanceRecord.getLessonId() + "/" +
-                        FirebaseDBHeaders.REPORT_CARD_TOTAL
-        );
-        totalCtRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Long currentVal = dataSnapshot.getValue(Long.class);
-                if (currentVal == null){
-                    currentVal = 0L;
-                }
-                long newVal = currentVal + correctCt[1];
-                totalCtRef.setValue(newVal);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        };
+        db.addReportCard(level, lessonKey, correctCt[0], correctCt[1], reportCartOnResultListener);
     }
 
     static int[] calculateCorrectCount(List<QuestionAttempt> attempts){
@@ -108,25 +77,14 @@ class ResultsManager {
         LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
         String lessonKey = instanceRecord.getLessonId();
         int level = lessonHierarchyViewer.getLessonLevel(lessonKey);
-        final DatabaseReference ref = db.getReference(
-                FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                        userID + "/" +
-                        Integer.toString(level) + "/" +
-                        lessonKey
-        );
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()){
-                    ref.setValue(true);
+            public void onClearedLessonAdded(boolean firstTimeCleared) {
+                if(firstTimeCleared){
                     resultsManagerListener.onLessonCleared();
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        };
+        db.addClearedLesson(level, lessonKey, onResultListener);
     }
 }

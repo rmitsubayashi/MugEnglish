@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
@@ -24,13 +27,12 @@ import java.util.List;
 public class UserProfile_ReportCard extends Fragment {
     private RecyclerView list;
     private UserProfile_ReportCardAdapter adapter;
-    private String userID;
     private int lessonLevel;
+    private Database db = new FirebaseDB();
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         lessonLevel = preferences.getInt(getString(R.string.preferences_report_card_last_selected_lesson_level), 1);
 
@@ -43,17 +45,35 @@ public class UserProfile_ReportCard extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user_profile_report_card, container, false);
         list = view.findViewById(R.id.user_profile_report_card_list);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        populateReportCard();
         return view;
     }
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        populateReportCard();
+    }
+
     private void populateReportCard(){
+        //for when the user changes a level
+        // and already has an adapter
         if (adapter != null){
             if (list.getAdapter() == null){
                 list.setAdapter(adapter);
+            } else {
+                //if this is the same lesson,
+                //we don't need to re-populate anything
+                if (adapter.getLessonLevel() == lessonLevel) {
+                    return;
+                } else {
+                    //if the user was viewing another level,
+                    //remove the listeners to that level
+                    //before listening to this level
+                    db.cleanup();
+                }
             }
         } else {
-            adapter = new UserProfile_ReportCardAdapter(lessonLevel, userID, new UserProfile_ReportCardAdapter.ReportCardListener() {
+            adapter = new UserProfile_ReportCardAdapter(lessonLevel, new UserProfile_ReportCardAdapter.ReportCardListener() {
                 @Override
                 public void onItemClicked() {
 
@@ -61,16 +81,21 @@ public class UserProfile_ReportCard extends Fragment {
             });
             list.setAdapter(adapter);
         }
+        OnResultListener onResultListener = new OnResultListener() {
+            @Override
+            public void onReportCardQueried(List<UserProfile_ReportCardDataWrapper> reportCardInfo) {
+                adapter.setData(reportCardInfo);
+            }
+        };
+
+        db.getReportCard(lessonLevel, onResultListener);
+
     }
 
     @Override
     public void onStop(){
         super.onStop();
-        if (adapter != null){
-            adapter.removeValueEventListeners();
-        }
+        db.cleanup();
     }
-
-
 
 }

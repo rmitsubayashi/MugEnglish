@@ -18,7 +18,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
@@ -32,6 +35,7 @@ public class LessonList extends Fragment {
     private final String TAG = "LessonList";
     public static final String LESSON_LEVEL = "lessonLevel";
     private final String SAVED_STATE_LIST_STATE = "listState";
+    private final Database db = new FirebaseDB();
     private RecyclerView listView;
     private int lessonLevel;
     private RecyclerView.LayoutManager layoutManager;
@@ -97,6 +101,26 @@ public class LessonList extends Fragment {
     }
 
     private void populateLessonList(final int lessonLevel){
+        OnResultListener onResultListener = new OnResultListener() {
+            @Override
+            public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
+                LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
+                //lessonHierarchyViewer.debugUnlockAllLessons();
+                List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
+                if (adapter == null) {
+                    adapter = new LessonListAdapter(lessonRows, listener, clearedLessonKeys);
+                    listView.setAdapter(adapter);
+                } else {
+                    if (listView.getAdapter() == null){
+                        listView.setAdapter(adapter);
+                    } else {
+                        adapter.setClearedLessonKeys(clearedLessonKeys);
+                    }
+                }
+            }
+        };
+        db.getClearedLessons(lessonLevel, onResultListener);
+        /*
         clearedLessonsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.CLEARED_LESSONS + "/" +
                         FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" +
@@ -110,19 +134,6 @@ public class LessonList extends Fragment {
                     String lessonKey = lessonSnapshot.getKey();
                     clearedLessons.add(lessonKey);
                 }
-                LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
-                lessonHierarchyViewer.debugUnlockAllLessons();
-                List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
-                if (adapter == null) {
-                    adapter = new LessonListAdapter(lessonRows, listener, clearedLessons);
-                    listView.setAdapter(adapter);
-                } else {
-                    if (listView.getAdapter() == null){
-                        listView.setAdapter(adapter);
-                    } else {
-                        adapter.setClearedLessonKeys(clearedLessons);
-                    }
-                }
 
             }
 
@@ -132,7 +143,7 @@ public class LessonList extends Fragment {
             }
         };
         clearedLessonsRef.addValueEventListener(clearedLessonsListener);
-
+        */
     }
 
     @Override
@@ -145,9 +156,7 @@ public class LessonList extends Fragment {
     @Override
     public void onStop(){
         super.onStop();
-        if (clearedLessonsListener != null && clearedLessonsRef != null){
-            clearedLessonsRef.removeEventListener(clearedLessonsListener);
-        }
+        db.cleanup();
     }
 
 }

@@ -129,7 +129,7 @@ public class FacebookInterestFinder {//extends IntentService{
             public Transaction.Result doTransaction(MutableData mutableData) {
                 for (WikiDataEntryData interest : interests) {
                     //add
-                    UserInterestAdder userInterestAdder = new UserInterestAdder();
+                    AddUserInterestHelper userInterestAdder = new AddUserInterestHelper();
                     userInterestAdder.findPronunciationAndCategoryThenAdd(interest);
                 }
                 return Transaction.success(mutableData);

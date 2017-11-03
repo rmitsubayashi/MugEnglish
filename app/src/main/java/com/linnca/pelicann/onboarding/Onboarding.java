@@ -16,10 +16,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessonlist.LessonList;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.userinterestcontrols.StarterPacks;
-import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
+import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ public class Onboarding extends AppCompatActivity {
     private Button finishButton;
     private final List<ImageView> indicators = new ArrayList<>(3);
     private ProgressBar loading;
+    private Database db = new FirebaseDB();
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -123,8 +126,12 @@ public class Onboarding extends AppCompatActivity {
 
     private void addStarterPack(int starterPackSelection){
         List<WikiDataEntryData> list = StarterPacks.getStarterPack(starterPackSelection);
-        UserInterestAdder adder = new UserInterestAdder();
-        adder.justAdd(list);
+        db.addUserInterests(list, new OnResultListener() {
+            @Override
+            public void onUserInterestsAdded() {
+                super.onUserInterestsAdded();
+            }
+        });
     }
 
     private void markOnboardingCompleted(){

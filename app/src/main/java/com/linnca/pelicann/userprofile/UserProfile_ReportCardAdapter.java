@@ -32,24 +32,8 @@ class UserProfile_ReportCardAdapter
     static final int NOT_CLEARED = -1;
     private final LessonHierarchyViewer lessonHierarchyViewer;
     private int lessonLevel;
-    private List<LessonListRow> data;
-    private final Map<String, LessonData> allLessons = new HashMap<>();
-    private final Map<String, Integer> allLessonsRowPosition = new HashMap<>();
-
-    private class DataReferencePair {
-        DatabaseReference ref;
-        ValueEventListener listener;
-
-        DataReferencePair(DatabaseReference ref, ValueEventListener listener) {
-            this.ref = ref;
-            this.listener = listener;
-        }
-    }
-    private List<DataReferencePair> allDatabaseListeners = new ArrayList<>();
-
-    private FirebaseDatabase db;
-    private String userID;
-
+    private List<LessonListRow> rows;
+    private Map<String, UserProfile_ReportCardDataWrapper> data = new HashMap<>();
     private ReportCardListener listener;
 
     interface ReportCardListener {
@@ -57,20 +41,27 @@ class UserProfile_ReportCardAdapter
     }
 
     UserProfile_ReportCardAdapter(int lessonLevel,
-                                  String userID, ReportCardListener listener){
+                                  ReportCardListener listener){
         lessonHierarchyViewer = new LessonHierarchyViewer();
-        db = FirebaseDatabase.getInstance();
-        this.userID = userID;
         this.listener = listener;
 
         setLessons(lessonLevel);
 
     }
 
-    private void setLessons(int level){
-        //remove any listeners currently listening
-        removeValueEventListeners();
+    int getLessonLevel(){
+        return this.lessonLevel;
+    }
 
+    void setData(List<UserProfile_ReportCardDataWrapper> dataToSet){
+        data.clear();
+        for (UserProfile_ReportCardDataWrapper datum : dataToSet){
+            data.put(datum.getLessonKey(), datum);
+        }
+        notifyDataSetChanged();
+    }
+
+    private void setLessons(int level){
         List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(level);
         //don't include reviews
         for (Iterator<LessonListRow> iterator = lessonRows.iterator(); iterator.hasNext();){
@@ -79,13 +70,11 @@ class UserProfile_ReportCardAdapter
                 iterator.remove();
             }
         }
-        this.data = new ArrayList<>(lessonRows.size()+1);
+        this.rows = new ArrayList<>(lessonRows.size()+1);
         //header view
-        data.add(new LessonListRow());
+        rows.add(new LessonListRow());
         //the data
-        data.addAll(lessonRows);
-
-        populateMap();
+        rows.addAll(lessonRows);
 
         notifyDataSetChanged();
 
@@ -97,7 +86,7 @@ class UserProfile_ReportCardAdapter
     public long getItemId(int position){ return position; }
 
     @Override
-    public int getItemCount(){return data.size();}
+    public int getItemCount(){return rows.size();}
 
     @Override
     public int getItemViewType(int position){
@@ -152,11 +141,11 @@ class UserProfile_ReportCardAdapter
     }
 
     private void populateRow(int position, final UserProfile_ReportCard_RowViewHolder holder){
-        LessonListRow lessonRow = data.get(position);
+        LessonListRow lessonRow = rows.get(position);
         //do everything that doesn't require database connection first
         holder.setRowInfo(lessonRow);
-        LessonListRow rowBefore = position == 0 ? null : data.get(position - 1);
-        LessonListRow rowAfter = position == data.size() - 1 ? null : data.get(position + 1);
+        LessonListRow rowBefore = position == 0 ? null : rows.get(position - 1);
+        LessonListRow rowAfter = position == rows.size() - 1 ? null : rows.get(position + 1);
         //don't connect reviews and the preceding/following item
         if (rowBefore != null && rowBefore.isReview())
             rowBefore = null;
@@ -172,57 +161,22 @@ class UserProfile_ReportCardAdapter
             if (lessonData == null)
                 continue;
             final int toClearScore = lessonData.getToClearScore();
-            DatabaseReference scoreRef = db.getReference(
-                    FirebaseDBHeaders.REPORT_CARD + "/" +
-                            userID + "/" +
-                            lessonData.getKey()
-            );
-            ValueEventListener valueEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Long total = dataSnapshot.child(FirebaseDBHeaders.REPORT_CARD_TOTAL)
-                            .getValue(Long.class);
-                    Long correct = dataSnapshot.child(FirebaseDBHeaders.REPORT_CARD_CORRECT)
-                            .getValue(Long.class);
-                    if (total == null || correct == null){
-                        holder.setRowData(rowNumber, NOT_CLEARED, toClearScore, listener);
-                        return;
-                    }
-
-                    int averageCorrect = (int)(correct * 100 / total);
-                    holder.setRowData(rowNumber, averageCorrect, toClearScore, listener);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            };
-            scoreRef.addListenerForSingleValueEvent(valueEventListener);
-            allDatabaseListeners.add(new DataReferencePair(scoreRef, valueEventListener));
-        }
-    }
-
-    private void populateMap(){
-        if (data == null)
-            return;
-        int rowCt = 0;
-        for (LessonListRow row : data){
-            LessonData[] dataList = row.getLessons();
-            for (LessonData data : dataList){
-                if (data != null) {
-                    allLessons.put(data.getKey(), data);
-                    allLessonsRowPosition.put(data.getKey(), rowCt);
-                }
+            //if the user hasn't cleared it yet
+            if (!data.containsKey(lessonData.getKey())) {
+                holder.setRowData(rowNumber, NOT_CLEARED, toClearScore, listener);
+                continue;
             }
-            rowCt++;
-        }
-    }
+            UserProfile_ReportCardDataWrapper reportCardData = data.get(lessonData.getKey());
 
-    void removeValueEventListeners(){
-        for (DataReferencePair pair : allDatabaseListeners){
-            pair.ref.removeEventListener(pair.listener);
+            int total = reportCardData.getTotalCt();
+            int correct = reportCardData.getCorrectCt();
+            if (total == 0){
+                //shouldn't happen but just in case
+                holder.setRowData(rowNumber, NOT_CLEARED, toClearScore, listener);
+                continue;
+            }
+            int averageCorrect = correct * 100 / total;
+            holder.setRowData(rowNumber, averageCorrect, toClearScore, listener);
         }
-        allDatabaseListeners.clear();
     }
 }

@@ -27,9 +27,10 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
 import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
-import com.linnca.pelicann.userinterestcontrols.UserInterestAdder;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import java.util.ArrayList;
@@ -209,25 +210,34 @@ public class SearchInterests extends Fragment {
             @Override
             public void onAddInterest(final WikiDataEntryData data) {
                 //add the interest
-                UserInterestAdder userInterestAdder = new UserInterestAdder();
-                userInterestAdder.findPronunciationAndCategoryThenAdd(data);
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, data.getWikiDataID());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, data.getLabel());
-                firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ADD_ITEM, bundle);
+                OnResultListener onResultListener = new OnResultListener() {
+                    @Override
+                    public void onUserInterestsAdded() {
+                        //log event
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, data.getWikiDataID());
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, data.getLabel());
+                        firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ADD_ITEM, bundle);
 
-                //also to the list we have saved locally
-                userInterests.add(data);
+                        //also update the list we have saved locally
+                        userInterests.add(data);
 
-                //reset recommendation count
-                recommendationCt = defaultRecommendationCt;
+                        //reset recommendation count
+                        recommendationCt = defaultRecommendationCt;
 
-                //clear the search text
-                searchView.setQuery("", false);
-                searchView.clearFocus();
+                        //clear the search text
+                        searchView.setQuery("", false);
+                        searchView.clearFocus();
 
-                //populate list with recommended items
-                populateRecommendations(data);
+                        //populate list with recommended items
+                        populateRecommendations(data);
+                    }
+                };
+                AddUserInterestHelper addUserInterestHelper = new AddUserInterestHelper();
+                //we are only adding one, but the method can handle more than one
+                List<WikiDataEntryData> dataList = new ArrayList<>(1);
+                dataList.add(data);
+                addUserInterestHelper.findPronunciationAndCategoryThenAdd(dataList, onResultListener);
             }
 
             @Override

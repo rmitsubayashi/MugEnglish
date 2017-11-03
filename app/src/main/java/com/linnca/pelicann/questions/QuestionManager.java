@@ -234,13 +234,8 @@ public class QuestionManager{
 		instanceRecord.setLessonId(lessonKey);
 		instanceRecord.setAttempts(new ArrayList<QuestionAttempt>());
 		startTimestamp = System.currentTimeMillis();
-		String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-		FirebaseDatabase db = FirebaseDatabase.getInstance();
-		DatabaseReference ref = db.getReference(
-				FirebaseDBHeaders.INSTANCE_RECORDS + "/" + userID + "/" +
-				"" + "/" + instanceRecord.getInstanceId());
-		String key = ref.push().getKey();
-		instanceRecord.setId(key);
+		//generating the ID of the instance record
+		// once we save it in the database
 	}
 
 

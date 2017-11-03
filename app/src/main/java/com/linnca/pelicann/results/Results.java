@@ -24,8 +24,11 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
@@ -46,7 +49,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Results extends Fragment {
     private final String TAG = "Results";
     private FirebaseAnalytics firebaseLog;
-    private FirebaseDatabase db;
+    private final Database db = new FirebaseDB();
     private String userID;
     public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
     private InstanceRecord instanceRecord;
@@ -82,7 +85,6 @@ public class Results extends Fragment {
         });
 
         resultsManager.saveInstanceRecord();
-        db = FirebaseDatabase.getInstance();
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
@@ -134,7 +136,16 @@ public class Results extends Fragment {
     private void setLayout(){
         populateCorrectCount();
         resultsManager.checkLessonCleared();
-        getVocabulary();
+        OnResultListener onResultListener = new OnResultListener() {
+            @Override
+            public void onLessonVocabularyQueried(List<NewVocabularyWrapper> words) {
+                for (NewVocabularyWrapper word : words) {
+                    View view = createVocabularyItem(word);
+                    vocabularyList.addView(view);
+                }
+            }
+        };
+        db.getLessonVocabulary(instanceRecord.getInstanceId(), onResultListener);
 
         boolean needToReview = false;
         //user needs to review if the user gets a question wrong
@@ -192,7 +203,7 @@ public class Results extends Fragment {
         correctCtTextView.setText(displayText);
         //change text color based on accuracy (the user can edit border line??)
         double correctPercentage = (double)correctCt / (double)totalCt;
-        if (correctPercentage > 0.7){
+        if (correctPercentage > 0.8){
             correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
         } else if (correctPercentage > 0.5){
             correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.orange500));
@@ -201,161 +212,28 @@ public class Results extends Fragment {
         }
     }
 
-    private void getVocabulary(){
-        String instanceKey = instanceRecord.getInstanceId();
-        DatabaseReference vocabularyRef = db.getReference(
-                FirebaseDBHeaders.LESSON_INSTANCE_VOCABULARY + "/" +
-                        instanceKey
-        );
-        vocabularyRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<List<String>> type =
-                        new GenericTypeIndicator<List<String>>() {};
-                List<String> vocabularyIDs = dataSnapshot.getValue(type);
-                if (vocabularyIDs == null)
-                    return;
-                int vocabularyCt = vocabularyIDs.size();
-                AtomicInteger vocabularyFetched = new AtomicInteger(0);
-                List<VocabularyWord> words = Collections.synchronizedList(new ArrayList<VocabularyWord>(vocabularyCt));
-                for (String id : vocabularyIDs){
-                    fetchVocabularyWord(id, vocabularyCt, vocabularyFetched, words);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void fetchVocabularyWord(String id, final int vocabularyToFetch, final AtomicInteger vocabularyFetched, final List<VocabularyWord> allWords){
-        DatabaseReference vocabularyRef = db.getReference(
-                FirebaseDBHeaders.VOCABULARY + "/" +
-                        id
-        );
-        vocabularyRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                VocabularyWord word = dataSnapshot.getValue(VocabularyWord.class);
-                allWords.add(word);
-
-                if (vocabularyFetched.incrementAndGet() == vocabularyToFetch){
-                    populateVocabularyItems(allWords);
-                } else {
-                    Log.d(TAG, ""+vocabularyFetched.get());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private class VocabularyComparator implements Comparator<VocabularyWord>{
-        public int compare(VocabularyWord word1, VocabularyWord word2){
-            return word1.getWord().toLowerCase().compareTo(word2.getWord().toLowerCase());
-        }
-    }
-
-    private void populateVocabularyItems(List<VocabularyWord> allWords){
-        //cluster duplicates (same words but different example sentences)
-        List<List<VocabularyWord>> filteredWords = new ArrayList<>(allWords.size());
-        //sort alphabetically
-        Collections.sort(allWords, new VocabularyComparator());
-        for (VocabularyWord word : allWords){
-            if (filteredWords.size() == 0){
-                //first item
-                List<VocabularyWord> cluster = new ArrayList<>(allWords.size());
-                cluster.add(word);
-                filteredWords.add(cluster);
-                continue;
-            }
-            boolean matched = false;
-            for (List<VocabularyWord> toCompareCluster : filteredWords){
-                VocabularyWord toCompare = toCompareCluster.get(0);
-                if (word.getWord().equals(toCompare.getWord()) &&
-                        word.getMeaning().equals(toCompare.getMeaning())){
-                    toCompareCluster.add(word);
-                    matched = true;
-                    break;
-                }
-            }
-            if (!matched){
-                //new word
-                List<VocabularyWord> cluster = new ArrayList<>(allWords.size());
-                cluster.add(word);
-                filteredWords.add(cluster);
-            }
-        }
-
-        checkIfAlreadyAdded(filteredWords);
-    }
-
-    private void checkIfAlreadyAdded(List<List<VocabularyWord>> list){
-        final Random random = new Random();
-        for (final List<VocabularyWord> words : list){
-            int index = random.nextInt(words.size());
-            final VocabularyWord wordToAdd = words.get(index);
-            DatabaseReference wordRef = db.getReference(
-                    FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                            userID
-            );
-            Query wordQuery = wordRef.orderByChild(FirebaseDBHeaders.VOCABULARY_LIST_WORD_WORD)
-                    .equalTo(wordToAdd.getWord()).limitToFirst(1);
-            wordQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    //there is no word so we can add it
-                    if (!dataSnapshot.exists()){
-                        View view = createVocabularyItem(wordToAdd, true);
-                        vocabularyList.addView(view);
-                        return;
-                    }
-                    //only one
-                    for (DataSnapshot child : dataSnapshot.getChildren()){
-                        View view;
-                        VocabularyListWord word = child.getValue(VocabularyListWord.class);
-                        //check if an item exists with the same word/meaning pair.
-                        //if there is a word with different meanings,
-                        //we should be able to add both meanings
-                        if (word != null &&
-                                word.getWord().equals(wordToAdd.getWord()) &&
-                                word.getMeanings().contains(wordToAdd.getMeaning())){
-                            view = createVocabularyItem(wordToAdd, false);
-                        } else {
-                            view = createVocabularyItem(wordToAdd, true);
-                        }
-                        vocabularyList.addView(view);
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }
-
-    private View createVocabularyItem(final VocabularyWord word, boolean canAdd){
+    private View createVocabularyItem(final NewVocabularyWrapper vocabularyWrapper){
         View view = getLayoutInflater().inflate(R.layout.inflatable_result_vocabulary_item, vocabularyList, false);
         TextView wordView = view.findViewById(R.id.results_vocabulary_item_word);
-        wordView.setText(word.getWord());
+        wordView.setText(vocabularyWrapper.getVocabularyWord().getWord());
         TextView meaningView = view.findViewById(R.id.results_vocabulary_item_meaning);
-        meaningView.setText(word.getMeaning());
+        meaningView.setText(vocabularyWrapper.getVocabularyWord().getMeaning());
         Button addButton = view.findViewById(R.id.results_vocabulary_item_add);
-        if (canAdd) {
+        if (vocabularyWrapper.isNew()) {
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    OnResultListener onResultListener = new OnResultListener() {
+                        @Override
+                        public void onVocabularyWordAdded() {
+                            super.onVocabularyWordAdded();
+                        }
+                    };
                     //add vocabulary
-                    addVocabularyWord(word);
-                    //the user shouldn't be able to click the button anymore
+                    db.addVocabularyWord(vocabularyWrapper.getVocabularyWord(), onResultListener);
+                    //the user shouldn't be able to click the button anymore.
+                    //this should be done immediately after, not
+                    //after the vocabulary word has successfully been added
                     disableAddButton((Button) view);
                 }
             });
@@ -375,74 +253,5 @@ public class Results extends Fragment {
         });
         button.setOnClickListener(null);
         button.setText(R.string.results_vocabulary_item_added);
-    }
-
-    private void addVocabularyWord(final VocabularyWord word){
-        //for displaying a list of words
-        DatabaseReference listRef = db.getReference(
-                FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                        userID
-        );
-        Query listQuery = listRef.orderByChild(FirebaseDBHeaders.VOCABULARY_LIST_WORD_WORD)
-                .equalTo(word.getWord()).limitToFirst(1);
-        listQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String key;
-                if (!dataSnapshot.exists()){
-                    //this is a new word
-                    DatabaseReference newItemRef = db.getReference(
-                            FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                                    userID
-                    );
-                    key = newItemRef.push().getKey();
-                    VocabularyListWord toSave = new VocabularyListWord(word, key);
-                    newItemRef.child(key).setValue(toSave);
-                    addVocabularyWordPt2(key, word);
-                    return;
-                }
-                //only loops once
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                    VocabularyListWord listWord = childSnapshot.getValue(VocabularyListWord.class);
-                    if (childSnapshot.exists() && listWord != null) {
-                        listWord.addMeaning(word.getMeaning());
-                        key = childSnapshot.getKey();
-                        db.getReference(
-                                FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                                        userID + "/" +
-                                        key
-                        ).setValue(listWord);
-                    } else {
-                        //this is a new meaning
-                        DatabaseReference newItemRef = db.getReference(
-                                FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                                        userID
-                        );
-                        key = newItemRef.push().getKey();
-                        VocabularyListWord toSave = new VocabularyListWord(word, key);
-                        newItemRef.child(key).setValue(toSave);
-                    }
-
-                    addVocabularyWordPt2(key, word);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-    //we are going to add the whole word to the details list,
-    //using the key used/created when adding the item to the list before this
-    private void addVocabularyWordPt2(String key, VocabularyWord word){
-        DatabaseReference detailsRef = db.getReference(
-                FirebaseDBHeaders.VOCABULARY_DETAILS + "/" +
-                        userID + "/" +
-                        key
-        );
-        detailsRef.push().setValue(word);
     }
 }
