@@ -47,7 +47,7 @@ public class NAME_drove_from_CITY extends Lesson{
 
     public NAME_drove_from_CITY(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 3;
+        super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

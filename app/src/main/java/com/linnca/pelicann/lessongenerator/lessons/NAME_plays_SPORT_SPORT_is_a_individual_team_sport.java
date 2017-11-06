@@ -1,14 +1,9 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
@@ -27,7 +22,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
     public static final String KEY = "NAME_plays_SPORT_SPORT_is_a_individual_team_sport";
@@ -69,7 +66,7 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
 
     public NAME_plays_SPORT_SPORT_is_a_individual_team_sport(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
@@ -181,38 +178,29 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
     //we want to read from the database and then create the questions
     @Override
     protected void accessDBWhenCreatingQuestions(){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference(FirebaseDBHeaders.UTILS + "/sportsVerbMapping");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        Set<String> sportIDs = new HashSet<>(queryResults.size());
+        for (QueryResult qr : queryResults){
+            sportIDs.add(qr.sportID);
+        }
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //update if possible
+            public void onSportQueried(String wikiDataID, String verb, String object) {
+                //find all query results with the sport ID and update it
                 for (QueryResult qr : queryResults){
-                    String id = qr.sportID;
-                    if (dataSnapshot.hasChild(id)){
-                        String verb = (String)dataSnapshot.child(id).child("verb").getValue();
-                        String object = (String)dataSnapshot.child(id).child("name").getValue();
+                    if (qr.sportID.equals(wikiDataID)){
                         qr.verb = verb;
-                        if (object != null) {
-                            qr.object = object;
-                        }
-                        else
-                            qr.object = "";
+                        qr.object = object;
                     }
-                    //if no match, the default (and most likely) is
-                    // play + sport
-
                 }
+            }
 
+            @Override
+            public void onSportsQueried() {
                 createQuestionsFromResults();
                 saveNewQuestions();
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        };
+        db.getSports(sportIDs, onResultListener);
     }
 
     private String formatSentenceEN(QueryResult qr){

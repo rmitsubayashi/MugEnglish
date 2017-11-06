@@ -1,9 +1,15 @@
 package com.linnca.pelicann.db;
 
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
+import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
+import java.util.Collection;
 import java.util.List;
 
 //abstract class for all requests we need to make to the database.
@@ -19,6 +25,28 @@ public abstract class Database {
     public abstract String getUserID();
     public abstract void cleanup();
 
+    //only used in initial run by admin, not called by client
+    public abstract void addGenericQuestions(List<QuestionData> questions, List<VocabularyWord> vocabulary);
+    //using 'search' to distinguish from getting questions for answering
+    public abstract void searchQuestions(String lessonKey, List<WikiDataEntryData> userInterests,
+                                                  int toPopulate, List<String> questionSetIDsToAvoid,
+                                                  OnResultListener onResultListener);
+    public abstract void addQuestions(String lessonKey, List<QuestionDataWrapper> questions, OnResultListener onResultListener);
+    public abstract void getRelatedUserInterests(Collection<WikiDataEntryData> userInterests, int categoryOfQuestion, int searchCtPerUserInterest,
+                                                 OnResultListener onResultListener);
+    public abstract void getRandomQuestions(String lessonKey, int userQuestionHistorySize, List<String> questionSetIDsToAvoid,
+                                                        int totalQuestionSetsToPopulate,
+                                                        OnResultListener onResultListener);
+    public abstract void getQuestionSets(List<String> questionSetIDs, OnResultListener onResultListener);
+
+    public abstract void getQuestion(String questionID, OnResultListener onResultListener);
+
+    public abstract void addLessonInstance(String lessonKey, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs,
+                                           OnResultListener onResultListener);
+    public abstract void getLessonInstances(String lessonKey, OnResultListener onResultListener);
+    public abstract void getLessonInstanceDetails(String lessonKey, String instanceID, OnResultListener onResultListener);
+    public abstract void removeLessonInstance(String lessonKey, String instanceID, OnResultListener onResultListener);
+
     public abstract void getVocabularyDetails(String vocabularyItemID, OnResultListener onResultListener);
     public abstract void getVocabularyList(OnResultListener onResultListener);
     public abstract void addVocabularyWord(VocabularyWord word, OnResultListener onResultListener);
@@ -31,14 +59,24 @@ public abstract class Database {
     //when adding a new interest, we most likely have to fetch pronunciation/ category info
     public abstract void addUserInterests(List<WikiDataEntryData> userInterest, OnResultListener onResultListener);
 
+    public abstract void getRecommendations(Collection<WikiDataEntryData> userInterests, String targetUserInterestID, int recommendationCt, OnResultListener onResultListener);
+
     public abstract void addInstanceRecord(InstanceRecord record, OnResultListener onResultListener);
 
     public abstract void getClearedLessons(int lessonLevel, OnResultListener onResultListener);
     public abstract void addClearedLesson(int lessonLevel, String lessonKey, OnResultListener onResultListener);
+    //for debugging
+    public abstract void clearAllLessons(List<List<LessonListRow>> lessonLevels);
 
     public abstract void getReportCard(int level, OnResultListener onResultListener);
     public abstract void addReportCard(int level, String lessonKey, int correctCt, int totalCt, OnResultListener onResultListener);
 
+    public abstract void addAppUsageLog(AppUsageLog log);
     public abstract void getFirstAppUsageDate(OnResultListener onResultListener);
     public abstract void getAppUsageForMonths(String startMonthKey, String endMonthKey, OnResultListener onResultListener);
+
+    //for admin use only
+    public abstract void addSport(String sportWikiDataID, String verb, String object);
+    public abstract void getSports(Collection<String> sportWikiDataIDs, OnResultListener onResultListener);
 }
+

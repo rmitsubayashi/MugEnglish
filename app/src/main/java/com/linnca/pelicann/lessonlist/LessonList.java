@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
@@ -32,8 +30,6 @@ public class LessonList extends Fragment {
     private int lessonLevel;
     private RecyclerView.LayoutManager layoutManager;
     private LessonListAdapter adapter;
-    private DatabaseReference clearedLessonsRef;
-    private ValueEventListener clearedLessonsListener;
 
     private LessonListListener listener;
 
@@ -112,30 +108,6 @@ public class LessonList extends Fragment {
             }
         };
         db.getClearedLessons(lessonLevel, onResultListener);
-        /*
-        clearedLessonsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                        FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" +
-                        lessonLevel
-        );
-        clearedLessonsListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Set<String> clearedLessons = new HashSet<>((int)dataSnapshot.getChildrenCount()+1);
-                for (DataSnapshot lessonSnapshot : dataSnapshot.getChildren()){
-                    String lessonKey = lessonSnapshot.getKey();
-                    clearedLessons.add(lessonKey);
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        clearedLessonsRef.addValueEventListener(clearedLessonsListener);
-        */
     }
 
     @Override

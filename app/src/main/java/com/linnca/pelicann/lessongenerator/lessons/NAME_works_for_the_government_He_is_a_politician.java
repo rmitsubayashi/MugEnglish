@@ -50,7 +50,7 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
 
     public NAME_works_for_the_government_He_is_a_politician(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 3;
+        super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

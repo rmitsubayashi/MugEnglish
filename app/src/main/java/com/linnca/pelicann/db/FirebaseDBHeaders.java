@@ -7,7 +7,7 @@ public class FirebaseDBHeaders {
     public static final String LESSON_INSTANCES = "lessonInstances";
     public static final String LESSON_INSTANCE_VOCABULARY = "lessonInstanceVocabulary";
     public static final String QUESTIONS = "questions";
-    public static final String QUESTION_SET_IDS_PER_LESSON = "questionSetIDsPerLesson";
+    public static final String QUESTION_SET_IDS_PER_USER_INTEREST_PER_LESSON = "questionSetIDsPerUserInterestPerLesson";
     public static final String QUESTION_SETS = "questionSets";
     public static final String QUESTION_SETS_QUESTION_IDS = "questions";
     public static final String QUESTION_SETS_VOCABULARY = "vocabulary";
@@ -17,6 +17,9 @@ public class FirebaseDBHeaders {
     public static final String RANDOM_QUESTION_SET_DATE = "date";
     public static final String INSTANCE_RECORDS = "instanceRecords";
     public static final String UTILS = "utils";
+    public static final String UTILS_SPORTS_VERB_MAPPINGS = "sportsVerbMapping";
+    public static final String UTILS_SPORT_VERB_MAPPING_OBJECT = "object";
+    public static final String UTILS_SPORT_VERB_MAPPING_VERB = "verb";
     public static final String RECOMMENDATION_MAP = "recommendationMap";
     public static final String RECOMMENDATION_MAP_EDGE_COUNT = "count";
     public static final String RECOMMENDATION_MAP_EDGE_DATA = "data";

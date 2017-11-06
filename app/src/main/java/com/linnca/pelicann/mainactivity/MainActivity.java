@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -29,16 +30,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
+import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.lessonlist.LessonList;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements
         VocabularyDetails.VocabularyDetailsListener
 {
     private final String TAG = "MainActivity";
+    private final Database db = new FirebaseDB();
     private boolean searchIconVisible = false;
     private boolean descriptionIconVisible = false;
     private String descriptionLessonKey;
@@ -227,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements
         setLessonView();
     }
 
+
     /*
     class HelperTask extends AsyncTask<String, Void, String> {
         protected String doInBackground(String... urls) {
@@ -255,11 +257,12 @@ public class MainActivity extends AppCompatActivity implements
         temp1 = temp1.minusMonths(1);
         DateTime temp2 = DateTime.now();
         temp2 = temp2.minusMonths(1).plusHours(1);
-        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
+        db.addAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
 
         temp1 = temp1.minusMonths(1);
         temp2 = temp2.minusMonths(1).plusHours(1);
-        recordAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));*/
+        db.addAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));*/
+        //new HelperTask().execute();
 
     }
 
@@ -870,35 +873,13 @@ public class MainActivity extends AppCompatActivity implements
         return textToSpeech;
     }
 
-    //we are assuming a one-activity multiple-fragment structure.
-    //if we ever start another activity from this main activity,
-    //we need to change this
-    private void recordAppUsageLog(AppUsageLog log){
-        //we can index by year -> month so
-        //we don't need to fetch the whole log every time
-        long startTime = log.getStartTimeStamp();
-        DateTime dateTime = new DateTime(startTime);
-        int month = dateTime.getMonthOfYear();
-        int year = dateTime.getYear();
-        String key = AppUsageLog.formatKey(month, year);
-
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference logRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.APP_USAGE + "/" +
-                userID + "/" +
-                key
-        );
-        logRef.push().setValue(log);
-
-    }
-
     private void goToErrorPage(){}
 
     @Override
     protected void onStop(){
         super.onStop();
         long endAppTimeStamp = System.currentTimeMillis();
-        recordAppUsageLog(new AppUsageLog(startAppTimestamp, endAppTimeStamp));
+        db.addAppUsageLog(new AppUsageLog(startAppTimestamp, endAppTimeStamp));
     }
 
     @Override

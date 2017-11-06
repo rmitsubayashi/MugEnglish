@@ -50,7 +50,7 @@ public class NAME_speaks_LANGUAGE extends Lesson{
 
     public NAME_speaks_LANGUAGE(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 5;
+        super.questionSetsToPopulate = 5;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

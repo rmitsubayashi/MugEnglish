@@ -1,14 +1,9 @@
 package com.linnca.pelicann.questions;
 
 
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 
 import java.util.ArrayList;
@@ -23,7 +18,7 @@ public class QuestionManager{
 	private final String TAG = "QuestionManager";
 	public static final int QUESTIONS = 1;
 	public static final int REVIEW = 2;
-	private FirebaseDatabase db;
+	private final Database db = new FirebaseDB();
 	private boolean questionsStarted = false;
 	private boolean reviewStarted = false;
 	private LessonInstanceData lessonInstanceData = null;
@@ -53,7 +48,6 @@ public class QuestionManager{
 
 	public QuestionManager(QuestionManagerListener listener){
 		this.questionManagerListener = listener;
-		this.db = FirebaseDatabase.getInstance();
 	}
 
 	public void startQuestions(LessonInstanceData data, String lessonKey){
@@ -108,6 +102,16 @@ public class QuestionManager{
 			}
 			//next question
 			String questionID = lessonInstanceData.getQuestionIdAt(questionMkr);
+			OnResultListener onResultListener = new OnResultListener() {
+				@Override
+				public void onQuestionQueried(QuestionData questionData) {
+					currentQuestionData = questionData;
+					questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
+					questionMkr++;
+				}
+			};
+			db.getQuestion(questionID, onResultListener);
+			/*
 			DatabaseReference questionRef = db.getReference(
 					FirebaseDBHeaders.QUESTIONS + "/" +
 							questionID
@@ -124,7 +128,7 @@ public class QuestionManager{
 				public void onCancelled(DatabaseError databaseError) {
 					Log.d(TAG, "Error" + databaseError.getMessage());
 				}
-			});
+			});*/
 		}
 		//for review
 		else {

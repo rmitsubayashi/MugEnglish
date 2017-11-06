@@ -50,7 +50,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
 
     public TEAM_is_a_SPORT_team(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 4;
+        super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_OTHER;
         super.lessonKey = KEY;
 

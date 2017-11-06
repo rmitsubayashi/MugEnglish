@@ -58,7 +58,7 @@ public class PLACE_is_a_country_city extends Lesson {
 
         super(connector, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
-        super.questionSetsLeftToPopulate = 5;
+        super.questionSetsToPopulate = 5;
         super.lessonKey = KEY;
 
     }

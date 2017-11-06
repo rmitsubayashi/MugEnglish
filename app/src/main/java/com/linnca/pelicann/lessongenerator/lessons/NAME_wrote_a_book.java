@@ -43,7 +43,7 @@ public class NAME_wrote_a_book extends Lesson{
 
     public NAME_wrote_a_book(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

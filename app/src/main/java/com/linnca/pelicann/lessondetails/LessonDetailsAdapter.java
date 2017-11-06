@@ -1,24 +1,25 @@
 package com.linnca.pelicann.lessondetails;
 
 
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.linnca.pelicann.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 class LessonDetailsAdapter
-        extends FirebaseRecyclerAdapter<LessonInstanceData, LessonDetailsViewHolder> {
-
+        extends RecyclerView.Adapter<LessonDetailsViewHolder> {
+    private final List<LessonInstanceData> allInstances = new ArrayList<>();
     //context menu doesn't work for recyclerviews
     private LessonInstanceData longClickData;
     //so we can click on an item and start questions
@@ -29,14 +30,17 @@ class LessonDetailsAdapter
     private LessonDetailsAdapterListener uiListener;
 
     interface LessonDetailsAdapterListener {
-        void onLoad();
+        //we are showing/hiding UI components on the main layout
+        // instead of creating an extra view type with an empty state
+        // because we want to position the empty state components relative
+        // to components on the main layout
         void onItems();
         void onNoItems();
     }
 
-    LessonDetailsAdapter(FirebaseRecyclerOptions<LessonInstanceData> options, LessonDetailsAdapterListener uiListener,
+    LessonDetailsAdapter(LessonDetailsAdapterListener uiListener,
                          LessonDetails.LessonDetailsListener lessonDetailsListener, String lessonKey){
-        super(options);
+        super();
         this.uiListener = uiListener;
         this.lessonDetailsListener = lessonDetailsListener;
         this.lessonKey = lessonKey;
@@ -47,22 +51,61 @@ class LessonDetailsAdapter
     }
 
     @Override
-    public LessonDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.inflatable_lesson_details_instance_list_item, parent, false);
-        return new LessonDetailsViewHolder(view);
+    public int getItemCount(){
+        return allInstances.size();
+    }
+
+    public void setLessonInstances(List<LessonInstanceData> instances){
+        allInstances.clear();
+        allInstances.addAll(instances);
+
+        if (this.getItemCount() == 0){
+            uiListener.onNoItems();
+        } else {
+            uiListener.onItems();
+        }
+
+        notifyDataSetChanged();
     }
 
     @Override
-    public void onBindViewHolder(final LessonDetailsViewHolder holder, int position, final LessonInstanceData data) {
-        String allInterestsLabel = "";
+    public LessonDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.inflatable_lesson_details_instance_list_item, parent, false);
+        final LessonDetailsViewHolder holder = new LessonDetailsViewHolder(view);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lessonDetailsListener.lessonDetailsToQuestions(
+                        allInstances.get(holder.getAdapterPosition()),
+                        lessonKey
+                );
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                longClickData = allInstances.get(holder.getAdapterPosition());
+                //returning false so we can catch the onlongclicklistener of the parent
+                return false;
+            }
+        });
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(final LessonDetailsViewHolder holder, int position) {
+        LessonInstanceData data = allInstances.get(position);
+        StringBuilder allInterestsLabelBuilder = new StringBuilder();
         Set<String> duplicates = new HashSet<>(data.getInterestLabels().size());
         for (String interestLabel : data.getInterestLabels()) {
             if (!duplicates.contains(interestLabel)) {
-                allInterestsLabel += interestLabel + " + ";
+                allInterestsLabelBuilder.append(interestLabel);
+                allInterestsLabelBuilder.append(" + ");
             }
             duplicates.add(interestLabel);
         }
+        String allInterestsLabel = allInterestsLabelBuilder.toString();
         if (allInterestsLabel.equals("")){
             allInterestsLabel = Integer.toString(position + 1);
         } else {
@@ -76,15 +119,17 @@ class LessonDetailsAdapter
                 getResources().getString(R.string.lesson_details_created);
         holder.setCreated(createdLabel + ": " + dateString);
 
+        /*
         //set action listener
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lessonDetailsListener.lessonDetailsToQuestions(data, lessonKey);
+                lessonDetailsListener.lessonDetailsToQuestions(holder.getAdapterPosition(), lessonKey);
             }
-        });
+        });*/
 
         //final DatabaseReference ref = getItem(position);
+        /*
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -92,17 +137,7 @@ class LessonDetailsAdapter
                 //returning false so we can catch the onlongclicklistener of the parent
                 return false;
             }
-        });
-    }
-
-    @Override
-    public void onDataChanged(){
-        if (this.getItemCount() == 0){
-            uiListener.onNoItems();
-        } else {
-            uiListener.onItems();
-        }
-        uiListener.onLoad();
+        });*/
     }
 
 

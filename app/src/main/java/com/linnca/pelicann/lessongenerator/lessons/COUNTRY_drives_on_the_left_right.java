@@ -49,7 +49,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
 
     public COUNTRY_drives_on_the_left_right(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 3;
+        super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
         super.lessonKey = KEY;
 

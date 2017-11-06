@@ -56,7 +56,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
 
     public NAME_possessive_first_last_name_is_NAME(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 5;
+        super.questionSetsToPopulate = 5;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

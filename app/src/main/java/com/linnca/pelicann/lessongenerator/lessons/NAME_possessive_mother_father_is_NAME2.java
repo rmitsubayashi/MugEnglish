@@ -60,7 +60,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
     public NAME_possessive_mother_father_is_NAME2(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
-        super.questionSetsLeftToPopulate = 3;
+        super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
 
     }

@@ -1,13 +1,8 @@
 package com.linnca.pelicann.lessonlist;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessongenerator.lessons.COMPANY_makes_PRODUCT;
 import com.linnca.pelicann.lessongenerator.lessons.COUNTRY_drives_on_the_left_right;
@@ -490,36 +485,8 @@ public class LessonHierarchyViewer {
     }
 
     public void debugUnlockAllLessons(){
-        int levelCt = lessonLevels.size();
-        for (int i=0; i<levelCt; i++) {
-            List<LessonListRow> lessonRows = lessonLevels.get(i);
-            int level = i+1;
-            for (LessonListRow row : lessonRows) {
-                for (LessonData lessonData : row.getLessons()) {
-                    if (lessonData == null)
-                        continue;
-                    final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
-                            FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                                    FirebaseAuth.getInstance().getCurrentUser().getUid() + "/" +
-                                    level + "/" +
-                                    lessonData.getKey()
-                    );
-                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (!dataSnapshot.exists()){
-                                ref.setValue(true);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-        }
+        Database db = new FirebaseDB();
+        db.clearAllLessons(lessonLevels);
     }
 
     private void adjustRowTitles(List<LessonListRow> rows){

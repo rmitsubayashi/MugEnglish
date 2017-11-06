@@ -55,7 +55,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
         super(connector, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
-        super.questionSetsLeftToPopulate = 3;
+        super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
 
     }

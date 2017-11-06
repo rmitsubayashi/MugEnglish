@@ -54,7 +54,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
 
     public The_DEMONYM_flag_is_COLORS(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
         super.lessonKey = KEY;
         populateColors();

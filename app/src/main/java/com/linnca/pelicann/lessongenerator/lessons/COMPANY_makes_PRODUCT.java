@@ -49,7 +49,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
 
     public COMPANY_makes_PRODUCT(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 1;
+        super.questionSetsToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_OTHER;
         super.lessonKey = KEY;
 

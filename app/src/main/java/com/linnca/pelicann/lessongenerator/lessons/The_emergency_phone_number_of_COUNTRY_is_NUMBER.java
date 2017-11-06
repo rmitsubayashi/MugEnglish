@@ -54,7 +54,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
         super(connector, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsToPopulate = 2;
         super.lessonKey = KEY;
 
     }

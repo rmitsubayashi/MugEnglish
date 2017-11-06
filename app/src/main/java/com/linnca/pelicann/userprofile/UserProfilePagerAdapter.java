@@ -12,27 +12,19 @@ import java.util.List;
 
 class UserProfilePagerAdapter extends FragmentPagerAdapter {
     private final int tabCount;
-    private final List<InstanceRecord> records;
 
-    public UserProfilePagerAdapter(FragmentManager manager, int tabCount, List<InstanceRecord> records){
+    UserProfilePagerAdapter(FragmentManager manager, int tabCount){
         super(manager);
         this.tabCount = tabCount;
-        this.records = records;
     }
 
     @Override
     public Fragment getItem(int position){
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(null, (Serializable)records);
         switch (position) {
             case 0:
-                Fragment user_profile_hours_studied = new UserProfile_HoursStudied();
-                user_profile_hours_studied.setArguments(bundle);
-                return user_profile_hours_studied;
+                return new UserProfile_HoursStudied();
             case 1:
-                Fragment user_profile_report_card = new UserProfile_ReportCard();
-                user_profile_report_card.setArguments(bundle);
-                return  user_profile_report_card;
+                return new UserProfile_ReportCard();
             default:
                 return null;
         }

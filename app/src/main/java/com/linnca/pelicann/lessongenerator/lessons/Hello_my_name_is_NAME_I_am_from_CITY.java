@@ -57,7 +57,7 @@ public class Hello_my_name_is_NAME_I_am_from_CITY extends Lesson{
 
     public Hello_my_name_is_NAME_I_am_from_CITY(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 1;
+        super.questionSetsToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

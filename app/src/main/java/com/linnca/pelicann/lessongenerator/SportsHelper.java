@@ -2,13 +2,11 @@ package com.linnca.pelicann.lessongenerator;
 
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.connectors.WikipediaConnector;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -69,11 +67,6 @@ public class SportsHelper {
 		sparqlConn = new WikiDataSPARQLConnector();
 		wikipediaConn = new WikipediaConnector();
 	}
-	
-	public boolean sportExists(String wikiDataID) throws Exception{
-
-		return true;
-	}
 
 	//returns 'V O' or 'V' depending on the sport
 	//we want to just pass in the wikidata ID and search the database,
@@ -90,6 +83,7 @@ public class SportsHelper {
 
 	//to generate all pairs
 	public void run() throws Exception{
+		Database db = new FirebaseDB();
 		Document doc = fetchSports();
 		NodeList list = doc.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
 		for (int i=0; i<list.getLength(); i++){
@@ -100,8 +94,7 @@ public class SportsHelper {
 			int lastIndexURL = url.lastIndexOf('/');
 			url = url.substring(lastIndexURL+1);
 			String id = SPARQLDocumentParserHelper.findValueByNodeName(n, "sport");
-			int lastIndexID = id.lastIndexOf('/');
-			id = id.substring(lastIndexID+1);
+			id = LessonGeneratorUtils.stripWikidataID(id);
 			name = TermAdjuster.adjustSportsEN(name);
 			//decide verb
 			//get # of the word 'played' in the Wikipedia page
@@ -158,22 +151,8 @@ public class SportsHelper {
 				//everything else will be a do sport
 				verb = "do";
 			}
-			
-			//no duplicates
-			//update data if exists
-			FirebaseAuth auth = FirebaseAuth.getInstance();
-			if (auth.getCurrentUser() != null) {
-				FirebaseDatabase db = FirebaseDatabase.getInstance();
-				String userID = auth.getCurrentUser().getUid();
-				DatabaseReference ref = db.getReference(
-						FirebaseDBHeaders.UTILS + "/sportsVerbMapping");
-				if (ref != null){
-					ref.child(id).child("name").setValue(name);
-					ref.child(id).child("verb").setValue(verb);
 
-					Log.d(TAG, "Added " + name + " --- " + verb);
-				}
-			}
+			db.addSport(id, verb, name);
 		}
 	}
 	

@@ -21,17 +21,13 @@ import android.view.animation.Animation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
@@ -44,14 +40,13 @@ import org.joda.time.PeriodType;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class LessonDetails extends Fragment {
     private final String TAG = "LessonDetails";
-    private FirebaseDatabase db;
+    private Database db = new FirebaseDB();
     private String userID;
     private FirebaseAnalytics firebaseLog;
     public static final String BUNDLE_LESSON_DATA = "lessonData";
@@ -64,7 +59,7 @@ public class LessonDetails extends Fragment {
     private ProgressBar loading;
     private ViewGroup mainLayout;
 
-    private LessonDetailsAdapter firebaseAdapter;
+    private LessonDetailsAdapter adapter;
     private LessonDetailsListener lessonDetailsListener;
 
     public interface LessonDetailsListener {
@@ -75,7 +70,6 @@ public class LessonDetails extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        db = FirebaseDatabase.getInstance();
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
@@ -99,7 +93,6 @@ public class LessonDetails extends Fragment {
             lessonData = (LessonData) arguments.getSerializable(BUNDLE_LESSON_DATA);
 
             addActionListeners();
-            populateData();
             setLessonColor(lessonData.getColorID());
         }
 
@@ -112,8 +105,7 @@ public class LessonDetails extends Fragment {
         lessonDetailsListener.setToolbarState(
                 new ToolbarState(lessonData.getTitle(), false, false, lessonData.getKey())
         );
-        if (firebaseAdapter != null)
-            firebaseAdapter.startListening();
+        populateData();
     }
 
     @Override
@@ -147,20 +139,20 @@ public class LessonDetails extends Fragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        LessonInstanceData longClickData = firebaseAdapter.getLongClickPositionData();
+        LessonInstanceData longClickData = adapter.getLongClickPositionData();
         switch (item.getItemId()) {
             case R.id.lesson_details_item_menu_more_info:
                 //open a dialog with details (access records)
                 getInstanceDetails(longClickData);
                 return true;
             case R.id.lesson_details_item_menu_delete:
-                DatabaseReference instanceRef = FirebaseDatabase.getInstance().getReference(
-                        FirebaseDBHeaders.LESSON_INSTANCES + "/"+
-                                userID+"/"+
-                                lessonData.getKey() + "/" +
-                                longClickData.getId()
-                );
-                instanceRef.removeValue();
+                OnResultListener onResultListener = new OnResultListener() {
+                    @Override
+                    public void onLessonInstanceRemoved() {
+                        super.onLessonInstanceRemoved();
+                    }
+                };
+                db.removeLessonInstance(lessonData.getKey(), longClickData.getId(), onResultListener);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -168,21 +160,9 @@ public class LessonDetails extends Fragment {
     }
 
     private void populateData(){
-
-        //grab list of instances
-        DatabaseReference lessonInstancesRef = db.getReference(
-                FirebaseDBHeaders.LESSON_INSTANCES + "/"+userID+"/"+ lessonData.getKey());
-        FirebaseRecyclerOptions<LessonInstanceData> options = new FirebaseRecyclerOptions.Builder<LessonInstanceData>()
-                .setQuery(lessonInstancesRef, LessonInstanceData.class)
-                .build();
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        firebaseAdapter = new LessonDetailsAdapter(options,
+        adapter = new LessonDetailsAdapter(
                 new LessonDetailsAdapter.LessonDetailsAdapterListener() {
-                    @Override
-                    public void onLoad() {
-                        loading.setVisibility(View.INVISIBLE);
-                    }
-
                     @Override
                     public void onItems(){
                         noItemAddTextView.setVisibility(View.GONE);
@@ -194,21 +174,31 @@ public class LessonDetails extends Fragment {
                         noItemAddTextView.setVisibility(View.VISIBLE);
                         noItemsDescriptionTextView.setVisibility(View.VISIBLE);
                     }
-                }, lessonDetailsListener, lessonData.getKey());
-        //when we create a new instance, remove the progress spinner
-        firebaseAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                }, lessonDetailsListener, lessonData.getKey()
+        );
+        
+        /*
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
 
             }
-        });
+        });*/
 
-
-
-        list.setAdapter(firebaseAdapter);
-
+        list.setAdapter(adapter);
+        //so we can long click the list items to show the context menu options
         registerForContextMenu(list);
+
+        OnResultListener onResultListener = new OnResultListener() {
+            @Override
+            public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
+                loading.setVisibility(View.GONE);
+                adapter.setLessonInstances(lessonInstances);
+            }
+        };
+
+        db.getLessonInstances(lessonData.getKey(), onResultListener);
     }
 
 
@@ -240,66 +230,24 @@ public class LessonDetails extends Fragment {
     }
 
     private void createNewInstance(){
-        createButton.setEnabled(false);
-        createButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.gray500)));
-
-        createProgressBar.setVisibility(View.VISIBLE);
+        disableCreateButtonForLoading();
         //load lesson class
         Lesson lesson = LessonFactory.parseLesson(lessonData.getKey(),
-                new Lesson.LessonListener() {
-                    private DateTime startTime = DateTime.now();
-            @Override
-            public void onLessonCreated() {
-                //since these will be called from a separate thread, we want to make sure
-                // these run on the UI thread
-                //( not sure if this achieves it though. These are called even though we destroy the fragment)
-                createButton.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (LessonDetails.this.isVisible()) {
-                            createButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.orange500)));
-                            createButton.setEnabled(true);
-                        }
-                    }
-                });
-                createProgressBar.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (LessonDetails.this.isVisible()) {
-                            Animation fadeoutAnimation = new AlphaAnimation(1f,0f);
-                            fadeoutAnimation.setDuration(500);
-                            fadeoutAnimation.setAnimationListener(new Animation.AnimationListener() {
-                                @Override
-                                public void onAnimationStart(Animation animation) {
+            new Lesson.LessonListener() {
+                private DateTime startTime = DateTime.now();
+                @Override
+                public void onLessonCreated() {
+                    enableCreateButtonAfterLoading();
 
-                                }
+                    DateTime finishTime = DateTime.now();
+                    int millisecondsTaken = new Period(startTime, finishTime, PeriodType.millis()).getMillis();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(FirebaseAnalytics.Param.VALUE, millisecondsTaken);
+                    firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_LOAD, bundle);
 
-                                @Override
-                                public void onAnimationEnd(Animation animation) {
-                                    createProgressBar.setVisibility(View.INVISIBLE);
-                                    //reset alpha so the progress bar shows the next time around
-                                    createProgressBar.setAlpha(1f);
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animation animation) {
-
-                                }
-                            });
-                            createProgressBar.startAnimation(fadeoutAnimation);
-
-                        }
-                    }
-                });
-
-                DateTime finishTime = DateTime.now();
-                int millisecondsTaken = new Period(startTime, finishTime, PeriodType.millis()).getMillis();
-                Bundle bundle = new Bundle();
-                bundle.putInt(FirebaseAnalytics.Param.VALUE, millisecondsTaken);
-                firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_LOAD, bundle);
-
+                }
             }
-        });
+        );
 
         //first part connects to Firebase
         // thus running on the main UI thread.
@@ -312,31 +260,65 @@ public class LessonDetails extends Fragment {
         //the list listens for inserts and removes the loading spinner
     }
 
-    private void getInstanceDetails(final LessonInstanceData instanceData){
-        String instanceID = instanceData.getId();
-        DatabaseReference recordsRef = db.getReference(
-                FirebaseDBHeaders.INSTANCE_RECORDS + "/" +
-                userID + "/" +
-                lessonData.getKey() + "/" +
-                instanceID
-        );
-        recordsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void disableCreateButtonForLoading(){
+        createButton.setEnabled(false);
+        createButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.gray500)));
+
+        createProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void enableCreateButtonAfterLoading(){
+        //since these will be called from a separate thread, we want to make sure
+        // these run on the UI thread
+        //( not sure if this achieves it though. These are called even though we destroy the fragment)
+        createButton.post(new Runnable() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<InstanceRecord> allRecords = new ArrayList<>((int)dataSnapshot.getChildrenCount());
-                for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()){
-                    InstanceRecord record = recordSnapshot.getValue(InstanceRecord.class);
-                    allRecords.add(record);
+            public void run() {
+                if (LessonDetails.this.isVisible()) {
+                    createButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.orange500)));
+                    createButton.setEnabled(true);
                 }
-
-                showInstanceDetailDialog(instanceData, allRecords);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
+        createProgressBar.post(new Runnable() {
+            @Override
+            public void run() {
+                if (LessonDetails.this.isVisible()) {
+                    Animation fadeoutAnimation = new AlphaAnimation(1f,0f);
+                    fadeoutAnimation.setDuration(500);
+                    fadeoutAnimation.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            createProgressBar.setVisibility(View.INVISIBLE);
+                            //reset alpha so the progress bar shows the next time around
+                            createProgressBar.setAlpha(1f);
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+                    createProgressBar.startAnimation(fadeoutAnimation);
+
+                }
+            }
+        });
+    }
+
+    private void getInstanceDetails(final LessonInstanceData instanceData){
+        OnResultListener onResultListener = new OnResultListener() {
+            @Override
+            public void onLessonInstanceDetailsQueried(List<InstanceRecord> records) {
+                showInstanceDetailDialog(instanceData, records);
+            }
+        };
+        db.getLessonInstanceDetails(lessonData.getKey(), instanceData.getId(), onResultListener);
     }
 
     private void showInstanceDetailDialog(LessonInstanceData instanceData, List<InstanceRecord> allRecords){
@@ -413,8 +395,7 @@ public class LessonDetails extends Fragment {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if (firebaseAdapter != null)
-            firebaseAdapter.stopListening();
+        db.cleanup();
     }
 
 }

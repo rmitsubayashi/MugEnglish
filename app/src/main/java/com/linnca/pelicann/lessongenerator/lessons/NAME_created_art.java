@@ -43,7 +43,7 @@ public class NAME_created_art extends Lesson{
 
     public NAME_created_art(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 1;
+        super.questionSetsToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

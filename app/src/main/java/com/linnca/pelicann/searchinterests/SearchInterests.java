@@ -16,17 +16,12 @@ import android.widget.SearchView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
-import com.linnca.pelicann.db.FirebaseDBHeaders;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
@@ -34,7 +29,6 @@ import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
@@ -42,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SearchInterests extends Fragment {
     private FirebaseAnalytics firebaseLog;
-    private String userID;
+    private final Database db = new FirebaseDB();
     private final String TAG = "SearchInterests";
     private EntitySearcher searcher;
     private SearchView searchView;
@@ -50,8 +44,8 @@ public class SearchInterests extends Fragment {
     private SearchResultsAdapter adapter = null;
     //initial row count of search results
     private final int defaultRowCt = 10;
-    private final int defaultRecommendationCt = 1;
-    private final int incrementRecommendationCt = 1;
+    private final int defaultRecommendationCt = 5;
+    private final int incrementRecommendationCt = 5;
     private int recommendationCt = defaultRecommendationCt;
     //so we don't show search results queried before the currently shown result
     private int queryOrderSent = 0;
@@ -60,7 +54,7 @@ public class SearchInterests extends Fragment {
     //we can do continue=# to get the results from that number of results
     //increment when we want more rows
     private Integer currentRowCt = defaultRowCt;
-    //so  we can filter out user interests we don't need
+    //so we can filter out user interests we don't need
     private final List<WikiDataEntryData> userInterests = new ArrayList<>();
     //we get more than we need to guarantee populating the recommendations
     //so save it and when the user loads more,
@@ -84,7 +78,7 @@ public class SearchInterests extends Fragment {
                         WikiBaseEndpointConnector.JAPANESE)
         );
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
     }
@@ -144,23 +138,11 @@ public class SearchInterests extends Fragment {
     }
 
     private void addSearchFunctionality(){
-
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference(
-                FirebaseDBHeaders.USER_INTERESTS + "/" +
-                userID
-        );
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()){
-                    WikiDataEntryData data = child.getValue(WikiDataEntryData.class);
-                    userInterests.add(data);
-                }
-
-
-
+            public void onUserInterestsQueried(List<WikiDataEntryData> queriedUserInterests) {
+                userInterests.clear();
+                userInterests.addAll(queriedUserInterests);
                 list.setLayoutManager(new LinearLayoutManager(getContext()));
                 SearchResultsAdapter.SearchResultsAdapterListener searchResultsAdapterListener = getSearchResultsAdapterListener();
                 adapter = new SearchResultsAdapter(searchResultsAdapterListener);
@@ -194,13 +176,16 @@ public class SearchInterests extends Fragment {
                         return true;
                     }
                 });
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+                //we don't want to keep listening because
+                // we want to show the recommendations after a
+                // user has added an interest,
+                // but if we kept on listening, it would
+                // attach a new adapter instead
+                db.cleanup();
             }
-        });
+        };
+        db.getUserInterests(onResultListener);
     }
 
 
@@ -249,6 +234,7 @@ public class SearchInterests extends Fragment {
                     List<WikiDataEntryData> toDisplay = savedRecommendations.subList(0, recommendationCt);
                     adapter.showRecommendations(toDisplay);
                 } else {
+                    //grab more from the database
                     populateRecommendations(data);
                 }
 
@@ -262,31 +248,11 @@ public class SearchInterests extends Fragment {
 
     private void populateRecommendations(WikiDataEntryData data){
         adapter.setRecommendationWikiDataEntryData(data);
-        final DatabaseReference recommendationRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                        data.getWikiDataID()
-        );
-        //pigeon-hole so we are guaranteed to get recommendations
-        int fetchCt = userInterests.size() + recommendationCt;
-        Query recommendationRefQuery = recommendationRef
-                .orderByChild(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT)
-                .limitToLast(fetchCt);
-        recommendationRefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<WikiDataEntryData> recommendations = new ArrayList<>();
-                for (DataSnapshot child : dataSnapshot.getChildren()){
-                    WikiDataEntryData recommendationData = child.child(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA)
-                            .getValue(WikiDataEntryData.class);
-                    recommendations.add(recommendationData);
-                }
-                //we need to reverse this because the recommendations are ordered by count
-                // (1,3,5,10, etc)
-                //so we can get the most recommended one on top
-                Collections.reverse(recommendations);
-                recommendations.removeAll(userInterests);
+            public void onRecommendationsQueried(List<WikiDataEntryData> recommendations) {
                 savedRecommendations = new ArrayList<>(recommendations);
-                if (recommendations.size() >= recommendationCt) {
+                if (recommendations.size() > recommendationCt) {
                     List<WikiDataEntryData> toDisplay = recommendations.subList(0, recommendationCt);
                     adapter.showRecommendations(toDisplay);
                 } else {
@@ -295,13 +261,9 @@ public class SearchInterests extends Fragment {
                     adapter.removeFooter();
                 }
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+        };
+        db.getRecommendations(userInterests, data.getWikiDataID(),
+                recommendationCt, onResultListener);
     }
 
     private void populateResults(String query){

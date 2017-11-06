@@ -77,7 +77,7 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
 
     public NAME_is_NAME2_possessive_husband_wife(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 3;
+        super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

@@ -436,7 +436,7 @@ public class LessonFactory {
     }
 
     public static void saveGenericQuestions(){
-        /*
+
         Lesson lesson = new good_morning_afternoon_evening(null, null);
         lesson.saveGenericQuestions();
         lesson = new Hello_my_name_is_NAME(null, null);
@@ -500,7 +500,7 @@ public class LessonFactory {
         lesson = new I_turned_left_right(null, null);
         lesson.saveGenericQuestions();
         lesson = new NAME_worked_for_the_government_He_was_a_politician(null, null);
-        lesson.saveGenericQuestions();*/
+        lesson.saveGenericQuestions();
 
     }
 }

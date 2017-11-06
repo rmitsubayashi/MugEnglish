@@ -76,7 +76,7 @@ public class NAME_is_AGE_years_old extends Lesson {
 
     public NAME_is_AGE_years_old(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 4;
+        super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

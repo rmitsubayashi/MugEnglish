@@ -58,7 +58,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
 
         super(connector, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
-        super.questionSetsLeftToPopulate = 3;
+        super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
 
     }

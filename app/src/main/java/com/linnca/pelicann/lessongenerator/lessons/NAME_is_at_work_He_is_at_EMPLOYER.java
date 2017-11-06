@@ -59,7 +59,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
 
     public NAME_is_at_work_He_is_at_EMPLOYER(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 

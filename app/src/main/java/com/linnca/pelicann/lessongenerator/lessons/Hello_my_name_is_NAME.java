@@ -42,7 +42,7 @@ public class Hello_my_name_is_NAME extends Lesson {
 
     public Hello_my_name_is_NAME(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
@@ -114,11 +114,11 @@ public class Hello_my_name_is_NAME extends Lesson {
         VocabularyWord hello = new VocabularyWord("","hello", "こんにちは",
                 formatSentenceEN(qr), formatSentenceJP(qr), KEY);
         VocabularyWord my = new VocabularyWord("","my", "私の",
-                "My name is " + qr.personEN, "私の名前は" + qr.personJP + "です。", KEY);
+                "My name is " + qr.personEN + ".", "私の名前は" + qr.personJP + "です。", KEY);
         VocabularyWord name = new VocabularyWord("", "name","名前",
-                "My name is " + qr.personEN, "私の名前は" + qr.personJP + "です。", KEY);
+                "My name is " + qr.personEN + ".", "私の名前は" + qr.personJP + "です。", KEY);
         VocabularyWord is = new VocabularyWord("", "is","~は",
-                "My name is " + qr.personEN, "私の名前は" + qr.personJP + "です。", KEY);
+                "My name is " + qr.personEN + ".", "私の名前は" + qr.personJP + "です。", KEY);
         List<VocabularyWord> words = new ArrayList<>(4);
         words.add(hello);
         words.add(my);

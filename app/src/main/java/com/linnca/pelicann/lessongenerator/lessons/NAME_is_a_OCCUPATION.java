@@ -50,7 +50,7 @@ public class NAME_is_a_OCCUPATION extends Lesson{
 
     public NAME_is_a_OCCUPATION(WikiBaseEndpointConnector connector, LessonListener listener){
         super(connector, listener);
-        super.questionSetsLeftToPopulate = 2;
+        super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
