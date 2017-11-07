@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
@@ -52,8 +53,8 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
 
     private final List<String> allColors = new ArrayList<>(8);
 
-    public The_DEMONYM_flag_is_COLORS(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public The_DEMONYM_flag_is_COLORS(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
         super.lessonKey = KEY;

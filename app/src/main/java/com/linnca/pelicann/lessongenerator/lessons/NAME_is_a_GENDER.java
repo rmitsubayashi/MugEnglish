@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
@@ -47,8 +48,8 @@ public class NAME_is_a_GENDER extends Lesson {
         }
     }
 
-    public NAME_is_a_GENDER(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public NAME_is_a_GENDER(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;

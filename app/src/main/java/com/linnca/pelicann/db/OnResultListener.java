@@ -3,6 +3,7 @@ package com.linnca.pelicann.db;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionSet;
 import com.linnca.pelicann.results.NewVocabularyWrapper;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.userprofile.AppUsageLog;
@@ -23,10 +24,8 @@ public abstract class OnResultListener {
     public void onQuestionsAdded(){}
     public void onRelatedUserInterestsQueried(List<WikiDataEntryData> relatedUserInterests){}
     public void onRandomQuestionsQueried(List<String> questionSetIDs){}
-    //for each question set that we search
-    public void onQuestionSetQueried(String questionSetKey, List<List<String>> questionIDs, String interestLabel, List<String> vocabularyWordKeys){}
     //once we are done getting all question sets
-    public void onQuestionSetsQueried(){}
+    public void onQuestionSetsQueried(List<QuestionSet> questionSets){}
 
     public void onQuestionQueried(QuestionData questionData){}
 

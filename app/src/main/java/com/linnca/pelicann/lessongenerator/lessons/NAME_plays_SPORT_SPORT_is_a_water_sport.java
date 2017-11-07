@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -57,8 +58,8 @@ public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
         }
     }
 
-    public NAME_plays_SPORT_SPORT_is_a_water_sport(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public NAME_plays_SPORT_SPORT_is_a_water_sport(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;

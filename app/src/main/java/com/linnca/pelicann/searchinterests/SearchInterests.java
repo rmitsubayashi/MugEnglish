@@ -23,6 +23,7 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
 import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
@@ -36,7 +37,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SearchInterests extends Fragment {
     private FirebaseAnalytics firebaseLog;
-    private final Database db = new FirebaseDB();
+    private Database db;
     private final String TAG = "SearchInterests";
     private EntitySearcher searcher;
     private SearchView searchView;
@@ -81,6 +82,13 @@ public class SearchInterests extends Fragment {
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
     }
 
     @Override

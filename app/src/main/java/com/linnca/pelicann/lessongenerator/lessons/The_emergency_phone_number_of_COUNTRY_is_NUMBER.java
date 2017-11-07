@@ -4,6 +4,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -50,9 +51,9 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
 
 
-    public The_emergency_phone_number_of_COUNTRY_is_NUMBER(WikiBaseEndpointConnector connector, LessonListener listener){
+    public The_emergency_phone_number_of_COUNTRY_is_NUMBER(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
 
-        super(connector, listener);
+        super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 2;
         super.lessonKey = KEY;

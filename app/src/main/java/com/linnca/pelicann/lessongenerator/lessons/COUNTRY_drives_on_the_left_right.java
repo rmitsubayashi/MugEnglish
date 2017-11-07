@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
@@ -47,8 +48,8 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         }
     }
 
-    public COUNTRY_drives_on_the_left_right(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public COUNTRY_drives_on_the_left_right(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
         super.lessonKey = KEY;

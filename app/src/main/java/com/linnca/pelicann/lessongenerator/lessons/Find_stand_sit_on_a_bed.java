@@ -1,6 +1,7 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
@@ -16,8 +17,8 @@ import java.util.List;
 public class Find_stand_sit_on_a_bed extends Lesson {
     public static final String KEY = "Find_stand_sit_on_a_bed";
 
-    public Find_stand_sit_on_a_bed(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public Find_stand_sit_on_a_bed(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.lessonKey = KEY;
     }
     @Override

@@ -26,16 +26,12 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.List;
 
-/*
-* We are using an external library for the FABs
-* because Android doesn't directly support FAB menus.
-* We can make our own if we have time
-* */
 public class UserInterests extends Fragment {
     private final String TAG = "UserInterests";
     private FirebaseAnalytics firebaseLog;
@@ -47,7 +43,6 @@ public class UserInterests extends Fragment {
     private RecyclerView.OnItemTouchListener undoOnTouchListener;
     private FloatingActionButton searchFAB;
     private UserInterestListener userInterestListener;
-    private String userID;
     private ActionMode actionMode;
     private ActionMode.Callback actionModeCallback;
 
@@ -59,11 +54,17 @@ public class UserInterests extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
-        db = new FirebaseDB();
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
     }
 
     @Override

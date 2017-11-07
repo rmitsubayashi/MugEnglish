@@ -21,6 +21,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.ArrayList;
@@ -50,7 +51,13 @@ public class VocabularyList extends Fragment {
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
-        db = new FirebaseDB();
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
     }
 
     @Override

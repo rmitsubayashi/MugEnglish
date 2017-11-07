@@ -39,15 +39,16 @@ dependencies {
     //there is a 'fixed' version
     compile 'com.takisoft.fix:preference-v7:26.1.0.2'
 
+    //for a lot of UI design stuff
+    compile 'com.android.support:design:26.1.0'
+
     //for time management
     compile 'joda-time:joda-time:2.9.9'
 
-    compile 'com.google.firebase:firebase-auth:11.4.2'
-    compile 'com.google.firebase:firebase-database:11.4.2'
-    compile 'com.google.firebase:firebase-core:11.4.2'
-    compile 'com.google.firebase:firebase-crash:11.4.2'
-    compile 'com.firebaseui:firebase-ui-auth:3.1.0'
-    compile 'com.firebaseui:firebase-ui-database:3.1.0'
+    compile 'com.google.firebase:firebase-auth:11.6.0'
+    compile 'com.google.firebase:firebase-database:11.6.0'
+    compile 'com.google.firebase:firebase-core:11.6.0'
+    compile 'com.google.firebase:firebase-crash:11.6.0'
 
     //to use constraint layout
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

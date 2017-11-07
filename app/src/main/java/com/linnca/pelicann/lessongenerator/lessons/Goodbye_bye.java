@@ -1,6 +1,7 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
@@ -17,8 +18,8 @@ import java.util.List;
 public class Goodbye_bye extends Lesson {
     public static final String KEY = "Goodbye_bye";
 
-    public Goodbye_bye(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public Goodbye_bye(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.lessonKey = KEY;
     }
     @Override

@@ -136,7 +136,7 @@ class UserInterestAdapter
 
         originalList = new ArrayList<>(updatedList);
         List<WikiDataEntryData> updatedFilteredList = new ArrayList<>(updatedList);
-        filter(updatedFilteredList);
+        updatedFilteredList = filter(updatedFilteredList, filter);
         List<WikiDataEntryData> prevFilteredList = filteredList;
         filteredList = updatedFilteredList;
 
@@ -203,7 +203,7 @@ class UserInterestAdapter
         int oldFilter = this.filter;
         this.filter = newFilter;
         List<WikiDataEntryData> newFilteredList = new ArrayList<>(originalList);
-        filter(newFilteredList);
+        newFilteredList = filter(newFilteredList, newFilter);
         List<WikiDataEntryData> oldFilteredList = filteredList;
         filteredList = newFilteredList;
         //should animate filtered list,
@@ -255,9 +255,9 @@ class UserInterestAdapter
 
     }
 
-    private void filter(List<WikiDataEntryData> list){
+    private List<WikiDataEntryData> filter(List<WikiDataEntryData> list, int filter){
         if (filter == ToolbarSpinnerAdapter.FILTER_ALL){
-            return;
+            return list;
         }
         List<Integer> toMatchFilter = new ArrayList<>();
         if (filter == ToolbarSpinnerAdapter.FILTER_PERSON){
@@ -277,5 +277,6 @@ class UserInterestAdapter
                 iterator.remove();
             }
         }
+        return list;
     }
 }

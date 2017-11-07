@@ -5,6 +5,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.questions.InstanceRecord;
 
 import java.io.Serializable;
@@ -12,22 +14,31 @@ import java.util.List;
 
 class UserProfilePagerAdapter extends FragmentPagerAdapter {
     private final int tabCount;
+    private final Database db;
 
-    UserProfilePagerAdapter(FragmentManager manager, int tabCount){
+    UserProfilePagerAdapter(FragmentManager manager, int tabCount, Database db){
         super(manager);
         this.tabCount = tabCount;
+        this.db = db;
     }
 
     @Override
     public Fragment getItem(int position){
+        Fragment fragment;
         switch (position) {
             case 0:
-                return new UserProfile_HoursStudied();
+                fragment = new UserProfile_HoursStudied();
+                break;
             case 1:
-                return new UserProfile_ReportCard();
+                fragment = new UserProfile_ReportCard();
+                break;
             default:
                 return null;
         }
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override

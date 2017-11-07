@@ -1,5 +1,6 @@
 package com.linnca.pelicann.db;
 
+
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
@@ -9,6 +10,7 @@ import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,7 +22,7 @@ import java.util.List;
 //this is because of Firebase's real-time database nature.
 //(we can't return values from a Firebase request)
 
-public abstract class Database {
+public abstract class Database implements Serializable{
 
     public abstract String getUserID();
     public abstract void cleanup();

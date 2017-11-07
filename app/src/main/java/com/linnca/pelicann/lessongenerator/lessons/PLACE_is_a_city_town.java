@@ -4,6 +4,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
@@ -52,9 +53,9 @@ public class PLACE_is_a_city_town extends Lesson {
 
 
 
-    public PLACE_is_a_city_town(WikiBaseEndpointConnector connector, LessonListener listener){
+    public PLACE_is_a_city_town(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
 
-        super(connector, listener);
+        super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;

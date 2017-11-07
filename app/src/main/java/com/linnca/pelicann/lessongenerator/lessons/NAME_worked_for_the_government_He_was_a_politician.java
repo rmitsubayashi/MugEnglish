@@ -3,6 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -47,8 +48,8 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
         }
     }
 
-    public NAME_worked_for_the_government_He_was_a_politician(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public NAME_worked_for_the_government_He_was_a_politician(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;

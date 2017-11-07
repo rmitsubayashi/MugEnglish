@@ -10,6 +10,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.MainActivity;
 
 import org.joda.time.DateTime;
 
@@ -17,8 +18,20 @@ import java.util.List;
 
 public class UserProfile_HoursStudied extends Fragment {
     private final String TAG = "UserProfileHoursStudied";
-    private final Database db = new FirebaseDB();
+    private Database db;
     private CustomCalendarView calendarView;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

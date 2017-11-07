@@ -30,6 +30,7 @@ import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
@@ -46,7 +47,7 @@ import java.util.Locale;
 
 public class LessonDetails extends Fragment {
     private final String TAG = "LessonDetails";
-    private Database db = new FirebaseDB();
+    private Database db;
     private String userID;
     private FirebaseAnalytics firebaseLog;
     public static final String BUNDLE_LESSON_DATA = "lessonData";
@@ -70,6 +71,13 @@ public class LessonDetails extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
@@ -233,6 +241,7 @@ public class LessonDetails extends Fragment {
         disableCreateButtonForLoading();
         //load lesson class
         Lesson lesson = LessonFactory.parseLesson(lessonData.getKey(),
+            db,
             new Lesson.LessonListener() {
                 private DateTime startTime = DateTime.now();
                 @Override

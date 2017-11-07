@@ -73,8 +73,6 @@ import com.linnca.pelicann.userprofile.UserProfile;
 import com.linnca.pelicann.vocabulary.VocabularyDetails;
 import com.linnca.pelicann.vocabulary.VocabularyList;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -95,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements
         VocabularyDetails.VocabularyDetailsListener
 {
     private final String TAG = "MainActivity";
-    private final Database db = new FirebaseDB();
+    private Database db;
+    public final static String BUNDLE_DATABASE = "bundleDatabase";
     private boolean searchIconVisible = false;
     private boolean descriptionIconVisible = false;
     private String descriptionLessonKey;
@@ -132,9 +131,17 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            db = (Database) getIntent().getSerializableExtra(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
+
         setContentView(R.layout.activity_main);
 
-        LessonFactory.saveGenericQuestions();
+        LessonFactory.saveGenericQuestions(db);
         lessonHierarchyViewer = new LessonHierarchyViewer();
 
         toolbar = findViewById(R.id.tool_bar);
@@ -145,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements
         setSpinnerAdapter();
 
         fragmentManager = getSupportFragmentManager();
-        questionManager = new QuestionManager(getQuestionManagerListener());
+        questionManager = new QuestionManager(db, getQuestionManagerListener());
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
@@ -164,14 +171,20 @@ public class MainActivity extends AppCompatActivity implements
                     switch (selectedNavigationItemID){
                         case R.id.main_navigation_drawer_interests :
                             newFragment = new UserInterests();
+                            bundle.putSerializable(BUNDLE_DATABASE, db);
+                            newFragment.setArguments(bundle);
                             newFragmentTag = FRAGMENT_USER_INTERESTS;
                             break;
                         case R.id.main_navigation_drawer_data :
                             newFragment = new UserProfile();
+                            bundle.putSerializable(BUNDLE_DATABASE, db);
+                            newFragment.setArguments(bundle);
                             newFragmentTag = FRAGMENT_USER_PROFILE;
                             break;
                         case R.id.main_navigation_drawer_vocabulary :
                             newFragment = new VocabularyList();
+                            bundle.putSerializable(BUNDLE_DATABASE, db);
+                            newFragment.setArguments(bundle);
                             newFragmentTag = FRAGMENT_VOCABULARY_LIST;
                             break;
                         case R.id.main_navigation_drawer_settings :
@@ -181,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements
                         case R.id.main_navigation_drawer_lesson_level1 :
                             newFragment = new LessonList();
                             bundle.putInt(LessonList.LESSON_LEVEL, 1);
+                            bundle.putSerializable(BUNDLE_DATABASE, db);
                             newFragment.setArguments(bundle);
                             setLastSelectedLessonLevel(1);
                             newFragmentTag = FRAGMENT_LESSON_LIST;
@@ -188,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements
                         case R.id.main_navigation_drawer_lesson_level2 :
                             newFragment = new LessonList();
                             bundle.putInt(LessonList.LESSON_LEVEL, 2);
+                            //just want to see it fail
+                            bundle.putSerializable(BUNDLE_DATABASE, db);
                             newFragment.setArguments(bundle);
                             setLastSelectedLessonLevel(2);
                             newFragmentTag = FRAGMENT_LESSON_LIST;
@@ -387,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements
         Fragment fragment = new LessonDetails();
         Bundle bundle = new Bundle();
         bundle.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonData);
+        bundle.putSerializable(BUNDLE_DATABASE, db);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_LESSON_DETAILS);
@@ -428,6 +445,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void userInterestsToSearchInterests(){
         Fragment fragment = new SearchInterests();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(BUNDLE_DATABASE, db);
+        fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_SEARCH_INTERESTS);
         fragmentTransaction.addToBackStack(FRAGMENT_USER_INTERESTS);
@@ -440,6 +460,7 @@ public class MainActivity extends AppCompatActivity implements
         Fragment fragment = new VocabularyDetails();
         Bundle bundle = new Bundle();
         bundle.putString(VocabularyDetails.BUNDLE_VOCABULARY_ID, key);
+        bundle.putSerializable(BUNDLE_DATABASE, db);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_VOCABULARY_DETAILS);
@@ -457,6 +478,7 @@ public class MainActivity extends AppCompatActivity implements
         int lessonLevel = lessonHierarchyViewer.getLessonLevel(lessonKey);
         Bundle bundle1 = new Bundle();
         bundle1.putInt(LessonList.LESSON_LEVEL, lessonLevel);
+        bundle1.putSerializable(BUNDLE_DATABASE, db);
         fragment1.setArguments(bundle1);
         topmostFragmentTag = FRAGMENT_LESSON_LIST;
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -466,6 +488,7 @@ public class MainActivity extends AppCompatActivity implements
         Fragment fragment2 = new LessonDetails();
         Bundle bundle2 = new Bundle();
         bundle2.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonHierarchyViewer.getLessonData(lessonKey));
+        bundle2.putSerializable(BUNDLE_DATABASE, db);
         fragment2.setArguments(bundle2);
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment2, FRAGMENT_LESSON_DETAILS);
         fragmentTransaction.addToBackStack(FRAGMENT_LESSON_LIST);
@@ -562,6 +585,7 @@ public class MainActivity extends AppCompatActivity implements
                 Fragment fragment = new Results();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Results.BUNDLE_INSTANCE_RECORD, instanceRecord);
+                bundle.putSerializable(BUNDLE_DATABASE, db);
                 fragment.setArguments(bundle);
 
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -653,6 +677,7 @@ public class MainActivity extends AppCompatActivity implements
         Fragment lessonListFragment = new LessonList();
         Bundle bundle = new Bundle();
         bundle.putInt(LessonList.LESSON_LEVEL, lastSelectedLessonLevel);
+        bundle.putSerializable(BUNDLE_DATABASE, db);
         lessonListFragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonListFragment, FRAGMENT_LESSON_LIST);

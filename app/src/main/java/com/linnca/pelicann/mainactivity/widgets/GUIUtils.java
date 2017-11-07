@@ -1,29 +1,20 @@
 package com.linnca.pelicann.mainactivity.widgets;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.BuildConfig;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.TwitterAuthProvider;
-import com.google.firebase.auth.UserInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GUIUtils {
+    /*
     //request code for firebase sign in
     public static final int REQUEST_CODE_SIGN_IN = 190;
     //which sign in methods to display to the user
     public static final int SIGN_IN_PROVIDER_ALL = 0;
     //these are for searching via facebook or twitter
     public static final int SIGN_IN_PROVIDER_FACEBOOK = 1;
-    public static final int SIGN_IN_PROVIDER_TWITTER = 2;
+    public static final int SIGN_IN_PROVIDER_TWITTER = 2;*/
 
     private GUIUtils(){}
     public static int stringToDrawableID(String imageString, Context context){
@@ -37,6 +28,7 @@ public class GUIUtils {
 
     }
 
+    /*
     public static Intent getSignInIntent(int provider){
         return AuthUI.getInstance().createSignInIntentBuilder()
                 .setProviders(getSelectedProviders(provider))
@@ -61,10 +53,10 @@ public class GUIUtils {
                             .build());
             selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.TWITTER_PROVIDER).build());
             selectedProviders.add(new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build());
-            /*selectedProviders.add(
+            selectedProviders.add(
                 new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER)
                         .setPermissions(getGooglePermissions())
-                        .build());*/
+                        .build());
         }
 
         return selectedProviders;
@@ -115,7 +107,7 @@ public class GUIUtils {
         result.add("user_actions.music");
         result.add("user_actions.books");
         return result;
-    }
+    }*/
 
     public static boolean hideKeyboard(View targetViewOfKeyboard){
         if (targetViewOfKeyboard == null){

@@ -1,6 +1,7 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
@@ -16,8 +17,8 @@ import java.util.List;
 public class Walk_run extends Lesson {
     public static final String KEY = "Walk_run";
 
-    public Walk_run(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public Walk_run(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.lessonKey = KEY;
     }
     @Override

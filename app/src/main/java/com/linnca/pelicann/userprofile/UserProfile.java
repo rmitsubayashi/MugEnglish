@@ -11,17 +11,31 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 public class UserProfile extends Fragment{
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private Database db;
 
     private UserProfileListener userProfileListener;
 
     public interface UserProfileListener {
         void setToolbarState(ToolbarState state);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        try {
+            db = (Database)getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            db = new FirebaseDB();
+        }
     }
 
     @Override
@@ -31,7 +45,6 @@ public class UserProfile extends Fragment{
         tabLayout = view.findViewById(R.id.user_profile_tab_layout);
         viewPager = view.findViewById(R.id.user_profile_pager);
 
-        populateTabs();
         return view;
     }
 
@@ -42,6 +55,8 @@ public class UserProfile extends Fragment{
                 new ToolbarState(getString(R.string.user_profile_app_bar_title),
                         false, false, null)
         );
+
+        populateTabs();
     }
 
     @Override
@@ -89,7 +104,7 @@ public class UserProfile extends Fragment{
         });
 
         UserProfilePagerAdapter adapter =
-                new UserProfilePagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
+                new UserProfilePagerAdapter(getChildFragmentManager(), tabLayout.getTabCount(), db);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }

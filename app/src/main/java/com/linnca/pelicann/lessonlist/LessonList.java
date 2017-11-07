@@ -16,6 +16,7 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class LessonList extends Fragment {
     private final String TAG = "LessonList";
     public static final String LESSON_LEVEL = "lessonLevel";
     private final String SAVED_STATE_LIST_STATE = "listState";
-    private final Database db = new FirebaseDB();
+    private Database db;
     private RecyclerView listView;
     private int lessonLevel;
     private RecyclerView.LayoutManager layoutManager;
@@ -37,6 +38,17 @@ public class LessonList extends Fragment {
         void lessonListToLessonDetails(LessonData lessonData);
         void lessonListToReview(String key);
         void setToolbarState(ToolbarState state);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
     }
 
     @Override

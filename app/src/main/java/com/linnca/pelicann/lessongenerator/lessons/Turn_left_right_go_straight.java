@@ -1,6 +1,7 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
@@ -17,8 +18,8 @@ import java.util.List;
 public class Turn_left_right_go_straight extends Lesson {
     public static final String KEY = "Turn_left_right_go_straight";
 
-    public Turn_left_right_go_straight(WikiBaseEndpointConnector connector, LessonListener listener){
-        super(connector, listener);
+    public Turn_left_right_go_straight(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+        super(connector, db, listener);
         super.lessonKey = KEY;
     }
     @Override

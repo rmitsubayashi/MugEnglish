@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+//used in lessonDetails to display each instance and start the questions
 public class LessonInstanceData implements Serializable{
     private String id;
+    //in case we want to 'refresh' questions
     private List<String> questionSetIds;
     //for every question with more than one possible variation,
     //we check this to see which variation we have here
@@ -14,6 +16,9 @@ public class LessonInstanceData implements Serializable{
     private List<String> interestLabels; //actual name, not ID
     //for displaying
     private long createdTimeStamp;
+    //the reason we don't just store a QuestionSet class is because
+    // the QuestionSet class has a redundant vocabularyID field
+    // not necessary for displaying the instance to the user
 
     public LessonInstanceData(){
         questionSetIds = new ArrayList<>();

@@ -16,6 +16,7 @@ import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSet;
 import com.linnca.pelicann.results.NewVocabularyWrapper;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.userprofile.AppUsageLog;
@@ -233,16 +234,16 @@ public class FirebaseDB extends Database {
             }
 
             String questionSetWikiDataID = questionDataWrapper.getWikiDataID();
-            //save the question set
+            //save the question set (pretty much the same thing as the
+            //questionDataWrapper but just the IDs
             String questionSetKey = questionSetRef.push().getKey();
-            questionSetRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_QUESTION_IDS)
-                    .setValue(questionIDs);
-            questionSetRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_LABEL)
-                    .setValue(questionDataWrapper.getInterestLabel());
-            questionSetRef.child(questionSetKey).child(FirebaseDBHeaders.QUESTION_SETS_VOCABULARY)
-                    .setValue(vocabularyIDs);
+            QuestionSet questionSet = new QuestionSet(questionSetKey, questionDataWrapper.getInterestLabel(),
+                    questionIDs, vocabularyIDs);
+            questionSetRef.child(questionSetKey).setValue(questionSet);
 
-            //save the id reference of the question set we just created
+            //save just the id of the question set we just created
+            // so we can easily query question sets we haven't had yet
+            // without too much data transfer
             questionSetIDsPerLessonRef.child(questionSetWikiDataID).push().setValue(questionSetKey);
 
             DatabaseReference randomQuestionSetIDRef = randomQuestionSetIDsRef.push();
@@ -362,7 +363,10 @@ public class FirebaseDB extends Database {
     @Override
     public void getQuestionSets(List<String> questionSetIDs, final OnResultListener onResultListener){
         //to check each listener to see if all listeners have completed
-        final AtomicInteger questionSetsRetrieved = new AtomicInteger(0);
+        final AtomicInteger questionSetsRetrievedCt = new AtomicInteger(0);
+        final List<QuestionSet> questionSetsRetrieved = Collections.synchronizedList(
+                new ArrayList<QuestionSet>(questionSetIDs.size())
+        );
         final int questionSetsToRetrieve = questionSetIDs.size();
         DatabaseReference questionSetsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.QUESTION_SETS);
@@ -371,20 +375,11 @@ public class FirebaseDB extends Database {
             questionSetRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    String interestLabel = dataSnapshot.child(FirebaseDBHeaders.QUESTION_SETS_LABEL)
-                            .getValue(String.class);
-                    GenericTypeIndicator<List<List<String>>> type =
-                            new GenericTypeIndicator<List<List<String>>>() {};
-                    List<List<String>> allQuestions = dataSnapshot.child(FirebaseDBHeaders.QUESTION_SETS_QUESTION_IDS)
-                            .getValue(type);
-                    GenericTypeIndicator<List<String>> type2 =
-                            new GenericTypeIndicator<List<String>>() {};
-                    List<String> vocabularyWordIDs = dataSnapshot.child(FirebaseDBHeaders.QUESTION_SETS_VOCABULARY)
-                            .getValue(type2);
-                    onResultListener.onQuestionSetQueried(questionSetID, allQuestions, interestLabel, vocabularyWordIDs);
-                    if (questionSetsRetrieved.incrementAndGet() == questionSetsToRetrieve){
+                    QuestionSet questionSet = dataSnapshot.getValue(QuestionSet.class);
+                    questionSetsRetrieved.add(questionSet);
+                    if (questionSetsRetrievedCt.incrementAndGet() == questionSetsToRetrieve){
                         //all listeners have completed so continue
-                        onResultListener.onQuestionSetsQueried();
+                        onResultListener.onQuestionSetsQueried(questionSetsRetrieved);
                     }
                 }
 

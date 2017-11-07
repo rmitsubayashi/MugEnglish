@@ -14,6 +14,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.MainActivity;
 
 import java.util.List;
 
@@ -21,14 +22,20 @@ public class UserProfile_ReportCard extends Fragment {
     private RecyclerView list;
     private UserProfile_ReportCardAdapter adapter;
     private int lessonLevel;
-    private Database db = new FirebaseDB();
+    private Database db;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         lessonLevel = preferences.getInt(getString(R.string.preferences_report_card_last_selected_lesson_level), 1);
-
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
     }
 
     @Override

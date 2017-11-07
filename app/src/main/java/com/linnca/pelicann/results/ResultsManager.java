@@ -11,7 +11,7 @@ import java.util.List;
 
 //this manages the results displayed to the user
 class ResultsManager {
-    private final Database db = new FirebaseDB();
+    private final Database db;
     private final InstanceRecord instanceRecord;
     private final ResultsManagerListener resultsManagerListener;
 
@@ -19,9 +19,10 @@ class ResultsManager {
         void onLessonCleared();
     }
 
-    ResultsManager(InstanceRecord instanceRecord, ResultsManagerListener listener){
+    ResultsManager(InstanceRecord instanceRecord, Database db, ResultsManagerListener listener){
         this.instanceRecord = instanceRecord;
         this.resultsManagerListener = listener;
+        this.db = db;
     }
 
     void saveInstanceRecord(){

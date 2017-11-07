@@ -20,6 +20,7 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
@@ -33,7 +34,7 @@ import java.util.List;
 public class Results extends Fragment {
     private final String TAG = "Results";
     private FirebaseAnalytics firebaseLog;
-    private final Database db = new FirebaseDB();
+    private Database db;
     private String userID;
     public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
     private InstanceRecord instanceRecord;
@@ -55,8 +56,16 @@ public class Results extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
+        } catch (Exception e){
+            e.printStackTrace();
+            //hard code a new database instance
+            db = new FirebaseDB();
+        }
         instanceRecord = (InstanceRecord) getArguments().getSerializable(BUNDLE_INSTANCE_RECORD);
-        resultsManager = new ResultsManager(instanceRecord, new ResultsManager.ResultsManagerListener() {
+        resultsManager = new ResultsManager(instanceRecord, db,
+                new ResultsManager.ResultsManagerListener() {
             @Override
             public void onLessonCleared(){
                 firstClearTextView.post(new Runnable() {

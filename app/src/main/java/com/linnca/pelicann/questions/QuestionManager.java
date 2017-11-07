@@ -18,7 +18,7 @@ public class QuestionManager{
 	private final String TAG = "QuestionManager";
 	public static final int QUESTIONS = 1;
 	public static final int REVIEW = 2;
-	private final Database db = new FirebaseDB();
+	private Database db;
 	private boolean questionsStarted = false;
 	private boolean reviewStarted = false;
 	private LessonInstanceData lessonInstanceData = null;
@@ -46,7 +46,8 @@ public class QuestionManager{
         void onReviewFinished();
 	}
 
-	public QuestionManager(QuestionManagerListener listener){
+	public QuestionManager(Database db, QuestionManagerListener listener){
+		this.db = db;
 		this.questionManagerListener = listener;
 	}
 

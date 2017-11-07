@@ -9,6 +9,7 @@ import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSet;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -29,7 +30,7 @@ public abstract class Lesson {
 	protected final String TOPIC_GENERIC_QUESTION = "一般問題";
 	//there are lessons that need to access the database,
 	//so make this protected
-	protected final Database db = new FirebaseDB();
+	protected Database db;
 	protected String lessonKey;
 	//the lesson instance we will be creating
 	private final LessonInstanceData lessonInstanceData = new LessonInstanceData();
@@ -75,9 +76,10 @@ public abstract class Lesson {
 	}
 	
 	
-	protected Lesson(WikiBaseEndpointConnector connector, LessonListener lessonListener){
+	protected Lesson(WikiBaseEndpointConnector connector, Database db, LessonListener lessonListener){
 		this.connector = connector;
 		this.lessonListener = lessonListener;
+		this.db = db;
 	}
 
 	// 1. check if a question already exists in the database
@@ -401,17 +403,20 @@ public abstract class Lesson {
 		}
 		OnResultListener onResultListener = new OnResultListener() {
 			@Override
-			public void onQuestionSetQueried(String questionSetKey, List<List<String>> questionIDs, String interestLabel, List<String> vocabularyWordKeys) {
-				lessonInstanceData.addQuestionSetId(questionSetKey);
-				List<String> instanceQuestions = pickQuestions(questionIDs);
-				lessonInstanceData.addQuestionIds(instanceQuestions);
-				lessonInstanceData.addInterestLabel(interestLabel);
-				if (vocabularyWordKeys != null)
-					lessonInstanceVocabularyWordIDs.addAll(vocabularyWordKeys);
-			}
+			public void onQuestionSetsQueried(List<QuestionSet> questionSets) {
+				for (QuestionSet questionSet : questionSets){
+					//we are saving all the data from the question set in the
+					// lessonInstanceData except for the vocabulary ID because
+					// that's not necessary when we are displaying the instance list
+					// to the user
+					lessonInstanceData.addQuestionSetId(questionSet.getKey());
+					List<String> instanceQuestions = pickQuestions(questionSet.getQuestionIDs());
+					lessonInstanceData.addQuestionIds(instanceQuestions);
+					lessonInstanceData.addInterestLabel(questionSet.getInterestLabel());
+					if (questionSet.getVocabularyIDs() != null)
+						lessonInstanceVocabularyWordIDs.addAll(questionSet.getVocabularyIDs());
+				}
 
-			@Override
-			public void onQuestionSetsQueried() {
 				saveInstance();
 			}
 		};

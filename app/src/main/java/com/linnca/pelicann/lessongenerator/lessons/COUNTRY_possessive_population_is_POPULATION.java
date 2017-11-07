@@ -4,6 +4,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -54,9 +55,9 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
 
 
 
-    public COUNTRY_possessive_population_is_POPULATION(WikiBaseEndpointConnector connector, LessonListener listener){
+    public COUNTRY_possessive_population_is_POPULATION(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
 
-        super(connector, listener);
+        super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
