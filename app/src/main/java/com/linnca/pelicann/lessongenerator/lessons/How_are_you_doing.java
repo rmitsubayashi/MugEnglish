@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
@@ -41,7 +42,7 @@ public class How_are_you_doing extends Lesson {
         }
     }
 
-    public How_are_you_doing(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public How_are_you_doing(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;

@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
@@ -55,7 +56,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         }
     }
 
-    public NAME_possessive_first_last_name_is_NAME(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public NAME_possessive_first_last_name_is_NAME(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 5;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;

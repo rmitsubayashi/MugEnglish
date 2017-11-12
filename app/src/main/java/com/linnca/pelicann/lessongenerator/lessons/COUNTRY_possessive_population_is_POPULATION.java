@@ -1,6 +1,7 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
@@ -55,7 +56,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
 
 
 
-    public COUNTRY_possessive_population_is_POPULATION(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public COUNTRY_possessive_population_is_POPULATION(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
 
         super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;

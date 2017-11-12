@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
@@ -49,7 +50,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
         }
     }
 
-    public TEAM_is_a_SPORT_team(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public TEAM_is_a_SPORT_team(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_OTHER;

@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -18,7 +19,7 @@ import java.util.List;
 public class The_man_woman_reads_a_book extends Lesson {
     public static final String KEY = "The_man_woman_reads_a_book";
 
-    public The_man_woman_reads_a_book(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public The_man_woman_reads_a_book(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
     }

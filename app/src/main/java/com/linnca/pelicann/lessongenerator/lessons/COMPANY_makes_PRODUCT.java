@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
@@ -48,7 +49,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         }
     }
 
-    public COMPANY_makes_PRODUCT(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public COMPANY_makes_PRODUCT(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_OTHER;

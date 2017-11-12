@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
@@ -48,7 +49,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         }
     }
 
-    public COUNTRY_drives_on_the_left_right(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public COUNTRY_drives_on_the_left_right(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;

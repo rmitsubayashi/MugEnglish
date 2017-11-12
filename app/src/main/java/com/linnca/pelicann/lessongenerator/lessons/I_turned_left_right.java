@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -17,7 +18,7 @@ import java.util.List;
 public class I_turned_left_right extends Lesson {
     public static final String KEY = "I_turned_left_right";
 
-    public I_turned_left_right(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public I_turned_left_right(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
     }

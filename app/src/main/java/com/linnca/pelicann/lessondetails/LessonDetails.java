@@ -24,6 +24,8 @@ import android.widget.TextView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
@@ -241,6 +243,7 @@ public class LessonDetails extends Fragment {
         disableCreateButtonForLoading();
         //load lesson class
         Lesson lesson = LessonFactory.parseLesson(lessonData.getKey(),
+            new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
             db,
             new Lesson.LessonListener() {
                 private DateTime startTime = DateTime.now();

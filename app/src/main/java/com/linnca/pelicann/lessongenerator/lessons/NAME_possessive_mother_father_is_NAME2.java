@@ -1,6 +1,7 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
@@ -58,7 +59,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
 
 
-    public NAME_possessive_mother_father_is_NAME2(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public NAME_possessive_mother_father_is_NAME2(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
         super.questionSetsToPopulate = 3;

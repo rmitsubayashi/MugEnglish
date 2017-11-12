@@ -26,10 +26,14 @@ import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.joda.time.DateTime;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,19 +42,29 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FirebaseDB extends Database {
+//make sure the behavior replicates the behavior in the mock database
+// (we user the mock database to test methods that would otherwise
+//  connect to an actual database)
+
+public class FirebaseDB extends Database{
     //Firebase requires both the reference and the listener attached to it
     // to remove the listener.
-    private class EventListenerPair {
-        private Query databaseReference;
-        private ValueEventListener valueEventListener;
+    private class RefListenerPair {
+        private DatabaseReference ref;
+        private ValueEventListener eventListener;
 
-        private EventListenerPair(Query databaseReference, ValueEventListener valueEventListener) {
-            this.databaseReference = databaseReference;
-            this.valueEventListener = valueEventListener;
+        private RefListenerPair(DatabaseReference ref, ValueEventListener eventListener) {
+            this.ref = ref;
+            this.eventListener = eventListener;
+        }
+        
+        private void removeListener(){
+            ref.removeEventListener(eventListener);
+            ref = null;
+            eventListener = null;
         }
     }
-    private List<EventListenerPair> eventListenerPairs = new ArrayList<>();
+    private List<RefListenerPair> refListenerPairs = new ArrayList<>();
 
     @Override
     public String getUserID(){
@@ -62,9 +76,18 @@ public class FirebaseDB extends Database {
         //Firebase keeps connections open so it can update changes in real time.
         //when we do not need the data anymore,
         //we should remove the connections
-        for (EventListenerPair pair : eventListenerPairs){
-            pair.databaseReference.removeEventListener(pair.valueEventListener);
+        for (RefListenerPair pair : refListenerPairs){
+            pair.removeListener();
         }
+        refListenerPairs.clear();
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        //if we have any value event listeners left when we try to
+        // serialize the database instance, the program will crash
+        // because the value event listeners are not serializable
+        cleanup();
+        out.defaultWriteObject();
     }
 
     //not for client
@@ -103,7 +126,7 @@ public class FirebaseDB extends Database {
         final List<String> questionSetIDsToReturn = Collections.synchronizedList(
                 new ArrayList<String>(toPopulate)
         );
-        final List<WikiDataEntryData> userInterestsChecked = Collections.synchronizedList(
+        final List<WikiDataEntryData> userInterestsAlreadyChecked = Collections.synchronizedList(
                 new ArrayList<WikiDataEntryData>(userInterests.size())
         );
         final AtomicInteger questionSetsToPopulateAtomicInt = new AtomicInteger(toPopulate);
@@ -132,14 +155,14 @@ public class FirebaseDB extends Database {
                     //this means someone already checked and it didn't match
                     //TODO a value here can't be null?
                     if (dataSnapshot.exists() && dataSnapshot.getValue() == null){
-                        userInterestsChecked.add(userInterest);
+                        userInterestsAlreadyChecked.add(userInterest);
                     }
 
                     //check the question sets to see if we have one the user hasn't had yet.
                     //we can't just check for the user interest ID because the user might have
                     //covered one question set for a uer interest but not another
                     if (dataSnapshot.exists() && dataSnapshot.getValue() != null){
-                        userInterestsChecked.add(userInterest);
+                        userInterestsAlreadyChecked.add(userInterest);
 
                         for (DataSnapshot questionSetIDSnapshot : dataSnapshot.getChildren()){
                             String questionSetID = questionSetIDSnapshot.getValue(String.class);
@@ -152,7 +175,7 @@ public class FirebaseDB extends Database {
                         //we have found enough questions from the database alone
                         if (questionSetsToPopulateAtomicInt.get() == 0) {
                             onResultListener.onQuestionsQueried(questionSetIDsToReturn,
-                                    userInterestsChecked);
+                                    userInterestsAlreadyChecked);
                             return;
                         }
                     }
@@ -160,7 +183,7 @@ public class FirebaseDB extends Database {
                     //if this is the last one, we should finish
                     if (userInterestsLooped.incrementAndGet() == userInterestsToLoop){
                         onResultListener.onQuestionsQueried(questionSetIDsToReturn,
-                                userInterestsChecked);
+                                userInterestsAlreadyChecked);
                     }
                 }
 
@@ -230,7 +253,6 @@ public class FirebaseDB extends Database {
                         vocabularyIDs.add(vocabularyKey);
                     }
                 }
-
             }
 
             String questionSetWikiDataID = questionDataWrapper.getWikiDataID();
@@ -455,7 +477,7 @@ public class FirebaseDB extends Database {
         };
 
         lessonInstancesRef.addValueEventListener(lessonInstancesListener);
-        eventListenerPairs.add(new EventListenerPair(lessonInstancesRef, lessonInstancesListener));
+        refListenerPairs.add(new RefListenerPair(lessonInstancesRef, lessonInstancesListener));
     }
 
     @Override
@@ -487,11 +509,12 @@ public class FirebaseDB extends Database {
 
     @Override
     public void removeLessonInstance(String lessonKey, String instanceID, final OnResultListener onResultListener){
+        String instancesPath = FirebaseDBHeaders.LESSON_INSTANCES + "/"+
+                getUserID()+"/"+
+                lessonKey + "/" +
+                instanceID;
         DatabaseReference instanceRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.LESSON_INSTANCES + "/"+
-                        getUserID()+"/"+
-                        lessonKey + "/" +
-                        instanceID
+                instancesPath
         );
         instanceRef.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -529,9 +552,10 @@ public class FirebaseDB extends Database {
 
     @Override
     public void getVocabularyList(final OnResultListener onResultListener){
+        String vocabularyPath = FirebaseDBHeaders.VOCABULARY_LIST + "/" +
+                getUserID();
         DatabaseReference vocabularyRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.VOCABULARY_LIST + "/" +
-                        getUserID()
+                vocabularyPath
         );
 
         ValueEventListener vocabularyEventListener = new ValueEventListener() {
@@ -552,9 +576,11 @@ public class FirebaseDB extends Database {
         };
 
         vocabularyRef.addValueEventListener(vocabularyEventListener);
-        eventListenerPairs.add(new EventListenerPair(vocabularyRef, vocabularyEventListener));
+        refListenerPairs.add(new RefListenerPair(vocabularyRef, vocabularyEventListener));
     }
 
+    //when the user adds a word to his list,
+    // not when lesson generation adds vocabulary words
     @Override
     public void addVocabularyWord(final VocabularyWord word, final OnResultListener onResultListener){
         //for displaying a list of words
@@ -819,9 +845,10 @@ public class FirebaseDB extends Database {
 
     @Override
     public void getUserInterests(final OnResultListener onResultListener){
+        String userInterestPath = FirebaseDBHeaders.USER_INTERESTS + "/" +
+                getUserID();
         DatabaseReference userInterestRef = FirebaseDatabase.getInstance()
-                .getReference(FirebaseDBHeaders.USER_INTERESTS + "/" +
-                        getUserID());
+                .getReference(userInterestPath);
         //order alphabetically.
         //'pronunciation' is a variable in the WikiDataEntryData class
         Query userInterestQuery = userInterestRef.orderByChild("pronunciation");
@@ -844,7 +871,7 @@ public class FirebaseDB extends Database {
             }
         };
         userInterestQuery.addValueEventListener(userInterestQueryListener);
-        eventListenerPairs.add(new EventListenerPair(userInterestQuery, userInterestQueryListener));
+        refListenerPairs.add(new RefListenerPair(userInterestRef, userInterestQueryListener));
     }
 
     @Override
@@ -1157,10 +1184,11 @@ public class FirebaseDB extends Database {
 
     @Override
     public void getClearedLessons(int lessonLevel, final OnResultListener onResultListener){
+        String clearedLessonsPath = FirebaseDBHeaders.CLEARED_LESSONS + "/" +
+                getUserID() + "/" +
+                lessonLevel;
         DatabaseReference clearedLessonsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                        getUserID() + "/" +
-                        lessonLevel
+                clearedLessonsPath
         );
         ValueEventListener clearedLessonsListener = new ValueEventListener() {
             @Override
@@ -1179,7 +1207,7 @@ public class FirebaseDB extends Database {
             }
         };
         clearedLessonsRef.addValueEventListener(clearedLessonsListener);
-        eventListenerPairs.add(new EventListenerPair(clearedLessonsRef, clearedLessonsListener));
+        refListenerPairs.add(new RefListenerPair(clearedLessonsRef, clearedLessonsListener));
     }
 
     @Override
@@ -1269,10 +1297,11 @@ public class FirebaseDB extends Database {
 
     @Override
     public void getReportCard(int level, final OnResultListener onResultListener){
+        String reportCardPath = FirebaseDBHeaders.REPORT_CARD + "/" +
+                getUserID() + "/" +
+                Integer.toString(level);
         DatabaseReference reportCardRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.REPORT_CARD + "/" +
-                        getUserID() + "/" +
-                        Integer.toString(level)
+                reportCardPath
         );
         ValueEventListener reportCardListener = new ValueEventListener() {
             @Override
@@ -1304,7 +1333,7 @@ public class FirebaseDB extends Database {
         };
 
         reportCardRef.addValueEventListener(reportCardListener);
-        eventListenerPairs.add(new EventListenerPair(reportCardRef, reportCardListener));
+        refListenerPairs.add(new RefListenerPair(reportCardRef, reportCardListener));
 
     }
 

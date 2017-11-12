@@ -2,9 +2,8 @@ package com.linnca.pelicann.lessongenerator;
 
 import android.util.Log;
 
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.questions.QuestionData;
@@ -69,14 +68,14 @@ public abstract class Lesson {
 	//what to do after we finish creating an instance
 	private final LessonListener lessonListener;
 
-	private WikiBaseEndpointConnector connector = null;
+	private EndpointConnectorReturnsXML connector = null;
 
 	public interface LessonListener {
 		void onLessonCreated();
 	}
 	
 	
-	protected Lesson(WikiBaseEndpointConnector connector, Database db, LessonListener lessonListener){
+	protected Lesson(EndpointConnectorReturnsXML connector, Database db, LessonListener lessonListener){
 		this.connector = connector;
 		this.lessonListener = lessonListener;
 		this.db = db;

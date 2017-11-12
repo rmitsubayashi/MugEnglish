@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
@@ -19,7 +20,7 @@ import java.util.List;
 public class Hi_hey_whats_up extends Lesson {
     public static final String KEY = "Hi_hey_whats_up";
 
-    public Hi_hey_whats_up(WikiBaseEndpointConnector connector, Database db, LessonListener listener){
+    public Hi_hey_whats_up(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
     }
