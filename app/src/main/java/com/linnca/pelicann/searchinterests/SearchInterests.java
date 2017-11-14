@@ -5,6 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import android.widget.SearchView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.db.Database;
@@ -26,12 +29,17 @@ import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
-import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -39,7 +47,7 @@ public class SearchInterests extends Fragment {
     private FirebaseAnalytics firebaseLog;
     private Database db;
     private final String TAG = "SearchInterests";
-    private EntitySearcher searcher;
+    private EndpointConnectorReturnsXML connector;
     private SearchView searchView;
     private RecyclerView list;
     private SearchResultsAdapter adapter = null;
@@ -49,9 +57,9 @@ public class SearchInterests extends Fragment {
     private final int incrementRecommendationCt = 5;
     private int recommendationCt = defaultRecommendationCt;
     //so we don't show search results queried before the currently shown result
-    private int queryOrderSent = 0;
-    private final Lock lock = new ReentrantLock();
-    private int queryOrderReceived = 0;
+    private AtomicInteger queryReceivedMaxOrder = new AtomicInteger(0);
+    //so only one thread can edit the UI at one time
+    private Lock lock = new ReentrantLock();
     //we can do continue=# to get the results from that number of results
     //increment when we want more rows
     private Integer currentRowCt = defaultRowCt;
@@ -73,11 +81,8 @@ public class SearchInterests extends Fragment {
         super.onCreate(savedInstanceState);
         //so we can access the search view
         setHasOptionsMenu(true);
-
-        searcher = new EntitySearcher(
-                new WikiDataAPISearchConnector(
-                        WikiBaseEndpointConnector.JAPANESE)
-        );
+        connector = new WikiDataAPISearchConnector(
+                WikiBaseEndpointConnector.JAPANESE);
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
@@ -174,12 +179,12 @@ public class SearchInterests extends Fragment {
                                 if (searchView.getQuery().toString().equals(s)) {
                                     if (s.length() > 1) {
                                         //search
-                                        populateResults(s);
+                                        search(s, queryReceivedMaxOrder.incrementAndGet());
 
                                     }
                                 }
                             }
-                        }, 200);
+                        }, 300);
 
                         return true;
                     }
@@ -212,6 +217,12 @@ public class SearchInterests extends Fragment {
                         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, data.getLabel());
                         firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ADD_ITEM, bundle);
 
+                        //in the background thread, find the item's
+                        //classification and pronunciation
+                        AddUserInterestHelper addUserInterestHelper = new AddUserInterestHelper();
+                        addUserInterestHelper.addClassification(data);
+                        addUserInterestHelper.addPronunciation(data);
+
                         //also update the list we have saved locally
                         userInterests.add(data);
 
@@ -226,11 +237,11 @@ public class SearchInterests extends Fragment {
                         populateRecommendations(data);
                     }
                 };
-                AddUserInterestHelper addUserInterestHelper = new AddUserInterestHelper();
+
                 //we are only adding one, but the method can handle more than one
                 List<WikiDataEntryData> dataList = new ArrayList<>(1);
                 dataList.add(data);
-                addUserInterestHelper.findPronunciationAndCategoryThenAdd(dataList, onResultListener);
+                db.addUserInterests(dataList, onResultListener);
             }
 
             @Override
@@ -274,17 +285,104 @@ public class SearchInterests extends Fragment {
                 recommendationCt, onResultListener);
     }
 
-    private void populateResults(String query){
-        try {
-            SearchConnection conn = new SearchConnection();
-            SearchConnectionHelperClass helper = new SearchConnectionHelperClass(query, currentRowCt, queryOrderSent++);
-            conn.execute(helper);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+    private void search(final String query, final int queryOrder){
+        //main looper makes sure the handler runs on the UI thread
+        final Handler handler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message inputMessage){
+                List<WikiDataEntryData> result = (List<WikiDataEntryData>)inputMessage.obj;
+                //if the user exited the screen and we can't update the list
+                if (!SearchInterests.this.isVisible()){
+                    return;
+                }
+                //don't do anything if the list is null
+                //(different from an empty list)
+                if (result == null){
+                    return;
+                }
+                //check if this is the most recent.
+                //if not, don't show this to the user
+                if (queryReceivedMaxOrder.get() != queryOrder){
+                    return;
+                }
+
+                //the adapter might not be loaded yet
+                if (adapter != null){
+                    lock.lock();
+                    try {
+                        //filter out all of the user's interests
+                        result.removeAll(userInterests);
+                        //remove disambiguation pages (we will never need them)
+                        removeDisambiguationPages(result);
+                        //display empty state if the results are empty
+                        if (result.size() == 0) {
+                            WikiDataEntryData emptyState = new WikiDataEntryData();
+                            emptyState.setWikiDataID(adapter.VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID);
+                            emptyState.setLabel(query);
+                            result.add(emptyState);
+                        }
+                        adapter.updateEntries(result);
+                        //log
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, query);
+                        firebaseLog.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
+                    } finally {
+                        lock.unlock();
+                    }
+                }
+            }
+        };
+        EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
+            @Override
+            public boolean shouldStop() {
+                return false;
+            }
+
+            @Override
+            public void onStop() {
+
+            }
+
+            @Override
+            public void onFetchDOM(Document result) {
+                NodeList resultNodes = result.getElementsByTagName(WikiDataAPISearchConnector.ENTITY_TAG);
+                List<WikiDataEntryData> searchResults = new ArrayList<>();
+                int nodeCt = resultNodes.getLength();
+                for (int i=0; i<nodeCt; i++){
+                    Node n = resultNodes.item(i);
+                    if (n.getNodeType() == Node.ELEMENT_NODE)
+                    {
+                        String wikiDataID = "";
+                        String label = "";
+                        String description = "";
+
+                        Element e = (Element)n;
+                        if (e.hasAttribute("id")) {
+                            wikiDataID = e.getAttribute("id");
+                        }
+                        if(e.hasAttribute("label")) {
+                            label = e.getAttribute("label");
+                        }
+
+                        if(e.hasAttribute("description")) {
+                            description = e.getAttribute("description");
+                        }
+
+                        //set pronunciation to label for now.
+                        //if there is a pronunciation field, use that
+                        searchResults.add(new WikiDataEntryData(label, description, wikiDataID, label, WikiDataEntryData.CLASSIFICATION_NOT_SET));
+                    }
+                }
+                Message message = handler.obtainMessage(0, searchResults);
+                message.sendToTarget();
+            }
+        };
+        List<String> queryList = new ArrayList<>(1);
+        queryList.add(query);
+        connector.fetchDOMFromGetRequest(onFetchDOMListener, queryList);
     }
 
-    private class SearchConnectionHelperClass {
+    /*private class SearchConnectionHelperClass {
         private final String query;
         private final int maxRowCount;
         private final int searchOrder;
@@ -367,17 +465,19 @@ public class SearchInterests extends Fragment {
                 firebaseLog.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
             }
         }
-    }
+    }*/
 
     private void removeDisambiguationPages(List<WikiDataEntryData> result){
         for (Iterator<WikiDataEntryData> iterator = result.iterator(); iterator.hasNext();){
             WikiDataEntryData data = iterator.next();
             String description = data.getDescription();
             //not sure if these cover every case
-            if (description.equals("ウィキペディアの曖昧さ回避ページ") ||
+            if (description != null &&
+                    (description.equals("ウィキペディアの曖昧さ回避ページ") ||
                     description.equals("ウィキメディアの曖昧さ回避ページ") ||
                     description.equals("Wikipedia disambiguation page") ||
-                    description.equals("Wikimedia disambiguation page")){
+                    description.equals("Wikimedia disambiguation page"))
+                ){
                 iterator.remove();
             }
         }

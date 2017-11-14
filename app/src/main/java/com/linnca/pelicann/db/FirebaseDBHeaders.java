@@ -3,6 +3,10 @@ package com.linnca.pelicann.db;
 class FirebaseDBHeaders {
     //headers for each child in the firebase database
     static final String USER_INTERESTS = "userInterests";
+    //make sure this matches the class variable name
+    static final String USER_INTERESTS_PRONUNCIATION = "pronunciation";
+    //make sure this matches the class variable name
+    static final String USER_INTERESTS_CLASSIFICATION = "classification";
     static final String CLEARED_LESSONS = "clearedLessons";
     static final String LESSON_INSTANCES = "lessonInstances";
     static final String LESSON_INSTANCE_VOCABULARY = "lessonInstanceVocabulary";

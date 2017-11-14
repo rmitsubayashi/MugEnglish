@@ -64,6 +64,7 @@ public class FirebaseDB extends Database{
             eventListener = null;
         }
     }
+    //this should never be serialized (can't serialize)
     private List<RefListenerPair> refListenerPairs = new ArrayList<>();
 
     @Override
@@ -929,6 +930,28 @@ public class FirebaseDB extends Database{
 
             }
         });*/
+    }
+
+    @Override
+    public void setPronunciation(String userInterestID, String pronunciation){
+        DatabaseReference pronunciationRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.USER_INTERESTS + "/" +
+                getUserID() + "/" +
+                userInterestID + "/" +
+                FirebaseDBHeaders.USER_INTERESTS_PRONUNCIATION
+        );
+        pronunciationRef.setValue(pronunciation);
+    }
+
+    @Override
+    public void setClassification(String userInterestID, int classification){
+        DatabaseReference classificationRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.USER_INTERESTS + "/" +
+                        getUserID() + "/" +
+                        userInterestID + "/" +
+                        FirebaseDBHeaders.USER_INTERESTS_CLASSIFICATION
+        );
+        classificationRef.setValue(classification);
     }
 
     /*

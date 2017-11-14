@@ -58,8 +58,12 @@ public abstract class Database implements Serializable{
     public abstract void getUserInterests(OnResultListener onResultListener);
     public abstract void removeUserInterests(List<WikiDataEntryData> userInterests, OnResultListener onResultListener);
     //note that this is just to update.
-    //when adding a new interest, we most likely have to fetch pronunciation/ category info
+    //when adding a new interest, we most likely have to fetch pronunciation/classification info
     public abstract void addUserInterests(List<WikiDataEntryData> userInterest, OnResultListener onResultListener);
+    //fetching pronunciation/classification info will be handled with these.
+    //add user interest -> onResultListener -> add pronunciation/classification concurrently
+    public abstract void setPronunciation(String userInterestID, String pronunciation);
+    public abstract void setClassification(String userInterestID, int classification);
 
     public abstract void getRecommendations(Collection<WikiDataEntryData> userInterests, String targetUserInterestID, int recommendationCt, OnResultListener onResultListener);
 

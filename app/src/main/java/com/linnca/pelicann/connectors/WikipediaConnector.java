@@ -4,11 +4,12 @@ public class WikipediaConnector extends WikiBaseEndpointConnector {
 	public  WikipediaConnector(){
 		
 	}
-	
-	protected String formatURL(String... parameterValue) throws Exception{
+
+	@Override
+	protected String formatURL(String parameterValue) throws Exception{
 		//already encoded
 		return "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&"
-				+ "titles=" + parameterValue[0] +
+				+ "titles=" + parameterValue +
 				"&format=xml&rvprop=content";
 	}
 }

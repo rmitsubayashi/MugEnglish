@@ -10,6 +10,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
 
+import java.nio.charset.StandardCharsets;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -190,13 +191,8 @@ public class QuestionUtils {
         textView.setMovementMethod(null);
     }
 
-    static boolean isAlphanumeric(String str){
-        for (int i=0; i<str.length(); i++) {
-            char c = str.charAt(i);
-            if (!Character.isDigit(c) && !Character.isLetter(c) && !Character.isSpaceChar(c))
-                return false;
-        }
-        return true;
+    public static boolean isAlphanumeric(String str){
+        return StandardCharsets.US_ASCII.newEncoder().canEncode(str);
     }
 
     static void shuffleArray(char[] stringArray){

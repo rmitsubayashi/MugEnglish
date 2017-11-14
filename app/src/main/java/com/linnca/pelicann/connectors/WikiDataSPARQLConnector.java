@@ -27,8 +27,8 @@ public class WikiDataSPARQLConnector extends WikiBaseEndpointConnector {
 
 	}
 
-	protected String formatURL(String... parameterValue) throws Exception{
-		String languageInsertedQuery = super.formatRequestLanguage(parameterValue[0]);
+	protected String formatURL(String parameterValue) throws Exception{
+		String languageInsertedQuery = super.formatRequestLanguage(parameterValue);
 		String url = "https://query.wikidata.org/sparql?query=";
 		//http URLs have to be in ASCII characters
 		String encodedQuery = URLEncoder.encode(languageInsertedQuery, StandardCharsets.UTF_8.name());

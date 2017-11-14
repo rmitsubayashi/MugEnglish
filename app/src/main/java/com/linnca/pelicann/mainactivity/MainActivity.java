@@ -244,25 +244,6 @@ public class MainActivity extends AppCompatActivity implements
         setLessonView();
     }
 
-
-    /*
-    class HelperTask extends AsyncTask<String, Void, String> {
-        protected String doInBackground(String... urls) {
-            try {
-                SportsHelper helper = new SportsHelper();
-                try {
-                    helper.run();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-                return "";
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }*/
-
     @Override
     protected void onStart(){
         super.onStart();
@@ -278,7 +259,9 @@ public class MainActivity extends AppCompatActivity implements
         temp1 = temp1.minusMonths(1);
         temp2 = temp2.minusMonths(1).plusHours(1);
         db.addAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));*/
-        //new HelperTask().execute();
+        /*
+        SportsHelper helper = new SportsHelper();
+        helper.run();*/
 
     }
 

@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 //this class (inherited classes) will create the questions for the lesson
 //the first time around.
@@ -191,68 +192,65 @@ public abstract class Lesson {
 					getQuestionDataFromQuestionSetIDs();
 				} else {
 					//we still need to create questions.
-					CreateQuestionHelper helper = new CreateQuestionHelper();
-					//we can ignore the warning on Android Studio
-					helper.start();
+					//we don't need to check for interests we've already matched /
+					// know we can't match
+					Set<WikiDataEntryData> copy = new HashSet<>(userInterests);
+					copy.removeAll(userInterestsChecked);
+					populateResults(copy);
 				}
 			}
 		};
 		db.searchQuestions(lessonKey, userInterestList, questionSetsLeftToPopulate,
 				questionSetIDsToAvoid, onResultListener);
 	}
-
-	//Firebase onChange() works on the main UI Thread (even if it's called from another service
-	// so we have to make a separate thread
-	private class CreateQuestionHelper extends Thread{
-		@Override
-		public void run(){
-			try {
-				//we don't need to check for interests we've already matched /
-				// know we can't match
-				Set<WikiDataEntryData> copy = new HashSet<>(userInterests);
-				copy.removeAll(userInterestsChecked);
-				populateResults(copy);
-
-				//from here the methods are not (might not be) synchronous
-				//more methods embedded in this.
-				//create questions
-				//save in db
-				accessDBWhenCreatingQuestions();
-			} catch (Exception e){
-				e.printStackTrace();
-			}
-		}
-	}
-
-
 	
 	//検索するのは特定のentityひとつに対するクエリー
 	//UNIONしてまとめて検索してもいいけど時間が異常にかかる
 	protected abstract String getSPARQLQuery();
 	//一つ一つのクエリーを送って、まとめる
-	private void populateResults(Set<WikiDataEntryData> interests) throws Exception {
+	private void populateResults(Set<WikiDataEntryData> interests){
 		//shuffle so we don't get the same interests over and over
 		ArrayList<WikiDataEntryData> interestList = new ArrayList<>(interests);
 		Collections.shuffle(interestList);
+		ArrayList<String> allQueries = new ArrayList<>(interestList.size());
 		for (WikiDataEntryData interest : interestList){
 			String entityID = interest.getWikiDataID();
 			String query = addEntityToQuery(entityID);
-			Document resultDOM = connector.fetchDOMFromGetRequest(query);
-			this.processResultsIntoClassWrappers(resultDOM);
-			//there can be more results than we need.
-			//subtracting handled in each theme
-			if (getQueryResultCt() >= questionSetsLeftToPopulate){
-				break;
+			allQueries.add(query);
+		}
+		EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
+			AtomicBoolean onStoppedCalled = new AtomicBoolean(false);
+			@Override
+			public boolean shouldStop() {
+				return getQueryResultCt() >= questionSetsLeftToPopulate;
 			}
+
+			@Override
+			public void onStop(){
+				//only call once
+				if (!onStoppedCalled.getAndSet(true))
+					accessDBWhenCreatingQuestions();
+			}
+
+			@Override
+			public void onFetchDOM(Document result) {
+				processResultsIntoClassWrappers(result);
+			}
+		};
+		try {
+			connector.fetchDOMFromGetRequest(onFetchDOMListener, allQueries);
+		} catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 
 	protected abstract int getQueryResultCt();
 
-	//ドキュメントのデータを、わかりやすいクラスに入れる
+	//wrap the data into usable classes.
+	//each lesson has different data, so all the classes are unique
 	protected abstract void processResultsIntoClassWrappers(Document document);
 
-	//問題を作ってリストに保存する
+	//generate questions using the data we got
 	protected abstract void createQuestionsFromResults();
 
 	/* if we ever want to access the database when writing the questions

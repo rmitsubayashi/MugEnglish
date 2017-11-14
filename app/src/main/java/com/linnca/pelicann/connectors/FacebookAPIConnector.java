@@ -1,11 +1,16 @@
 package com.linnca.pelicann.connectors;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 public class FacebookAPIConnector implements EndpointConnectorReturnsJSON {
@@ -14,15 +19,33 @@ public class FacebookAPIConnector implements EndpointConnectorReturnsJSON {
     public FacebookAPIConnector(){}
 
     @Override
-    public JSONObject fetchJSONObjectFromGetRequest(String... params) throws Exception {
-        HttpURLConnection conn = formatHttpConnection(params);
+    public void fetchJSONArrayFromGetRequest(final OnFetchJSONListener listener, List<String> params) {
+        int parameterCt = params.size();
+        ArrayBlockingQueue<Runnable> taskQueue = new ArrayBlockingQueue<>(parameterCt);
+        int coreCt = Runtime.getRuntime().availableProcessors();
+        final ThreadPoolExecutor executor = new ThreadPoolExecutor(coreCt, coreCt,
+                1, TimeUnit.SECONDS, taskQueue,
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        for (final String parameter : params) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HttpURLConnection conn = formatHttpConnection(parameter);
+                        InputStream is = conn.getInputStream();
+                        //convert input stream to string
+                        Scanner s = new Scanner(is).useDelimiter("\\A");
+                        String str = s.hasNext() ? s.next() : "";
 
-        InputStream is = conn.getInputStream();
-        //convert input stream to string
-        Scanner s = new Scanner(is).useDelimiter("\\A");
-        String str = s.hasNext() ? s.next() : "";
-
-        return new JSONObject(str);
+                        JSONArray jsonArray = new JSONArray(str);
+                        listener.onFetchJSONArray(jsonArray);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            executor.execute(runnable);
+        }
     }
 
     private HttpURLConnection formatHttpConnection(String... parameterValue) throws Exception{

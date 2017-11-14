@@ -1,8 +1,13 @@
 package com.linnca.pelicann.connectors;
 
 
-import org.json.JSONObject;
+import org.json.JSONArray;
 
-interface EndpointConnectorReturnsJSON {
-    JSONObject fetchJSONObjectFromGetRequest(String... query) throws Exception;
+import java.util.List;
+
+public interface EndpointConnectorReturnsJSON {
+    interface OnFetchJSONListener {
+        void onFetchJSONArray(JSONArray result);
+    }
+    void fetchJSONArrayFromGetRequest(OnFetchJSONListener onFetchJSONListener, List<String> query);
 }

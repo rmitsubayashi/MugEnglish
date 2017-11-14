@@ -21,7 +21,6 @@ import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.userinterestcontrols.EntitySearcher;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -135,23 +134,25 @@ public class Tutorial_ChoosePerson extends Fragment {
         protected List<OnboardingPersonBundle> doInBackground(String... params){
             String searchName = params[0];
             WikiDataAPISearchConnector searchConnector = new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE);
-            EntitySearcher entitySearcher = new EntitySearcher(searchConnector);
             List<OnboardingPersonBundle> result = new ArrayList<>();
-            List<WikiDataEntryData> searchResult;
-            try {
+            List<WikiDataEntryData> searchResult = null;
+            /*try {
                 searchResult = entitySearcher.search(searchName, EntitySearcher.LIMIT);
             } catch (Exception e){
                 e.printStackTrace();
                 return null;
-            }
+            }*/
 
             WikiDataSPARQLConnector connector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
             //check if human
             for ( WikiDataEntryData data : searchResult ){
                 String wikiDataID = data.getWikiDataID();
                 String query = formatQuery(wikiDataID);
+                List<String> queryList = new ArrayList<>(searchResult.size());
+                queryList.add(query);
                 try {
-                    Document document = connector.fetchDOMFromGetRequest(query);
+                    Document document = null;
+                    connector.fetchDOMFromGetRequest(null, queryList);
                     int nodeCt = WikiDataSPARQLConnector.countResults(document);
                     //this result is not a human with a gender so remove
                     if (nodeCt != 0){

@@ -2,6 +2,8 @@ package com.linnca.pelicann.lessongenerator;
 
 import android.util.Log;
 
+import com.google.firebase.database.FirebaseDatabase;
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.connectors.WikipediaConnector;
@@ -57,6 +59,7 @@ public class SportsHelper {
 	private static String TAG = "sportsHelper";
 	private WikiDataSPARQLConnector sparqlConn;
 	private WikipediaConnector wikipediaConn;
+	private Database db = new FirebaseDB();
 	
 	public static final String PAST = "past";
 	public static final String PRESENT3RD = "present3rd";
@@ -82,78 +85,117 @@ public class SportsHelper {
 	}
 
 	//to generate all pairs
-	public void run() throws Exception{
-		Database db = new FirebaseDB();
-		Document doc = fetchSports();
-		NodeList list = doc.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
-		for (int i=0; i<list.getLength(); i++){
-			Node n =list.item(i);
-			String name = SPARQLDocumentParserHelper.findValueByNodeName(n, "sportLabel");
-			Log.d(TAG,name);
-			String url = SPARQLDocumentParserHelper.findValueByNodeName(n, "sitelink");
-			int lastIndexURL = url.lastIndexOf('/');
-			url = url.substring(lastIndexURL+1);
-			String id = SPARQLDocumentParserHelper.findValueByNodeName(n, "sport");
-			id = LessonGeneratorUtils.stripWikidataID(id);
-			name = TermAdjuster.adjustSportsEN(name);
-			//decide verb
-			//get # of the word 'played' in the Wikipedia page
-			//to see if the sport should use 'play' as the verb
-			String text = wikipediaConn.getDOMAsString(url);
-			//6 = played.length()
-			int playedCt = ( text.length() - text.replace("played", "").length() ) / 6;
-			
-			String verb;
-			List<String> ingExceptions = new ArrayList<>();
-			ingExceptions.add("Q213711");//hurling
-			ingExceptions.add("Q20898537");//women's curling
-			ingExceptions.add("Q1148620");//finswimming
-			ingExceptions.add("Q83462");//weightlifting
-			ingExceptions.add("Q124100");//bodybuilding
-			ingExceptions.add("Q32112");//boxing
-			ingExceptions.add("Q838781");//eventing
-			ingExceptions.add("Q136851");//curling
-			ingExceptions.add("Q1741178");//Kiiking?
-			ingExceptions.add("Q1637219");//speedcubing
-			ingExceptions.add("Q895138");//powerbocking
-			if	(name.length() > 2 && 
-			(name.substring(name.length()-3)).equals("ing") &&
-			!ingExceptions.contains(id)){
-				//for '~ing' we should trim the end
-				//ie skiing -> ski
-				//but we shouldn't if it's a multiple worded sport
-				//ie Greco-Roman wrestling
-				//we did Greco-Roman wresling
-				//not we Greco-Roman wrestled
-				if (name.indexOf(' ') != -1){
-					verb = "do";
-				} else {
-					//we should remove the 'ing'
-					verb = name.substring(0, name.length()-3);
-					//handle exceptions manually
-					if ((verb.substring(verb.length()-2)).equals("mm") || 
-							(verb.substring(verb.length()-2)).equals("nn") )
-						verb = verb.substring(0,verb.length()-1);
-					
-					if (verb.equals("wrestl") || verb.equals("fenc"))
-						verb += "e";
-					
-					
-					//we don't need a sport name
-					//we ski
-					//not we ski ski
-					name = "";
-				}
-			//if played was used in the wikipedia page, it most likely uses 'play', not 'do'
-			} else if (playedCt > 2 || name.equals("tennis") || name.equals("Goalball")){
-				verb = "play";
-			} else {
-				//everything else will be a do sport
-				verb = "do";
+	public void run(){
+		EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
+			@Override
+			public boolean shouldStop() {
+				return false;
 			}
 
-			db.addSport(id, verb, name);
-		}
+			@Override
+			public void onStop() {
+
+			}
+
+			@Override
+			public void onFetchDOM(Document result) {
+				//the result is a list of all sports and a link to their respective
+				// Wikipedia pages
+				NodeList list = result.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
+				for (int i=0; i<list.getLength(); i++){
+					Node n =list.item(i);
+					final String finalName = TermAdjuster.adjustSportsEN(
+							SPARQLDocumentParserHelper.findValueByNodeName(n, "sportLabel")
+					);
+					String url = SPARQLDocumentParserHelper.findValueByNodeName(n, "sitelink");
+					int lastIndexURL = url.lastIndexOf('/');
+					url = url.substring(lastIndexURL+1);
+					final String id = LessonGeneratorUtils.stripWikidataID(
+							SPARQLDocumentParserHelper.findValueByNodeName(n, "sport")
+					);
+					//decide verb
+					//get # of the word 'played' in the Wikipedia page
+					//to see if the sport should use 'play' as the verb
+					EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener2 = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
+						@Override
+						public boolean shouldStop() {
+							return false;
+						}
+
+						@Override
+						public void onStop() {
+
+						}
+
+						@Override
+						public void onFetchDOM(Document result) {
+							String text = SPARQLDocumentParserHelper.DOMToString(result);
+							//6 = played.length()
+							int playedCt = ( text.length() - text.replace("played", "").length() ) / 6;
+							String name = finalName;
+							String verb;
+							List<String> ingExceptions = new ArrayList<>();
+							ingExceptions.add("Q213711");//hurling
+							ingExceptions.add("Q20898537");//women's curling
+							ingExceptions.add("Q1148620");//finswimming
+							ingExceptions.add("Q83462");//weightlifting
+							ingExceptions.add("Q124100");//bodybuilding
+							ingExceptions.add("Q32112");//boxing
+							ingExceptions.add("Q838781");//eventing
+							ingExceptions.add("Q136851");//curling
+							ingExceptions.add("Q1741178");//Kiiking?
+							ingExceptions.add("Q1637219");//speedcubing
+							ingExceptions.add("Q895138");//powerbocking
+							if	(name.length() > 2 &&
+									(name.substring(name.length()-3)).equals("ing") &&
+									!ingExceptions.contains(id)){
+								//for '~ing' we should trim the end
+								//ie skiing -> ski
+								//but we shouldn't if it's a multiple worded sport
+								//ie Greco-Roman wrestling
+								//we did Greco-Roman wresling
+								//not we Greco-Roman wrestled
+								if (name.indexOf(' ') != -1){
+									verb = "do";
+								} else {
+									//we should remove the 'ing'
+									verb = name.substring(0, name.length()-3);
+									//handle exceptions manually
+									if ((verb.substring(verb.length()-2)).equals("mm") ||
+											(verb.substring(verb.length()-2)).equals("nn") )
+										verb = verb.substring(0,verb.length()-1);
+
+									if (verb.equals("wrestl") || verb.equals("fenc"))
+										verb += "e";
+
+
+									//we don't need a sport name
+									//we ski
+									//not we ski ski
+									name = "";
+								}
+								//if played was used in the wikipedia page, it most likely uses 'play', not 'do'
+							} else if (playedCt > 2 || name.equals("tennis") || name.equals("Goalball")){
+								verb = "play";
+							} else {
+								//everything else will be a do sport
+								verb = "do";
+							}
+
+							db.addSport(id, verb, name);
+						}
+					};
+					List<String> urlList = new ArrayList<>(1);
+					urlList.add(url);
+					wikipediaConn.fetchDOMFromGetRequest(onFetchDOMListener2, urlList);
+				}
+			}
+		};
+		String sportsQuery = getSportsQuery();
+		List<String> queryList = new ArrayList<>(1);
+		queryList.add(sportsQuery);
+		sparqlConn.fetchDOMFromGetRequest(onFetchDOMListener, queryList);
+
 	}
 	
 	public static String inflectVerb(String verb, String tense){
@@ -204,8 +246,8 @@ public class SportsHelper {
 		return verb;
 	}
 	
-	private Document fetchSports() throws Exception{
-		String query = 
+	private String getSportsQuery() {
+		return
 				"SELECT DISTINCT ?sport ?sportLabel ?sitelink "+
 				"WHERE " + 
 				"{ " +
@@ -221,8 +263,6 @@ public class SportsHelper {
 				"	 SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
 						WikiDataSPARQLConnector.ENGLISH + "' }" +
 				"}";
-		
-		return sparqlConn.fetchDOMFromGetRequest(query);
 	}
 	
 	

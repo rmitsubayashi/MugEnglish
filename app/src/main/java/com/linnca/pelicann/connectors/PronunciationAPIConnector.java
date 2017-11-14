@@ -6,7 +6,11 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 //note: we can install this program on our own server
 //if we end up using a server
@@ -15,33 +19,36 @@ public class PronunciationAPIConnector implements EndpointConnectorReturnsJSON {
     public PronunciationAPIConnector(){}
 
     @Override
-    public JSONObject fetchJSONObjectFromGetRequest(String... parameters) throws Exception{
-        HttpURLConnection conn = formatHttpConnection(parameters);
+    public void fetchJSONArrayFromGetRequest(final OnFetchJSONListener listener, List<String> parameters){
+        int parameterCt = parameters.size();
+        ArrayBlockingQueue<Runnable> taskQueue = new ArrayBlockingQueue<>(parameterCt);
+        int coreCt = Runtime.getRuntime().availableProcessors();
+        final ThreadPoolExecutor executor = new ThreadPoolExecutor(coreCt, coreCt,
+                1, TimeUnit.SECONDS, taskQueue,
+                new ThreadPoolExecutor.DiscardOldestPolicy());
+        for (final String parameter : parameters) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        HttpURLConnection conn = formatHttpConnection(parameter);
+                        InputStream is = conn.getInputStream();
+                        //convert input stream to string
+                        Scanner s = new Scanner(is).useDelimiter("\\A");
+                        String str = s.hasNext() ? s.next() : "";
 
-        InputStream is = conn.getInputStream();
-        //convert input stream to string
-        Scanner s = new Scanner(is).useDelimiter("\\A");
-        String str = s.hasNext() ? s.next() : "";
-
-        JSONArray jsonArray = new JSONArray(str);
-
-        return null;
+                        JSONArray jsonArray = new JSONArray(str);
+                        listener.onFetchJSONArray(jsonArray);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            executor.execute(runnable);
+        }
     }
 
-    //we are fetching an array, not object
-    //so fix the implementation later
-    public JSONArray fetchJSONArrayFromGetRequest(String... parameters) throws Exception{
-        HttpURLConnection conn = formatHttpConnection(parameters);
-
-        InputStream is = conn.getInputStream();
-        //convert input stream to string
-        Scanner s = new Scanner(is).useDelimiter("\\A");
-        String str = s.hasNext() ? s.next() : "";
-
-        return new JSONArray(str);
-    }
-
-    private HttpURLConnection formatHttpConnection(String... parameterValue) throws Exception{
+    private HttpURLConnection formatHttpConnection(String parameterValue) throws Exception{
         String urlString = formatURL(parameterValue);
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -52,9 +59,8 @@ public class PronunciationAPIConnector implements EndpointConnectorReturnsJSON {
         return conn;
     }
 
-    private String formatURL(String... parameter){
-        String wordToQuery = parameter[0];
-        return "http://yapi.ta2o.net/apis/mecapi.cgi?sentence="+wordToQuery+
+    private String formatURL(String parameter){
+        return "http://yapi.ta2o.net/apis/mecapi.cgi?sentence="+parameter+
                 "&response=pronounciation&format=json";
     }
 }

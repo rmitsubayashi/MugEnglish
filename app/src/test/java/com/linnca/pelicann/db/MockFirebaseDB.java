@@ -132,6 +132,8 @@ public class MockFirebaseDB extends Database {
             String dateTime = "dateTime" + mockDateTime++;
             randomQuestionSets.put(dateTime, setID);
 
+            onResultListener.onQuestionSetAdded(setID, questionIDs, wrapper.getInterestLabel(),vocabularyIDs);
+
         }
 
         onResultListener.onQuestionsAdded();
@@ -144,7 +146,12 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void getRandomQuestions(String lessonKey, int userQuestionHistorySize, List<String> questionSetIDsToAvoid, int totalQuestionSetsToPopulate, OnResultListener onResultListener) {
-        onResultListener.onRandomQuestionsQueried(new ArrayList<String>());
+        List<String> randomQuestionSetIDs = new ArrayList<>(randomQuestionSets.size());
+        for (Map.Entry<String, String> entry : randomQuestionSets.entrySet()){
+            if (!questionSetIDsToAvoid.contains(entry.getValue()))
+                randomQuestionSetIDs.add(entry.getValue());
+        }
+        onResultListener.onRandomQuestionsQueried(randomQuestionSetIDs);
     }
 
     @Override
@@ -240,6 +247,16 @@ public class MockFirebaseDB extends Database {
     public void addUserInterests(List<WikiDataEntryData> userInterest, OnResultListener onResultListener) {
         this.userInterests.addAll(userInterest);
         onResultListener.onUserInterestsAdded();
+    }
+
+    @Override
+    public void setPronunciation(String userInterestID, String pronunciation){
+
+    }
+
+    @Override
+    public void setClassification(String userInterestID, int classification){
+
     }
 
     @Override

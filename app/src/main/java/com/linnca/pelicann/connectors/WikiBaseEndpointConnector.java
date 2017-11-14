@@ -1,5 +1,7 @@
 package com.linnca.pelicann.connectors;
 
+import android.util.Log;
+
 import org.w3c.dom.Document;
 
 import java.io.BufferedReader;
@@ -7,6 +9,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,25 +53,55 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	WikiBaseEndpointConnector(String language){
 		this.language = language;
 	}
-	
-	public Document fetchDOMFromGetRequest(String... parameterValue) throws Exception{
-		HttpURLConnection conn = formatHttpConnection(parameterValue);
-		InputStream resultInputStream = fetchHttpConnectionResponse(conn);
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		Document document = documentBuilder.parse(resultInputStream);
-		document.getDocumentElement().normalize();
-		
-		return document;
+
+	//we are creating multiple threads.
+	//for each thread, we make a connection to the WikiBase server and get a response.
+	@Override
+	public void fetchDOMFromGetRequest(final OnFetchDOMListener listener, List<String> parameterValues){
+		int parameterCt = parameterValues.size();
+		ArrayBlockingQueue<Runnable> taskQueue = new ArrayBlockingQueue<>(parameterCt);
+		int coreCt = Runtime.getRuntime().availableProcessors();
+		final ThreadPoolExecutor executor = new ThreadPoolExecutor(coreCt, coreCt,
+				1, TimeUnit.SECONDS, taskQueue,
+				new ThreadPoolExecutor.DiscardOldestPolicy());
+		for (final String parameter : parameterValues){
+			Runnable runnable = new Runnable() {
+				@Override
+				public void run() {
+					if (listener.shouldStop()){
+						return;
+					}
+					try {
+						HttpURLConnection conn = formatHttpConnection(parameter);
+						InputStream resultInputStream = fetchHttpConnectionResponse(conn);
+						DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+						DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+						Document document = documentBuilder.parse(resultInputStream);
+						document.getDocumentElement().normalize();
+						if (!listener.shouldStop()) {
+							listener.onFetchDOM(document);
+						}
+						if (listener.shouldStop()) {
+							//doesn't stop threads already running?
+							executor.shutdownNow();
+							listener.onStop();
+						}
+					} catch (Exception e){
+						e.printStackTrace();
+					}
+				}
+			};
+			executor.execute(runnable);
+		}
 	}
 	
-	protected abstract String formatURL(String... parameterValue) throws Exception;
+	protected abstract String formatURL(String parameterValue) throws Exception;
 	
 	String formatRequestLanguage(String str){
 		return str.replace(LANGUAGE_PLACEHOLDER, language);
 	}
 	
-	private HttpURLConnection formatHttpConnection(String... parameterValue) throws Exception{
+	private HttpURLConnection formatHttpConnection(String parameterValue) throws Exception{
 		String urlString = formatURL(parameterValue);
 		URL url = new URL(urlString);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -80,23 +116,5 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	
 	private InputStream fetchHttpConnectionResponse(HttpURLConnection conn) throws Exception{
 		return conn.getInputStream();
-	}
-
-	//debugging
-	public String getDOMAsString(String parameterValue) throws Exception{
-		HttpURLConnection conn = formatHttpConnection(parameterValue);
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(conn.getInputStream())
-        );
-		String inputLine;
-		StringBuilder response = new StringBuilder();
-		
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-			response.append("\n");
-		}
-		in.close();
-		
-		return response.toString();
 	}
 }

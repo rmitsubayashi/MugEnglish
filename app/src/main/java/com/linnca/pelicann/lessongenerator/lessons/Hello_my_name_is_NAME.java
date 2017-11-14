@@ -20,12 +20,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Hello_my_name_is_NAME extends Lesson {
     public static final String KEY = "Hello_my_name_is_NAME";
 
-    private final List<QueryResult> queryResults = new ArrayList<>();
+    private final List<QueryResult> queryResults = Collections.synchronizedList(
+            new ArrayList<QueryResult>()
+    );
     private class QueryResult {
         private final String personID;
         private final String personEN;
