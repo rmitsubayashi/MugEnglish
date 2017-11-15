@@ -50,6 +50,7 @@ import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExc
 import com.linnca.pelicann.preferences.PreferencesListener;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionFragmentFactory;
 import com.linnca.pelicann.questions.QuestionManager;
 import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_Actions;
@@ -350,10 +351,10 @@ public class MainActivity extends AppCompatActivity implements
 
         Fragment questionFragment = fragmentManager.findFragmentByTag(FRAGMENT_QUESTION);
         if (questionFragment != null && questionFragment.isVisible()){
-            if (questionManager.isQuestionsStarted())
+            if (questionManager.questionsStarted())
                 questionManager.resetManager(QuestionManager.QUESTIONS);
             //we are just going back to the start of the review
-            if (questionManager.isReviewStarted())
+            if (questionManager.reviewStarted())
                 questionManager.resetReviewMarker();
 
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -499,49 +500,8 @@ public class MainActivity extends AppCompatActivity implements
                     goToErrorPage();
                     return;
                 }
-                Fragment fragment;
-                switch (questionData.getQuestionType()){
-                    case QuestionTypeMappings.FILL_IN_BLANK_INPUT :
-                        fragment = new Question_FillInBlank_Input();
-                        break;
-                    case QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE :
-                        fragment = new Question_FillInBlank_MultipleChoice();
-                        break;
-                    case QuestionTypeMappings.MULTIPLE_CHOICE :
-                        fragment = new Question_MultipleChoice();
-                        break;
-                    case QuestionTypeMappings.SENTENCE_PUZZLE :
-                        fragment = new Question_Puzzle_Piece();
-                        break;
-                    case QuestionTypeMappings.TRUE_FALSE :
-                        fragment = new Question_TrueFalse();
-                        break;
-                    case QuestionTypeMappings.SPELLING_SUGGESTIVE :
-                        fragment = new Question_Spelling_Suggestive();
-                        break;
-                    case QuestionTypeMappings.SPELLING :
-                        fragment = new Question_Spelling();
-                        break;
-                    case QuestionTypeMappings.TRANSLATE_WORD :
-                        fragment = new Question_TranslateWord();
-                        break;
-                    case QuestionTypeMappings.CHAT_MULTIPLE_CHOICE :
-                        fragment = new Question_Chat_MultipleChoice();
-                        break;
-                    case QuestionTypeMappings.CHAT :
-                        fragment = new Question_Chat();
-                        break;
-                    case QuestionTypeMappings.CHOOSE_CORRECT_SPELLING :
-                        fragment = new Question_Choose_Correct_Spelling();
-                        break;
-                    case QuestionTypeMappings.ACTIONS :
-                        fragment = new Question_Actions();
-                        break;
-                    default:
-                        Log.d(TAG, "Could not find question type");
-                        return;
-                }
 
+                Fragment fragment = QuestionFragmentFactory.getQuestionFragment(questionData.getQuestionType());
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA,
                         questionData);
@@ -551,11 +511,13 @@ public class MainActivity extends AppCompatActivity implements
                 //do not add to the back stack because we don't want the user going back to a question
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 if (firstQuestion){
-                    if (questionManager.isQuestionsStarted())
+                    //we should add the fragment before the first question to the back stack
+                    if (questionManager.questionsStarted())
                         fragmentTransaction.addToBackStack(FRAGMENT_LESSON_DETAILS);
-                    else if (questionManager.isReviewStarted())
+                    else if (questionManager.reviewStarted())
                         fragmentTransaction.addToBackStack(FRAGMENT_RESULTS);
                 }
+                //sliding animation from one question to the next
                 fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                         R.anim.slide_in_left, R.anim.slide_out_right
                 );
@@ -580,7 +542,7 @@ public class MainActivity extends AppCompatActivity implements
                 fragmentTransaction.commit();
 
                 //although we might use it in the review or subsequent questions,
-                //we should prioritize the resources we can save?
+                //we should prioritize the resources we can save right now?
                 if (textToSpeech != null){
                     textToSpeech.shutdown();
                     textToSpeech = null;
@@ -616,6 +578,11 @@ public class MainActivity extends AppCompatActivity implements
         questionManager.saveResponse(answer, correct);
     }
 
+    //this is called by each question fragment.
+    //the question fragment communicates with the main activity ->
+    // the main activity communicates with the question manager ->
+    // the question manager tells the main activity what to do next ->
+    // the main activity creates the next question fragment
     @Override
     public void onNextQuestion(){
         questionManager.nextQuestion(false);
@@ -628,6 +595,9 @@ public class MainActivity extends AppCompatActivity implements
         editor.apply();
     }
 
+    //not sure where the user should go after a review.
+    //should he be taken back to the results page?
+    //or should the user go back to the lesson details page? or the lesson list?
     @Override
     public void resultsToLessonCategories(){
         questionManager.resetManager(QuestionManager.REVIEW);

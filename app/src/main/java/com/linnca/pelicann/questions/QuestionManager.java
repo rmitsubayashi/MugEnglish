@@ -64,7 +64,7 @@ public class QuestionManager{
 		}
 	}
 
-	public boolean isQuestionsStarted(){
+	public boolean questionsStarted(){
         return questionsStarted;
     }
 
@@ -80,7 +80,7 @@ public class QuestionManager{
 		}
 	}
 
-	public boolean isReviewStarted(){
+	public boolean reviewStarted(){
         return reviewStarted;
     }
 
@@ -137,15 +137,16 @@ public class QuestionManager{
 		List<QuestionAttempt> attempts = instanceRecord.getAttempts();
 		int attemptNumber;
 		//first attempt at first question
-		if (attempts.size() == 0)
+		if (attempts.size() == 0) {
+			//prevents array out of bounds exception
 			attemptNumber = 1;
-		else {
+		} else {
 			QuestionAttempt lastAttempt = attempts.get(attempts.size() - 1);
 			if (questionID.equals(lastAttempt.getQuestionID())){
-				//same question so an attempt at the same question
+				//same question so this is an attempt at the same question
 				attemptNumber = lastAttempt.getAttemptNumber() + 1;
 			} else {
-				//new question
+				//new question so first attempt number
 				attemptNumber = 1;
 			}
 		}
@@ -166,10 +167,6 @@ public class QuestionManager{
 			missedQuestionsForReviewSet.add(currentQuestionData);
 		}
 
-	}
-
-	public String getAnswer(){
-		return currentQuestionData.getAnswer();
 	}
 
 	private void startNewInstanceRecord(){
