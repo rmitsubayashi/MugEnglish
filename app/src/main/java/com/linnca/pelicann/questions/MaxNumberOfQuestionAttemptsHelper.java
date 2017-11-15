@@ -8,8 +8,8 @@ class MaxNumberOfQuestionAttemptsHelper {
     
     private MaxNumberOfQuestionAttemptsHelper(){}
     
-    static int getMaxNumberOfQuestionAttempts(int questionType, QuestionData questionData, UserGetter userGetter){
-        int maxPossibleAttempts = getMaxPossibleAttemptsPerQuestionType(questionType, questionData);
+    static int getMaxNumberOfQuestionAttempts(QuestionData questionData, UserGetter userGetter){
+        int maxPossibleAttempts = getMaxPossibleAttemptsPerQuestionType(questionData);
         int userMaxAttempts = userGetter.getMaxNumberOfQuestionAttemptsSetByUser();
         if (maxPossibleAttempts == UNLIMITED_ATTEMPTS){
             //the question allow unlimited attempts
@@ -27,9 +27,10 @@ class MaxNumberOfQuestionAttemptsHelper {
             }
         }
     }
-    private static int getMaxPossibleAttemptsPerQuestionType(int questionType, QuestionData questionData){
+    private static int getMaxPossibleAttemptsPerQuestionType(QuestionData questionData){
         int choiceCt = questionData.getChoices() == null ?
                 0 : questionData.getChoices().size();
+        int questionType = questionData.getQuestionType();
         switch (questionType){
             case Question_Actions.QUESTION_TYPE :
                 return UNLIMITED_ATTEMPTS;

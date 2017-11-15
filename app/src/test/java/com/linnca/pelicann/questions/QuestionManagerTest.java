@@ -1,6 +1,5 @@
 package com.linnca.pelicann.questions;
 
-import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.MockFirebaseDB;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 

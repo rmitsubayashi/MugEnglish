@@ -35,7 +35,6 @@ public class Question_Actions extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        this.questionType = QUESTION_TYPE;
     }
 
     @Override

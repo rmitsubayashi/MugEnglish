@@ -46,7 +46,7 @@ public class Question_Spelling extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        this.questionType = QUESTION_TYPE;
+
     }
 
     @Override

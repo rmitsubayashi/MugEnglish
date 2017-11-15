@@ -23,7 +23,7 @@ public class Question_TranslateWord extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        this.questionType = QUESTION_TYPE;
+
         //as of now, this is the only way
         //I can stick the response feedback bottom sheet on the bottom.
         //(if I have the keyboard open while submitting an answer,

@@ -26,7 +26,7 @@ public class Question_FillInBlank_MultipleChoice extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        this.questionType = QUESTION_TYPE;
+
     }
 
     @Override

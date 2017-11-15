@@ -34,7 +34,6 @@ import java.util.Locale;
 //sets methods common for all question GUIs
 public abstract class Question_General extends Fragment {
     protected final String TAG = "Question Fragment";
-    protected int questionType;
     public static final String BUNDLE_QUESTION_DATA = "bundleQuestionData";
     public static final String BUNDLE_QUESTION_NUMBER = "bundleQuestionNumber";
     public static final String BUNDLE_QUESTION_TOTAL_QUESTIONS = "bundleTotalQuestions";
@@ -142,7 +141,7 @@ public abstract class Question_General extends Fragment {
                     allWrongResponses.add(answer);
                     //check if the user should be given another chance
                     int maxNumberOfAttempts = MaxNumberOfQuestionAttemptsHelper.getMaxNumberOfQuestionAttempts(
-                            questionType, questionData,
+                            questionData,
                             new MaxNumberOfQuestionAttemptsHelper.UserGetter() {
                                 @Override
                                 public int getMaxNumberOfQuestionAttemptsSetByUser() {
@@ -227,7 +226,7 @@ public abstract class Question_General extends Fragment {
             nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
         } //else condition is default now
         TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
-        final String description = QuestionFeedbackFormatter.formatFeedback(questionType, correct,
+        final String description = QuestionFeedbackFormatter.formatFeedback(correct,
                 questionData, response, allWrongResponses);
         if (correct){
             feedbackTitle.setText(R.string.question_feedback_correct);

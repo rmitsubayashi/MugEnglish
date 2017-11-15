@@ -32,7 +32,7 @@ public class Question_SentencePuzzle extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        this.questionType = QUESTION_TYPE;
+
         //determine whether to use small or big buttons
         List<String> choices = questionData.getChoices();
         int choicesLength = 0;
