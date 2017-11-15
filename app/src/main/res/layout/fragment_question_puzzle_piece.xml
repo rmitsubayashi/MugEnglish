@@ -6,7 +6,7 @@
     android:id="@+id/fragment_question_puzzle_piece"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.linnca.pelicann.questions.Question_Puzzle_Piece"
+    tools:context="com.linnca.pelicann.questions.Question_SentencePuzzle"
     >
     <RelativeLayout
         android:layout_width="match_parent"

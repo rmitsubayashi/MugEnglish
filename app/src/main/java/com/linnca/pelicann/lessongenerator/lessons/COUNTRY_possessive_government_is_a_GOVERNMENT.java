@@ -12,8 +12,10 @@ import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_Spelling;
+import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
+import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -188,7 +190,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(qr.countryJP);
-        data.setQuestionType(QuestionTypeMappings.SPELLING);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         //for suggestive, we don't need to lowercase everything
@@ -221,7 +223,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(qr.countryJP);
-        data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
@@ -254,7 +256,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(qr.countryJP);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
@@ -299,7 +301,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(qr.countryJP);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
@@ -320,7 +322,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.SPELLING_SUGGESTIVE);
+        data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         //for suggestive, we don't need to lowercase everything

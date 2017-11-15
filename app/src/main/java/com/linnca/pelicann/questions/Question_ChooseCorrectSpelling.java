@@ -13,7 +13,8 @@ import com.linnca.pelicann.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Question_Choose_Correct_Spelling extends Question_General {
+public class Question_ChooseCorrectSpelling extends Question_General {
+    public static final int QUESTION_TYPE = 11;
     private TextView questionTextView;
     private LinearLayout choicesLayout;
     private int choiceCt;
@@ -21,6 +22,7 @@ public class Question_Choose_Correct_Spelling extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -43,14 +45,6 @@ public class Question_Choose_Correct_Spelling extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return (String)clickedView.getTag();
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        //it should be the number of choices - 1 (the last one is obvious)
-        //just in case. we also set it in onCreateView
-        setChoiceCt();
-        return choiceCt - 1;
     }
 
     @Override
@@ -88,6 +82,11 @@ public class Question_Choose_Correct_Spelling extends Question_General {
         );
         choices.addAll(misspelledChoices);
         QuestionUtils.shuffle(choices);
+
+        //update the question data since we
+        //reference the question data to see how many
+        // choices a user has left
+        questionData.setChoices(choices);
 
         for (String choice : choices){
             Button choiceButton = (Button)inflater.

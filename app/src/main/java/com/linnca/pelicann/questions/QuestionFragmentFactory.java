@@ -7,40 +7,40 @@ public class QuestionFragmentFactory {
     public static Fragment getQuestionFragment(int questionType){
         Fragment fragment;
         switch (questionType) {
-            case QuestionTypeMappings.FILL_IN_BLANK_INPUT:
+            case Question_FillInBlank_Input.QUESTION_TYPE:
                 fragment = new Question_FillInBlank_Input();
                 break;
-            case QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE:
+            case Question_FillInBlank_MultipleChoice.QUESTION_TYPE:
                 fragment = new Question_FillInBlank_MultipleChoice();
                 break;
-            case QuestionTypeMappings.MULTIPLE_CHOICE:
+            case Question_MultipleChoice.QUESTION_TYPE:
                 fragment = new Question_MultipleChoice();
                 break;
-            case QuestionTypeMappings.SENTENCE_PUZZLE:
-                fragment = new Question_Puzzle_Piece();
+            case Question_SentencePuzzle.QUESTION_TYPE:
+                fragment = new Question_SentencePuzzle();
                 break;
-            case QuestionTypeMappings.TRUE_FALSE:
+            case Question_TrueFalse.QUESTION_TYPE:
                 fragment = new Question_TrueFalse();
                 break;
-            case QuestionTypeMappings.SPELLING_SUGGESTIVE:
+            case Question_Spelling_Suggestive.QUESTION_TYPE:
                 fragment = new Question_Spelling_Suggestive();
                 break;
-            case QuestionTypeMappings.SPELLING:
+            case Question_Spelling.QUESTION_TYPE:
                 fragment = new Question_Spelling();
                 break;
-            case QuestionTypeMappings.TRANSLATE_WORD:
+            case Question_TranslateWord.QUESTION_TYPE:
                 fragment = new Question_TranslateWord();
                 break;
-            case QuestionTypeMappings.CHAT_MULTIPLE_CHOICE:
+            case Question_Chat_MultipleChoice.QUESTION_TYPE:
                 fragment = new Question_Chat_MultipleChoice();
                 break;
-            case QuestionTypeMappings.CHAT:
+            case Question_Chat.QUESTION_TYPE:
                 fragment = new Question_Chat();
                 break;
-            case QuestionTypeMappings.CHOOSE_CORRECT_SPELLING:
-                fragment = new Question_Choose_Correct_Spelling();
+            case Question_ChooseCorrectSpelling.QUESTION_TYPE:
+                fragment = new Question_ChooseCorrectSpelling();
                 break;
-            case QuestionTypeMappings.ACTIONS:
+            case Question_Actions.QUESTION_TYPE:
                 fragment = new Question_Actions();
                 break;
             default:

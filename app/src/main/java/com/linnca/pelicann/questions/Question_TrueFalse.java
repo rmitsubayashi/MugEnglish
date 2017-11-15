@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 
 public class Question_TrueFalse extends Question_General {
+    public static final int QUESTION_TYPE = 1;
     public static final String TRUE_FALSE_QUESTION_TRUE = "true";
     public static final String TRUE_FALSE_QUESTION_FALSE = "false";
     private TextView questionTextView;
@@ -20,6 +21,7 @@ public class Question_TrueFalse extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -43,18 +45,6 @@ public class Question_TrueFalse extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return (String)clickedView.getTag();
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        //it's either true or false..
-        return 1;
-    }
-
-    @Override
-    protected String formatWrongFeedbackString(){
-        //we really don't need feedback for true false questions
-        return null;
     }
 
     @Override

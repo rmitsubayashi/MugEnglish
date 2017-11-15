@@ -12,8 +12,10 @@ import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling;
+import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -247,7 +249,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -290,7 +292,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE);
@@ -321,7 +323,7 @@ public class NAME_plays_SPORT extends Lesson{
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(qr.personJP);
-            data.setQuestionType(QuestionTypeMappings.TRUE_FALSE);
+            data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
             data.setQuestion(question);
             data.setChoices(null);
             data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_FALSE);
@@ -338,7 +340,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(qr.sportNameEN);
         data.setChoices(null);
         data.setAnswer(qr.sportNameJP);
@@ -354,7 +356,7 @@ public class NAME_plays_SPORT extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SPELLING);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(qr.sportNameJP);
         data.setChoices(null);
         data.setAnswer(qr.sportNameEN);

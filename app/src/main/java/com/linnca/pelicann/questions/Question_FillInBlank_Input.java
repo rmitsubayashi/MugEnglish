@@ -20,6 +20,7 @@ import com.linnca.pelicann.R;
 //to make it easier for the user to solve
 
 public class Question_FillInBlank_Input extends Question_General {
+    public static final int QUESTION_TYPE = 4;
     public static final String FILL_IN_BLANK_TEXT = "@blankText@";
     public  static final String FILL_IN_BLANK_NUMBER = "@blankNum@";
     private EditText questionInput;
@@ -30,6 +31,7 @@ public class Question_FillInBlank_Input extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -54,11 +56,6 @@ public class Question_FillInBlank_Input extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return questionInput.getText().toString();
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        return Question_General.UNLIMITED_ATTEMPTS;
     }
 
     private void createQuestionLayout(){

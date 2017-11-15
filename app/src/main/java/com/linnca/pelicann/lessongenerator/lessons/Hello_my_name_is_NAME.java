@@ -10,8 +10,11 @@ import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_Chat;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling;
+import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -145,7 +148,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.CHAT);
+        data.setQuestionType(Question_Chat.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
@@ -178,7 +181,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -225,7 +228,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.SPELLING_SUGGESTIVE);
+        data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
@@ -242,7 +245,7 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.SPELLING);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);

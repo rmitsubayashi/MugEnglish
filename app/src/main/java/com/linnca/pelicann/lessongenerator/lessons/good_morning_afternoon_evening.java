@@ -1,15 +1,15 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_MultipleChoice;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -120,7 +120,7 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(QuestionTypeMappings.CHAT_MULTIPLE_CHOICE);
+            data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
             ChatQuestionItem chatItem1 = new ChatQuestionItem(false, answer);
             ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
             List<ChatQuestionItem> chatItems = new ArrayList<>(2);
@@ -163,7 +163,7 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(QuestionTypeMappings.MULTIPLE_CHOICE);
+            data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(jpAnswers.get(i));
             data.setChoices(multipleChoiceChoices());
             data.setAnswer(answer);
@@ -185,7 +185,7 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+            data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(jpAnswers.get(i) + "\n\ngood " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
             data.setChoices(null);
             data.setAnswer(answer);

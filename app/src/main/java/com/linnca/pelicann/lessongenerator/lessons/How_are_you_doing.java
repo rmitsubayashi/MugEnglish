@@ -10,8 +10,10 @@ import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -141,7 +143,7 @@ public class How_are_you_doing extends Lesson {
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.CHAT_MULTIPLE_CHOICE);
+        data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -211,7 +213,7 @@ public class How_are_you_doing extends Lesson {
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -228,7 +230,7 @@ public class How_are_you_doing extends Lesson {
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(genericQuestionJP());
         data.setChoices(null);
         data.setAnswer(genericAnswerEN());

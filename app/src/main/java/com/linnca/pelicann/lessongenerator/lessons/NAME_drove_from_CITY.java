@@ -10,9 +10,10 @@ import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -153,7 +154,7 @@ public class NAME_drove_from_CITY extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -172,7 +173,7 @@ public class NAME_drove_from_CITY extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SPELLING);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
@@ -203,7 +204,7 @@ public class NAME_drove_from_CITY extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_INPUT);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);

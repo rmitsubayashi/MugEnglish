@@ -19,7 +19,8 @@ import org.apmem.tools.layouts.FlowLayout;
 import java.util.List;
 
 
-public class Question_Puzzle_Piece extends Question_General {
+public class Question_SentencePuzzle extends Question_General {
+    public static final int QUESTION_TYPE = 3;
     private FlowLayout answerLayout;
     private FlowLayout choicesLayout;
     private TextView questionTextView;
@@ -31,6 +32,7 @@ public class Question_Puzzle_Piece extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
         //determine whether to use small or big buttons
         List<String> choices = questionData.getChoices();
         int choicesLength = 0;
@@ -87,19 +89,6 @@ public class Question_Puzzle_Piece extends Question_General {
         }
 
         return answer;
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        //technically not unlimited but it doesn't matter too much
-        return Question_General.UNLIMITED_ATTEMPTS;
-    }
-
-    @Override
-    protected String formatWrongFeedbackString(){
-        String answer = questionData.getAnswer();
-        answer = answer.replace("|", " ");
-        return "正解: " + answer;
     }
 
     //no need to enable text to speech because this will always be Japanese??

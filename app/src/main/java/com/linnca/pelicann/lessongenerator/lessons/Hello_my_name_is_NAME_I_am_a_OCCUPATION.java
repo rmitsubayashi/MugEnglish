@@ -12,8 +12,10 @@ import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
+import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
 import org.w3c.dom.Document;
@@ -154,7 +156,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.CHAT_MULTIPLE_CHOICE);
+        data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -190,7 +192,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -209,7 +211,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.CHOOSE_CORRECT_SPELLING);
+        data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);

@@ -34,7 +34,7 @@ import java.util.Locale;
 //sets methods common for all question GUIs
 public abstract class Question_General extends Fragment {
     protected final String TAG = "Question Fragment";
-    static final int UNLIMITED_ATTEMPTS = -1;
+    protected int questionType;
     public static final String BUNDLE_QUESTION_DATA = "bundleQuestionData";
     public static final String BUNDLE_QUESTION_NUMBER = "bundleQuestionNumber";
     public static final String BUNDLE_QUESTION_TOTAL_QUESTIONS = "bundleTotalQuestions";
@@ -43,8 +43,7 @@ public abstract class Question_General extends Fragment {
     private int questionNumber;
     private int totalQuestions;
     private final List<String> allWrongResponses = new ArrayList<>();
-
-    private int maxNumberOfAttempts;
+    //keep track of teh number of attempts for this question
     private int attemptCt = 0;
 
     private BottomSheetBehavior behavior;
@@ -71,7 +70,6 @@ public abstract class Question_General extends Fragment {
         questionData = (QuestionData)args.getSerializable(BUNDLE_QUESTION_DATA);
         questionNumber = args.getInt(BUNDLE_QUESTION_NUMBER);
         totalQuestions = args.getInt(BUNDLE_QUESTION_TOTAL_QUESTIONS);
-        setMaxNumberOfAttempts();
         try {
             textToSpeech = ((MainActivity) getActivity()).getTextToSpeech();
         } catch (ClassCastException e){
@@ -118,9 +116,6 @@ public abstract class Question_General extends Fragment {
 
     //need this to record response
     protected abstract String getResponse(View clickedView);
-    //how many chances that are possibly allowed for each question type
-    // (t/f is only one, m/c can have more)
-    protected abstract int getMaxPossibleAttempts();
     //we can disable choice after answer when you have multiple attempts.
     //this will be user friendly?
     protected void doSomethingAfterWrongAnswer(View clickedView){}
@@ -131,139 +126,35 @@ public abstract class Question_General extends Fragment {
     //even if the textViews are not clickable, these events fire
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){}
 
-    //formatting may be different for certain question types, but this should be the base
-    protected String formatWrongFeedbackString(){
-        //no specific feedback to give to the user
-        if (questionData.getFeedback() != null) {
-            List<FeedbackPair> feedbackPairs = questionData.getFeedback();
-            List<String> implicitAllWrongResponses = null;
-            for (FeedbackPair feedbackPair : feedbackPairs) {
-                List<String> responsesToCompare = feedbackPair.getResponse();
-                if (feedbackPair.getResponseCheckType() == FeedbackPair.IMPLICIT) {
-                    //format the answer and compare
-                    if (implicitAllWrongResponses == null) {
-                        implicitAllWrongResponses = new ArrayList<>();
-                        for (String wrongResponse : allWrongResponses) {
-                            implicitAllWrongResponses.add(formatAnswer(wrongResponse));
-                        }
-                    }
-
-                    for (String responseToCompare : responsesToCompare){
-                        responseToCompare = formatAnswer(responseToCompare);
-                        if (implicitAllWrongResponses.contains(responseToCompare)){
-                            return feedbackPair.getFeedback();
-                        }
-                    }
-                } else if (feedbackPair.getResponseCheckType() == FeedbackPair.EXPLICIT) {
-                    //we should check directly to avoid formatAnswer() hiding the feedback
-                    //we want to match
-                    if (!Collections.disjoint(responsesToCompare, allWrongResponses)) {
-                        return feedbackPair.getFeedback();
-                    }
-                }
-            }
-        }
-
-        String answer = questionData.getAnswer();
-        return "正解: " + answer;
-    }
-
-    //same for this
-    private String formatCorrectFeedbackString(String response){
-        if (questionData.getFeedback() != null){
-            List<FeedbackPair> feedbackPairs = questionData.getFeedback();
-            for (FeedbackPair feedbackPair : feedbackPairs) {
-                List<String> responses = feedbackPair.getResponse();
-                if (feedbackPair.getResponseCheckType() == FeedbackPair.EXPLICIT) {
-                    if (responses.contains(response)) {
-                        return feedbackPair.getFeedback();
-                    }
-                } else if (feedbackPair.getResponseCheckType() == FeedbackPair.IMPLICIT){
-                    String formattedResponse = formatAnswer(response);
-                    for (String r : responses){
-                        String fr = formatAnswer(r);
-                        if (fr.equals(formattedResponse)){
-                            return feedbackPair.getFeedback();
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private void setMaxNumberOfAttempts(){
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(getContext());
-        //the preference is still stored as a string
-        String preferencesMaxAttemptsString = sharedPreferences.getString
-                (getString(R.string.preferences_questions_numberOfAttemptsPerQuestion_key), "1");
-        int preferencesMaxAttempts = Integer.parseInt(preferencesMaxAttemptsString);
-        int maxPossibleAttempts = getMaxPossibleAttempts();
-        if (maxPossibleAttempts == UNLIMITED_ATTEMPTS){
-            //the question allow unlimited attempts
-            //so restrict the user's attempts to the number set in the preferences
-            maxNumberOfAttempts = preferencesMaxAttempts;
-        } else {
-            if (preferencesMaxAttempts <= maxPossibleAttempts){
-                //the user has set a number of attempts less than the maximum possible attempts
-                //so only allow the user to attempt the number of times he set in the preferences
-                maxNumberOfAttempts = preferencesMaxAttempts;
-            } else {
-                //the max possible attempts is less than the number the user set in the preferences
-                //so only allow the max possible attempts
-                maxNumberOfAttempts = maxPossibleAttempts;
-            }
-        }
-    }
-
-    //might be different for different question types??
-    private boolean checkAnswer(String response){
-        List<String> allAnswers = new ArrayList<>();
-        allAnswers.add(questionData.getAnswer());
-        if (questionData.getAcceptableAnswers() != null){
-            allAnswers.addAll(questionData.getAcceptableAnswers());
-        }
-
-        int answersLength = allAnswers.size();
-        for (int i=0; i<answersLength; i++){
-            allAnswers.set(i, formatAnswer(allAnswers.get(i)));
-        }
-        response = formatAnswer(response);
-
-        return allAnswers.contains(response);
-    }
-
-    private String formatAnswer(String answer){
-        //we still accept technically wrong answers for example
-        //names should always be capitalized.
-        //this should be considered correct and
-        //reinforced in the feedback section
-
-        //lower case
-        answer = answer.toLowerCase();
-        //remove whitespace
-        answer = answer.trim();
-        //remove last punctuation
-        answer = answer.replaceAll("\\p{Punct}+$", "");
-
-        return answer;
-    }
-
     protected View.OnClickListener getResponseListener(){
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptCt++;
                 String answer = getResponse(view);
-                if (checkAnswer(answer)){
+                //if the user got it right
+                if (QuestionResponseChecker.checkResponse(questionData, answer)){
                     questionListener.onRecordResponse(answer, true);
                     openFeedback(true, answer);
 
-                } else {
+                } else { //if the user didn't get it right
                     questionListener.onRecordResponse(answer, false);
                     allWrongResponses.add(answer);
+                    //check if the user should be given another chance
+                    int maxNumberOfAttempts = MaxNumberOfQuestionAttemptsHelper.getMaxNumberOfQuestionAttempts(
+                            questionType, questionData,
+                            new MaxNumberOfQuestionAttemptsHelper.UserGetter() {
+                                @Override
+                                public int getMaxNumberOfQuestionAttemptsSetByUser() {
+                                    SharedPreferences sharedPreferences =
+                                            PreferenceManager.getDefaultSharedPreferences(getContext());
+                                    //the preference is still stored as a string
+                                    String preferencesMaxAttemptsString = sharedPreferences.getString
+                                            (getString(R.string.preferences_questions_numberOfAttemptsPerQuestion_key), "1");
+                                    return Integer.parseInt(preferencesMaxAttemptsString);
+                                }
+                            }
+                    );
                     if (attemptCt == maxNumberOfAttempts){
                         //the user used up all his attempts
                         openFeedback(false, answer);
@@ -336,13 +227,12 @@ public abstract class Question_General extends Fragment {
             nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
         } //else condition is default now
         TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
-        final String description;
+        final String description = QuestionFeedbackFormatter.formatFeedback(questionType, correct,
+                questionData, response, allWrongResponses);
         if (correct){
             feedbackTitle.setText(R.string.question_feedback_correct);
-            description = formatCorrectFeedbackString(response);
         } else {
             feedbackTitle.setText(R.string.question_feedback_incorrect);
-            description = formatWrongFeedbackString();
         }
 
         if (keyboardFocusView == null) {
@@ -408,8 +298,5 @@ public abstract class Question_General extends Fragment {
             }
         }
     }
-
-
-
 
 }

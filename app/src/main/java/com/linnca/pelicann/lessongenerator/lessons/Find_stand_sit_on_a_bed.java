@@ -1,13 +1,13 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_Actions;
+import com.linnca.pelicann.questions.Question_MultipleChoice;
+import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -111,7 +111,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.MULTIPLE_CHOICE);
+        data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         //for suggestive, we don't need to lowercase everything
@@ -137,7 +137,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.MULTIPLE_CHOICE);
+        data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         //for suggestive, we don't need to lowercase everything
@@ -163,7 +163,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.MULTIPLE_CHOICE);
+        data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         //for suggestive, we don't need to lowercase everything
@@ -184,7 +184,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         //for suggestive, we don't need to lowercase everything
@@ -206,7 +206,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.ACTIONS);
+        data.setQuestionType(Question_Actions.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(actions);
         //for suggestive, we don't need to lowercase everything

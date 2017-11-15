@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 
 public class Question_TranslateWord extends Question_General {
+    public static final int QUESTION_TYPE = 8;
     private EditText questionInput;
     private TextView wordToTranslateTextView;
     private Button submitButton;
@@ -22,7 +23,7 @@ public class Question_TranslateWord extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-
+        this.questionType = QUESTION_TYPE;
         //as of now, this is the only way
         //I can stick the response feedback bottom sheet on the bottom.
         //(if I have the keyboard open while submitting an answer,
@@ -53,11 +54,6 @@ public class Question_TranslateWord extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return questionInput.getText().toString();
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        return Question_General.UNLIMITED_ATTEMPTS;
     }
 
     private void createQuestionLayout(){

@@ -20,7 +20,6 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_General;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TrueFalse;
@@ -179,7 +178,7 @@ public class TutorialActivity extends AppCompatActivity implements
     @Override
     public void lessonDetailsToQuestion1(){
         questionMkr = 1;
-        QuestionData questionData = new QuestionData(null, null, null, QuestionTypeMappings.SPELLING_SUGGESTIVE,
+        QuestionData questionData = new QuestionData(null, null, null, Question_Spelling_Suggestive.QUESTION_TYPE,
                 "男性", null, "man", null, null);
         Fragment fragment = new Question_Spelling_Suggestive();
         Bundle bundle = new Bundle();
@@ -194,7 +193,7 @@ public class TutorialActivity extends AppCompatActivity implements
 
     private void question1ToQuestion2(){
         questionMkr = 2;
-        QuestionData questionData = new QuestionData(null, null, null, QuestionTypeMappings.SPELLING_SUGGESTIVE,
+        QuestionData questionData = new QuestionData(null, null, null, Question_Spelling_Suggestive.QUESTION_TYPE,
                 "女性", null, "woman", null, null);
         Fragment fragment = new Question_Spelling_Suggestive();
         Bundle bundle = new Bundle();
@@ -212,7 +211,7 @@ public class TutorialActivity extends AppCompatActivity implements
         String question = selectedPerson.getEnglishName() + " is a man";
         boolean answer = selectedPerson.getGender() == OnboardingPersonBundle.GENDER_MALE;
         String answerString = Question_TrueFalse.getTrueFalseString(answer);
-        QuestionData questionData = new QuestionData(null, null, null, QuestionTypeMappings.TRUE_FALSE,
+        QuestionData questionData = new QuestionData(null, null, null, Question_TrueFalse.QUESTION_TYPE,
                 question, null, answerString, null, null);
         Fragment fragment = new Question_TrueFalse();
         Bundle bundle = new Bundle();

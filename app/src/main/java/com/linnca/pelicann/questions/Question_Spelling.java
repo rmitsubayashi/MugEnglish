@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.Stack;
 
 public class Question_Spelling extends Question_General {
+    public static final int QUESTION_TYPE = 7;
     private TableLayout grid;
     private TextView questionTextView;
     private Button submitButton;
@@ -45,6 +46,7 @@ public class Question_Spelling extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -71,12 +73,6 @@ public class Question_Spelling extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return answerText.toString();
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        //technically not infinite
-        return Question_General.UNLIMITED_ATTEMPTS;
     }
 
     private void populateQuestion(){

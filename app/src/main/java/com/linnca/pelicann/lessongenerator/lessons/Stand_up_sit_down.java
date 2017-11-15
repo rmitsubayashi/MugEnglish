@@ -1,12 +1,10 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_Actions;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -101,7 +99,7 @@ public class Stand_up_sit_down extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         //for suggestive, we don't need to lowercase everything
@@ -127,7 +125,7 @@ public class Stand_up_sit_down extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         //for suggestive, we don't need to lowercase everything
@@ -149,7 +147,7 @@ public class Stand_up_sit_down extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.ACTIONS);
+        data.setQuestionType(Question_Actions.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(actions);
         //for suggestive, we don't need to lowercase everything

@@ -81,7 +81,7 @@ public class QuestionManagerTest {
         LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
                 questionSetIDs, questionIDs, interestLabels);
 
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", firstQuestion);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");
@@ -181,10 +181,10 @@ public class QuestionManagerTest {
         LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
                 questionSetIDs, questionIDs, interestLabels);
 
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", firstQuestion);
-        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", secondQuestion);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");
@@ -224,10 +224,10 @@ public class QuestionManagerTest {
         LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
                 questionSetIDs, questionIDs, interestLabels);
 
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", firstQuestion);
-        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", secondQuestion);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");
@@ -266,10 +266,10 @@ public class QuestionManagerTest {
         LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
                 questionSetIDs, questionIDs, interestLabels);
 
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", firstQuestion);
-        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", secondQuestion);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");

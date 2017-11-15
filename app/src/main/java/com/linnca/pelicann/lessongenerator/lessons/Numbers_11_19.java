@@ -1,12 +1,12 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
+import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
+import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -136,7 +136,7 @@ public class Numbers_11_19 extends Lesson {
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(QuestionTypeMappings.TRANSLATE_WORD);
+            data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
@@ -157,7 +157,7 @@ public class Numbers_11_19 extends Lesson {
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(QuestionTypeMappings.SPELLING_SUGGESTIVE);
+            data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);

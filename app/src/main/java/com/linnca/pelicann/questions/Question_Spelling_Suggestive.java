@@ -28,6 +28,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class Question_Spelling_Suggestive extends Question_General {
+    public static final int QUESTION_TYPE = 6;
     private TableLayout grid;
     private TextView questionTextView;
     private Button submitButton;
@@ -49,6 +50,7 @@ public class Question_Spelling_Suggestive extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -76,12 +78,6 @@ public class Question_Spelling_Suggestive extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return questionData.getAnswer().substring(0, answerTextProgress);
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        //technically not infinite
-        return Question_General.UNLIMITED_ATTEMPTS;
     }
 
     private void populateQuestion(){

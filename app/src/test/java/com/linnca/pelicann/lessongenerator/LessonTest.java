@@ -1,7 +1,5 @@
 package com.linnca.pelicann.lessongenerator;
 
-import android.util.Log;
-
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.db.MockFirebaseDB;
@@ -10,7 +8,6 @@ import com.linnca.pelicann.lessongenerator.lessons.Goodbye_bye;
 import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSet;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
@@ -18,7 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -292,7 +288,7 @@ public class LessonTest {
         questions1.add("questionID1");
         questionSet1.add(questions1);
         db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "interestLabel1", questionSet1, new ArrayList<String>()));
-        QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", questionData1);
         List<List<String>> questionSet2 = new ArrayList<>(1);
@@ -300,7 +296,7 @@ public class LessonTest {
         questions2.add("questionID2");
         questionSet2.add(questions2);
         db.questionSets.put("questionSetID2", new QuestionSet("questionSetID2", "interestLabel2", questionSet2, new ArrayList<String>()));
-        QuestionData questionData2 = new QuestionData("questionID2","lessonID2", "topic2", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData questionData2 = new QuestionData("questionID2","lessonID2", "topic2", Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", questionData2);
 
@@ -365,7 +361,7 @@ public class LessonTest {
         questions1.add("questionID1");
         questionSet1.add(questions1);
         db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "interestLabel1", questionSet1, new ArrayList<String>()));
-        QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", QuestionTypeMappings.TRUE_FALSE,
+        QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", questionData1);
 

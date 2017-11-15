@@ -1,14 +1,13 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.Question_Actions;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -114,7 +113,7 @@ public class Turn_left_right_go_straight extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         //for suggestive, we don't need to lowercase everything
@@ -141,7 +140,7 @@ public class Turn_left_right_go_straight extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         //for suggestive, we don't need to lowercase everything
@@ -162,7 +161,7 @@ public class Turn_left_right_go_straight extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.SPELLING_SUGGESTIVE);
+        data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
@@ -183,7 +182,7 @@ public class Turn_left_right_go_straight extends Lesson {
         data.setId("");
         data.setLessonId(super.lessonKey);
         data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(QuestionTypeMappings.ACTIONS);
+        data.setQuestionType(Question_Actions.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(actions);
         //for suggestive, we don't need to lowercase everything

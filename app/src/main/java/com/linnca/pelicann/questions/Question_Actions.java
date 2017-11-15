@@ -21,6 +21,7 @@ import com.linnca.pelicann.R;
 import java.util.List;
 
 public class Question_Actions extends Question_General {
+    public static final int QUESTION_TYPE = 12;
     public static String ANSWER_FINISHED = "@finished@";
     private Button startButton;
     private TextView actionView;
@@ -34,6 +35,7 @@ public class Question_Actions extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -58,11 +60,6 @@ public class Question_Actions extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return ANSWER_FINISHED;
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        return Question_General.UNLIMITED_ATTEMPTS;
     }
 
     private void adjustTextSize(){

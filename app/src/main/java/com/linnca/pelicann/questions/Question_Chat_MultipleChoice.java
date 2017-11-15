@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Question_Chat_MultipleChoice extends Question_General {
+    public static final int QUESTION_TYPE = 9;
     private TextView fromTextView;
     private LinearLayout chatItemsLayout;
     private LinearLayout choicesLayout;
@@ -29,6 +30,7 @@ public class Question_Chat_MultipleChoice extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -54,14 +56,6 @@ public class Question_Chat_MultipleChoice extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return chatBoxEditText.getText().toString();
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        //it should be the number of choices - 1 (the last one is obvious)
-        int choiceCt = questionData.getChoices().size();
-        //if there's one choice, it's intentionally obvious
-        return (choiceCt == 1 ? 1 : choiceCt - 1);
     }
 
     @Override

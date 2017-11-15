@@ -13,9 +13,11 @@ import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionTypeMappings;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_MultipleChoice;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -319,7 +321,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SENTENCE_PUZZLE);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -359,7 +361,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.FILL_IN_BLANK_MULTIPLE_CHOICE);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
@@ -420,7 +422,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(qr.personJP);
-            data.setQuestionType(QuestionTypeMappings.MULTIPLE_CHOICE);
+            data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(question);
             data.setChoices(choices);
             data.setAnswer(answer);
@@ -437,7 +439,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(QuestionTypeMappings.SPELLING_SUGGESTIVE);
+        data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion(qr.occupationJP);
         data.setChoices(null);
         data.setAnswer(qr.occupationEN);

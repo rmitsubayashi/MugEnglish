@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Question_Chat extends Question_General {
+    public static final int QUESTION_TYPE = 10;
     private TextView fromTextView;
     private LinearLayout chatItemsLayout;
     private EditText chatBoxEditText;
@@ -25,6 +26,7 @@ public class Question_Chat extends Question_General {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        this.questionType = QUESTION_TYPE;
     }
 
     @Override
@@ -50,11 +52,6 @@ public class Question_Chat extends Question_General {
     @Override
     protected String getResponse(View clickedView){
         return chatBoxEditText.getText().toString();
-    }
-
-    @Override
-    protected int getMaxPossibleAttempts(){
-        return UNLIMITED_ATTEMPTS;
     }
 
     @Override
