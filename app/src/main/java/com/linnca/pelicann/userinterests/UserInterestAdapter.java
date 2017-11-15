@@ -11,7 +11,6 @@ import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -19,10 +18,7 @@ class UserInterestAdapter
         extends RecyclerView.Adapter<UserInterestViewHolder>
 {
     private final UserInterestAdapterListener listener;
-    private List<WikiDataEntryData> originalList;
-    //default to no filter
-    private int filter = ToolbarSpinnerAdapter.FILTER_ALL;
-    private List<WikiDataEntryData> filteredList = new ArrayList<>();
+    private final UserInterestFilter userInterestFilter = new UserInterestFilter();
     private HashSet<Integer> selectedDataPositions = new HashSet<>();
 
     interface UserInterestAdapterListener {
@@ -39,12 +35,12 @@ class UserInterestAdapter
 
     @Override
     public int getItemCount(){
-        return filteredList.size();
+        return userInterestFilter.size();
     }
 
     @Override
     public long getItemId(int position){
-        return filteredList.get(position).hashCode();
+        return userInterestFilter.get(position).hashCode();
     }
 
     @Override
@@ -56,7 +52,7 @@ class UserInterestAdapter
 
     @Override
     public void onBindViewHolder(final UserInterestViewHolder holder, int position){
-        final WikiDataEntryData data = filteredList.get(position);
+        final WikiDataEntryData data = userInterestFilter.get(position);
         holder.setLabel(data.getLabel());
         holder.setDescription(data.getDescription());
         boolean isSelected = isSelected(position);
@@ -110,7 +106,7 @@ class UserInterestAdapter
     List<WikiDataEntryData> getSelectedItems(){
         List<WikiDataEntryData> copyList = new ArrayList<>(selectedDataPositions.size());
         for (Integer selectedItemPosition : selectedDataPositions){
-            WikiDataEntryData selectedItem = filteredList.get(selectedItemPosition);
+            WikiDataEntryData selectedItem = userInterestFilter.get(selectedItemPosition);
             WikiDataEntryData copy = new WikiDataEntryData(selectedItem);
             copyList.add(copy);
         }
@@ -121,27 +117,34 @@ class UserInterestAdapter
         List<Integer> selectedDataPositionsCopy = new ArrayList<>(selectedDataPositions);
         selectedDataPositions.clear();
         for (Integer i : selectedDataPositionsCopy){
+            //if we don't clear the list before notifying the item,
+            //nothing will change because we reference the list
+            //to see whether the item is selected or not
             notifyItemChanged(i);
         }
     }
 
     void setInterests(List<WikiDataEntryData> updatedList){
-        //initial call
-        if (originalList == null){
-            originalList = new ArrayList<>(updatedList);
-            filteredList = new ArrayList<>(updatedList);
+        //just update if the displayed list is empty
+        //(can be the initial call or just if there is nothing on
+        // the screen now)
+        if (userInterestFilter.size() == 0){
+            userInterestFilter.setUserInterests(updatedList);
             notifyDataSetChanged();
             return;
         }
 
-        originalList = new ArrayList<>(updatedList);
-        List<WikiDataEntryData> updatedFilteredList = new ArrayList<>(updatedList);
-        updatedFilteredList = filter(updatedFilteredList, filter);
-        List<WikiDataEntryData> prevFilteredList = filteredList;
-        filteredList = updatedFilteredList;
+        //if there is something on the screen,
+        // the list of user interests have changed (!not filtered!)
+        // so animate the inserted/removed items.
+        //save the previous list so we can animate
+        List<WikiDataEntryData> originalList = new ArrayList<>(
+                userInterestFilter.getFilteredList());
+        //updating the user interests takes care of filtering as well
+        userInterestFilter.setUserInterests(updatedList);
 
-        int prevListSize = prevFilteredList.size();
-        int updatedListSize = updatedFilteredList.size();
+        int prevListSize = originalList.size();
+        int updatedListSize = userInterestFilter.size();
         //more than one item removed/added
         if (Math.abs(prevListSize - updatedListSize) > 1){
             notifyDataSetChanged();
@@ -152,8 +155,8 @@ class UserInterestAdapter
         if (prevListSize > updatedListSize){
             //we don't want to go beyond the array range so loop until the smaller one
             for (int i=0; i<updatedListSize; i++){
-                WikiDataEntryData prevListItem = prevFilteredList.get(i);
-                WikiDataEntryData updatedListItem = updatedFilteredList.get(i);
+                WikiDataEntryData prevListItem = originalList.get(i);
+                WikiDataEntryData updatedListItem = userInterestFilter.get(i);
                 if (!prevListItem.equals(updatedListItem)){
                     notifyItemRemoved(i);
                     return;
@@ -165,8 +168,8 @@ class UserInterestAdapter
         //we should add
         if (prevListSize < updatedListSize){
             for (int i=0; i<prevListSize; i++){
-                WikiDataEntryData prevListItem = prevFilteredList.get(i);
-                WikiDataEntryData updatedListItem = updatedFilteredList.get(i);
+                WikiDataEntryData prevListItem = originalList.get(i);
+                WikiDataEntryData updatedListItem = userInterestFilter.get(i);
                 if (!prevListItem.equals(updatedListItem)){
                     notifyItemInserted(i);
                     return;
@@ -187,33 +190,23 @@ class UserInterestAdapter
         if (!ToolbarSpinnerAdapter.isSpinnerState(newFilter))
             return;
 
-        //first instance.
-        //should always initialize list before filtering it,
-        //but just to make sure
-        if (originalList == null){
-            return;
-        }
-
-        if (this.filter == newFilter){
-            //we don't need to do anything
-            //because the filters are the same
-            return;
-        }
-
-        int oldFilter = this.filter;
-        this.filter = newFilter;
-        List<WikiDataEntryData> newFilteredList = new ArrayList<>(originalList);
-        newFilteredList = filter(newFilteredList, newFilter);
-        List<WikiDataEntryData> oldFilteredList = filteredList;
-        filteredList = newFilteredList;
+        //get the current state so we can
+        //animate the changes
+        int oldFilter = userInterestFilter.getFilter();
+        List<WikiDataEntryData> oldFilteredList = new ArrayList<>(
+                userInterestFilter.getFilteredList());
+        userInterestFilter.setFilter(newFilter);
         //should animate filtered list,
         //but only when it goes from all to something else or vice versa
         // since the rest is mutually exclusive??
+        //i.e. if we go from people to places, since there will be no items in common,
+        // animating will just remove all items and then add the new ones
 
         //we want to remove items
         if (oldFilter == ToolbarSpinnerAdapter.FILTER_ALL){
-            //make the new list a st to make it easier to search
-            Set<WikiDataEntryData> newFilteredSet = new HashSet<>(newFilteredList);
+            //make the new list a set to make it easier to search
+            Set<WikiDataEntryData> newFilteredSet = new HashSet<>(
+                    userInterestFilter.getFilteredList());
             int itemsRemoved = 0;
             for (int i=0; i<oldFilteredList.size(); i++){
                 WikiDataEntryData oldItem = oldFilteredList.get(i);
@@ -230,8 +223,8 @@ class UserInterestAdapter
             int tempToAdd = 0;
             int oldFilteredListIndex = 0;
             int itemsAdded =0;
-            for (int i=0; i<newFilteredList.size(); i++){
-                WikiDataEntryData newData = newFilteredList.get(i);
+            for (int i=0; i<userInterestFilter.size(); i++){
+                WikiDataEntryData newData = userInterestFilter.get(i);
                 if (!oldFilteredSet.contains(newData)){
                     tempToAdd++;
                 } else {
@@ -253,30 +246,5 @@ class UserInterestAdapter
         //the rest
         notifyDataSetChanged();
 
-    }
-
-    private List<WikiDataEntryData> filter(List<WikiDataEntryData> list, int filter){
-        if (filter == ToolbarSpinnerAdapter.FILTER_ALL){
-            return list;
-        }
-        List<Integer> toMatchFilter = new ArrayList<>();
-        if (filter == ToolbarSpinnerAdapter.FILTER_PERSON){
-            toMatchFilter.add(WikiDataEntryData.CLASSIFICATION_PERSON);
-        }
-        if (filter == ToolbarSpinnerAdapter.FILTER_PLACE){
-            toMatchFilter.add(WikiDataEntryData.CLASSIFICATION_PLACE);
-        }
-        if (filter == ToolbarSpinnerAdapter.FILTER_OTHER){
-            toMatchFilter.add(WikiDataEntryData.CLASSIFICATION_OTHER);
-            //also all unidentified
-            toMatchFilter.add(WikiDataEntryData.CLASSIFICATION_NOT_SET);
-        }
-        for (Iterator<WikiDataEntryData> iterator = list.iterator(); iterator.hasNext();){
-            WikiDataEntryData data = iterator.next();
-            if (!toMatchFilter.contains(data.getClassification())){
-                iterator.remove();
-            }
-        }
-        return list;
     }
 }

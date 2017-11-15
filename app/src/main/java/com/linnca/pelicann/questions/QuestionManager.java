@@ -27,15 +27,16 @@ public class QuestionManager{
 	private QuestionManagerListener questionManagerListener;
 	private int questionMkr = 0;
 	private int totalQuestions = 0;
-	//store information about this instance of the instance.
-	//a user can run this instance multiple times
+	//store information about this run of the instance.
+	//a user can run an instance multiple times,
+	// getting multiple records
 	private InstanceRecord instanceRecord;
-	//temp variables for each question attempt
+	//start and end times for each question attempt.
 	private long startTimestamp;
 	private long endTimeStamp;
 
-	//save the question data for the review.
-	//we can fetch them again from the question ID, but this prevents another connection to FireBase
+	//save the missed questions for the review.
+	//we can fetch them again from the question ID, but this prevents another connection to the database.
 	//store in a set to prevent duplicates (we are adding every time we get a question attempt)
 	private Set<QuestionData> missedQuestionsForReviewSet = new HashSet<>();
 	private List<QuestionData> missedQuestionsForReviewList = new ArrayList<>();
@@ -112,24 +113,6 @@ public class QuestionManager{
 				}
 			};
 			db.getQuestion(questionID, onResultListener);
-			/*
-			DatabaseReference questionRef = db.getReference(
-					FirebaseDBHeaders.QUESTIONS + "/" +
-							questionID
-			);
-			questionRef.addListenerForSingleValueEvent(new ValueEventListener() {
-				@Override
-				public void onDataChange(DataSnapshot dataSnapshot) {
-					currentQuestionData = dataSnapshot.getValue(QuestionData.class);
-					questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
-					questionMkr++;
-				}
-
-				@Override
-				public void onCancelled(DatabaseError databaseError) {
-					Log.d(TAG, "Error" + databaseError.getMessage());
-				}
-			});*/
 		}
 		//for review
 		else {
@@ -142,49 +125,7 @@ public class QuestionManager{
 			currentQuestionData = missedQuestionsForReviewList.get(questionMkr);
 			questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
 			questionMkr++;
-		} /*else {
-			//somehow we don't have the questions stored.
-			//the instance record still has a record of the questions attempts
-			//so use that
-			boolean foundNextQuestion = false;
-			List<QuestionAttempt> attempts = instanceRecord.getAttempts();
-			for (int i=questionMkr; i<attempts.size(); i++){
-				QuestionAttempt attempt = attempts.get(questionMkr);
-				if (!attempt.getCorrect() && currentQuestionData == null ||
-						!attempt.getCorrect() && !attempt.getQuestionID().equals(currentQuestionData.getId())){
-					foundNextQuestion = true;
-					String questionID = attempt.getQuestionID();
-					DatabaseReference questionRef = db.getReference(
-							FirebaseDBHeaders.QUESTIONS + "/" +
-									questionID
-					);
-					//we don't just increment the question marker because
-					//we are skipping correct questions
-					final int newQuestionMkr = i+1;
-					questionRef.addListenerForSingleValueEvent(new ValueEventListener() {
-						@Override
-						public void onDataChange(DataSnapshot dataSnapshot) {
-							currentQuestionData = dataSnapshot.getValue(QuestionData.class);
-							questionManagerListener.onNextQuestion(currentQuestionData, false);
-							questionMkr = newQuestionMkr;
-						}
-
-						@Override
-						public void onCancelled(DatabaseError databaseError) {
-
-						}
-					});
-					break;
-				}
-			}
-
-			if (!foundNextQuestion){
-				//that means the user is finished with the review
-				resetManager(REVIEW);
-                questionManagerListener.onReviewFinished();
-			}
-		}*/
-
+		}
 	}
 
 	public void saveResponse(String response, Boolean correct){
