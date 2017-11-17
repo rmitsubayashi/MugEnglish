@@ -2,7 +2,6 @@ package com.linnca.pelicann.searchinterests;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -47,17 +47,11 @@ public class SearchInterests extends Fragment {
     private FirebaseAnalytics firebaseLog;
     private Database db;
     private final String TAG = "SearchInterests";
-    private EndpointConnectorReturnsXML connector;
     private SearchView searchView;
     private RecyclerView list;
     private SearchResultsAdapter adapter = null;
     //initial row count of search results
     private final int defaultRowCt = 10;
-    private final int defaultRecommendationCt = 5;
-    private final int incrementRecommendationCt = 5;
-    private int recommendationCt = defaultRecommendationCt;
-    //so we don't show search results queried before the currently shown result
-    private AtomicInteger queryReceivedMaxOrder = new AtomicInteger(0);
     //so only one thread can edit the UI at one time
     private Lock lock = new ReentrantLock();
     //we can do continue=# to get the results from that number of results
@@ -65,10 +59,10 @@ public class SearchInterests extends Fragment {
     private Integer currentRowCt = defaultRowCt;
     //so we can filter out user interests we don't need
     private final List<WikiDataEntryData> userInterests = new ArrayList<>();
-    //we get more than we need to guarantee populating the recommendations
-    //so save it and when the user loads more,
-    // we can reference this first
-    private List<WikiDataEntryData> savedRecommendations;
+    //manages threads for searching
+    private SearchHelper searchHelper;
+    //helps get recommendations
+    private RecommendationGetter recommendationGetter;
 
     private SearchInterestsListener searchInterestsListener;
 
@@ -81,8 +75,6 @@ public class SearchInterests extends Fragment {
         super.onCreate(savedInstanceState);
         //so we can access the search view
         setHasOptionsMenu(true);
-        connector = new WikiDataAPISearchConnector(
-                WikiBaseEndpointConnector.JAPANESE);
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
@@ -94,6 +86,12 @@ public class SearchInterests extends Fragment {
             //hard code a new database instance
             db = new FirebaseDB();
         }
+        searchHelper = new SearchHelper(
+                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE)
+        );
+        recommendationGetter = new RecommendationGetter(
+                5, db, 3
+        );
     }
 
     @Override
@@ -151,6 +149,8 @@ public class SearchInterests extends Fragment {
     }
 
     private void addSearchFunctionality(){
+        //we want to allow searching after we grab the user's current interests
+        //because we need to be able to filter out user interests the user already has
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onUserInterestsQueried(List<WikiDataEntryData> queriedUserInterests) {
@@ -169,23 +169,10 @@ public class SearchInterests extends Fragment {
                     }
 
                     @Override
-                    public boolean onQueryTextChange(final String s) {
-                        //after a short time after the query is entered,
-                        //if no new text has been entered, search.
-                        //if there is new text, do nothing
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (searchView.getQuery().toString().equals(s)) {
-                                    if (s.length() > 1) {
-                                        //search
-                                        search(s, queryReceivedMaxOrder.incrementAndGet());
-
-                                    }
-                                }
-                            }
-                        }, 300);
-
+                    public boolean onQueryTextChange(String query) {
+                        if (query.length() > 0){
+                            searchHelper.search(getSearchHandler(query), query);
+                        }
                         return true;
                     }
                 });
@@ -207,7 +194,6 @@ public class SearchInterests extends Fragment {
         return new SearchResultsAdapter.SearchResultsAdapterListener() {
             @Override
             public void onAddInterest(final WikiDataEntryData data) {
-                //add the interest
                 OnResultListener onResultListener = new OnResultListener() {
                     @Override
                     public void onUserInterestsAdded() {
@@ -223,18 +209,21 @@ public class SearchInterests extends Fragment {
                         addUserInterestHelper.addClassification(data);
                         addUserInterestHelper.addPronunciation(data);
 
-                        //also update the list we have saved locally
+                        //also update the list we have saved locally.
+                        //we stop listening to the user interests after we initially retrieve it,
+                        //so updating the list manually is required
                         userInterests.add(data);
-
-                        //reset recommendation count
-                        recommendationCt = defaultRecommendationCt;
 
                         //clear the search text
                         searchView.setQuery("", false);
                         searchView.clearFocus();
 
-                        //populate list with recommended items
-                        populateRecommendations(data);
+                        //give the data to the adapter
+                        // so it can give feedback to teh user
+                        adapter.setRecommendationWikiDataEntryData(data);
+                        //get recommendations for the user
+                        recommendationGetter.getNewRecommendations(userInterests, data.getWikiDataID(),
+                                getRecommendationGetterListener());
                     }
                 };
 
@@ -246,48 +235,33 @@ public class SearchInterests extends Fragment {
 
             @Override
             public void onLoadMoreRecommendations(WikiDataEntryData data){
-                recommendationCt += incrementRecommendationCt;
-                //check first if we can still populate the recommendations with
-                //the initial list we grabbed
-                if (savedRecommendations.size() >= recommendationCt){
-                    List<WikiDataEntryData> toDisplay = savedRecommendations.subList(0, recommendationCt);
-                    adapter.showRecommendations(toDisplay);
-                } else {
-                    //grab more from the database
-                    populateRecommendations(data);
-                }
+                recommendationGetter.loadMoreRecommendations(userInterests, data.getWikiDataID(),
+                        getRecommendationGetterListener());
 
                 Bundle bundle = new Bundle();
                 bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Load More Recommendations");
-                bundle.putInt(FirebaseAnalytics.Param.VALUE, recommendationCt);
+                bundle.putInt(FirebaseAnalytics.Param.VALUE, recommendationGetter.getToDisplayRecommendationCt());
                 firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
             }
         };
     }
 
-    private void populateRecommendations(WikiDataEntryData data){
-        adapter.setRecommendationWikiDataEntryData(data);
-        OnResultListener onResultListener = new OnResultListener() {
+    private RecommendationGetter.RecommendationGetterListener getRecommendationGetterListener(){
+        return new RecommendationGetter.RecommendationGetterListener() {
             @Override
-            public void onRecommendationsQueried(List<WikiDataEntryData> recommendations) {
-                savedRecommendations = new ArrayList<>(recommendations);
-                if (recommendations.size() > recommendationCt) {
-                    List<WikiDataEntryData> toDisplay = recommendations.subList(0, recommendationCt);
-                    adapter.showRecommendations(toDisplay);
-                } else {
-                    adapter.showRecommendations(recommendations);
-                    //hide the show more footer so the user can't load more (there aren't any)
+            public void onGetRecommendations(List<WikiDataEntryData> results, boolean showLoadMoreButton) {
+                adapter.showRecommendations(results);
+                if (!showLoadMoreButton){
                     adapter.removeFooter();
                 }
             }
         };
-        db.getRecommendations(userInterests, data.getWikiDataID(),
-                recommendationCt, onResultListener);
     }
 
-    private void search(final String query, final int queryOrder){
+    //used so the search thread can connect to the UI thread
+    private Handler getSearchHandler(final String query){
         //main looper makes sure the handler runs on the UI thread
-        final Handler handler = new Handler(Looper.getMainLooper()){
+        return new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message inputMessage){
                 List<WikiDataEntryData> result = (List<WikiDataEntryData>)inputMessage.obj;
@@ -298,11 +272,6 @@ public class SearchInterests extends Fragment {
                 //don't do anything if the list is null
                 //(different from an empty list)
                 if (result == null){
-                    return;
-                }
-                //check if this is the most recent.
-                //if not, don't show this to the user
-                if (queryReceivedMaxOrder.get() != queryOrder){
                     return;
                 }
 
@@ -332,140 +301,7 @@ public class SearchInterests extends Fragment {
                 }
             }
         };
-        EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
-            @Override
-            public boolean shouldStop() {
-                return false;
-            }
-
-            @Override
-            public void onStop() {
-
-            }
-
-            @Override
-            public void onFetchDOM(Document result) {
-                NodeList resultNodes = result.getElementsByTagName(WikiDataAPISearchConnector.ENTITY_TAG);
-                List<WikiDataEntryData> searchResults = new ArrayList<>();
-                int nodeCt = resultNodes.getLength();
-                for (int i=0; i<nodeCt; i++){
-                    Node n = resultNodes.item(i);
-                    if (n.getNodeType() == Node.ELEMENT_NODE)
-                    {
-                        String wikiDataID = "";
-                        String label = "";
-                        String description = "";
-
-                        Element e = (Element)n;
-                        if (e.hasAttribute("id")) {
-                            wikiDataID = e.getAttribute("id");
-                        }
-                        if(e.hasAttribute("label")) {
-                            label = e.getAttribute("label");
-                        }
-
-                        if(e.hasAttribute("description")) {
-                            description = e.getAttribute("description");
-                        }
-
-                        //set pronunciation to label for now.
-                        //if there is a pronunciation field, use that
-                        searchResults.add(new WikiDataEntryData(label, description, wikiDataID, label, WikiDataEntryData.CLASSIFICATION_NOT_SET));
-                    }
-                }
-                Message message = handler.obtainMessage(0, searchResults);
-                message.sendToTarget();
-            }
-        };
-        List<String> queryList = new ArrayList<>(1);
-        queryList.add(query);
-        connector.fetchDOMFromGetRequest(onFetchDOMListener, queryList);
     }
-
-    /*private class SearchConnectionHelperClass {
-        private final String query;
-        private final int maxRowCount;
-        private final int searchOrder;
-
-        SearchConnectionHelperClass(String query, int maxRowCount, int searchOrder) {
-            this.query = query;
-            this.maxRowCount = maxRowCount;
-            this.searchOrder = searchOrder;
-        }
-
-        public String getQuery() {
-            return query;
-        }
-
-        int getMaxRowCount() {
-            return maxRowCount;
-        }
-
-        int getSearchOrder() {
-            return searchOrder;
-        }
-    }
-
-    private class SearchConnection extends AsyncTask< SearchConnectionHelperClass, Integer, List<WikiDataEntryData> > {
-        private String query;
-        @Override
-        protected List<WikiDataEntryData> doInBackground(SearchConnectionHelperClass... queryList){
-            SearchConnectionHelperClass helper = queryList[0];
-            query = helper.getQuery();
-            int maxRowCount = helper.getMaxRowCount();
-            final int searchOrder = helper.getSearchOrder();
-            List<WikiDataEntryData> result = new ArrayList<>();
-            try {
-                result = searcher.search(query, maxRowCount);
-                //if another query that came after this one finished first,
-                //don't execute this query
-                lock.lock();
-                try {
-                    if (queryOrderReceived > searchOrder) {
-                        lock.unlock();
-                        return null;
-                    }
-                    queryOrderReceived = searchOrder;
-                } finally {
-                    lock.unlock();
-                }
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(List<WikiDataEntryData> result){
-            //if the user exited the screen and we can't update the list
-            if (!SearchInterests.this.isVisible()){
-                return;
-            }
-            //don't do anything if this query comes before another one already reflected
-            if (result == null){
-                return;
-            }
-            //the adapter might not be loaded yet
-            if (adapter != null){
-                //filter out all of the user's interests
-                result.removeAll(userInterests);
-                //remove disambiguation pages (we will never need them)
-                removeDisambiguationPages(result);
-                //display empty state if the results are empty
-                if (result.size() == 0){
-                    WikiDataEntryData emptyState = new WikiDataEntryData();
-                    emptyState.setWikiDataID(adapter.VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID);
-                    emptyState.setLabel(query);
-                    result.add(emptyState);
-                }
-                adapter.updateEntries(result);
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, query);
-                firebaseLog.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
-            }
-        }
-    }*/
 
     private void removeDisambiguationPages(List<WikiDataEntryData> result){
         for (Iterator<WikiDataEntryData> iterator = result.iterator(); iterator.hasNext();){

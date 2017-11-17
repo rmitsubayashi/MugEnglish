@@ -55,7 +55,7 @@ class LessonDetailsAdapter
         return allInstances.size();
     }
 
-    public void setLessonInstances(List<LessonInstanceData> instances){
+    void setLessonInstances(List<LessonInstanceData> instances){
         allInstances.clear();
         allInstances.addAll(instances);
 
@@ -118,26 +118,6 @@ class LessonDetailsAdapter
         String createdLabel = holder.itemView.getContext().
                 getResources().getString(R.string.lesson_details_created);
         holder.setCreated(createdLabel + ": " + dateString);
-
-        /*
-        //set action listener
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lessonDetailsListener.lessonDetailsToQuestions(holder.getAdapterPosition(), lessonKey);
-            }
-        });*/
-
-        //final DatabaseReference ref = getItem(position);
-        /*
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                longClickData = data;
-                //returning false so we can catch the onlongclicklistener of the parent
-                return false;
-            }
-        });*/
     }
 
 

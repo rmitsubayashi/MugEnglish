@@ -2,7 +2,6 @@ package com.linnca.pelicann.questions;
 
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class QuestionFeedbackFormatterTest {
-    private QuestionData questionData;
 
     @Test
     public void formatFeedback_wrongResponseWithNoSpecificFeedback_feedbackShouldAtLeastContainTheCorrectAnswer(){

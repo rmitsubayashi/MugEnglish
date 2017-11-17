@@ -21,13 +21,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -38,7 +36,7 @@ public abstract class Question_General extends Fragment {
     public static final String BUNDLE_QUESTION_NUMBER = "bundleQuestionNumber";
     public static final String BUNDLE_QUESTION_TOTAL_QUESTIONS = "bundleTotalQuestions";
 
-    QuestionData questionData;
+    protected QuestionData questionData;
     private int questionNumber;
     private int totalQuestions;
     private final List<String> allWrongResponses = new ArrayList<>();
@@ -48,9 +46,9 @@ public abstract class Question_General extends Fragment {
     private BottomSheetBehavior behavior;
     private NestedScrollView feedback;
     private Button nextButton;
-    ViewGroup parentViewGroupForFeedback;
-    ViewGroup siblingViewGroupForFeedback;
-    View keyboardFocusView;
+    protected ViewGroup parentViewGroupForFeedback;
+    protected ViewGroup siblingViewGroupForFeedback;
+    protected View keyboardFocusView;
 
     private QuestionListener questionListener;
 

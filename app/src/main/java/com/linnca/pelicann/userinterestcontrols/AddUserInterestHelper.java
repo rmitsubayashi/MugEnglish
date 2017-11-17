@@ -8,7 +8,6 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 

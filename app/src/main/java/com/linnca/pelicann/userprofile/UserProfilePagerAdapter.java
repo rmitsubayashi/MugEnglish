@@ -7,10 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.questions.InstanceRecord;
-
-import java.io.Serializable;
-import java.util.List;
 
 class UserProfilePagerAdapter extends FragmentPagerAdapter {
     private final int tabCount;

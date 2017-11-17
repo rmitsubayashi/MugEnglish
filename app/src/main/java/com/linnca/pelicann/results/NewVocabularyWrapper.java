@@ -11,7 +11,7 @@ public class NewVocabularyWrapper {
         this.isNew = isNew;
     }
 
-    public VocabularyWord getVocabularyWord() {
+    VocabularyWord getVocabularyWord() {
         return vocabularyWord;
     }
 

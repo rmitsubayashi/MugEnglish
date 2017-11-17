@@ -49,13 +49,12 @@ public class QuestionUtils {
 
         return question;
     }
-
-    public static String getChatQuestionFrom(String questionString){
+    static String getChatQuestionFrom(String questionString){
         int breakIndex = questionString.indexOf("::");
         return questionString.substring(0, breakIndex);
     }
 
-    public static List<ChatQuestionItem> getChatQuestionChatItems(String questionString){
+    static List<ChatQuestionItem> getChatQuestionChatItems(String questionString){
         List<ChatQuestionItem> chatItems = new ArrayList<>();
         String[] split = questionString.split("::");
         //shouldn't happen, but just in case

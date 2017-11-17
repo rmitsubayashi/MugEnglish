@@ -261,15 +261,9 @@ public class LessonDetails extends Fragment {
             }
         );
 
-        //first part connects to Firebase
-        // thus running on the main UI thread.
-        //the second part (connecting to wikidata)
-        // runs on an async task
         if (lesson != null) {
             lesson.createInstance();
         }
-
-        //the list listens for inserts and removes the loading spinner
     }
 
     private void disableCreateButtonForLoading(){
@@ -405,8 +399,8 @@ public class LessonDetails extends Fragment {
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
+    public void onStop(){
+        super.onStop();
         db.cleanup();
     }
 

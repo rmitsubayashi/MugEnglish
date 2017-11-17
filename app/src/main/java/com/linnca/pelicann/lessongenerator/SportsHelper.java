@@ -1,8 +1,5 @@
 package com.linnca.pelicann.lessongenerator;
 
-import android.util.Log;
-
-import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;

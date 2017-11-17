@@ -191,7 +191,7 @@
     <string name="search_interests_recommendations_more">もっと表示する</string>
     <string name="search_interests_empty_state_title">「%1$s」の検索結果　0件</string>
     <string name="search_interests_empty_state_title_backup">見つかりませんでした</string>
-    <string name="search_interests_empty_state_advice">検索エンジンはWikipedia（ウィキペディア）のデータベースを参照しています。\nWikipediaの記事に載っている題名を検索してみてください！</string>
+    <string name="search_interests_empty_state_advice">検索エンジンはWikipedia（ウィキペディア）を参照しています。\nWikipediaの記事に載っている題名を検索してみてください！</string>
 
     <!--Facebook interests-->
     <string name="facebook_interests_app_bar_title">Facebookで検索</string>

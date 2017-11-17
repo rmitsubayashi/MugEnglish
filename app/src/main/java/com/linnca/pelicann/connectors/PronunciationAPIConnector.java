@@ -1,7 +1,6 @@
 package com.linnca.pelicann.connectors;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;

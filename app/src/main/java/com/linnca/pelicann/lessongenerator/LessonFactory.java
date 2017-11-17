@@ -2,11 +2,7 @@ package com.linnca.pelicann.lessongenerator;
 
 //create an instance of the required lesson class
 
-import android.util.Log;
-
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
-import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.lessons.COMPANY_makes_PRODUCT;
 import com.linnca.pelicann.lessongenerator.lessons.COUNTRY_drives_on_the_left_right;

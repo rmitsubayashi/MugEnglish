@@ -14,8 +14,11 @@ import com.linnca.pelicann.vocabulary.VocabularyWord;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 //we are creating a mock database for testing purposes.
 //some of the data is narrowed down.
@@ -41,6 +44,7 @@ public class MockFirebaseDB extends Database {
     public Map<String, VocabularyListWord> vocabularyListWords = new HashMap<>();
     //user interest ID -> ID -> set IDs
     public Map<String, List<String>> questionSetsPerUserInterestPerQuestion = new HashMap<>();
+    public List<WikiDataEntryData> recommendations = new ArrayList<>();
 
     @Override
     public String getUserID() {
@@ -261,7 +265,17 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void getRecommendations(Collection<WikiDataEntryData> userInterests, String targetUserInterestID, int recommendationCt, OnResultListener onResultListener) {
-
+        //don't care about filtering out user interests for the mock database.
+        //also don't care about the weight of each recommendation edge for mocking.
+        //but make sure we retrieve the right number of recommendations
+        List<WikiDataEntryData> result;
+        recommendationCt = recommendationCt + userInterests.size();
+        if (recommendationCt >= recommendations.size()){
+            result = new ArrayList<>(recommendations);
+        } else {
+            result = new ArrayList<>(recommendations.subList(0, recommendationCt));
+        }
+        onResultListener.onRecommendationsQueried(result);
     }
 
     @Override

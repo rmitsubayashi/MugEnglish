@@ -2,7 +2,6 @@ package com.linnca.pelicann.questions;
 
 
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 
@@ -30,10 +29,7 @@ public class QuestionManager{
 	//store information about this run of the instance.
 	//a user can run an instance multiple times,
 	// getting multiple records
-	private InstanceRecord instanceRecord;
-	//start and end times for each question attempt.
-	private long startTimestamp;
-	private long endTimeStamp;
+	private InstanceRecordManager instanceRecordManager;
 
 	//save the missed questions for the review.
 	//we can fetch them again from the question ID, but this prevents another connection to the database.
@@ -72,7 +68,7 @@ public class QuestionManager{
 		if (!reviewStarted){
 			reviewStarted = true;
 			questionsStarted = false;//just to make sure
-			this.instanceRecord = instanceRecord;
+			instanceRecordManager = new InstanceRecordManager(instanceRecord);
 			totalQuestions = missedQuestionsForReviewSet.size();
 			//make it easier to loop through
 			missedQuestionsForReviewList = new ArrayList<>(missedQuestionsForReviewSet);
@@ -92,12 +88,14 @@ public class QuestionManager{
 			return;
 		}
 
+		instanceRecordManager.setQuestionAttemptStartTimestamp();
+
 		//for normal questions
 		if (questionsStarted) {
 			//if we are done with the questions
 			if (questionMkr == lessonInstanceData.questionCount()) {
-				instanceRecord.setCompleted(true);
-				questionManagerListener.onQuestionsFinished(instanceRecord);
+				instanceRecordManager.markInstanceCompleted();
+				questionManagerListener.onQuestionsFinished(instanceRecordManager.getInstanceRecord());
 				//make sure to call this last because this resets the instance record
 				resetManager(QUESTIONS);
 				return;
@@ -133,34 +131,10 @@ public class QuestionManager{
 			//don't save anything if this is a review
 			return;
 		}
-		String questionID = currentQuestionData.getId();
-		List<QuestionAttempt> attempts = instanceRecord.getAttempts();
-		int attemptNumber;
-		//first attempt at first question
-		if (attempts.size() == 0) {
-			//prevents array out of bounds exception
-			attemptNumber = 1;
-		} else {
-			QuestionAttempt lastAttempt = attempts.get(attempts.size() - 1);
-			if (questionID.equals(lastAttempt.getQuestionID())){
-				//same question so this is an attempt at the same question
-				attemptNumber = lastAttempt.getAttemptNumber() + 1;
-			} else {
-				//new question so first attempt number
-				attemptNumber = 1;
-			}
-		}
-		endTimeStamp = System.currentTimeMillis();
-		QuestionAttempt attempt = new QuestionAttempt(
-				attemptNumber,questionID,response,correct,
-				startTimestamp,endTimeStamp);
 
-		attempts.add(attempt);
+		instanceRecordManager.addQuestionAttempt(currentQuestionData.getId(), response, correct);
 
-		//this should be the new start time for the next question
-		startTimestamp = System.currentTimeMillis();
-
-		//for when the user reviews
+		//save incorrect responses for when the user reviews
 		if (!correct){
 			//the user may have multiple question attempts per question.
 			//the set prevents duplicate questions
@@ -170,14 +144,8 @@ public class QuestionManager{
 	}
 
 	private void startNewInstanceRecord(){
-		instanceRecord = new InstanceRecord();
-		instanceRecord.setCompleted(false);
-		instanceRecord.setInstanceId(lessonInstanceData.getId());
-		instanceRecord.setLessonId(lessonKey);
-		instanceRecord.setAttempts(new ArrayList<QuestionAttempt>());
-		startTimestamp = System.currentTimeMillis();
-		//generating the ID of the instance record
-		// once we save it in the database
+		instanceRecordManager = new InstanceRecordManager(lessonInstanceData.getId(),
+				lessonKey);
 	}
 
 
@@ -187,7 +155,7 @@ public class QuestionManager{
 		totalQuestions = 0;
 		lessonInstanceData = null;
 		currentQuestionData = null;
-		instanceRecord = null;
+		instanceRecordManager = null;
 		if (identifier == QUESTIONS){
 			questionsStarted = false;
 		}

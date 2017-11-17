@@ -1,7 +1,6 @@
 package com.linnca.pelicann.results;
 
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
 import com.linnca.pelicann.questions.InstanceRecord;

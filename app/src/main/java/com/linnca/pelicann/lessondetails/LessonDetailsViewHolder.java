@@ -11,7 +11,7 @@ class LessonDetailsViewHolder extends RecyclerView.ViewHolder{
     private final TextView interestsLabel;
     private final TextView created;
 
-    public LessonDetailsViewHolder(View itemView) {
+    LessonDetailsViewHolder(View itemView) {
         super(itemView);
         interestsLabel = itemView.findViewById(R.id.lesson_details_item_topics);
         created = itemView.findViewById(R.id.lesson_details_item_date_created);
