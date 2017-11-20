@@ -259,12 +259,21 @@ public class SearchInterests extends Fragment {
     }
 
     //used so the search thread can connect to the UI thread
+    @SuppressWarnings("unchecked")
     private Handler getSearchHandler(final String query){
         //main looper makes sure the handler runs on the UI thread
         return new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message inputMessage){
-                List<WikiDataEntryData> result = (List<WikiDataEntryData>)inputMessage.obj;
+                List<WikiDataEntryData> result;
+                try {
+                    //I catch the class cast exception but Android Studio
+                    // still shows the unchecked cast warning??
+                    result = (List<WikiDataEntryData>) inputMessage.obj;
+                } catch (ClassCastException e){
+                    e.printStackTrace();
+                    return;
+                }
                 //if the user exited the screen and we can't update the list
                 if (!SearchInterests.this.isVisible()){
                     return;

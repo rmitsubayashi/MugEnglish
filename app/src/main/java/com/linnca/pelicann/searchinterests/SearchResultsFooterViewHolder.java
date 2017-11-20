@@ -14,7 +14,7 @@ class SearchResultsFooterViewHolder extends RecyclerView.ViewHolder {
         button = itemView.findViewById(R.id.search_interests_recommendations_more_button);
     }
 
-    public void setButton(View.OnClickListener listener){
+    public void setButtonListener(View.OnClickListener listener){
         button.setOnClickListener(listener);
     }
 }

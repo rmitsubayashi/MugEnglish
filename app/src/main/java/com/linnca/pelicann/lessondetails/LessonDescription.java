@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
+import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class LessonDescription extends Fragment {
                              Bundle savedInstanceState){
         String lessonKey = getArguments().getString(BUNDLE_LESSON_KEY);
         alwaysShowException = getArguments().getBoolean(BUNDLE_SHOW_EXCEPTION);
-        LessonHierarchyViewer helper = new LessonHierarchyViewer();
+        LessonListViewer helper = new LessonListViewer();
         LessonData lessonData = helper.getLessonData(lessonKey);
         Integer layoutID = lessonData.getDescriptionLayout();
         if (layoutID == null){

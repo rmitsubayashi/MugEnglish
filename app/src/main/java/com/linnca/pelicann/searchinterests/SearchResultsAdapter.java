@@ -1,5 +1,6 @@
 package com.linnca.pelicann.searchinterests;
 
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,9 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private boolean showFooter = false;
     private String headerLabel = "";
     private WikiDataEntryData recommendationWikiDataEntryData;
+
+    //prevent fast double clicks on any of the buttons
+    private long lastClickTime = 0;
 
     interface SearchResultsAdapterListener {
         void onAddInterest(WikiDataEntryData data);
@@ -90,13 +94,20 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             ((SearchResultsViewHolder)viewHolder).setButtonListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    //make sure the user can't double click
+                    if (SystemClock.elapsedRealtime() - lastClickTime < 1000){
+                        return;
+                    }
+                    //update the last clicked time
+                    lastClickTime = SystemClock.elapsedRealtime();
+                    //add the interest
                     searchResultsAdapterListener.onAddInterest(fData);
                 }
             });
         } else if (viewHolder instanceof SearchResultsHeaderViewHolder){
             ((SearchResultsHeaderViewHolder) viewHolder).setTitle(headerLabel);
         } else if (viewHolder instanceof SearchResultsFooterViewHolder){
-            ((SearchResultsFooterViewHolder) viewHolder).setButton(new View.OnClickListener() {
+            ((SearchResultsFooterViewHolder) viewHolder).setButtonListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     searchResultsAdapterListener.onLoadMoreRecommendations(recommendationWikiDataEntryData);

@@ -2,7 +2,7 @@ package com.linnca.pelicann.results;
 
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnResultListener;
-import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
+import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
 
@@ -34,9 +34,9 @@ class ResultsManager {
         db.addInstanceRecord(instanceRecord, instanceRecordOnResultListener);
 
         //also save correct count for displaying the report card
-        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
+        LessonListViewer lessonListViewer = new LessonListViewer();
         String lessonKey = instanceRecord.getLessonId();
-        int level = lessonHierarchyViewer.getLessonLevel(lessonKey);
+        int level = lessonListViewer.getLessonLevel(lessonKey);
         final int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
         OnResultListener reportCartOnResultListener = new OnResultListener() {
             @Override
@@ -67,9 +67,9 @@ class ResultsManager {
     }
 
     void checkLessonCleared(){
-        LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
+        LessonListViewer lessonListViewer = new LessonListViewer();
         String lessonKey = instanceRecord.getLessonId();
-        int level = lessonHierarchyViewer.getLessonLevel(lessonKey);
+        int level = lessonListViewer.getLessonLevel(lessonKey);
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onClearedLessonAdded(boolean firstTimeCleared) {

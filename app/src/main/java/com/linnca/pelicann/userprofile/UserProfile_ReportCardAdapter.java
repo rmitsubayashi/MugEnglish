@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
+import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListRow;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ class UserProfile_ReportCardAdapter
     private final int VIEW_TYPE_HEADER = 2;
     //any integer other than these will be the average accuracy
     static final int NOT_CLEARED = -1;
-    private final LessonHierarchyViewer lessonHierarchyViewer;
+    private final LessonListViewer lessonListViewer;
     private int lessonLevel;
     private List<LessonListRow> rows;
     private Map<String, UserProfile_ReportCardDataWrapper> data = new HashMap<>();
@@ -36,7 +36,7 @@ class UserProfile_ReportCardAdapter
 
     UserProfile_ReportCardAdapter(int lessonLevel,
                                   ReportCardListener listener){
-        lessonHierarchyViewer = new LessonHierarchyViewer();
+        lessonListViewer = new LessonListViewer();
         this.listener = listener;
 
         setLessons(lessonLevel);
@@ -56,7 +56,7 @@ class UserProfile_ReportCardAdapter
     }
 
     private void setLessons(int level){
-        List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(level);
+        List<LessonListRow> lessonRows = lessonListViewer.getLessonsAtLevel(level);
         //don't include reviews
         for (Iterator<LessonListRow> iterator = lessonRows.iterator(); iterator.hasNext();){
             LessonListRow row = iterator.next();

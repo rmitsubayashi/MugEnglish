@@ -36,7 +36,7 @@ import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
-import com.linnca.pelicann.lessonlist.LessonHierarchyViewer;
+import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonList;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
     private FragmentManager fragmentManager;
     private boolean navigationItemSelected = false;
     private int selectedNavigationItemID = -1;
-    private LessonHierarchyViewer lessonHierarchyViewer;
+    private LessonListViewer lessonListViewer;
     private long startAppTimestamp;
 
     private String topmostFragmentTag = "";
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         LessonFactory.saveGenericQuestions(db);
-        lessonHierarchyViewer = new LessonHierarchyViewer();
+        lessonListViewer = new LessonListViewer();
 
         toolbar = findViewById(R.id.tool_bar);
         toolbarSpinner = toolbar.findViewById(R.id.tool_bar_spinner);
@@ -443,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements
         //make sure when the user presses the back button after the redirect,
         //the user goes to the lesson list screen
         Fragment fragment1 = new LessonList();
-        int lessonLevel = lessonHierarchyViewer.getLessonLevel(lessonKey);
+        int lessonLevel = lessonListViewer.getLessonLevel(lessonKey);
         Bundle bundle1 = new Bundle();
         bundle1.putInt(LessonList.LESSON_LEVEL, lessonLevel);
         bundle1.putSerializable(BUNDLE_DATABASE, db);
@@ -455,7 +455,7 @@ public class MainActivity extends AppCompatActivity implements
         fragmentTransaction = fragmentManager.beginTransaction();
         Fragment fragment2 = new LessonDetails();
         Bundle bundle2 = new Bundle();
-        bundle2.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonHierarchyViewer.getLessonData(lessonKey));
+        bundle2.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonListViewer.getLessonData(lessonKey));
         bundle2.putSerializable(BUNDLE_DATABASE, db);
         fragment2.setArguments(bundle2);
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment2, FRAGMENT_LESSON_DETAILS);
@@ -759,7 +759,7 @@ public class MainActivity extends AppCompatActivity implements
         if (descriptionLessonKey == null) {
             descriptionIconVisible = false;
         } else {
-            descriptionIconVisible = lessonHierarchyViewer.layoutExists(descriptionLessonKey);
+            descriptionIconVisible = lessonListViewer.layoutExists(descriptionLessonKey);
 
         }
 
