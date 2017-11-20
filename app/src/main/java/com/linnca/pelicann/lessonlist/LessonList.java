@@ -104,9 +104,9 @@ public class LessonList extends Fragment {
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
-                LessonHierarchyViewer lessonHierarchyViewer = new LessonHierarchyViewer();
-                //lessonHierarchyViewer.debugUnlockAllLessons();
-                List<LessonListRow> lessonRows = lessonHierarchyViewer.getLessonsAtLevel(lessonLevel);
+                LessonListViewer lessonListViewer = new LessonListViewer();
+                //lessonListViewer.debugUnlockAllLessons();
+                List<LessonListRow> lessonRows = lessonListViewer.getLessonsAtLevel(lessonLevel);
                 if (adapter == null) {
                     adapter = new LessonListAdapter(lessonRows, listener, clearedLessonKeys);
                     listView.setAdapter(adapter);

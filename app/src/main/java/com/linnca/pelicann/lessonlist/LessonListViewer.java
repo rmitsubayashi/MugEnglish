@@ -70,13 +70,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LessonHierarchyViewer {
+public class LessonListViewer {
     private final List<List<LessonListRow>> lessonLevels = new ArrayList<>();
     //so we can go people1 -> people2 -> people3
     private Map<String, Integer> titleCount;
     private final String review = "ふくしゅう";
 
-    public LessonHierarchyViewer(){
+    public LessonListViewer(){
         populateLessons();
     }
 
@@ -206,7 +206,6 @@ public class LessonHierarchyViewer {
         col2Prerequisites.add(Hello_my_name_is_NAME_I_am_a_OCCUPATION.KEY);
         col2Prerequisites.add(Hello_my_name_is_NAME_I_am_from_CITY.KEY);
         col2Data = new LessonData("id_review2", review, null, col2Prerequisites, 100, 0, 0);
-        col2Data.setPrerequisiteLeeway(1);
         row.setCol2(col2Data);
         lessonRows.add(row);
 
@@ -263,7 +262,6 @@ public class LessonHierarchyViewer {
         col2Prerequisites.add(NAME_is_at_work_He_is_at_EMPLOYER.KEY);
         col2Prerequisites.add(COMPANY_makes_PRODUCT.KEY);
         col2Data = new LessonData("id_review3", review, null, col2Prerequisites, 100, 0, 0);
-        col2Data.setPrerequisiteLeeway(0);
         row.setCol2(col2Data);
         lessonRows.add(row);
 
@@ -308,7 +306,6 @@ public class LessonHierarchyViewer {
         col2Prerequisites.add(NAME_is_NAME2_possessive_husband_wife.KEY);
         col2Prerequisites.add(COUNTRY_possessive_area_is_AREA.KEY);
         col2Data = new LessonData("id_review4", review, null, col2Prerequisites, 100, 0, 0);
-        col2Data.setPrerequisiteLeeway(0);
         row.setCol2(col2Data);
         lessonRows.add(row);
 

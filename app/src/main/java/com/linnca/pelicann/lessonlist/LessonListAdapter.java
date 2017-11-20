@@ -200,15 +200,11 @@ class LessonListAdapter
         if (prerequisites == null){
             return STATUS_ACTIVE;
         }
-        int activeLeeway = data.getPrerequisiteLeeway();
-        int currentLeeway = 0;
+        //check if we've cleared all prerequisites for this lesson
         for (String prerequisiteKey : prerequisites){
             if (!clearedLessonKeys.contains(prerequisiteKey)){
-                if (currentLeeway >= activeLeeway) {
-                    active = false;
-                    break;
-                }
-                currentLeeway++;
+                active = false;
+                break;
             }
         }
         if (active){
