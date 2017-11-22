@@ -182,6 +182,10 @@
     <string name="results_vocabulary">単語リスト</string>
     <string name="results_vocabulary_item_add">+ 追加</string>
     <string name="results_vocabulary_item_added">追加済</string>
+    <!--results after review-->
+    <string name="review_results_title">復習お疲れ様です</string>
+    <string name="review_results_correct_ct">正解数</string>
+    <string name="review_results_finish">終了する</string>
 
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>

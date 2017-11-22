@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 public class LessonList extends Fragment {
-    private final String TAG = "LessonList";
+    public static final String TAG = "LessonList";
     public static final String LESSON_LEVEL = "lessonLevel";
     private final String SAVED_STATE_LIST_STATE = "listState";
     private Database db;
@@ -36,7 +36,7 @@ public class LessonList extends Fragment {
 
     public interface LessonListListener {
         void lessonListToLessonDetails(LessonData lessonData);
-        void lessonListToReview(String key);
+        void lessonListToReview(int lessonLevel, String key);
         void setToolbarState(ToolbarState state);
     }
 
@@ -108,7 +108,7 @@ public class LessonList extends Fragment {
                 //lessonListViewer.debugUnlockAllLessons();
                 List<LessonListRow> lessonRows = lessonListViewer.getLessonsAtLevel(lessonLevel);
                 if (adapter == null) {
-                    adapter = new LessonListAdapter(lessonRows, listener, clearedLessonKeys);
+                    adapter = new LessonListAdapter(lessonLevel, lessonRows, listener, clearedLessonKeys);
                     listView.setAdapter(adapter);
                 } else {
                     if (listView.getAdapter() == null){
@@ -119,7 +119,7 @@ public class LessonList extends Fragment {
                 }
             }
         };
-        db.getClearedLessons(lessonLevel, onResultListener);
+        db.getClearedLessons(lessonLevel, true, onResultListener);
     }
 
     @Override

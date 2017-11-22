@@ -8,6 +8,7 @@ class FirebaseDBHeaders {
     //make sure this matches the class variable name
     static final String USER_INTERESTS_CLASSIFICATION = "classification";
     static final String CLEARED_LESSONS = "clearedLessons";
+    static final String REVIEW_QUESTIONS = "reviewQuestions";
     static final String LESSON_INSTANCES = "lessonInstances";
     static final String LESSON_INSTANCE_VOCABULARY = "lessonInstanceVocabulary";
     static final String QUESTIONS = "questions";

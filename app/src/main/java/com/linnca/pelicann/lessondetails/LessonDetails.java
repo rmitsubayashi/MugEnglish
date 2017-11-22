@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class LessonDetails extends Fragment {
-    private final String TAG = "LessonDetails";
+    public static final String TAG = "LessonDetails";
     private Database db;
     private String userID;
     private FirebaseAnalytics firebaseLog;

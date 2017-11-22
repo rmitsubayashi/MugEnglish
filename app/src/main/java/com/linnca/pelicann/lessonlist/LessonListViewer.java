@@ -70,6 +70,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//stores the lesson list information
+// and formats it for viewing
 public class LessonListViewer {
     private final List<List<LessonListRow>> lessonLevels = new ArrayList<>();
     //so we can go people1 -> people2 -> people3
@@ -450,9 +452,6 @@ public class LessonListViewer {
         adjustRowTitles(lessonRows);
         lessonLevels.add(lessonRows);
 
-
-
-
         titleCount.clear();
         //make sure we don't clear but overwrite the reference
         lessonRows = new ArrayList<>(50);
@@ -554,6 +553,26 @@ public class LessonListViewer {
         return -1;
     }
 
+    public int getLessonRowIndex(String lessonKey){
+        int levelCt = lessonLevels.size();
+        for (int i=0; i<levelCt; i++) {
+            List<LessonListRow> lessonRows = lessonLevels.get(i);
+            int rowCt = lessonRows.size();
+            for (int j=0; j<rowCt; j++) {
+                LessonListRow row = lessonRows.get(j);
+                for (LessonData lessonData : row.getLessons()) {
+                    if (lessonData == null)
+                        continue;
+                    if (lessonData.getKey().equals(lessonKey)) {
+                        return j;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    //for description page
     public boolean layoutExists(String lessonKey){
         for (List<LessonListRow> lessonRows : lessonLevels) {
             for (LessonListRow row : lessonRows) {

@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessonlist;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -16,13 +17,13 @@ class LessonListReviewRowViewHolder extends RecyclerView.ViewHolder {
         button = itemView.findViewById(R.id.lesson_list_list_review_item_button);
     }
 
-    void populateRow(final LessonData data, final LessonList.LessonListListener listener, int status){
+    void populateRow(final LessonData data, final LessonList.LessonListListener listener, int status, final int lessonLevel){
         button.setText(data.getTitle());
         if (status == LessonListAdapter.STATUS_ACTIVE){
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    listener.lessonListToReview(data.getKey());
+                    listener.lessonListToReview(lessonLevel, data.getKey());
                 }
             });
             button.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.orange500));

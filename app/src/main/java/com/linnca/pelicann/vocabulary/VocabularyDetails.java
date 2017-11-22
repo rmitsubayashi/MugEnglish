@@ -21,7 +21,7 @@ import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import java.util.List;
 
 public class VocabularyDetails extends Fragment{
-    private final String TAG = "VocabularyDetails";
+    public static final String TAG = "VocabularyDetails";
     public static final String BUNDLE_VOCABULARY_ID = "vocabularyID";
 
     private String key;

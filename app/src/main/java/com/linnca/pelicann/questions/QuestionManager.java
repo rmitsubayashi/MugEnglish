@@ -15,11 +15,8 @@ import java.util.Set;
 
 public class QuestionManager{
 	private final String TAG = "QuestionManager";
-	public static final int QUESTIONS = 1;
-	public static final int REVIEW = 2;
 	private Database db;
 	private boolean questionsStarted = false;
-	private boolean reviewStarted = false;
 	private LessonInstanceData lessonInstanceData = null;
 	private String lessonKey = null;
 	private QuestionData currentQuestionData;
@@ -28,19 +25,19 @@ public class QuestionManager{
 	private int totalQuestions = 0;
 	//store information about this run of the instance.
 	//a user can run an instance multiple times,
-	// getting multiple records
+	// getting multiple records for an instance
 	private InstanceRecordManager instanceRecordManager;
 
-	//save the missed questions for the review.
+	//save the missed questions for the instance review.
 	//we can fetch them again from the question ID, but this prevents another connection to the database.
 	//store in a set to prevent duplicates (we are adding every time we get a question attempt)
-	private Set<QuestionData> missedQuestionsForReviewSet = new HashSet<>();
-	private List<QuestionData> missedQuestionsForReviewList = new ArrayList<>();
+	private Set<QuestionData> missedQuestionsForReview = new HashSet<>();
 
 	public interface QuestionManagerListener{
 		void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion);
-		void onQuestionsFinished(InstanceRecord instanceRecord);
-        void onReviewFinished();
+		//arrayList so we can easily save it in a bundle
+		void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs,
+								 List<QuestionData> missedQuestions);
 	}
 
 	public QuestionManager(Database db, QuestionManagerListener listener){
@@ -51,7 +48,6 @@ public class QuestionManager{
 	public void startQuestions(LessonInstanceData data, String lessonKey){
 		if(!questionsStarted) {
 			questionsStarted = true;
-			reviewStarted = false;//just to make sure
 			this.lessonInstanceData = data;
 			totalQuestions = lessonInstanceData.questionCount();
 			this.lessonKey = lessonKey;
@@ -64,81 +60,47 @@ public class QuestionManager{
         return questionsStarted;
     }
 
-	public void startReview(InstanceRecord instanceRecord){
-		if (!reviewStarted){
-			reviewStarted = true;
-			questionsStarted = false;//just to make sure
-			instanceRecordManager = new InstanceRecordManager(instanceRecord);
-			totalQuestions = missedQuestionsForReviewSet.size();
-			//make it easier to loop through
-			missedQuestionsForReviewList = new ArrayList<>(missedQuestionsForReviewSet);
-			nextQuestion(true);
-		}
-	}
-
-	public boolean reviewStarted(){
-        return reviewStarted;
-    }
-
     //we need to know whether this is the first question
 	//so we can put the previous fragment on the back stack
 	public void nextQuestion(final boolean isFirstQuestion){
 		//don't do anything if we haven't started anything
-		if (!questionsStarted && !reviewStarted){
+		if (!questionsStarted){
 			return;
 		}
-
 		instanceRecordManager.setQuestionAttemptStartTimestamp();
 
-		//for normal questions
-		if (questionsStarted) {
-			//if we are done with the questions
-			if (questionMkr == lessonInstanceData.questionCount()) {
-				instanceRecordManager.markInstanceCompleted();
-				questionManagerListener.onQuestionsFinished(instanceRecordManager.getInstanceRecord());
-				//make sure to call this last because this resets the instance record
-				resetManager(QUESTIONS);
-				return;
-			}
-			//next question
-			String questionID = lessonInstanceData.getQuestionIdAt(questionMkr);
-			OnResultListener onResultListener = new OnResultListener() {
-				@Override
-				public void onQuestionQueried(QuestionData questionData) {
-					currentQuestionData = questionData;
-					questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
-					questionMkr++;
-				}
-			};
-			db.getQuestion(questionID, onResultListener);
+		//if we are done with the questions
+		if (questionMkr == lessonInstanceData.questionCount()) {
+			instanceRecordManager.markInstanceCompleted();
+			questionManagerListener.onQuestionsFinished(instanceRecordManager.getInstanceRecord(),
+					new ArrayList<>(lessonInstanceData.getQuestionIds()),
+					new ArrayList<>(missedQuestionsForReview));
+			//the user will not be able to go back and redo this question again,
+			// so we can reset everything
+			resetManager();
+			return;
 		}
-		//for review
-		else {
-			//review
-			if (questionMkr == missedQuestionsForReviewList.size()){
-				resetManager(REVIEW);
-                questionManagerListener.onReviewFinished();
-				return;
+		//next question
+		String questionID = lessonInstanceData.getQuestionIdAt(questionMkr);
+		OnResultListener onResultListener = new OnResultListener() {
+			@Override
+			public void onQuestionQueried(QuestionData questionData) {
+				currentQuestionData = questionData;
+				questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
+				questionMkr++;
 			}
-			currentQuestionData = missedQuestionsForReviewList.get(questionMkr);
-			questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
-			questionMkr++;
-		}
+		};
+		db.getQuestion(questionID, onResultListener);
 	}
 
 	public void saveResponse(String response, Boolean correct){
-		if (reviewStarted){
-			//don't save anything if this is a review
-			return;
-		}
-
 		instanceRecordManager.addQuestionAttempt(currentQuestionData.getId(), response, correct);
 
 		//save incorrect responses for when the user reviews
 		if (!correct){
 			//the user may have multiple question attempts per question.
 			//the set prevents duplicate questions
-			missedQuestionsForReviewSet.add(currentQuestionData);
+			missedQuestionsForReview.add(currentQuestionData);
 		}
 
 	}
@@ -148,31 +110,14 @@ public class QuestionManager{
 				lessonKey);
 	}
 
-
-	public void resetManager(int identifier){
-		//do for both review and normal run
+	public void resetManager(){
+		questionsStarted = false;
+		lessonInstanceData = null;
+		lessonKey = null;
+		currentQuestionData = null;
 		questionMkr = 0;
 		totalQuestions = 0;
-		lessonInstanceData = null;
-		currentQuestionData = null;
 		instanceRecordManager = null;
-		if (identifier == QUESTIONS){
-			questionsStarted = false;
-		}
-		if (identifier == REVIEW){
-			reviewStarted = false;
-			missedQuestionsForReviewSet.clear();
-			missedQuestionsForReviewList.clear();
-		}
+		missedQuestionsForReview.clear();
 	}
-
-	public void resetReviewMarker(){
-		questionMkr = 0;
-		reviewStarted = false;
-		//we are going to make a new list the next time the
-		//user reviews
-		missedQuestionsForReviewList.clear();
-	}
-
-
 }

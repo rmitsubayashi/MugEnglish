@@ -30,14 +30,11 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
-            @Override
-            public void onReviewFinished() {
-                //not testing this
-            }
+            
         };
         questionManager = new QuestionManager(db, listener);
         List<String> questionSetIDs = new ArrayList<>(1);
@@ -61,14 +58,10 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 //not testing this
             }
-
-            @Override
-            public void onReviewFinished() {
-                //not testing this
-            }
+            
         };
         questionManager = new QuestionManager(db, listener);
         List<String> questionSetIDs = new ArrayList<>(1);
@@ -96,14 +89,11 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
-            @Override
-            public void onReviewFinished() {
-                //not testing this
-            }
+            
         };
         questionManager = new QuestionManager(db, listener);
         List<String> questionSetIDs = new ArrayList<>(1);
@@ -127,14 +117,11 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
-            @Override
-            public void onReviewFinished() {
-                //not testing this
-            }
+            
         };
         questionManager = new QuestionManager(db, listener);
         List<String> questionSetIDs = new ArrayList<>(1);
@@ -159,14 +146,11 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
-            @Override
-            public void onReviewFinished() {
-                //not testing this
-            }
+            
         };
         questionManager = new QuestionManager(db, listener);
         List<String> questionSetIDs = new ArrayList<>(2);
@@ -202,14 +186,11 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
-            @Override
-            public void onReviewFinished() {
-                //not testing this
-            }
+            
         };
         questionManager = new QuestionManager(db, listener);
         List<String> questionSetIDs = new ArrayList<>(2);
@@ -244,14 +225,11 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 called[0] = true;
             }
 
-            @Override
-            public void onReviewFinished() {
-                //not testing this
-            }
+            
         };
         questionManager = new QuestionManager(db, listener);
         List<String> questionSetIDs = new ArrayList<>(2);

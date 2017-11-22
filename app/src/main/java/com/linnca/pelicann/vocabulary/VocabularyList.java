@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class VocabularyList extends Fragment {
-    private final String TAG = "VocabularyList";
+    public static final String TAG = "VocabularyList";
     private String userID;
     private Database db;
     private FirebaseAnalytics firebaseLog;

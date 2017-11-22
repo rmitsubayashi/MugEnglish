@@ -33,7 +33,7 @@ import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import java.util.List;
 
 public class UserInterests extends Fragment {
-    private final String TAG = "UserInterests";
+    public static final String TAG = "UserInterests";
     private FirebaseAnalytics firebaseLog;
     private Database db;
     private ViewGroup mainLayout;

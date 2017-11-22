@@ -11,9 +11,6 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +29,7 @@ import android.widget.Spinner;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
@@ -42,15 +41,15 @@ import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerItem;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
-import com.linnca.pelicann.preferences.Preferences;
-import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExceptionRule;
 import com.linnca.pelicann.preferences.PreferencesListener;
 import com.linnca.pelicann.questions.InstanceRecord;
+import com.linnca.pelicann.questions.InstanceReviewManager;
+import com.linnca.pelicann.questions.LessonsReviewManager;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionFragmentFactory;
 import com.linnca.pelicann.questions.QuestionManager;
 import com.linnca.pelicann.questions.Question_General;
 import com.linnca.pelicann.results.Results;
+import com.linnca.pelicann.results.ReviewResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
 import com.linnca.pelicann.userprofile.AppUsageLog;
@@ -70,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements
         Question_General.QuestionListener,
         LessonDetails.LessonDetailsListener,
         Results.ResultsListener,
+        ReviewResults.ReviewResultsListener,
         PreferencesListener,
         PreferenceFragmentCompat.OnPreferenceStartScreenCallback,
         LessonDescription.LessonDescriptionListener,
@@ -90,26 +90,15 @@ public class MainActivity extends AppCompatActivity implements
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private boolean hamburgerEnabled = false;
     private boolean toolbarBackListenerAttached = false;
-    private FragmentManager fragmentManager;
+    private MainActivityFragmentManager fragmentManager;
     private boolean navigationItemSelected = false;
     private int selectedNavigationItemID = -1;
     private LessonListViewer lessonListViewer;
     private long startAppTimestamp;
 
-    private String topmostFragmentTag = "";
-    private final String FRAGMENT_USER_INTERESTS = "userInterests";
-    private final String FRAGMENT_LESSON_LIST = "lessonList";
-    private final String FRAGMENT_SETTINGS = "settings";
-    private final String FRAGMENT_LESSON_DETAILS = "lessonDetails";
-    private final String FRAGMENT_QUESTION = "question";
-    private final String FRAGMENT_RESULTS = "results";
-    private final String FRAGMENT_USER_PROFILE = "userProfile";
-    private final String FRAGMENT_SEARCH_INTERESTS = "searchInterests";
-    private final String FRAGMENT_LESSON_DESCRIPTION = "lessonDescription";
-    private final String FRAGMENT_VOCABULARY_LIST = "vocabularyList";
-    private final String FRAGMENT_VOCABULARY_DETAILS = "vocabularyDetails";
-
     private QuestionManager questionManager;
+    private InstanceReviewManager instanceReviewManager;
+    private LessonsReviewManager lessonsReviewManager;
     //since initialization takes forever, initialize here and use this instance in all questions
     private TextToSpeech textToSpeech = null;
 
@@ -136,13 +125,13 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         setSpinnerAdapter();
 
-        fragmentManager = getSupportFragmentManager();
+        fragmentManager = new MainActivityFragmentManager(getSupportFragmentManager());
         questionManager = new QuestionManager(db, getQuestionManagerListener());
+        instanceReviewManager = new InstanceReviewManager(getInstanceReviewManagerListener());
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
                 this,drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
-
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
@@ -150,57 +139,30 @@ public class MainActivity extends AppCompatActivity implements
                 //(this is called after the animation finishes
                 // so better ux)
                 if (navigationItemSelected){
-                    Fragment newFragment;
-                    Bundle bundle = new Bundle();
-                    String newFragmentTag = "";
                     switch (selectedNavigationItemID){
                         case R.id.main_navigation_drawer_interests :
-                            newFragment = new UserInterests();
-                            bundle.putSerializable(BUNDLE_DATABASE, db);
-                            newFragment.setArguments(bundle);
-                            newFragmentTag = FRAGMENT_USER_INTERESTS;
+                            fragmentManager.rootToUserInterests(db);
                             break;
                         case R.id.main_navigation_drawer_data :
-                            newFragment = new UserProfile();
-                            bundle.putSerializable(BUNDLE_DATABASE, db);
-                            newFragment.setArguments(bundle);
-                            newFragmentTag = FRAGMENT_USER_PROFILE;
+                            fragmentManager.rootToUserProfile(db);
                             break;
                         case R.id.main_navigation_drawer_vocabulary :
-                            newFragment = new VocabularyList();
-                            bundle.putSerializable(BUNDLE_DATABASE, db);
-                            newFragment.setArguments(bundle);
-                            newFragmentTag = FRAGMENT_VOCABULARY_LIST;
+                            fragmentManager.rootToVocabularyList(db);
                             break;
                         case R.id.main_navigation_drawer_settings :
-                            newFragment = new Preferences();
-                            newFragmentTag = getString(R.string.preferences_main_key);
+                            fragmentManager.rootToSettings(db);
                             break;
                         case R.id.main_navigation_drawer_lesson_level1 :
-                            newFragment = new LessonList();
-                            bundle.putInt(LessonList.LESSON_LEVEL, 1);
-                            bundle.putSerializable(BUNDLE_DATABASE, db);
-                            newFragment.setArguments(bundle);
+                            fragmentManager.rootToLessonList(db, 1);
                             setLastSelectedLessonLevel(1);
-                            newFragmentTag = FRAGMENT_LESSON_LIST;
                             break;
                         case R.id.main_navigation_drawer_lesson_level2 :
-                            newFragment = new LessonList();
-                            bundle.putInt(LessonList.LESSON_LEVEL, 2);
-                            //just want to see it fail
-                            bundle.putSerializable(BUNDLE_DATABASE, db);
-                            newFragment.setArguments(bundle);
+                            fragmentManager.rootToLessonList(db, 2);
                             setLastSelectedLessonLevel(2);
-                            newFragmentTag = FRAGMENT_LESSON_LIST;
                             break;
                         default:
                             return;
                     }
-                    clearBackStack();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.main_activity_fragment_container, newFragment, newFragmentTag);
-                    fragmentTransaction.commit();
-                    topmostFragmentTag = newFragmentTag;
 
                     //reset so this won't be called if user plainly closes navigation drawer
                     navigationItemSelected = false;
@@ -218,14 +180,14 @@ public class MainActivity extends AppCompatActivity implements
         //Setting the actionbarToggle to drawer layout
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
 
-        //calling sync state is necessary or else your hamburger icon wont show up
+        //calling sync state is necessary or else the hamburger icon wont show up
         actionBarDrawerToggle.syncState();
         hamburgerEnabled = true;
 
         navigationView = findViewById(R.id.main_navigation_drawer);
         navigationView.setNavigationItemSelectedListener(this);
 
-        toolbar.setTitle(R.string.fragment_lesson_list_title);
+        //initial fragment on launch
         setLessonView();
     }
 
@@ -279,29 +241,7 @@ public class MainActivity extends AppCompatActivity implements
                 //associated with the current fragment.
                 //technically this is not needed as we are also hiding the icon
                 if (descriptionLessonKey != null){
-                    Fragment lessonDescriptionFragment = new LessonDescription();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(LessonDescription.BUNDLE_LESSON_KEY, descriptionLessonKey);
-
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
-                            0, R.anim.slide_out_bottom
-                    );
-                    if (fragmentManager.getBackStackEntryCount() != 0 ){
-                        String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
-                        fragmentTransaction.addToBackStack(fragmentTag);
-
-                        Fragment resultsFragment = fragmentManager.findFragmentByTag(FRAGMENT_RESULTS);
-                        if (resultsFragment != null && resultsFragment.isVisible()){
-                            //when we are at the results page, we should always show the exception rule
-                            bundle.putBoolean(LessonDescription.BUNDLE_SHOW_EXCEPTION, true);
-                        }
-                    } else {
-                        fragmentTransaction.addToBackStack(topmostFragmentTag);
-                    }
-                    lessonDescriptionFragment.setArguments(bundle);
-                    fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonDescriptionFragment, FRAGMENT_LESSON_DESCRIPTION);
-                    fragmentTransaction.commit();
+                    fragmentManager.fragmentToLessonDescription(descriptionLessonKey);
                 }
                 return true;
             default:
@@ -330,36 +270,39 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         //have to handle this in the activity or it gets really pain-in-the-ass-y.
-        //not necessary for a lot of cases, but can't help it
+        //not necessary for a lot of cases
         GUIUtils.hideKeyboard(getCurrentFocus());
 
-        Fragment questionFragment = fragmentManager.findFragmentByTag(FRAGMENT_QUESTION);
-        if (questionFragment != null && questionFragment.isVisible()){
-            if (questionManager.questionsStarted())
-                questionManager.resetManager(QuestionManager.QUESTIONS);
-            //we are just going back to the start of the review
-            if (questionManager.reviewStarted())
-                questionManager.resetReviewMarker();
+        if (fragmentManager.isVisible(Question_General.TAG)){
+            if (questionManager.questionsStarted()) {
+                questionManager.resetManager();
+            }
+            //we are just going back to the screen where the user can
+            // once again start a review, so don't clear the data but
+            // take it back to the initial state
+            if (instanceReviewManager.reviewStarted()) {
+                instanceReviewManager.resetCurrentQuestionIndex();
+            }
 
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(questionFragment);
-            fragmentTransaction.commit();
+            if (lessonsReviewManager != null &&
+                    lessonsReviewManager.reviewStarted()) {
+                //release resources
+                lessonsReviewManager = null;
+            }
+
+            fragmentManager.fromQuestionToFragment();
 
             if (textToSpeech != null){
                 textToSpeech.shutdown();
                 textToSpeech = null;
             }
+        } else if (fragmentManager.isVisible(Results.TAG)){
+            //the user will bot be able to access the results screen again
+            // so clear all data
+            instanceReviewManager.resetManager();
         }
 
-        Fragment resultsFragment = fragmentManager.findFragmentByTag(FRAGMENT_RESULTS);
-        if (resultsFragment != null && resultsFragment.isVisible()){
-            questionManager.resetManager(QuestionManager.REVIEW);
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(resultsFragment);
-            fragmentTransaction.commit();
-        }
-
-        if (fragmentManager.getBackStackEntryCount() == 1){
+        if (fragmentManager.fragmentAfterBackPressIsRoot()){
             switchActionBarUpButton();
         }
 
@@ -368,100 +311,52 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void lessonListToLessonDetails(LessonData lessonData){
-        Fragment fragment = new LessonDetails();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonData);
-        bundle.putSerializable(BUNDLE_DATABASE, db);
-        fragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_LESSON_DETAILS);
-        fragmentTransaction.addToBackStack(FRAGMENT_LESSON_LIST);
-        fragmentTransaction.commit();
+        fragmentManager.lessonListToLessonDetails(db, lessonData);
         switchActionBarUpButton();
-
     }
 
     @Override
-    public void lessonListToReview(String key){
-
+    public void lessonListToReview(int lessonLevel, String reviewKey){
+        //since this will not be called a lot
+        // (unlike the question and instance review manager),
+        // instantiate it locally
+        lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
+        lessonsReviewManager.startReview(lessonLevel, reviewKey);
+        switchActionBarUpButton();
     }
 
     @Override
     public boolean onPreferenceStartScreen(PreferenceFragmentCompat preferenceFragmentCompat,
                                            PreferenceScreen preferenceScreen) {
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment fragment;
-        String preferenceKey = preferenceScreen.getKey();
-        if (preferenceKey.equals(getString(R.string.preferences_main_key))) {
-            fragment=new Preferences();
-        } else if (preferenceKey.equals(getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key))){
-            fragment = new PreferencesDescriptionBeforeLessonWithExceptionRule();
-            fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
-                    0, R.anim.slide_out_bottom
-            );
-            preferenceScreen.getTitle();
-        } else {
+
+        boolean successful = fragmentManager.toPreferenceScreen(this, preferenceScreen);
+        if (successful) {
+            switchActionBarUpButton();
             return true;
+        } else {
+            return false;
         }
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, preferenceScreen.getKey());
-        fragmentTransaction.addToBackStack(preferenceScreen.getKey());
-        fragmentTransaction.commit();
-        switchActionBarUpButton();
-        return true;
     }
 
     @Override
     public void userInterestsToSearchInterests(){
-        Fragment fragment = new SearchInterests();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(BUNDLE_DATABASE, db);
-        fragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_SEARCH_INTERESTS);
-        fragmentTransaction.addToBackStack(FRAGMENT_USER_INTERESTS);
-        fragmentTransaction.commit();
+        fragmentManager.userInterestsToSearchInterests(db);
         switchActionBarUpButton();
     }
 
     @Override
     public void vocabularyListToVocabularyDetails(String key){
-        Fragment fragment = new VocabularyDetails();
-        Bundle bundle = new Bundle();
-        bundle.putString(VocabularyDetails.BUNDLE_VOCABULARY_ID, key);
-        bundle.putSerializable(BUNDLE_DATABASE, db);
-        fragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_VOCABULARY_DETAILS);
-        fragmentTransaction.addToBackStack(FRAGMENT_VOCABULARY_LIST);
-        fragmentTransaction.commit();
+        fragmentManager.vocabularyListToVocabularyDetails(db, key);
         switchActionBarUpButton();
     }
 
     @Override
     public void vocabularyDetailsToLessonDetails(String lessonKey){
-        clearBackStack();
         //make sure when the user presses the back button after the redirect,
         //the user goes to the lesson list screen
-        Fragment fragment1 = new LessonList();
-        int lessonLevel = lessonListViewer.getLessonLevel(lessonKey);
-        Bundle bundle1 = new Bundle();
-        bundle1.putInt(LessonList.LESSON_LEVEL, lessonLevel);
-        bundle1.putSerializable(BUNDLE_DATABASE, db);
-        fragment1.setArguments(bundle1);
-        topmostFragmentTag = FRAGMENT_LESSON_LIST;
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment1, FRAGMENT_LESSON_LIST);
-        fragmentTransaction.commit();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment fragment2 = new LessonDetails();
-        Bundle bundle2 = new Bundle();
-        bundle2.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonListViewer.getLessonData(lessonKey));
-        bundle2.putSerializable(BUNDLE_DATABASE, db);
-        fragment2.setArguments(bundle2);
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment2, FRAGMENT_LESSON_DETAILS);
-        fragmentTransaction.addToBackStack(FRAGMENT_LESSON_LIST);
-        fragmentTransaction.commit();
+        fragmentManager.vocabularyDetailsToLessonDetails(db, lessonKey, lessonListViewer);
 
+        int lessonLevel = lessonListViewer.getLessonLevel(lessonKey);
         //select the proper item in the navigation drawer
         switch (lessonLevel){
             case 1 :
@@ -480,50 +375,22 @@ public class MainActivity extends AppCompatActivity implements
         return new QuestionManager.QuestionManagerListener() {
             @Override
             public void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion) {
-                if (questionData == null){
-                    goToErrorPage();
-                    return;
-                }
-
-                Fragment fragment = QuestionFragmentFactory.getQuestionFragment(questionData.getQuestionType());
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA,
-                        questionData);
-                bundle.putInt(Question_General.BUNDLE_QUESTION_NUMBER, questionNumber);
-                bundle.putInt(Question_General.BUNDLE_QUESTION_TOTAL_QUESTIONS, totalQuestions);
-                fragment.setArguments(bundle);
-                //do not add to the back stack because we don't want the user going back to a question
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 if (firstQuestion){
-                    //we should add the fragment before the first question to the back stack
-                    if (questionManager.questionsStarted())
-                        fragmentTransaction.addToBackStack(FRAGMENT_LESSON_DETAILS);
-                    else if (questionManager.reviewStarted())
-                        fragmentTransaction.addToBackStack(FRAGMENT_RESULTS);
+                    fragmentManager.notQuestionFragmentToQuestion(questionData, questionNumber, totalQuestions);
+                } else {
+                    fragmentManager.questionToQuestion(questionData, questionNumber, totalQuestions);
                 }
-                //sliding animation from one question to the next
-                fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
-                        R.anim.slide_in_left, R.anim.slide_out_right
-                );
-                fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_QUESTION);
-                fragmentTransaction.commit();
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord) {
-                Fragment fragment = new Results();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(Results.BUNDLE_INSTANCE_RECORD, instanceRecord);
-                bundle.putSerializable(BUNDLE_DATABASE, db);
-                fragment.setArguments(bundle);
-
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                Fragment questionFragment = fragmentManager.findFragmentByTag(FRAGMENT_QUESTION);
-                if (questionFragment != null) {
-                    fragmentTransaction.remove(questionFragment);
-                }
-                fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, FRAGMENT_RESULTS);
-                fragmentTransaction.commit();
+            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs,
+                                            List<QuestionData> missedQuestions) {
+                //we are updating the database in the result fragment since we need
+                // to update the UI of the result fragment
+                fragmentManager.questionToResults(db, instanceRecord, questionIDs);
+                //save the missed questions in the instance review manager since
+                //we are resetting the question manager
+                instanceReviewManager.setQuestions(missedQuestions);
 
                 //although we might use it in the review or subsequent questions,
                 //we should prioritize the resources we can save right now?
@@ -532,17 +399,64 @@ public class MainActivity extends AppCompatActivity implements
                     textToSpeech = null;
                 }
             }
+        };
+    }
+
+    private InstanceReviewManager.InstanceReviewManagerListener getInstanceReviewManagerListener(){
+        return new InstanceReviewManager.InstanceReviewManagerListener() {
+            @Override
+            public void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion) {
+                if (firstQuestion){
+                    fragmentManager.notQuestionFragmentToQuestion(questionData, questionNumber, totalQuestions);
+                } else {
+                    fragmentManager.questionToQuestion(questionData, questionNumber, totalQuestions);
+                }
+            }
 
             @Override
-            public void onReviewFinished(){
-                //just go back to the lesson details screen?
-                fragmentManager.popBackStack(FRAGMENT_LESSON_DETAILS, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                Fragment resultsFragment = fragmentManager.findFragmentByTag(FRAGMENT_RESULTS);
-                if (resultsFragment != null){
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.remove(resultsFragment);
-                    fragmentTransaction.commit();
+            public void onReviewFinished() {
+                fragmentManager.questionToReviewResults();
+                if (textToSpeech != null){
+                    textToSpeech.shutdown();
+                    textToSpeech = null;
                 }
+            }
+        };
+    }
+
+    private LessonsReviewManager.LessonReviewManagerListener getLessonsReviewManagerListener(){
+        return new LessonsReviewManager.LessonReviewManagerListener() {
+            @Override
+            public void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion) {
+                if (firstQuestion){
+                    fragmentManager.notQuestionFragmentToQuestion(questionData, questionNumber, totalQuestions);
+                } else {
+                    fragmentManager.questionToQuestion(questionData, questionNumber, totalQuestions);
+                }
+            }
+
+            @Override
+            public void onReviewFinished(int lessonLevel, String reviewID) {
+                fragmentManager.questionToReviewResults();
+                //we won't need a reference to the review manager anymore
+                lessonsReviewManager = null;
+                //mark the review lesson as cleared
+                OnResultListener clearLessonOnResultListener = new OnResultListener() {
+                    @Override
+                    public void onClearedLessonAdded(boolean firstTimeCleared) {
+                        super.onClearedLessonAdded(firstTimeCleared);
+                    }
+                };
+                db.addClearedLesson(lessonLevel, reviewID, clearLessonOnResultListener);
+                //the user will never need the review again,
+                // so remove the review questions we stored in the database
+                OnResultListener removeReviewOnResultListener = new OnResultListener() {
+                    @Override
+                    public void onReviewQuestionsRemoved() {
+                        super.onReviewQuestionsRemoved();
+                    }
+                };
+                db.removeReviewQuestions(removeReviewOnResultListener);
 
                 if (textToSpeech != null){
                     textToSpeech.shutdown();
@@ -559,7 +473,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onRecordResponse(String answer, boolean correct){
-        questionManager.saveResponse(answer, correct);
+        if (questionManager.questionsStarted()) {
+            questionManager.saveResponse(answer, correct);
+        }
     }
 
     //this is called by each question fragment.
@@ -568,8 +484,22 @@ public class MainActivity extends AppCompatActivity implements
     // the question manager tells the main activity what to do next ->
     // the main activity creates the next question fragment
     @Override
-    public void onNextQuestion(){
-        questionManager.nextQuestion(false);
+    public void onNextQuestion(boolean correct){
+        if (questionManager.questionsStarted()) {
+            questionManager.nextQuestion(false);
+        }
+        if (instanceReviewManager.reviewStarted()) {
+            instanceReviewManager.nextQuestion(false);
+        }
+        //we might not have instantiated this yet
+        if (lessonsReviewManager != null){
+            if (correct){
+                lessonsReviewManager.nextQuestion(false);
+            } else {
+                lessonsReviewManager.returnQuestionToStack();
+                lessonsReviewManager.nextQuestion(false);
+            }
+        }
     }
 
     private void setLastSelectedLessonLevel(int level){
@@ -579,22 +509,25 @@ public class MainActivity extends AppCompatActivity implements
         editor.apply();
     }
 
-    //not sure where the user should go after a review.
-    //should he be taken back to the results page?
-    //or should the user go back to the lesson details page? or the lesson list?
     @Override
-    public void resultsToLessonCategories(){
-        questionManager.resetManager(QuestionManager.REVIEW);
+    public void resultsToLessonList(){
+        //we can remove all the data because the result fragment is
+        // not accessible anymore.
+        instanceReviewManager.resetManager();
         setLessonView();
     }
 
     @Override
-    public void resultsToReview(InstanceRecord instanceRecord){
-        questionManager.startReview(instanceRecord);
+    public void reviewResultsToLessonList(){
+        setLessonView();
+    }
+
+    @Override
+    public void resultsToReview(){
+        instanceReviewManager.startReview();
     }
 
     private void setLessonView(){
-        clearBackStack();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //default is lowest level (1)
         int lastSelectedLessonLevel = preferences.getInt(getString(R.string.preferences_last_selected_lesson_level), 1);
@@ -611,15 +544,7 @@ public class MainActivity extends AppCompatActivity implements
                 navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level1;
         }
         checkNavigationItem(navigationDrawerItemIDToSelect);
-        Fragment lessonListFragment = new LessonList();
-        Bundle bundle = new Bundle();
-        bundle.putInt(LessonList.LESSON_LEVEL, lastSelectedLessonLevel);
-        bundle.putSerializable(BUNDLE_DATABASE, db);
-        lessonListFragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, lessonListFragment, FRAGMENT_LESSON_LIST);
-        fragmentTransaction.commit();
-        topmostFragmentTag = FRAGMENT_LESSON_LIST;
+        fragmentManager.rootToLessonList(db, lastSelectedLessonLevel);
 
         if (!hamburgerEnabled){
             switchActionBarUpButton();
@@ -684,10 +609,6 @@ public class MainActivity extends AppCompatActivity implements
         }
         navigationView.getMenu().findItem(id).setChecked(true);
         selectedNavigationItemID = id;
-    }
-
-    private void clearBackStack(){
-        fragmentManager.popBackStack(topmostFragmentTag, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     private void switchActionBarUpButton(){
@@ -788,8 +709,7 @@ public class MainActivity extends AppCompatActivity implements
             toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    Fragment userInterestFragment = fragmentManager.findFragmentByTag(FRAGMENT_USER_INTERESTS);
-                    if (userInterestFragment != null && userInterestFragment.isVisible()){
+                    if (fragmentManager.isVisible(UserInterests.TAG)){
                         //since we don't have ids, differentiate the items by position
                         int filter;
                         switch (position){
@@ -808,7 +728,8 @@ public class MainActivity extends AppCompatActivity implements
                             default :
                                 filter = ToolbarSpinnerAdapter.FILTER_ALL;
                         }
-                        ((UserInterests)userInterestFragment).filterUserInterests(filter);
+                        ((UserInterests)fragmentManager.getFragment(UserInterests.TAG))
+                                .filterUserInterests(filter);
                     }
                 }
 
@@ -835,13 +756,12 @@ public class MainActivity extends AppCompatActivity implements
         return textToSpeech;
     }
 
-    private void goToErrorPage(){}
-
     @Override
     protected void onStop(){
         super.onStop();
         long endAppTimeStamp = System.currentTimeMillis();
         db.addAppUsageLog(new AppUsageLog(startAppTimestamp, endAppTimeStamp));
+        db.cleanup();
     }
 
     @Override

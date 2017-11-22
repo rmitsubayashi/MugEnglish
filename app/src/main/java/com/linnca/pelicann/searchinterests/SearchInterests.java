@@ -46,7 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SearchInterests extends Fragment {
     private FirebaseAnalytics firebaseLog;
     private Database db;
-    private final String TAG = "SearchInterests";
+    public static final String TAG = "SearchInterests";
     private SearchView searchView;
     private RecyclerView list;
     private SearchResultsAdapter adapter = null;

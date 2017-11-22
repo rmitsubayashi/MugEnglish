@@ -15,7 +15,7 @@ import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 public class Preferences extends PreferenceFragmentCompat {
-    private final String TAG = "Preferences";
+    public static final String TAG = "Preferences";
     private PreferencesListener listener;
 
     @Override

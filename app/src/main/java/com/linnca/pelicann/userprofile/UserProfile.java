@@ -18,6 +18,7 @@ import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 public class UserProfile extends Fragment{
+    public static final String TAG = "UserProfile";
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private Database db;

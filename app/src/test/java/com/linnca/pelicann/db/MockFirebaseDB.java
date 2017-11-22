@@ -284,7 +284,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getClearedLessons(int lessonLevel, OnResultListener onResultListener) {
+    public void getClearedLessons(int lessonLevel, boolean persistentConnection, OnResultListener onResultListener) {
 
     }
 
@@ -295,6 +295,21 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void clearAllLessons(List<List<LessonListRow>> lessonLevels) {
+
+    }
+
+    @Override
+    public void addReviewQuestion(List<String> questionKeys, OnResultListener onResultListener){
+
+    }
+
+    @Override
+    public void removeReviewQuestions(OnResultListener onResultListener){
+
+    }
+
+    @Override
+    public void getReviewQuestions(OnResultListener onResultListener){
 
     }
 

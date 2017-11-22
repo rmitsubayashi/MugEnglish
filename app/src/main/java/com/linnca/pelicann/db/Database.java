@@ -69,10 +69,14 @@ public abstract class Database implements Serializable{
 
     public abstract void addInstanceRecord(InstanceRecord record, OnResultListener onResultListener);
 
-    public abstract void getClearedLessons(int lessonLevel, OnResultListener onResultListener);
+    public abstract void getClearedLessons(int lessonLevel, boolean persistentConnection, OnResultListener onResultListener);
     public abstract void addClearedLesson(int lessonLevel, String lessonKey, OnResultListener onResultListener);
     //for debugging
     public abstract void clearAllLessons(List<List<LessonListRow>> lessonLevels);
+
+    public abstract void addReviewQuestion(List<String> questionKeys, OnResultListener onResultListener);
+    public abstract void removeReviewQuestions(OnResultListener onResultListener);
+    public abstract void getReviewQuestions(OnResultListener onResultListener);
 
     public abstract void getReportCard(int level, OnResultListener onResultListener);
     public abstract void addReportCard(int level, String lessonKey, int correctCt, int totalCt, OnResultListener onResultListener);

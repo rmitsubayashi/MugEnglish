@@ -18,7 +18,7 @@ import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import java.util.ArrayList;
 
 public class LessonDescription extends Fragment {
-    private final String TAG = "LessonDescription";
+    public static final String TAG = "LessonDescription";
     public static final String BUNDLE_LESSON_KEY = "bundleLessonKey";
     public static final String BUNDLE_SHOW_EXCEPTION = "bundleShowException";
     private LessonDescriptionListener listener;

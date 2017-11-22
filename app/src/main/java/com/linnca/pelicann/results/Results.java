@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,10 +21,12 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.lessonlist.UserLessonList;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
+import com.linnca.pelicann.questions.QuestionData;
 
 import java.util.List;
 
@@ -32,11 +35,12 @@ import java.util.List;
 // and save everything in the database
 
 public class Results extends Fragment {
-    private final String TAG = "Results";
+    public static final String TAG = "Results";
     private FirebaseAnalytics firebaseLog;
     private Database db;
     private String userID;
     public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
+    public static final String BUNDLE_QUESTION_IDS = "bundleQuestionIDs";
     private InstanceRecord instanceRecord;
     private ResultsManager resultsManager;
     private TextView correctCtTextView;
@@ -48,8 +52,8 @@ public class Results extends Fragment {
     private ResultsListener resultsListener;
 
     public interface ResultsListener {
-        void resultsToLessonCategories();
-        void resultsToReview(InstanceRecord instanceRecord);
+        void resultsToLessonList();
+        void resultsToReview();
         void setToolbarState(ToolbarState state);
     }
 
@@ -64,10 +68,11 @@ public class Results extends Fragment {
             db = new FirebaseDB();
         }
         instanceRecord = (InstanceRecord) getArguments().getSerializable(BUNDLE_INSTANCE_RECORD);
-        resultsManager = new ResultsManager(instanceRecord, db,
+        List<String> questionKeys = getArguments().getStringArrayList(BUNDLE_QUESTION_IDS);
+        resultsManager = new ResultsManager(instanceRecord, questionKeys, db,
                 new ResultsManager.ResultsManagerListener() {
             @Override
-            public void onLessonCleared(){
+            public void onLessonCleared(UserLessonList previousList){
                 firstClearTextView.post(new Runnable() {
                     @Override
                     public void run() {
@@ -93,7 +98,6 @@ public class Results extends Fragment {
         reviewButton = view.findViewById(R.id.results_review);
         finishButton = view.findViewById(R.id.results_finish);
         vocabularyList = view.findViewById(R.id.results_vocabulary_list);
-        setLayout();
         return view;
     }
 
@@ -103,6 +107,8 @@ public class Results extends Fragment {
         resultsListener.setToolbarState(
                 new ToolbarState(getString(R.string.results_app_bar_title), false, false, instanceRecord.getLessonId())
         );
+
+        setLayout();
     }
 
     @Override
@@ -128,7 +134,9 @@ public class Results extends Fragment {
 
     private void setLayout(){
         populateCorrectCount();
-        resultsManager.checkLessonCleared();
+        //this will update the UI if this is the user's first time clearing
+        // the lesson
+        resultsManager.clearLesson();
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onLessonVocabularyQueried(List<NewVocabularyWrapper> words) {
@@ -158,7 +166,7 @@ public class Results extends Fragment {
                     bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Review");
                     bundle.putString(FirebaseAnalytics.Param.ITEM_ID, instanceRecord.getId());
                     firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
-                    resultsListener.resultsToReview(instanceRecord);
+                    resultsListener.resultsToReview();
                 }
             });
             //change the layout of the finish button to recommend review
@@ -173,7 +181,7 @@ public class Results extends Fragment {
                     bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Finish Instead of Review");
                     bundle.putString(FirebaseAnalytics.Param.ITEM_ID, instanceRecord.getId());
                     firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
-                    resultsListener.resultsToLessonCategories();
+                    resultsListener.resultsToLessonList();
                 }
             });
         } else {
@@ -181,7 +189,7 @@ public class Results extends Fragment {
             finishButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    resultsListener.resultsToLessonCategories();
+                    resultsListener.resultsToLessonList();
                 }
             });
         }
@@ -246,5 +254,11 @@ public class Results extends Fragment {
         });
         button.setOnClickListener(null);
         button.setText(R.string.results_vocabulary_item_added);
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        db.cleanup();
     }
 }

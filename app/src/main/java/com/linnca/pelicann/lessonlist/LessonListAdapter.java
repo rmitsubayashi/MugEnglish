@@ -2,12 +2,17 @@ package com.linnca.pelicann.lessonlist;
 
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
+import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,20 +35,15 @@ class LessonListAdapter
     //no view
     static final int STATUS_NONE = 4;
     private final List<LessonListRow> data;
-    private final Map<String, LessonData> allLessons = new HashMap<>();
-    private final Map<String, Integer> allLessonsRowPosition = new HashMap<>();
-    private final Set<String> clearedLessonKeys;
-    private int lastClearedReviewPosition = -1;
-    private int nextToClearReviewPosition = -1;
+    private final int lessonLevel;
+    private UserLessonList userLessonList;
     private final LessonList.LessonListListener listener;
 
-    LessonListAdapter(List<LessonListRow> lessonRows, LessonList.LessonListListener listener, Set<String> clearedLessonKeys){
+    LessonListAdapter(int lessonLevel, List<LessonListRow> lessonRows, LessonList.LessonListListener listener, Set<String> clearedLessonKeys){
+        this.lessonLevel = lessonLevel;
         this.data = lessonRows;
         this.listener = listener;
-        this.clearedLessonKeys = new HashSet<>(clearedLessonKeys);
-        populateMap();
-        //debugging
-        setReviewMargins();
+        this.userLessonList = new UserLessonList(clearedLessonKeys);
     }
 
     @Override
@@ -85,6 +85,7 @@ class LessonListAdapter
         final LessonListRow lessonRow = data.get(position);
         if (holder instanceof LessonListRowViewHolder) {
             int[] rowStatus = new int[3];
+            int nextToClearReviewPosition = userLessonList.getNextToClearReviewPosition();
             if (position <= nextToClearReviewPosition) {
                 for (int i = 0; i < 3; i++) {
                     LessonData data = lessonRow.getLessons()[i];
@@ -103,6 +104,22 @@ class LessonListAdapter
                 }
             }
 
+            LessonList.LessonListListener debugListener = new LessonList.LessonListListener() {
+                @Override
+                public void lessonListToLessonDetails(LessonData lessonData) {
+                    addClearedLessonKey(lessonData.getKey());
+                }
+
+                @Override
+                public void lessonListToReview(int lessonLevel, String key) {
+
+                }
+
+                @Override
+                public void setToolbarState(ToolbarState state) {
+
+                }
+            };
             ((LessonListRowViewHolder)holder).populateRow(lessonRow, listener, rowStatus);
 
             LessonListRow rowBefore = position == 0 ? null : data.get(position - 1);
@@ -116,75 +133,24 @@ class LessonListAdapter
         } else if (holder instanceof LessonListReviewRowViewHolder){
             LessonData reviewData = lessonRow.getLessons()[1];
             int status = getItemStatus(reviewData);
-            ((LessonListReviewRowViewHolder)holder).populateRow(reviewData, listener, status);
+            ((LessonListReviewRowViewHolder)holder).populateRow(reviewData, listener, status, lessonLevel);
         }
     }
 
-    private View.OnClickListener debugListener(final String key){
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addClearedLessonKey(key);
-            }
-        };
-    }
-
-    private void populateMap(){
-        if (data == null)
-            return;
-        int rowCt = 0;
-        for (LessonListRow row : data){
-            LessonData[] dataList = row.getLessons();
-            for (LessonData data : dataList){
-                if (data != null) {
-                    allLessons.put(data.getKey(), data);
-                    allLessonsRowPosition.put(data.getKey(), rowCt);
-                }
-            }
-            rowCt++;
-        }
-    }
-
+    //debugging only
     private void addClearedLessonKey(String lessonKey){
-        clearedLessonKeys.add(lessonKey);
-        setReviewMargins();
-        notifyDataSetChanged();
+        FirebaseDB db = new FirebaseDB();
+        db.addClearedLesson(userLessonList.getLessonLevel(lessonKey), lessonKey, new OnResultListener() {
+            @Override
+            public void onClearedLessonAdded(boolean firstTimeCleared) {
+                super.onClearedLessonAdded(firstTimeCleared);
+            }
+        });
     }
 
     void setClearedLessonKeys(Set<String> clearedLessonKeys){
-        this.clearedLessonKeys.clear();
-        for (String key : clearedLessonKeys){
-            this.clearedLessonKeys.add(key);
-        }
-        setReviewMargins();
+        userLessonList = new UserLessonList(clearedLessonKeys);
         notifyDataSetChanged();
-    }
-
-    private void setReviewMargins(){
-        //all the review ids are "id_review#"
-        int maxClearedReview = -1;
-        for (String key : clearedLessonKeys){
-            if (key.startsWith("id_review")){
-                String numberString = key.replace("id_review","");
-                int reviewNumber = Integer.parseInt(numberString);
-                if (reviewNumber > maxClearedReview){
-                    maxClearedReview = reviewNumber;
-                }
-            }
-        }
-        String lastClearedReviewKey = "id_review" + Integer.toString(maxClearedReview);
-        if (maxClearedReview == -1){
-            //we haven't cleared a review yet
-            lastClearedReviewPosition = -1;
-        } else {
-            lastClearedReviewPosition = allLessonsRowPosition.get(lastClearedReviewKey);
-        }
-        //if the user hasn't cleared a review yet, we should find the first available review
-        String nextClearedReviewKey = "id_review" + Integer.toString(maxClearedReview == -1 ?
-                1 : maxClearedReview+1);
-        //handles the case where the user has completed every review.
-        nextToClearReviewPosition = allLessonsRowPosition.get(nextClearedReviewKey) != null ?
-                allLessonsRowPosition.get(nextClearedReviewKey) : 2147483647 ;
     }
 
     private int getItemStatus(LessonData data){
@@ -192,7 +158,7 @@ class LessonListAdapter
             return STATUS_NONE;
         }
 
-        if (clearedLessonKeys.contains(data.getKey())){
+        if (userLessonList.isCleared(data.getKey())){
             return STATUS_CLEARED;
         }
         boolean active = true;
@@ -202,7 +168,7 @@ class LessonListAdapter
         }
         //check if we've cleared all prerequisites for this lesson
         for (String prerequisiteKey : prerequisites){
-            if (!clearedLessonKeys.contains(prerequisiteKey)){
+            if (!userLessonList.isCleared(prerequisiteKey)){
                 active = false;
                 break;
             }
@@ -212,13 +178,13 @@ class LessonListAdapter
         }
 
         for (String prerequisiteKey : prerequisites){
-            LessonData prerequisite = allLessons.get(prerequisiteKey);
+            LessonData prerequisite = userLessonList.getLesson(prerequisiteKey);
             List<String> prerequisitesOfPrerequisites = prerequisite.getPrerequisiteKeys();
             if (prerequisitesOfPrerequisites == null){
                 return STATUS_NEXT_ACTIVE;
             }
             for (String key : prerequisitesOfPrerequisites){
-                if (clearedLessonKeys.contains(key)){
+                if (userLessonList.isCleared(key)){
                     return STATUS_NEXT_ACTIVE;
                 }
             }

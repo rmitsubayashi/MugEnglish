@@ -49,6 +49,10 @@ public abstract class OnResultListener {
     public void onClearedLessonsQueried(Set<String> clearedLessonKeys){}
     public void onClearedLessonAdded(boolean firstTimeCleared){}
 
+    public void onReviewQuestionsAdded(){}
+    public void onReviewQuestionsRemoved(){}
+    public void onReviewQuestionsQueried(List<String> questionKeys){}
+
     public void onInstanceRecordAdded(String generatedRecordKey){}
 
     public void onReportCardQueried(List<UserProfile_ReportCardDataWrapper> reportCardInfo){}

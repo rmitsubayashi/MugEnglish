@@ -1,6 +1,11 @@
 package com.linnca.pelicann.db;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,10 +53,10 @@ public class FirebaseDB extends Database{
     //Firebase requires both the reference and the listener attached to it
     // to remove the listener.
     private class RefListenerPair {
-        private DatabaseReference ref;
+        private Query ref;
         private ValueEventListener eventListener;
 
-        private RefListenerPair(DatabaseReference ref, ValueEventListener eventListener) {
+        private RefListenerPair(Query ref, ValueEventListener eventListener) {
             this.ref = ref;
             this.eventListener = eventListener;
         }
@@ -63,7 +68,8 @@ public class FirebaseDB extends Database{
         }
     }
     //this should never be serialized (can't serialize)
-    private List<RefListenerPair> refListenerPairs = new ArrayList<>();
+    private List<RefListenerPair> refListenerPairs = Collections.synchronizedList(
+            new ArrayList<RefListenerPair>());
 
     @Override
     public String getUserID(){
@@ -696,8 +702,7 @@ public class FirebaseDB extends Database{
                 FirebaseDBHeaders.LESSON_INSTANCE_VOCABULARY + "/" +
                         lessonInstanceKey
         );
-
-        vocabularyRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        ValueEventListener vocabularyListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 GenericTypeIndicator<List<String>> type =
@@ -723,7 +728,9 @@ public class FirebaseDB extends Database{
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+        vocabularyRef.addListenerForSingleValueEvent(vocabularyListener);
+        refListenerPairs.add(new RefListenerPair(vocabularyRef, vocabularyListener));
     }
 
     private void fetchVocabularyWord(String id, final int vocabularyToFetch, final AtomicInteger vocabularyFetched, final List<VocabularyWord> allWords, final OnResultListener onResultListener){
@@ -731,7 +738,7 @@ public class FirebaseDB extends Database{
                 FirebaseDBHeaders.VOCABULARY + "/" +
                         id
         );
-        vocabularyRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        ValueEventListener vocabularyListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 VocabularyWord word = dataSnapshot.getValue(VocabularyWord.class);
@@ -746,7 +753,9 @@ public class FirebaseDB extends Database{
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+        vocabularyRef.addListenerForSingleValueEvent(vocabularyListener);
+        refListenerPairs.add(new RefListenerPair(vocabularyRef, vocabularyListener));
     }
 
     private class VocabularyComparator implements Comparator<VocabularyWord> {
@@ -804,7 +813,7 @@ public class FirebaseDB extends Database{
             );
             Query wordQuery = wordRef.orderByChild(FirebaseDBHeaders.VOCABULARY_LIST_WORD_WORD)
                     .equalTo(wordToAdd.getWord()).limitToFirst(1);
-            wordQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            ValueEventListener wordListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     boolean newWord = true;
@@ -838,7 +847,9 @@ public class FirebaseDB extends Database{
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
-            });
+            };
+            wordQuery.addListenerForSingleValueEvent(wordListener);
+            refListenerPairs.add(new RefListenerPair(wordQuery, wordListener));
         }
     }
 
@@ -870,7 +881,7 @@ public class FirebaseDB extends Database{
             }
         };
         userInterestQuery.addValueEventListener(userInterestQueryListener);
-        refListenerPairs.add(new RefListenerPair(userInterestRef, userInterestQueryListener));
+        refListenerPairs.add(new RefListenerPair(userInterestQuery, userInterestQueryListener));
     }
 
     @Override
@@ -1204,7 +1215,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getClearedLessons(int lessonLevel, final OnResultListener onResultListener){
+    public void getClearedLessons(int lessonLevel, boolean persistentConnection, final OnResultListener onResultListener){
         String clearedLessonsPath = FirebaseDBHeaders.CLEARED_LESSONS + "/" +
                 getUserID() + "/" +
                 lessonLevel;
@@ -1227,7 +1238,10 @@ public class FirebaseDB extends Database{
 
             }
         };
-        clearedLessonsRef.addValueEventListener(clearedLessonsListener);
+        if (persistentConnection)
+            clearedLessonsRef.addValueEventListener(clearedLessonsListener);
+        else
+            clearedLessonsRef.addListenerForSingleValueEvent(clearedLessonsListener);
         refListenerPairs.add(new RefListenerPair(clearedLessonsRef, clearedLessonsListener));
     }
 
@@ -1291,6 +1305,68 @@ public class FirebaseDB extends Database{
                 }
             }
         }
+    }
+
+    @Override
+    public void addReviewQuestion(List<String> questionIDs, final OnResultListener onResultListener){
+        DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
+                        getUserID() + "/"
+        );
+
+        Map<String, Object> toUpdate = new HashMap<>(questionIDs.size());
+        for (String questionID : questionIDs){
+            toUpdate.put(questionID, true);
+        }
+        reviewRef.updateChildren(toUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                onResultListener.onReviewQuestionsAdded();
+            }
+        });
+    }
+
+    @Override
+    public void getReviewQuestions(final OnResultListener onResultListener){
+        DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
+                        getUserID() + "/"
+        );
+        reviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<String> questionKeys = new ArrayList<>(
+                        (int)dataSnapshot.getChildrenCount()
+                );
+                for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()){
+                    Boolean exists = questionSnapshot.getValue(Boolean.class);
+                    if (exists != null && exists){
+                        questionKeys.add(questionSnapshot.getKey());
+                    }
+                }
+                onResultListener.onReviewQuestionsQueried(questionKeys);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    @Override
+    public void removeReviewQuestions(final OnResultListener onResultListener){
+        DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
+                        getUserID() + "/"
+        );
+        reviewRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                onResultListener.onReviewQuestionsRemoved();
+            }
+        });
     }
 
     @Override

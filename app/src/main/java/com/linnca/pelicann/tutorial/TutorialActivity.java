@@ -158,7 +158,7 @@ public class TutorialActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNextQuestion(){
+    public void onNextQuestion(boolean correct){
         if (questionMkr == 0){
             lessonDetailsToQuestion1();
         } else if (questionMkr == 1){

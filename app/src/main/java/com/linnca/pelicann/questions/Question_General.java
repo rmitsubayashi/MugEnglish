@@ -31,7 +31,7 @@ import java.util.Locale;
 
 //sets methods common for all question GUIs
 public abstract class Question_General extends Fragment {
-    protected final String TAG = "Question Fragment";
+    public static final String TAG = "Question Fragment";
     public static final String BUNDLE_QUESTION_DATA = "bundleQuestionData";
     public static final String BUNDLE_QUESTION_NUMBER = "bundleQuestionNumber";
     public static final String BUNDLE_QUESTION_TOTAL_QUESTIONS = "bundleTotalQuestions";
@@ -55,7 +55,10 @@ public abstract class Question_General extends Fragment {
     protected TextToSpeech textToSpeech;
 
     public interface QuestionListener {
-        void onNextQuestion();
+        //this is for every time the user moves on to the next question
+        void onNextQuestion(boolean correct);
+        //this is for every response, whether the user moves on to
+        // the next question or not
         void onRecordResponse(String response, boolean correct);
         void setToolbarState(ToolbarState state);
     }
@@ -192,6 +195,19 @@ public abstract class Question_General extends Fragment {
                 .inflate(R.layout.inflatable_question_feedback, parentViewGroupForFeedback, false);
         behavior = BottomSheetBehavior.from(feedback);
         nextButton = feedback.findViewById(R.id.question_feedback_next);
+        //if last question, better for the user to know that this is the last question
+        // (the user will expect the result screen instead of another question)
+        if (questionNumber == totalQuestions){
+            nextButton.setText(R.string.question_feedback_finish);
+        }
+        behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        parentViewGroupForFeedback.addView(feedback);
+    }
+
+    private void openFeedback(final boolean correct, String response){
+        //overridden if we need to do something
+        doSomethingOnFeedbackOpened(correct, response);
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,22 +219,9 @@ public abstract class Question_General extends Fragment {
                         return true;
                     }
                 });
-                questionListener.onNextQuestion();
+                questionListener.onNextQuestion(correct);
             }
         });
-        //if last question, better for the user to know that this is the last question
-        // (the user will expect the result screen instead of another question)
-        if (questionNumber == totalQuestions){
-            nextButton.setText(R.string.question_feedback_finish);
-        }
-        behavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        parentViewGroupForFeedback.addView(feedback);
-    }
-
-    private void openFeedback(boolean correct, String response){
-        //overridden if we need to do something
-        doSomethingOnFeedbackOpened(correct, response);
-
         if (correct){
             feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
             nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
