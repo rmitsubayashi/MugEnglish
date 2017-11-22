@@ -1,11 +1,10 @@
 package com.linnca.pelicann.results;
 
-import android.util.Log;
-
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
-import com.linnca.pelicann.lessonlist.UserLessonList;
+import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
+import com.linnca.pelicann.lessonlist.UserLessonListViewer;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
 
@@ -19,10 +18,10 @@ class ResultsManager {
     private final InstanceRecord instanceRecord;
     private final List<String> questionIDs;
     private final ResultsManagerListener resultsManagerListener;
-    private UserLessonList userLessonList = null;
+    private UserLessonListViewer userLessonListViewer = null;
 
     interface ResultsManagerListener {
-        void onLessonCleared(UserLessonList previousState);
+        void onLessonCleared(UserLessonListViewer previousState);
     }
 
     ResultsManager(InstanceRecord instanceRecord, List<String> questionIDs, Database db, ResultsManagerListener listener){
@@ -33,7 +32,6 @@ class ResultsManager {
     }
 
     void saveInstanceRecord(){
-        Log.d("resultsManager","Called saveInstanceRecord");
         //save the whole instance record
         final OnResultListener instanceRecordOnResultListener = new OnResultListener() {
             @Override
@@ -44,7 +42,7 @@ class ResultsManager {
         db.addInstanceRecord(instanceRecord, instanceRecordOnResultListener);
 
         //save correct count for displaying the report card
-        LessonListViewer lessonListViewer = new LessonListViewer();
+        LessonListViewer lessonListViewer = new LessonListViewerImplementation();
         String lessonKey = instanceRecord.getLessonId();
         int level = lessonListViewer.getLessonLevel(lessonKey);
         final int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
@@ -64,7 +62,6 @@ class ResultsManager {
         OnResultListener clearedLessonOnResultListener = new OnResultListener() {
             @Override
             public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
-                Log.d("resultsManager","called clearedLessonOnResultListener");
                 OnResultListener reviewQuestionOnResultListener =
                         new OnResultListener() {
                             @Override
@@ -73,12 +70,10 @@ class ResultsManager {
                             }
                         };
                 //save it in a class variable so other methods may use it
-                userLessonList = new UserLessonList(clearedLessonKeys);
-                if (userLessonList.shouldSaveForReview(instanceRecord.getLessonId())){
-                    Log.d("resultsManager", "should save review questions");
+                userLessonListViewer = new UserLessonListViewer(new LessonListViewerImplementation(),
+                        clearedLessonKeys);
+                if (userLessonListViewer.shouldSaveForReview(instanceRecord.getLessonId())){
                     db.addReviewQuestion(questionIDs, reviewQuestionOnResultListener);
-                } else {
-                    Log.d("resultsManager", "shouldn't save review questions");
                 }
             }
         };
@@ -106,21 +101,22 @@ class ResultsManager {
     }
 
     void clearLesson(){
-        //we create an instance of UserLessonList when we
+        //we create an instance of UserLessonListViewer when we
         // save review questions.
         //if that has run already, just use that.
         // if not, fetch it here
-        if (userLessonList != null){
-            clearLessonHelperMethod(userLessonList);
+        if (userLessonListViewer != null){
+            clearLessonHelperMethod(userLessonListViewer);
         } else {
             OnResultListener onResultListener = new OnResultListener() {
                 @Override
                 public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
-                    UserLessonList newUserLessonList = new UserLessonList(clearedLessonKeys);
-                    clearLessonHelperMethod(newUserLessonList);
+                    UserLessonListViewer newUserLessonListViewer = new UserLessonListViewer(
+                            new LessonListViewerImplementation(), clearedLessonKeys);
+                    clearLessonHelperMethod(newUserLessonListViewer);
                 }
             };
-            LessonListViewer lessonListViewer = new LessonListViewer();
+            LessonListViewer lessonListViewer = new LessonListViewerImplementation();
             String lessonKey = instanceRecord.getLessonId();
             int level = lessonListViewer.getLessonLevel(lessonKey);
             db.getClearedLessons(level, false, onResultListener);
@@ -128,8 +124,8 @@ class ResultsManager {
 
     }
 
-    private void clearLessonHelperMethod(final UserLessonList previousList){
-        LessonListViewer lessonListViewer = new LessonListViewer();
+    private void clearLessonHelperMethod(final UserLessonListViewer previousList){
+        LessonListViewer lessonListViewer = new LessonListViewerImplementation();
         String lessonKey = instanceRecord.getLessonId();
         int level = lessonListViewer.getLessonLevel(lessonKey);
         OnResultListener onResultListener = new OnResultListener() {

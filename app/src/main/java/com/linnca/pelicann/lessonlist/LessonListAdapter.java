@@ -2,22 +2,17 @@ package com.linnca.pelicann.lessonlist;
 
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.database.FirebaseDatabase;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 class LessonListAdapter
@@ -36,14 +31,15 @@ class LessonListAdapter
     static final int STATUS_NONE = 4;
     private final List<LessonListRow> data;
     private final int lessonLevel;
-    private UserLessonList userLessonList;
+    private UserLessonListViewer userLessonListViewer;
     private final LessonList.LessonListListener listener;
 
     LessonListAdapter(int lessonLevel, List<LessonListRow> lessonRows, LessonList.LessonListListener listener, Set<String> clearedLessonKeys){
         this.lessonLevel = lessonLevel;
         this.data = lessonRows;
         this.listener = listener;
-        this.userLessonList = new UserLessonList(clearedLessonKeys);
+        this.userLessonListViewer = new UserLessonListViewer(new LessonListViewerImplementation(),
+                clearedLessonKeys);
     }
 
     @Override
@@ -85,7 +81,7 @@ class LessonListAdapter
         final LessonListRow lessonRow = data.get(position);
         if (holder instanceof LessonListRowViewHolder) {
             int[] rowStatus = new int[3];
-            int nextToClearReviewPosition = userLessonList.getNextToClearReviewPosition();
+            int nextToClearReviewPosition = userLessonListViewer.getNextToClearReviewPosition();
             if (position <= nextToClearReviewPosition) {
                 for (int i = 0; i < 3; i++) {
                     LessonData data = lessonRow.getLessons()[i];
@@ -140,7 +136,7 @@ class LessonListAdapter
     //debugging only
     private void addClearedLessonKey(String lessonKey){
         FirebaseDB db = new FirebaseDB();
-        db.addClearedLesson(userLessonList.getLessonLevel(lessonKey), lessonKey, new OnResultListener() {
+        db.addClearedLesson(userLessonListViewer.getLessonLevel(lessonKey), lessonKey, new OnResultListener() {
             @Override
             public void onClearedLessonAdded(boolean firstTimeCleared) {
                 super.onClearedLessonAdded(firstTimeCleared);
@@ -149,7 +145,8 @@ class LessonListAdapter
     }
 
     void setClearedLessonKeys(Set<String> clearedLessonKeys){
-        userLessonList = new UserLessonList(clearedLessonKeys);
+        userLessonListViewer = new UserLessonListViewer(new LessonListViewerImplementation(),
+                clearedLessonKeys);
         notifyDataSetChanged();
     }
 
@@ -158,7 +155,7 @@ class LessonListAdapter
             return STATUS_NONE;
         }
 
-        if (userLessonList.isCleared(data.getKey())){
+        if (userLessonListViewer.isCleared(data.getKey())){
             return STATUS_CLEARED;
         }
         boolean active = true;
@@ -168,7 +165,7 @@ class LessonListAdapter
         }
         //check if we've cleared all prerequisites for this lesson
         for (String prerequisiteKey : prerequisites){
-            if (!userLessonList.isCleared(prerequisiteKey)){
+            if (!userLessonListViewer.isCleared(prerequisiteKey)){
                 active = false;
                 break;
             }
@@ -178,13 +175,13 @@ class LessonListAdapter
         }
 
         for (String prerequisiteKey : prerequisites){
-            LessonData prerequisite = userLessonList.getLesson(prerequisiteKey);
+            LessonData prerequisite = userLessonListViewer.getLesson(prerequisiteKey);
             List<String> prerequisitesOfPrerequisites = prerequisite.getPrerequisiteKeys();
             if (prerequisitesOfPrerequisites == null){
                 return STATUS_NEXT_ACTIVE;
             }
             for (String key : prerequisitesOfPrerequisites){
-                if (userLessonList.isCleared(key)){
+                if (userLessonListViewer.isCleared(key)){
                     return STATUS_NEXT_ACTIVE;
                 }
             }

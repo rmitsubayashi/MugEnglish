@@ -36,7 +36,7 @@ public class LessonData implements Serializable{
         this.key = copy.key;
         this.title = copy.title;
         this.descriptionLayout = copy.descriptionLayout;
-        this.prerequisiteKeys = new ArrayList<>(prerequisiteKeys);
+        this.prerequisiteKeys = new ArrayList<>(copy.prerequisiteKeys);
         this.toClearScore = copy.toClearScore;
         this.colorID = copy.colorID;
         this.iconID = copy.iconID;

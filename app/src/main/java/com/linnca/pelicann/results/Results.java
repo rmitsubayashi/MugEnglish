@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,12 +20,11 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
-import com.linnca.pelicann.lessonlist.UserLessonList;
+import com.linnca.pelicann.lessonlist.UserLessonListViewer;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
-import com.linnca.pelicann.questions.QuestionData;
 
 import java.util.List;
 
@@ -72,7 +70,7 @@ public class Results extends Fragment {
         resultsManager = new ResultsManager(instanceRecord, questionKeys, db,
                 new ResultsManager.ResultsManagerListener() {
             @Override
-            public void onLessonCleared(UserLessonList previousList){
+            public void onLessonCleared(UserLessonListViewer previousList){
                 firstClearTextView.post(new Runnable() {
                     @Override
                     public void run() {

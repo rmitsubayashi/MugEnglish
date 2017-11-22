@@ -11,6 +11,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListRow;
+import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +37,7 @@ class UserProfile_ReportCardAdapter
 
     UserProfile_ReportCardAdapter(int lessonLevel,
                                   ReportCardListener listener){
-        lessonListViewer = new LessonListViewer();
+        lessonListViewer = new LessonListViewerImplementation();
         this.listener = listener;
 
         setLessons(lessonLevel);

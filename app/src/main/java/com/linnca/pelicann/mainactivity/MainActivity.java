@@ -37,6 +37,7 @@ import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonList;
+import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerItem;
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         LessonFactory.saveGenericQuestions(db);
-        lessonListViewer = new LessonListViewer();
+        lessonListViewer = new LessonListViewerImplementation();
 
         toolbar = findViewById(R.id.tool_bar);
         toolbarSpinner = toolbar.findViewById(R.id.tool_bar_spinner);
