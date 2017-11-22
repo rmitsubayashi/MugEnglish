@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.widget.SearchView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.db.Database;
@@ -31,15 +29,9 @@ import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

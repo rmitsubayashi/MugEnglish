@@ -9,8 +9,8 @@ import android.widget.AdapterView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListRow;
+import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 
 import java.util.ArrayList;
