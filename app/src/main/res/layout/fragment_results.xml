@@ -8,7 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="16dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="48dp"
+        android:animateLayoutChanges="true">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,15 +51,41 @@
             android:id="@+id/results_first_clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:visibility="invisible"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone"
             android:textSize="17sp"
             android:text="@string/results_first_clear"/>
+        <TextView
+            android:id="@+id/results_unlocked_lesson_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:textSize="17sp"/>
+        <LinearLayout
+            android:id="@+id/results_unlocked_lesson_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="32dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="21sp"
             android:text="@string/results_vocabulary"/>
+        <ProgressBar
+            android:id="@+id/results_vocabulary_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            />
+        <TextView
+            android:id="@+id/results_no_vocabulary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/results_no_vocabulary"
+            android:visibility="gone"/>
         <LinearLayout
             android:id="@+id/results_vocabulary_list"
             android:layout_width="match_parent"

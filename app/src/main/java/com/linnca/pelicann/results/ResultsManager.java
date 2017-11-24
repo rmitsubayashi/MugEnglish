@@ -1,5 +1,7 @@
 package com.linnca.pelicann.results;
 
+import android.util.Log;
+
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
@@ -21,7 +23,7 @@ class ResultsManager {
     private UserLessonListViewer userLessonListViewer = null;
 
     interface ResultsManagerListener {
-        void onLessonCleared(UserLessonListViewer previousState);
+        void onLessonFirstCleared(UserLessonListViewer previousState);
     }
 
     ResultsManager(InstanceRecord instanceRecord, List<String> questionIDs, Database db, ResultsManagerListener listener){
@@ -111,6 +113,7 @@ class ResultsManager {
             OnResultListener onResultListener = new OnResultListener() {
                 @Override
                 public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
+
                     UserLessonListViewer newUserLessonListViewer = new UserLessonListViewer(
                             new LessonListViewerImplementation(), clearedLessonKeys);
                     clearLessonHelperMethod(newUserLessonListViewer);
@@ -132,7 +135,7 @@ class ResultsManager {
             @Override
             public void onClearedLessonAdded(boolean firstTimeCleared) {
                 if(firstTimeCleared){
-                    resultsManagerListener.onLessonCleared(previousList);
+                    resultsManagerListener.onLessonFirstCleared(previousList);
                 }
             }
         };

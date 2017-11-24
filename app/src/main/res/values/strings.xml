@@ -180,8 +180,12 @@
     <string name="results_finish_review">このまま終了する</string>
     <string name="results_finish_no_review">終了する</string>
     <string name="results_vocabulary">単語リスト</string>
+    <string name="results_no_vocabulary">新しい単語はありません</string>
     <string name="results_vocabulary_item_add">+ 追加</string>
     <string name="results_vocabulary_item_added">追加済</string>
+    <string name="results_unlocked_lesson_title">解放されたレッスン</string>
+    <string name="results_no_unlocked_lessons_title">解放されたレッスンはありません</string>
+    <string name="results_unlocked_lesson_item_go_to_lesson">レッスンに行く</string>
     <!--results after review-->
     <string name="review_results_title">復習お疲れ様です</string>
     <string name="review_results_correct_ct">正解数</string>

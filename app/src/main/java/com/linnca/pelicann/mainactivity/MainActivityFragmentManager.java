@@ -33,7 +33,6 @@ import java.util.ArrayList;
 //manages all the fragment transactions
 class MainActivityFragmentManager {
     private FragmentManager fragmentManager;
-    private String topmostFragmentTag;
 
     MainActivityFragmentManager(FragmentManager fm){
         this.fragmentManager = fm;
@@ -53,7 +52,6 @@ class MainActivityFragmentManager {
     }
 
     void rootToUserInterests(Database db){
-        topmostFragmentTag = UserInterests.TAG;
         clearBackStack();
         Fragment fragment = new UserInterests();
         Bundle bundle = new Bundle();
@@ -65,7 +63,6 @@ class MainActivityFragmentManager {
     }
 
     void rootToUserProfile(Database db){
-        topmostFragmentTag = UserProfile.TAG;
         clearBackStack();
         Fragment fragment = new UserProfile();
         Bundle bundle = new Bundle();
@@ -77,7 +74,6 @@ class MainActivityFragmentManager {
     }
 
     void rootToVocabularyList(Database db){
-        topmostFragmentTag = VocabularyList.TAG;
         clearBackStack();
         Fragment fragment = new VocabularyList();
         Bundle bundle = new Bundle();
@@ -89,7 +85,6 @@ class MainActivityFragmentManager {
     }
 
     void rootToSettings(Database db){
-        topmostFragmentTag = Preferences.TAG;
         clearBackStack();
         Fragment fragment = new Preferences();
         Bundle bundle = new Bundle();
@@ -101,7 +96,6 @@ class MainActivityFragmentManager {
     }
 
     void rootToLessonList(Database db, int lessonLevel){
-        topmostFragmentTag = LessonList.TAG;
         clearBackStack();
         Fragment fragment = new LessonList();
         Bundle bundle = new Bundle();
@@ -160,7 +154,6 @@ class MainActivityFragmentManager {
         bundle1.putInt(LessonList.LESSON_LEVEL, lessonLevel);
         bundle1.putSerializable(MainActivity.BUNDLE_DATABASE, db);
         fragment1.setArguments(bundle1);
-        topmostFragmentTag = LessonList.TAG;
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment1, LessonList.TAG);
         fragmentTransaction.commit();
@@ -289,10 +282,26 @@ class MainActivityFragmentManager {
                 bundle.putBoolean(LessonDescription.BUNDLE_SHOW_EXCEPTION, true);
             }
         } else {
-            fragmentTransaction.addToBackStack(topmostFragmentTag);
+            fragmentTransaction.addToBackStack(null);
         }
         fragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonDescription.TAG);
+        fragmentTransaction.commit();
+    }
+
+    void resultsToLessonDetails(Database db, LessonData lessonData){
+        //removes the lessonDetails -> results transaction
+        fragmentManager.popBackStack();
+        //removes the lessonList -> lessonDetails transaction
+        fragmentManager.popBackStack();
+        Fragment fragment = new LessonDetails();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
+        bundle.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonData);
+        fragment.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonDetails.TAG);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 

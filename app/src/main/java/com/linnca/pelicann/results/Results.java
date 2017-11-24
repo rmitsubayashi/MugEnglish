@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -20,6 +21,7 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.UserLessonListViewer;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
@@ -36,7 +38,6 @@ public class Results extends Fragment {
     public static final String TAG = "Results";
     private FirebaseAnalytics firebaseLog;
     private Database db;
-    private String userID;
     public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
     public static final String BUNDLE_QUESTION_IDS = "bundleQuestionIDs";
     private InstanceRecord instanceRecord;
@@ -45,12 +46,17 @@ public class Results extends Fragment {
     private Button finishButton;
     private Button reviewButton;
     private TextView firstClearTextView;
+    private TextView unlockedLessonTitle;
+    private LinearLayout unlockedLessonList;
     private LinearLayout vocabularyList;
+    private ProgressBar vocabularyLoading;
+    private TextView noVocabularyTextView;
 
     private ResultsListener resultsListener;
 
     public interface ResultsListener {
         void resultsToLessonList();
+        void resultsToLessonDetails(LessonData lessonData);
         void resultsToReview();
         void setToolbarState(ToolbarState state);
     }
@@ -70,18 +76,13 @@ public class Results extends Fragment {
         resultsManager = new ResultsManager(instanceRecord, questionKeys, db,
                 new ResultsManager.ResultsManagerListener() {
             @Override
-            public void onLessonCleared(UserLessonListViewer previousList){
-                firstClearTextView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        firstClearTextView.setVisibility(View.VISIBLE);
-                    }
-                });
+            public void onLessonFirstCleared(UserLessonListViewer previousList){
+                populateFirstCleared(previousList);
             }
         });
 
         resultsManager.saveInstanceRecord();
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseLog = FirebaseAnalytics.getInstance(getActivity());
         firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
         firebaseLog.setUserId(userID);
@@ -95,7 +96,11 @@ public class Results extends Fragment {
         firstClearTextView = view.findViewById(R.id.results_first_clear);
         reviewButton = view.findViewById(R.id.results_review);
         finishButton = view.findViewById(R.id.results_finish);
+        unlockedLessonTitle = view.findViewById(R.id.results_unlocked_lesson_title);
+        unlockedLessonList = view.findViewById(R.id.results_unlocked_lesson_list);
         vocabularyList = view.findViewById(R.id.results_vocabulary_list);
+        noVocabularyTextView = view.findViewById(R.id.results_no_vocabulary);
+        vocabularyLoading = view.findViewById(R.id.results_vocabulary_loading);
         return view;
     }
 
@@ -138,6 +143,21 @@ public class Results extends Fragment {
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onLessonVocabularyQueried(List<NewVocabularyWrapper> words) {
+                vocabularyLoading.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        vocabularyLoading.setVisibility(View.GONE);
+                    }
+                });
+                if (words == null) {
+                    noVocabularyTextView.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            noVocabularyTextView.setVisibility(View.VISIBLE);
+                        }
+                    });
+                    return;
+                }
                 for (NewVocabularyWrapper word : words) {
                     View view = createVocabularyItem(word);
                     vocabularyList.addView(view);
@@ -191,6 +211,56 @@ public class Results extends Fragment {
                 }
             });
         }
+    }
+
+    private void populateFirstCleared(UserLessonListViewer previousList){
+        //make sure the view is loaded
+        firstClearTextView.post(new Runnable() {
+            @Override
+            public void run() {
+                firstClearTextView.setVisibility(View.VISIBLE);
+            }
+        });
+        //add unlocked items to the list
+        String clearedLessonKey = instanceRecord.getLessonId();
+        List<LessonData> unlockedLessons = previousList.getLessonsUnlockedByClearing(clearedLessonKey);
+        for (LessonData lessonData : unlockedLessons){
+            addUnlockedLessonItem(lessonData);
+        }
+        final int unlockedLessonTitleID;
+        if (unlockedLessons.size() != 0){
+            unlockedLessonTitleID = R.string.results_unlocked_lesson_title;
+        } else {
+            unlockedLessonTitleID = R.string.results_no_unlocked_lessons_title;
+        }
+        unlockedLessonTitle.post(new Runnable() {
+            @Override
+            public void run() {
+                unlockedLessonTitle.setText(unlockedLessonTitleID);
+                unlockedLessonTitle.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
+    private void addUnlockedLessonItem(final LessonData lessonData){
+        //make sure the view is loaded
+        unlockedLessonList.post(new Runnable() {
+            @Override
+            public void run() {
+                View view = getLayoutInflater().inflate(R.layout.inflatable_results_unlocked_lesson_item,
+                        unlockedLessonList, false);
+                TextView titleTextView = view.findViewById(R.id.results_unlocked_lesson_item_lesson_title);
+                titleTextView.setText(lessonData.getTitle());
+                Button goToLessonButton = view.findViewById(R.id.results_unlocked_lesson_item_go_to_lesson);
+                goToLessonButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        resultsListener.resultsToLessonDetails(lessonData);
+                    }
+                });
+                unlockedLessonList.addView(view);
+            }
+        });
     }
 
     private void populateCorrectCount(){
