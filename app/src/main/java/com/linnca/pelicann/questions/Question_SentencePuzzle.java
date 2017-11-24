@@ -35,15 +35,24 @@ public class Question_SentencePuzzle extends Question_General {
 
         //determine whether to use small or big buttons
         List<String> choices = questionData.getChoices();
+        int maxChoiceLength = -1;
         int choicesLength = 0;
         for (String choice : choices){
-            choicesLength += choice.length();
-            //space between words
-            choicesLength += 3;
+            int choiceLength = choice.length();
+            choicesLength += choiceLength;
+            if (choiceLength > maxChoiceLength){
+                maxChoiceLength = choiceLength;
+            }
         }
 
-        if (choicesLength > 90){
+        //arbitrary values
+        if (choicesLength > 60){
             buttonLayout = R.layout.inflatable_question_puzzle_piece_choice_small;
+        } else if (choicesLength > 40){
+            //if there's a large piece, more likely to create unneeded rows
+            if (maxChoiceLength > 15){
+                buttonLayout = R.layout.inflatable_question_puzzle_piece_choice_small;
+            }
         } else {
             buttonLayout = R.layout.inflatable_question_puzzle_piece_choice;
         }
@@ -52,15 +61,15 @@ public class Question_SentencePuzzle extends Question_General {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_question_puzzle_piece, container, false);
-        parentViewGroupForFeedback = view.findViewById(R.id.fragment_question_puzzle_piece);
-        siblingViewGroupForFeedback = view.findViewById(R.id.question_puzzle_piece_main_layout);
+        View view = inflater.inflate(R.layout.fragment_question_sentence_puzzle, container, false);
+        parentViewGroupForFeedback = view.findViewById(R.id.fragment_question_sentence_puzzle);
+        siblingViewGroupForFeedback = view.findViewById(R.id.question_sentence_puzzle_main_layout);
 
-        answerLayout = view.findViewById(R.id.question_puzzle_piece_answer);
-        choicesLayout = view.findViewById(R.id.question_puzzle_piece_choiceRow);
-        questionTextView = view.findViewById(R.id.question_puzzle_piece_question);
-        submitButton = view.findViewById(R.id.question_puzzle_piece_submit);
-        scrollView = view.findViewById(R.id.question_puzzle_piece_answer_scroll);
+        answerLayout = view.findViewById(R.id.question_sentence_puzzle_answer);
+        choicesLayout = view.findViewById(R.id.question_sentence_puzzle_choice_row);
+        questionTextView = view.findViewById(R.id.question_sentence_puzzle_question);
+        submitButton = view.findViewById(R.id.question_sentence_puzzle_submit);
+        scrollView = view.findViewById(R.id.question_sentence_puzzle_answer_scroll);
         //same view
         grandparentLayout = siblingViewGroupForFeedback;
 

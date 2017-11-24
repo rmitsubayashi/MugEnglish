@@ -5,9 +5,8 @@ package com.linnca.pelicann.lessongenerator;
 public class TermAdjuster {
     private TermAdjuster(){}
     public static String adjustOccupationEN(String occupation){
-        if (occupation.equals("association football player")){
-            occupation = "soccer player";
-        }
+        //covers soccer player, manager, etc.
+        occupation = occupation.replace("association football", "soccer");
 
         return occupation;
     }

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
+    android:id="@+id/fragment_question_true_false"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_question_true_false"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true">
     <ScrollView
+        android:id="@+id/question_true_false_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/question_true_false_main_layout">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,27 +23,27 @@
                 android:text="@string/question_true_false_instructions"
                 style="@style/questions_instructions"/>
             <TextView
+                android:id="@+id/question_true_false_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/questions_question"
-                android:id="@+id/question_true_false_question"/>
+                style="@style/questions_question"/>
             <Button
+                android:id="@+id/question_true_false_true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/lblue_button"
                 android:textSize="21sp"
                 android:textColor="@color/white"
                 android:text="@string/question_true_false_true"
-                android:layout_marginBottom="20dp"
-                android:id="@+id/question_true_false_true"/>
+                android:layout_marginBottom="20dp"/>
             <Button
+                android:id="@+id/question_true_false_false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/transparent_button"
                 android:textSize="21sp"
                 android:textColor="@color/lblue500"
                 android:text="@string/question_true_false_false"
-                android:id="@+id/question_true_false_false"
                 />
         </LinearLayout>
 

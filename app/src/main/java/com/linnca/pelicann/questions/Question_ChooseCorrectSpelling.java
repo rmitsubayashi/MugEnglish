@@ -76,9 +76,11 @@ public class Question_ChooseCorrectSpelling extends Question_General {
         List<String> choices = new ArrayList<>(choiceCt);
         String answer = questionData.getAnswer();
         choices.add(answer);
-        //odds can be the length of the string
+        //odds can be based on teh length of the string.
+        //long strings are more likely to change at least one character since
+        // there are more characters in total, so the odds should be high.
         List<String> misspelledChoices = QuestionUtils.createMisspelledWords(
-                answer, 2, choiceCt-1
+                answer, answer.length()/2, choiceCt-1
         );
         choices.addAll(misspelledChoices);
         QuestionUtils.shuffle(choices);
