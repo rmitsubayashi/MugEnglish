@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.LessonListRow;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 import java.util.List;
 
@@ -120,7 +121,7 @@ class UserProfile_ReportCard_RowViewHolder extends RecyclerView.ViewHolder {
                         } : null
         );
         int color = colCleared ?
-                ContextCompat.getColor(context, R.color.lblue500) :
+                ApplicationThemeManager.getColorFromAttribute(R.attr.color500, context) :
                 ContextCompat.getColor(context, R.color.gray500);
         colText.setTextColor(color);
         //if the user hasn't unlocked it, display 0

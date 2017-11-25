@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 import java.util.List;
 
@@ -96,7 +97,7 @@ class LessonListRowViewHolder extends RecyclerView.ViewHolder {
                 int colIconColor;
                 boolean colActive = colStatus == LessonListAdapter.STATUS_CLEARED || colStatus == LessonListAdapter.STATUS_ACTIVE;
                 if (colActive) {
-                    colTextColor = ContextCompat.getColor(context, colData.getColorID());
+                    colTextColor = ApplicationThemeManager.getColorFromAttribute(colData.getColorID(), context);
                     colIconColor = colTextColor;
                 }
                 /*
@@ -105,7 +106,7 @@ class LessonListRowViewHolder extends RecyclerView.ViewHolder {
                 //the user should be encouraged to repeat lessons
                 else if (colStatus == LessonListAdapter.STATUS_CLEARED) {
                     colIconColor = ContextCompat.getColor(context, R.color.yellow700);
-                    colTextColor = ContextCompat.getColor(context, R.color.orange500);
+                    colTextColor = ContextCompat.getColor(context, R.attr.colorAccent500);
                 }*/
                 else {
                     colTextColor = ContextCompat.getColor(context, R.color.gray500);

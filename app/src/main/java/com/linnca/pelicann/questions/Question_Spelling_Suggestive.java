@@ -18,6 +18,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 
 import java.util.ArrayList;
@@ -263,7 +264,8 @@ public class Question_Spelling_Suggestive extends Question_General {
     private void nextLetter(){
         Button nextLetterButton = answerButtons[answerTextProgress];
         nextLetterButton.setEnabled(true);
-        nextLetterButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lblue500));
+        nextLetterButton.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                R.attr.color500, getContext()));
 
         int prevButtonIndex = answerTextProgress-1;
         if (prevButtonIndex != -1){
@@ -281,7 +283,8 @@ public class Question_Spelling_Suggestive extends Question_General {
         if (answerTextProgress == 0)
             return;
         SpannableString spannableString = new SpannableString(questionData.getAnswer());
-        spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getContext(), R.color.orange500)),
+        spannableString.setSpan(new ForegroundColorSpan(ApplicationThemeManager.getColorFromAttribute(
+                R.attr.colorAccent500, getContext())),
                 0, answerTextProgress, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         answerTextView.setText(spannableString);
     }
@@ -289,6 +292,7 @@ public class Question_Spelling_Suggestive extends Question_General {
     @Override
     protected void doSomethingAfterResponse(){
         answerButtons[answerTextProgress-1].setTextColor(ContextCompat.getColor(getContext(), R.color.gray500));
-        answerTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.orange500));
+        answerTextView.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                R.attr.colorAccent500, getContext()));
     }
 }

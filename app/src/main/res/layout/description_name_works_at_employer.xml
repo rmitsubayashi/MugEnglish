@@ -27,7 +27,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_works_at_employer_new_word"/>
                 <TextView
                     android:padding="12dp"

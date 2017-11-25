@@ -3,7 +3,7 @@
 <Button xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/lblue_button_with_states"
+        android:background="@drawable/colored_button_with_invisible_disabled_state"
         android:textColor="@drawable/white_text_with_states"
         android:textSize="15sp"
         android:layout_marginBottom="16dp"

@@ -19,7 +19,7 @@
             android:scaleType="fitXY"
             android:adjustViewBounds="true"
             android:src="@drawable/ic_favorite"
-            android:tint="@color/pink500"
+            android:tint="@color/red500"
             />
     </LinearLayout>
     <TextView

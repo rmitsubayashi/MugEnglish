@@ -24,4 +24,14 @@
             />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="@string/preferences_category_general_key"
+        android:title="@string/preferences_category_general_label"
+        >
+        <ListPreference
+            android:key="@string/preferences_general_themeColor_key"
+            android:title="@string/preferences_general_themeColor_label"
+            android:dialogTitle="@string/preferences_general_themeColor_dialog_label"/>
+    </PreferenceCategory>
+
 </PreferenceScreen>

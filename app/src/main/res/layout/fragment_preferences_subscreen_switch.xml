@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:background="@color/lblue500">
+            android:background="?attr/color500">
             <Switch
                 android:id="@+id/preferences_subscreen_switch_button"
                 android:layout_width="wrap_content"
@@ -35,7 +35,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textSize="21sp"
-            android:textColor="@color/orange500"
+            android:textColor="?attr/colorAccent500"
             android:text="@string/preferences_subscreen_functionality_title"/>
         <TextView
             android:id="@+id/preferences_subscreen_switch_functionality_title"
@@ -51,7 +51,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textSize="21sp"
-            android:textColor="@color/orange500"
+            android:textColor="?attr/colorAccent500"
             android:text="@string/preferences_subscreen_reason_title"
             />
         <TextView

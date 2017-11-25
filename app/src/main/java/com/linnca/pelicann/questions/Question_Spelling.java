@@ -15,6 +15,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
 
 import java.util.ArrayList;
@@ -265,7 +266,8 @@ public class Question_Spelling extends Question_General {
 
                 Button button = answerButtons.pop();
                 button.setEnabled(true);
-                button.setTextColor(ContextCompat.getColor(getContext(), R.color.lblue500));
+                button.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                        R.attr.color500, getContext()));
                 answerText.deleteCharAt(answerText.length()-1);
                 answerTextView.setText(answerText.toString());
             }

@@ -96,6 +96,7 @@
     <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_label_short">
         例外的な文法の説明文
     </string>
+    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_show">表示する</string>
     <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_label_long">
         例外的な文法の説明文を表示する
     </string>
@@ -120,6 +121,23 @@
     <string name="preferences_questions_numberOfAttemptsPerQuestion_description">
         問題を何回間違っていいのか設定できます。\n間違えたらすぐに答えを確認せず、何が間違っているのかじっくり考えてください。
     </string>
+
+    <string name="preferences_category_general_label">
+        一般
+    </string>
+    <string name="preferences_category_general_key">
+        preferences:general
+    </string>
+    <string name="preferences_general_themeColor_key">
+        preferences:theme color
+    </string>
+    <string name="preferences_general_themeColor_blue">青</string>
+    <string name="preferences_general_themeColor_green">緑</string>
+    <string name="preferences_general_themeColor_red">赤</string>
+    <string name="preferences_general_themeColor_yellow">黄色</string>
+    <string name="preferences_general_themeColor_label">背景の色</string>
+    <string name="preferences_general_themeColor_dialog_label">新しい色</string>
+
     <string name="preferences_first_time_key">preferences:first time</string>
     <string name="preferences_last_selected_lesson_level">preferences: last selected lesson level</string>
     <string name="preferences_report_card_last_selected_lesson_level">preferences: report card last selected lesson level</string>

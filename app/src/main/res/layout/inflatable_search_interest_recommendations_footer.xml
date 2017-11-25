@@ -4,7 +4,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/orange500"
+        android:textColor="?attr/colorAccent500"
         android:background="@drawable/transparent_button"
         android:text="@string/search_interests_recommendations_more"
     />

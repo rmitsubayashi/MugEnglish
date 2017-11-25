@@ -223,8 +223,8 @@ public abstract class Question_General extends Fragment {
             }
         });
         if (correct){
-            feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
-            nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
+            feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_green500));
+            nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.light_green500));
         } //else condition is default now
         TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
         final String description = QuestionFeedbackFormatter.formatFeedback(correct,

@@ -32,6 +32,7 @@ import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
@@ -212,9 +213,9 @@ public class LessonDetails extends Fragment {
     }
 
 
-    private void setLessonColor(int color){
+    private void setLessonColor(int attrID){
         //background for whole activity
-        mainLayout.setBackgroundColor(ContextCompat.getColor(getContext(), color));
+        mainLayout.setBackgroundColor(ApplicationThemeManager.getColorFromAttribute(attrID, getContext()));
 
         /*
         //status bar (post-lollipop)
@@ -281,7 +282,8 @@ public class LessonDetails extends Fragment {
             @Override
             public void run() {
                 if (LessonDetails.this.isVisible()) {
-                    createButton.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getContext(), R.color.orange500)));
+                    createButton.setBackgroundTintList(ColorStateList.valueOf(
+                            ApplicationThemeManager.getColorFromAttribute(R.attr.colorAccent500, getContext())));
                     createButton.setEnabled(true);
                 }
             }

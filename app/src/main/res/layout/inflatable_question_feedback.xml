@@ -8,7 +8,7 @@ if we don't set it here, the bottom sheet comes in from the top??
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipToPadding="true"
-    android:background="?attr/colorAccent"
+    android:background="@color/orange500"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
     android:layout_gravity="bottom"
     android:elevation="16dp"
@@ -46,7 +46,7 @@ if we don't set it here, the bottom sheet comes in from the top??
                 android:layout_weight="0.2"
                 android:background="@drawable/white_button"
                 android:text="@string/question_feedback_next"
-                android:textColor="?attr/colorAccent"/>
+                android:textColor="@color/orange500"/>
 
         </LinearLayout>
 

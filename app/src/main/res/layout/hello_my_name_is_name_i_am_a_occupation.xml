@@ -41,7 +41,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_table_point_of_view_1"/>
                 <TextView
                     android:padding="12dp"
@@ -52,7 +52,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_table_point_of_view_2"/>
                 <TextView
                     android:padding="12dp"
@@ -63,7 +63,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_table_point_of_view_3"/>
                 <TextView
                     android:padding="12dp"

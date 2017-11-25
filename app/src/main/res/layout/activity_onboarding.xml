@@ -57,7 +57,7 @@
                 android:layout_height="8dp"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_circle"
-                android:tint="@color/orange500"/>
+                android:tint="?attr/colorAccent500"/>
             <ImageView
                 android:id="@+id/onboarding_indicator2"
                 android:layout_width="8dp"
@@ -81,7 +81,7 @@
             android:layout_alignParentEnd="true"
             android:background="@drawable/transparent_button"
             android:text="@string/onboarding_finish"
-            android:textColor="@color/lblue500"
+            android:textColor="?attr/color500"
             android:visibility="gone"/>
 
         <Button
@@ -91,7 +91,7 @@
             android:layout_alignParentEnd="true"
             android:background="@drawable/transparent_button"
             android:text="@string/onboarding_next"
-            android:textColor="@color/lblue500"
+            android:textColor="?attr/color500"
             />
     </RelativeLayout>
 

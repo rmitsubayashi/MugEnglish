@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 
 import java.text.DateFormat;
@@ -54,7 +55,8 @@ public class Tutorial_LessonDetails extends Fragment {
         View view = inflater.inflate(R.layout.fragment_tutorial_lesson_details, container, false);
         mainLayout = view.findViewById(R.id.fragment_tutorial_lesson_details);
 
-        mainLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.lblue300));
+        mainLayout.setBackgroundColor(ApplicationThemeManager.getColorFromAttribute(
+                R.attr.color300, getContext()));
 
         if (descriptionFeatureCovered) {
             showLesson();

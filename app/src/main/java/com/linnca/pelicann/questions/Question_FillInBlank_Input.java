@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 //we only have one blank per question
 //to make it easier for the user to solve
@@ -80,7 +81,7 @@ public class Question_FillInBlank_Input extends Question_General {
         int startIndex = question.indexOf('_');//Emoji haha
         int endIndex = question.lastIndexOf('_') + 1;
         ForegroundColorSpan colorSpan = new ForegroundColorSpan(
-                ContextCompat.getColor(getContext(),R.color.lblue700)
+                ApplicationThemeManager.getColorFromAttribute(R.attr.color700, getContext())
         );
         stringBuilder.setSpan(colorSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 

@@ -30,7 +30,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center"
-            android:tint="@color/lblue300"
+            android:tint="?attr/color300"
             android:src="@drawable/ic_down_arrow"
             />
         <EditText

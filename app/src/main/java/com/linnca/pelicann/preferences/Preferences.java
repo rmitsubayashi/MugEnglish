@@ -5,14 +5,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Preferences extends PreferenceFragmentCompat {
     public static final String TAG = "Preferences";
@@ -36,6 +41,7 @@ public class Preferences extends PreferenceFragmentCompat {
         //in a secondary fragment (while this is not destroyed)
         setNumberOfAttemptsPerQuestionPreference();
         setDescriptionBeforeLessonWithExceptionRulePreference();
+        setThemePreference();
     }
 
     @Override
@@ -77,6 +83,16 @@ public class Preferences extends PreferenceFragmentCompat {
                 return true;
             }
         });
+
+        ListPreference listPreference =
+                (ListPreference)findPreference(getString(R.string.preferences_general_themeColor_key));
+        listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                listener.updateTheme();
+                return true;
+            }
+        });
     }
     private void setNumberOfAttemptsPerQuestionPreference(){
         //default value
@@ -101,6 +117,23 @@ public class Preferences extends PreferenceFragmentCompat {
         }
         String title = getString(R.string.preferences_questions_numberOfAttemptsPerQuestion_label, numberOfAttempts);
         preference.setTitle(title);
+    }
+
+    private void setThemePreference(){
+        ListPreference listPreference =
+                (ListPreference)findPreference(getString(R.string.preferences_general_themeColor_key));
+        String[] listEntries = new String[3];
+        listEntries[0] = getString(R.string.preferences_general_themeColor_blue);
+        listEntries[1] = getString(R.string.preferences_general_themeColor_green);
+        listEntries[2] = getString(R.string.preferences_general_themeColor_yellow);
+        listPreference.setEntries(listEntries);
+
+        String[] listValues = new String[3];
+        listValues[0] = Integer.toString(ApplicationThemeManager.BLUE);
+        listValues[1] = Integer.toString(ApplicationThemeManager.GREEN);
+        listValues[2] = Integer.toString(ApplicationThemeManager.YELLOW);
+        listPreference.setEntryValues(listValues);
+
     }
 
     private void setDescriptionBeforeLessonWithExceptionRulePreference(){

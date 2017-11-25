@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 class SearchResultsEmptyStateViewHolder extends RecyclerView.ViewHolder {
     private final TextView titleTextView;
@@ -27,7 +28,8 @@ class SearchResultsEmptyStateViewHolder extends RecyclerView.ViewHolder {
                     itemView.getContext().getString(R.string.search_interests_empty_state_title, query)
             );
             //highlight the query to make it easier to see
-            spannableString.setSpan(new ForegroundColorSpan(ContextCompat.getColor(itemView.getContext(), R.color.orange500)),
+            spannableString.setSpan(new ForegroundColorSpan(ApplicationThemeManager.getColorFromAttribute(
+                    R.attr.colorAccent500, itemView.getContext())),
                     1, query.length()+1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             titleTextView.setText(spannableString);
 

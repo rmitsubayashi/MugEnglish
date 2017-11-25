@@ -19,6 +19,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.userinterestcontrols.StarterPacks;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
@@ -71,7 +72,8 @@ public class Onboarding extends AppCompatActivity {
         for (int i = 0; i < indicators.size(); i++) {
             indicators.get(i).setColorFilter(
                     i == position ?
-                    ContextCompat.getColor(this, R.color.orange500):
+                            ApplicationThemeManager.getColorFromAttribute(
+                                    R.attr.colorAccent500, this):
                     ContextCompat.getColor(this, R.color.gray500)
             );
         }

@@ -16,7 +16,7 @@
         android:background="@color/white"
         android:layout_margin="2dp"
         android:padding="8dp"
-        android:textColor="@color/lblue500"
+        android:textColor="?attr/color500"
         android:textSize="13sp"/>
 
 </RelativeLayout>

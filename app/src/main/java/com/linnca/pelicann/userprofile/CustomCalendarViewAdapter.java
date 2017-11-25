@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -72,7 +73,7 @@ class CustomCalendarViewAdapter extends ArrayAdapter<DateTime> {
             String mapKey = formatUsageDataKey(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth());
             if (usageData.containsKey(mapKey)) {
                 view.setBackgroundResource(R.drawable.calendar_view_cleared);
-                ((TextView)view).setTextColor(ContextCompat.getColor(getContext(), R.color.lblue700));
+                ((TextView)view).setTextColor(ApplicationThemeManager.getColorFromAttribute(R.attr.color700, getContext()));
                 final int minutesSpent = usageData.get(mapKey);
                 view.setOnClickListener(new View.OnClickListener() {
                     @Override

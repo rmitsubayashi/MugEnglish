@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/orange_button_color"
+        android:background="@drawable/accent_button_with_gray_disabled_state"
         android:textColor="@color/white"
         android:text="@string/tutorial_choose_person_search_button"/>
     <TextView

@@ -10,7 +10,7 @@
         android:id="@+id/user_profile_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:tabSelectedTextColor="@color/orange500"
+        app:tabSelectedTextColor="?attr/colorAccent500"
         />
 
     <android.support.v4.view.ViewPager

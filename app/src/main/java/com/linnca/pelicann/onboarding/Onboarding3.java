@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.userinterestcontrols.StarterPacks;
 
 public class Onboarding3 extends Fragment {
@@ -122,11 +123,13 @@ public class Onboarding3 extends Fragment {
     }
 
     private void selectImage(ImageView imageView){
-        imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.lblue500));
+        imageView.setColorFilter(ApplicationThemeManager.getColorFromAttribute(
+                R.attr.color500, getContext()));
     }
 
     private void selectLabel(TextView textView){
-        textView.setTextColor(ContextCompat.getColor(getContext(), R.color.lblue500));
+        textView.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                R.attr.color500, getContext()));
     }
     
     private void deselect(int selection){

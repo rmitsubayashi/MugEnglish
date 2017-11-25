@@ -26,6 +26,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
@@ -291,7 +292,7 @@ public class UserInterests extends Fragment {
                 actionMode = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                     getActivity().getWindow().setStatusBarColor(
-                            ContextCompat.getColor(getContext(), R.color.lblue700)
+                            ApplicationThemeManager.getColorFromAttribute(R.attr.color700, getContext())
                     );
                 }
             }

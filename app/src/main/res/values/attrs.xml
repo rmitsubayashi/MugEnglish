@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="color300" format="color"/>
+    <attr name="color500" format="color"/>
+    <attr name="color700" format="color"/>
+    <attr name="color900" format="color"/>
+    <attr name="colorAccent300" format="color"/>
+    <attr name="colorAccent500" format="color"/>
+    <attr name="colorAccent700" format="color"/>
+</resources>

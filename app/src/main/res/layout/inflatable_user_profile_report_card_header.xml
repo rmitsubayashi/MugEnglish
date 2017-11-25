@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
             android:textSize="13sp"
-            android:textColor="@color/lblue500"
+            android:textColor="?attr/color500"
             android:text="@string/user_profile_report_card_cleared"/>
         <TextView
             android:layout_width="wrap_content"

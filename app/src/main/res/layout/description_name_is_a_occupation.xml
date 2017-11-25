@@ -34,7 +34,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_is_a_occupation_example_1_word"/>
                 <TextView
                     android:padding="12dp"
@@ -45,7 +45,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_is_a_occupation_example_2_word"/>
                 <TextView
                     android:padding="12dp"
@@ -56,7 +56,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_is_a_occupation_example_3_word"/>
                 <TextView
                     android:padding="12dp"
@@ -89,17 +89,17 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_is_a_occupation_table_header_meaning"/>
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_is_a_occupation_table_header_male"/>
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_is_a_occupation_table_header_female"/>
             </TableRow>
             <TableRow>

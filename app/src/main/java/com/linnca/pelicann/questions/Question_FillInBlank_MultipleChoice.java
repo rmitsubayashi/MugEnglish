@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 import java.util.List;
 
@@ -71,7 +72,8 @@ public class Question_FillInBlank_MultipleChoice extends Question_General {
         int startIndex = question.indexOf('_');//Emoji haha
         int endIndex = question.lastIndexOf('_') + 1;
         ForegroundColorSpan colorSpan = new ForegroundColorSpan(
-                ContextCompat.getColor(getContext(),R.color.lblue700)
+                ApplicationThemeManager.getColorFromAttribute(
+                        R.attr.color700, getContext())
         );
         stringBuilder.setSpan(colorSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 

@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
-        android:tint="@color/orange500"/>
+        android:tint="?attr/colorAccent500"/>
     <TextView
         android:id="@+id/tool_bar_spinner_item_text"
         android:layout_width="wrap_content"

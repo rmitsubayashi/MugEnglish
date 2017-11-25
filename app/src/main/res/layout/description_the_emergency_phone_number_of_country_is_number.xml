@@ -27,7 +27,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_emergency_phone_number_of_country_is_number_new_word_part1_word"/>
                 <TextView
                     android:padding="12dp"
@@ -38,7 +38,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_emergency_phone_number_of_country_is_number_new_word_part2_word"/>
                 <TextView
                     android:padding="12dp"
@@ -49,7 +49,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_emergency_phone_number_of_country_is_number_new_word_part3_word"/>
                 <TextView
                     android:padding="12dp"

@@ -7,5 +7,5 @@
         android:paddingEnd="4dp"
         android:textAllCaps="false"
         android:background="@drawable/transparent_button_borderless"
-        android:textColor="@color/lblue500"
+        android:textColor="?attr/color500"
     />

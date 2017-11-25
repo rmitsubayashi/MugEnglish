@@ -30,7 +30,7 @@ so wrap a linear layout in another linear layout-->
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textSize="13sp"
-            android:textColor="@color/lblue700"
+            android:textColor="?attr/color700"
             android:id="@+id/lesson_details_item_date_created"
             />
     </LinearLayout>

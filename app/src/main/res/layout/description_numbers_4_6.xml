@@ -26,7 +26,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_numbers_word4"/>
                 <TextView
                     android:padding="12dp"
@@ -37,7 +37,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_numbers_word5"/>
                 <TextView
                     android:padding="12dp"
@@ -48,7 +48,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_numbers_word6"/>
                 <TextView
                     android:padding="12dp"

@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements
     private final String TAG = "MainActivity";
     private Database db;
     public final static String BUNDLE_DATABASE = "bundleDatabase";
+    private final String SAVED_STATE_PREFERENCES = "savedStatePreferences";
+    private boolean savedStatePreferences = false;
     private boolean searchIconVisible = false;
     private boolean descriptionIconVisible = false;
     private String descriptionLessonKey;
@@ -112,6 +114,18 @@ public class MainActivity extends AppCompatActivity implements
             //hard code a new database instance
             db = new FirebaseDB();
         }
+        //setting the color scheme based on user's settings
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        //list preferences can only store string arrays
+        String themeString = preferences.getString(getString(R.string.preferences_general_themeColor_key),
+                Integer.toString(ApplicationThemeManager.BLUE));
+        int theme;
+        try {
+            theme = Integer.parseInt(themeString);
+        } catch (ClassCastException e){
+            theme = ApplicationThemeManager.BLUE;
+        }
+        ApplicationThemeManager.setTheme(this, theme);
 
         setContentView(R.layout.activity_main);
 
@@ -187,8 +201,14 @@ public class MainActivity extends AppCompatActivity implements
         navigationView = findViewById(R.id.main_navigation_drawer);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //initial fragment on launch
-        setLessonView();
+        if (savedInstanceState != null &&
+                savedInstanceState.getBoolean(SAVED_STATE_PREFERENCES)){
+            checkNavigationItem(R.id.main_navigation_drawer_settings);
+            fragmentManager.rootToSettings(db);
+        } else {
+            //initial fragment on launch
+            setLessonView();
+        }
     }
 
     @Override
@@ -310,6 +330,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState){
+        if (savedStatePreferences){
+            outState.putBoolean(SAVED_STATE_PREFERENCES, true);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void lessonListToLessonDetails(LessonData lessonData){
         fragmentManager.lessonListToLessonDetails(db, lessonData);
         switchActionBarUpButton();
@@ -336,6 +364,15 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             return false;
         }
+    }
+
+    @Override
+    public void updateTheme(){
+        savedStatePreferences = true;
+        //we want the changes to be reflected,
+        // so re-create the activity.
+        //we have to call setTheme before any views are written
+        recreate();
     }
 
     @Override

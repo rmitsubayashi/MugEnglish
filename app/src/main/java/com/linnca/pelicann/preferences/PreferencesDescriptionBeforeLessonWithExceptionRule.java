@@ -67,7 +67,7 @@ public class PreferencesDescriptionBeforeLessonWithExceptionRule extends Fragmen
     }
 
     private void setLayout(){
-        titleTextView.setText(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_label_long);
+        titleTextView.setText(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_show);
         functionalityTextView.setText(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_description_functionality);
         reasonTitleTextView.setText(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_description_reason);
         SharedPreferences sharedPreferences =

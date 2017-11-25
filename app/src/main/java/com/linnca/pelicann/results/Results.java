@@ -23,6 +23,7 @@ import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.UserLessonListViewer;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
@@ -190,7 +191,8 @@ public class Results extends Fragment {
             //change the layout of the finish button to recommend review
             // (make it borderless)
             finishButton.setBackgroundResource(R.drawable.transparent_button);
-            finishButton.setTextColor(ContextCompat.getColor(getContext(), R.color.lblue500));
+            finishButton.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                    R.attr.color500, getContext()));
             finishButton.setText(R.string.results_finish_review);
             finishButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -273,7 +275,7 @@ public class Results extends Fragment {
         //change text color based on accuracy (the user can edit border line??)
         double correctPercentage = (double)correctCt / (double)totalCt;
         if (correctPercentage > 0.8){
-            correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.lgreen500));
+            correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.light_green500));
         } else if (correctPercentage > 0.5){
             correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.orange500));
         } else {

@@ -31,7 +31,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_possessive_first_last_name_is_name_word1"/>
                 <TextView
                     android:padding="12dp"
@@ -42,7 +42,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_name_possessive_first_last_name_is_name_word2"/>
                 <TextView
                     android:padding="12dp"

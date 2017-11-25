@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignStart="@id/lesson_list_list_item_col1_center_ref"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <LinearLayout
             android:id="@+id/lesson_list_list_item_col1_main_content"
             android:layout_width="wrap_content"
@@ -52,21 +52,21 @@
             android:layout_height="match_parent"
             android:layout_above="@id/lesson_list_list_item_col1_main_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col1_bottom"
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_below="@id/lesson_list_list_item_col1_main_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col1_right"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_toEndOf="@id/lesson_list_list_item_col1_main_content"
             android:layout_centerVertical="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -86,13 +86,13 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignEnd="@id/lesson_list_list_item_col2_center_ref"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col2_top_right"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignStart="@id/lesson_list_list_item_col2_center_ref"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <LinearLayout
             android:id="@+id/lesson_list_list_item_col2_main_content"
             android:layout_width="wrap_content"
@@ -118,28 +118,28 @@
             android:layout_height="match_parent"
             android:layout_above="@id/lesson_list_list_item_col2_main_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col2_bottom"
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_below="@id/lesson_list_list_item_col2_main_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col2_left"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_toStartOf="@id/lesson_list_list_item_col2_main_content"
             android:layout_centerVertical="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col2_right"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_toEndOf="@id/lesson_list_list_item_col2_main_content"
             android:layout_centerVertical="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -159,7 +159,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignEnd="@id/lesson_list_list_item_col3_center_ref"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <LinearLayout
             android:id="@+id/lesson_list_list_item_col3_main_content"
             android:layout_width="wrap_content"
@@ -185,21 +185,21 @@
             android:layout_height="match_parent"
             android:layout_above="@id/lesson_list_list_item_col3_main_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col3_bottom"
             android:layout_width="2dp"
             android:layout_height="match_parent"
             android:layout_below="@id/lesson_list_list_item_col3_main_content"
             android:layout_centerHorizontal="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
         <View
             android:id="@+id/lesson_list_list_item_col3_left"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_toStartOf="@id/lesson_list_list_item_col3_main_content"
             android:layout_centerVertical="true"
-            android:background="@color/orange500"/>
+            android:background="?attr/colorAccent300"/>
     </RelativeLayout>
 
 </LinearLayout>

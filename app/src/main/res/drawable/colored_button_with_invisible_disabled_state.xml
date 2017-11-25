@@ -2,5 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
           android:exitFadeDuration="@android:integer/config_longAnimTime">
     <item android:state_enabled="false" android:drawable="@color/transparent"/>
-    <item android:drawable="@drawable/lblue_button"/>
+    <item android:drawable="@drawable/colored_button"/>
 </selector>

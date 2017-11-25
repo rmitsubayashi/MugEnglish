@@ -54,7 +54,7 @@
                     android:paddingRight="16dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:tint="@color/orange500"
+                    android:tint="?attr/colorAccent500"
                     android:src="@drawable/ic_send"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     />

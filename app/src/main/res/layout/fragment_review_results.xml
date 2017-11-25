@@ -17,7 +17,7 @@
         android:id="@+id/review_results_finish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/lblue_button"
+        android:background="@drawable/colored_button"
         android:textColor="@color/white"
         android:text="@string/review_results_finish"
         />

@@ -17,7 +17,7 @@
         android:id="@+id/tutorial_confirm_person_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/orange_button_color"
+        android:background="@drawable/accent_button_with_gray_disabled_state"
         android:textColor="@color/white"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="12dp"

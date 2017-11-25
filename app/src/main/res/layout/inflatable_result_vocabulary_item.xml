@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:background="@drawable/transparent_button"
-        android:textColor="@color/orange500"
+        android:textColor="?attr/colorAccent500"
         android:text="@string/results_vocabulary_item_add"/>
     <TextView
         android:id="@+id/results_vocabulary_item_word"

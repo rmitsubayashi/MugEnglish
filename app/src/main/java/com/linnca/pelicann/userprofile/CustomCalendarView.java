@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -301,7 +302,8 @@ public class CustomCalendarView extends LinearLayout
     private void togglePreviousButtonVisibility(){
         if (canDisplayPreviousMonth()){
             btnPrev.setEnabled(true);
-            btnPrev.setTextColor(ContextCompat.getColor(getContext(), R.color.orange500));
+            btnPrev.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                    R.attr.colorAccent500, getContext()));
         } else {
             btnPrev.setEnabled(false);
             btnPrev.setTextColor(ContextCompat.getColor(getContext(), R.color.gray500));
@@ -311,7 +313,8 @@ public class CustomCalendarView extends LinearLayout
     private void toggleNextButtonVisibility(){
         if (canDisplayNextMonth()){
             btnNext.setEnabled(true);
-            btnNext.setTextColor(ContextCompat.getColor(getContext(), R.color.orange500));
+            btnNext.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                    R.attr.colorAccent500, getContext()));
         } else {
             btnNext.setEnabled(false);
             btnNext.setTextColor(ContextCompat.getColor(getContext(), R.color.gray500));

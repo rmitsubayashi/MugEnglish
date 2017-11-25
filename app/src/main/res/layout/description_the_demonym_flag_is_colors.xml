@@ -36,7 +36,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_demonym_flag_is_colors_word1"/>
                 <TextView
                     android:padding="12dp"
@@ -47,7 +47,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_demonym_flag_is_colors_word2"/>
                 <TextView
                     android:padding="12dp"
@@ -58,7 +58,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_demonym_flag_is_colors_word3"/>
                 <TextView
                     android:padding="12dp"
@@ -69,7 +69,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_demonym_flag_is_colors_word4"/>
                 <TextView
                     android:padding="12dp"
@@ -80,7 +80,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_demonym_flag_is_colors_word5"/>
                 <TextView
                     android:padding="12dp"
@@ -91,7 +91,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_demonym_flag_is_colors_word6"/>
                 <TextView
                     android:padding="12dp"
@@ -102,7 +102,7 @@
                 <TextView
                     android:padding="12dp"
                     android:textSize="15sp"
-                    android:textColor="@color/lblue300"
+                    android:textColor="?attr/color300"
                     android:text="@string/description_the_demonym_flag_is_colors_word7"/>
                 <TextView
                     android:padding="12dp"
