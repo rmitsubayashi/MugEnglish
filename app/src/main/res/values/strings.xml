@@ -213,11 +213,13 @@
     <string name="search_interests_search_hint">検索</string>
     <string name="search_interests_add">追加</string>
     <string name="search_interests_recommendations_success">追加しました！</string>
-    <string name="search_interests_recommendations_title">%1$sを追加した人はこんなものを追加しています</string>
+    <string name="search_interests_recommendations_title">%1$sが好きな人はこんなものも追加しています</string>
+    <string name="search_interests_recommendations_title_no_recommendations">この中で好きなものはありますか？</string>
     <string name="search_interests_recommendations_more">もっと表示する</string>
     <string name="search_interests_empty_state_title">「%1$s」の検索結果　0件</string>
     <string name="search_interests_empty_state_title_backup">見つかりませんでした</string>
     <string name="search_interests_empty_state_advice">検索エンジンはWikipedia（ウィキペディア）を参照しています。\nWikipediaの記事に載っている題名を検索してみてください！</string>
+    <string name="search_interests_initial_state_title">日本語か英語で検索してください</string>
 
     <!--Facebook interests-->
     <string name="facebook_interests_app_bar_title">Facebookで検索</string>
@@ -252,6 +254,7 @@
     <string name="user_interests_filter_people">人間</string>
     <string name="user_interests_filter_places">場所</string>
     <string name="user_interests_filter_other">その他</string>
+    <string name="user_interests_no_feature">機能は今後追加します</string>
 
     <!--user profile-->
     <string name="user_profile_app_bar_title">データ</string>
@@ -297,6 +300,7 @@
     <string name="vocabulary_details_example_sentence">例文</string>
     <string name="vocabulary_details_go_to_lesson">レッスンにいく</string>
 
+    <!--for the calendar view-->
     <string name="calendar_sunday">日</string>
     <string name="calendar_monday">月</string>
     <string name="calendar_tuesday">火</string>

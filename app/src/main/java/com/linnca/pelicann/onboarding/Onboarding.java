@@ -166,6 +166,7 @@ public class Onboarding extends AppCompatActivity {
                 String newUserID = authResult.getUser().getUid();
                 addStarterPack(adapter.getStarterPackSelection());
                 Intent intent = new Intent(Onboarding.this, MainActivity.class);
+                intent.putExtra(MainActivity.BUNDLE_DATABASE, new FirebaseDB());
                 startActivity(intent);
                 Onboarding.this.finish();
             }
