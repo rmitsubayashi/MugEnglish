@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -74,6 +75,8 @@ public class UserInterests extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user_interests, container, false);
         mainLayout = view.findViewById(R.id.user_interests_layout);
         listView = view.findViewById(R.id.user_interests_list);
+        listView.setLayoutManager(new LinearLayoutManager(getContext()));
+        registerForContextMenu(listView);
         searchFAB = view.findViewById(R.id.user_interests_search_fab);
         actionModeCallback = getActionModeCallback();
         populateFABs();
@@ -87,7 +90,7 @@ public class UserInterests extends Fragment {
                 new ToolbarState("",
                         false, true, null)
         );
-        populateUserInterests();
+        setAdapter();
     }
 
     @Override
@@ -150,12 +153,6 @@ public class UserInterests extends Fragment {
         db.getUserInterests(onResultListener);
     }
 
-    private void populateUserInterests(){
-        listView.setLayoutManager(new LinearLayoutManager(getContext()));
-        setAdapter();
-        registerForContextMenu(listView);
-    }
-
 
     private void populateFABs(){
         searchFAB.setOnClickListener(new View.OnClickListener() {
@@ -174,7 +171,10 @@ public class UserInterests extends Fragment {
         return new UserInterestAdapter.UserInterestAdapterListener() {
             @Override
             public void onItemClicked(int position){
-                if (actionMode != null) {
+                if (actionMode == null) {
+                    //normal click
+                    showNoFeature();
+                } else {
                     toggleSelection(position);
                 }
             }
@@ -190,6 +190,11 @@ public class UserInterests extends Fragment {
 
             }
         };
+    }
+
+    private void showNoFeature(){
+        Toast.makeText(getContext(), R.string.user_interests_no_feature, Toast.LENGTH_SHORT)
+                .show();
     }
     
     private void showUndoSnackBar(final List<WikiDataEntryData> dataToRecover){

@@ -48,9 +48,9 @@ public class UserLessonListViewerTest {
                 titleCount = new HashMap<>();
 
                 row = new LessonListRow();
-                col1Data = new LessonData("key1", "title", 1, null, 100, R.color.lblue300, 1);
-                col2Data = new LessonData("key2", "title", null, null, 100, R.color.lblue700, 1);
-                col3Data = new LessonData("key3", "title", null, null, 100, R.color.lblue700, 1);
+                col1Data = new LessonData("key1", "title", 1, null, 100, 1, 1);
+                col2Data = new LessonData("key2", "title", null, null, 100, 1, 1);
+                col3Data = new LessonData("key3", "title", null, null, 100, 1, 1);
                 row.setCol1(col1Data);
                 row.setCol2(col2Data);
                 row.setCol3(col3Data);
@@ -59,11 +59,11 @@ public class UserLessonListViewerTest {
                 row = new LessonListRow();
                 col1Prerequisites = new ArrayList<>(1);
                 col1Prerequisites.add("key1");
-                col1Data = new LessonData("key4", "title4", null, col1Prerequisites, 100, R.color.lblue300, 1);
+                col1Data = new LessonData("key4", "title4", null, col1Prerequisites, 100, 1, 1);
                 col2Prerequisites = new ArrayList<>(2);
                 col2Prerequisites.add("key2");
                 col2Prerequisites.add("key3");
-                col2Data = new LessonData("key5", "title5", null, col2Prerequisites, 100, R.color.lblue700, 1);
+                col2Data = new LessonData("key5", "title5", null, col2Prerequisites, 100, 1, 1);
                 row.setCol1(col1Data);
                 row.setCol2(col2Data);
                 lessonRows.add(row);
@@ -78,17 +78,17 @@ public class UserLessonListViewerTest {
                 lessonRows.add(row);
 
                 row = new LessonListRow();
-                col1Data = new LessonData("key6", "title6", null, null, 100, R.color.lblue300, 1);
+                col1Data = new LessonData("key6", "title6", null, null, 100, 1, 1);
                 row.setCol1(col1Data);
                 lessonRows.add(row);
 
                 row = new LessonListRow();
                 col1Prerequisites = new ArrayList<>(1);
                 col1Prerequisites.add("key6");
-                col1Data = new LessonData("key7", "title7", null, col1Prerequisites, 100, R.color.lblue300, 1);
+                col1Data = new LessonData("key7", "title7", null, col1Prerequisites, 100, 1, 1);
                 col2Prerequisites = new ArrayList<>(1);
                 col2Prerequisites.add("key6");
-                col2Data = new LessonData("key8", "title8", null, col2Prerequisites, 100, R.color.lblue700, 1);
+                col2Data = new LessonData("key8", "title8", null, col2Prerequisites, 100, 1, 1);
                 row.setCol1(col1Data);
                 row.setCol2(col2Data);
                 lessonRows.add(row);
@@ -107,7 +107,7 @@ public class UserLessonListViewerTest {
 
                 lessonRows = new ArrayList<>(1);
                 row = new LessonListRow();
-                col1Data = new LessonData("key9", "title9", null, null, 100, R.color.lblue300, 1);
+                col1Data = new LessonData("key9", "title9", null, null, 100, 1, 1);
                 row.setCol1(col1Data);
                 lessonRows.add(row);
 

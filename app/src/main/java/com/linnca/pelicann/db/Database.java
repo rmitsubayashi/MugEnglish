@@ -34,20 +34,18 @@ public abstract class Database implements Serializable{
                                                   int toPopulate, List<String> questionSetIDsToAvoid,
                                                   OnResultListener onResultListener);
     public abstract void addQuestions(String lessonKey, List<QuestionDataWrapper> questions, OnResultListener onResultListener);
-    public abstract void getRelatedUserInterests(Collection<WikiDataEntryData> userInterests, int categoryOfQuestion, int searchCtPerUserInterest,
-                                                 OnResultListener onResultListener);
-    public abstract void getRandomQuestions(String lessonKey, int userQuestionHistorySize, List<String> questionSetIDsToAvoid,
-                                                        int totalQuestionSetsToPopulate,
-                                                        OnResultListener onResultListener);
-    public abstract void getQuestionSets(List<String> questionSetIDs, OnResultListener onResultListener);
+    public abstract void getQuestionSets(String lessonKey, List<String> questionSetIDs, OnResultListener onResultListener);
+    public abstract void changeQuestionSetCount(String lessonKey, String questionSetID, int amount, OnResultListener onResultListener);
+    public abstract void getPopularQuestionSets(String lessonKey, List<String> questionSetsToAvoid,
+                                                int questionSetsToPopulate, OnResultListener onResultListener);
 
     public abstract void getQuestion(String questionID, OnResultListener onResultListener);
 
     public abstract void addLessonInstance(String lessonKey, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs,
                                            OnResultListener onResultListener);
-    public abstract void getLessonInstances(String lessonKey, OnResultListener onResultListener);
+    public abstract void getLessonInstances(String lessonKey, boolean persistentConnection, OnResultListener onResultListener);
     public abstract void getLessonInstanceDetails(String lessonKey, String instanceID, OnResultListener onResultListener);
-    public abstract void removeLessonInstance(String lessonKey, String instanceID, OnResultListener onResultListener);
+    public abstract void removeLessonInstance(String lessonKey, LessonInstanceData instance, OnResultListener onResultListener);
 
     public abstract void getVocabularyDetails(String vocabularyItemID, OnResultListener onResultListener);
     public abstract void getVocabularyList(OnResultListener onResultListener);
@@ -64,8 +62,6 @@ public abstract class Database implements Serializable{
     //add user interest -> onResultListener -> add pronunciation/classification concurrently
     public abstract void setPronunciation(String userInterestID, String pronunciation);
     public abstract void setClassification(String userInterestID, int classification);
-
-    public abstract void getRecommendations(Collection<WikiDataEntryData> userInterests, String targetUserInterestID, int recommendationCt, OnResultListener onResultListener);
 
     public abstract void addInstanceRecord(InstanceRecord record, OnResultListener onResultListener);
 

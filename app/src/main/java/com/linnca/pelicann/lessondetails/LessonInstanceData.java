@@ -1,36 +1,31 @@
 package com.linnca.pelicann.lessondetails;
 
+import com.linnca.pelicann.questions.QuestionSet;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 //used in lessonDetails to display each instance and start the questions
 public class LessonInstanceData implements Serializable{
     private String id;
-    //in case we want to 'refresh' questions
-    private List<String> questionSetIds;
-    //for every question with more than one possible variation,
-    //we check this to see which variation we have here
-    private List<String> questionIds;
-    //basically for displaying the instances to the users
-    private List<String> interestLabels; //actual name, not ID
-    //for displaying
+    private String lessonKey;
+    //for displaying to the user
     private long createdTimeStamp;
-    //the reason we don't just store a QuestionSet class is because
-    // the QuestionSet class has a redundant vocabularyID field
-    // not necessary for displaying the instance to the user
+    private List<String> genericQuestionIds;
+    private List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
 
     public LessonInstanceData(){
-        questionSetIds = new ArrayList<>();
-        questionIds = new ArrayList<>();
-        interestLabels = new ArrayList<>();
     }
 
-    public LessonInstanceData(String id, List<String> questionSetIds, List<String> questionIds, List<String> interestLabels) {
+    public LessonInstanceData(String id, String lessonKey, long createdTimeStamp, List<String> genericQuestionIds, List<LessonInstanceDataQuestionSet> questionSets) {
         this.id = id;
-        this.questionSetIds = new ArrayList<>(questionSetIds);
-        this.questionIds = new ArrayList<>(questionIds);
-        this.interestLabels = new ArrayList<>(interestLabels);
+        this.lessonKey = lessonKey;
+        this.createdTimeStamp = createdTimeStamp;
+        this.genericQuestionIds = genericQuestionIds;
+        this.questionSets = new ArrayList<>(questionSets);
     }
 
     public String getId() {
@@ -41,59 +36,73 @@ public class LessonInstanceData implements Serializable{
         this.id = id;
     }
 
-    public List<String> getQuestionSetIds() {
-        return questionSetIds;
+    public String getLessonKey() {
+        return lessonKey;
     }
 
-    public void setQuestionSetIds(List<String> questionSetIds) {
-        this.questionSetIds = questionSetIds;
+    public void setLessonKey(String lessonKey) {
+        this.lessonKey = lessonKey;
+    }
+
+    public List<LessonInstanceDataQuestionSet> getQuestionSets() {
+        return questionSets;
+    }
+
+    public void setQuestionSets(List<LessonInstanceDataQuestionSet> questionSets) {
+        this.questionSets = questionSets;
+    }
+
+    public List<String> getGenericQuestionIds() {
+        return genericQuestionIds;
+    }
+
+    public void setGenericQuestionIds(List<String> genericQuestionIDs) {
+        this.genericQuestionIds = genericQuestionIDs;
+    }
+
+    public List<String> questionSetIds() {
+        List<String> questionSetIds = new ArrayList<>(questionSets.size());
+        for (LessonInstanceDataQuestionSet set : questionSets){
+            questionSetIds.add(set.getId());
+        }
+        return questionSetIds;
     }
 
     //don't add 'get' because that tells FireBase that it's a variable
     public int questionSetCount(){
-        return questionSetIds.size();
+        return questionSets.size();
     }
 
-    //these are synchronized so when we fetch FireBase multiple times
-    //to grab questions, we can get the results asynchronously and
-    //not have to worry about concurrency issues
-    public synchronized void addQuestionSetId(String questionSetId){
-        questionSetIds.add(questionSetId);
-    }
+    public List<String> allQuestionIds() {
+        List<String> questionIDs = new ArrayList<>();
+        questionIDs.addAll(genericQuestionIds);
+        for (LessonInstanceDataQuestionSet set : questionSets){
+            questionIDs.addAll(set.getQuestionIDs());
+        }
 
-    public List<String> getQuestionIds() {
-        return questionIds;
-    }
-
-    public void setQuestionIds(List<String> questionIds) {
-        this.questionIds = questionIds;
+        return questionIDs;
     }
 
     //don't add 'get' because that tells FireBase that it's a variable
-    public int questionCount(){ return questionIds.size(); }
-
-    public synchronized void addQuestionIds(List<String> questionIds){
-        this.questionIds.addAll(questionIds);
+    public int questionCount(){
+        return allQuestionIds().size();
     }
 
-    public String getQuestionIdAt(int index){
-        if (index >= questionIds.size()){
+    public String questionIdAt(int index){
+        List<String> questionIDs = allQuestionIds();
+        if (index >= questionIDs.size()){
             return "";
         } else {
-            return questionIds.get(index);
+            return questionIDs.get(index);
         }
     }
 
-    public List<String> getInterestLabels() {
+    public Set<String> uniqueInterestLabels(){
+        Set<String> interestLabels = new HashSet<>(questionSetCount());
+        for (LessonInstanceDataQuestionSet set : questionSets){
+            interestLabels.add(set.getInterestLabel());
+        }
         return interestLabels;
-    }
-
-    public void setInterestLabels(List<String> interestLabels) {
-        this.interestLabels = interestLabels;
-    }
-
-    public synchronized void addInterestLabel(String interestLabel){
-        this.interestLabels.add(interestLabel);
     }
 
     public long getCreatedTimeStamp() {
@@ -102,5 +111,17 @@ public class LessonInstanceData implements Serializable{
 
     public void setCreatedTimeStamp(long createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
+    }
+
+    //this is synchronized so when we fetch FireBase multiple times
+    //to grab questions, we can get the results asynchronously and
+    //not have to worry about concurrency issues
+    public synchronized void addQuestionSet(QuestionSet questionSet, boolean partOfPopularityRating){
+        LessonInstanceDataQuestionSet set = new LessonInstanceDataQuestionSet(questionSet, partOfPopularityRating);
+        questionSets.add(set);
+    }
+
+    public void addGenericQuestions(List<String> questionIDs){
+        this.genericQuestionIds = new ArrayList<>(questionIDs);
     }
 }

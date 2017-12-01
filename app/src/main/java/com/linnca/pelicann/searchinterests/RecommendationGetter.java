@@ -51,7 +51,8 @@ class RecommendationGetter {
         if (savedRecommendations.size() > toDisplayRecommendationCt){
             //we technically can display the list if we have recommendations equal to the display count,
             // but then we don't know whether we should show the load more button or not.
-            List<WikiDataEntryData> toDisplay = savedRecommendations.subList(0, toDisplayRecommendationCt);
+            List<WikiDataEntryData> toDisplay = new ArrayList<>(
+                    savedRecommendations.subList(0, toDisplayRecommendationCt));
             recommendationGetterListener.onGetRecommendations(toDisplay, true);
         } else {
             //grab more from the database
@@ -61,7 +62,7 @@ class RecommendationGetter {
 
     private void getRecommendations(final List<WikiDataEntryData> userInterests, String wikiDataID,
                                     final RecommendationGetterListener recommendationGetterListener){
-        OnResultListener onResultListener = new OnResultListener() {
+        /*OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onRecommendationsQueried(List<WikiDataEntryData> recommendations) {
                 //clearing out all of the user interests is handled in the database,
@@ -84,7 +85,7 @@ class RecommendationGetter {
         //we get the to display recommendation count + 1 so we know
         // whether we can load more recommendations
         db.getRecommendations(userInterests, wikiDataID,
-                toDisplayRecommendationCt+1, onResultListener);
+                toDisplayRecommendationCt+1, onResultListener);*/
     }
 
 }

@@ -145,40 +145,20 @@ class UserInterestAdapter
 
         int prevListSize = originalList.size();
         int updatedListSize = userInterestFilter.size();
-        //more than one item removed/added
-        if (Math.abs(prevListSize - updatedListSize) > 1){
-            notifyDataSetChanged();
-            return;
-        }
 
         //we should remove
         if (prevListSize > updatedListSize){
-            //we don't want to go beyond the array range so loop until the smaller one
-            for (int i=0; i<updatedListSize; i++){
-                WikiDataEntryData prevListItem = originalList.get(i);
-                WikiDataEntryData updatedListItem = userInterestFilter.get(i);
-                if (!prevListItem.equals(updatedListItem)){
-                    notifyItemRemoved(i);
-                    return;
-                }
-            }
+            removeItemsAnimation(originalList, userInterestFilter.getFilteredList());
             return;
         }
 
         //we should add
         if (prevListSize < updatedListSize){
-            for (int i=0; i<prevListSize; i++){
-                WikiDataEntryData prevListItem = originalList.get(i);
-                WikiDataEntryData updatedListItem = userInterestFilter.get(i);
-                if (!prevListItem.equals(updatedListItem)){
-                    notifyItemInserted(i);
-                    return;
-                }
-            }
+            addItemsAnimation(originalList, userInterestFilter.getFilteredList());
             return;
         }
-
-        //this shouldn't happen as of this implementation (8/31/17)
+        //this shouldn't happen because we are either
+        // removing or adding, not both
         if (prevListSize == updatedListSize){
             notifyDataSetChanged();
         }
@@ -204,47 +184,60 @@ class UserInterestAdapter
 
         //we want to remove items
         if (oldFilter == ToolbarSpinnerAdapter.FILTER_ALL){
-            //make the new list a set to make it easier to search
-            Set<WikiDataEntryData> newFilteredSet = new HashSet<>(
-                    userInterestFilter.getFilteredList());
-            int itemsRemoved = 0;
-            for (int i=0; i<oldFilteredList.size(); i++){
-                WikiDataEntryData oldItem = oldFilteredList.get(i);
-                if (!newFilteredSet.contains(oldItem)){
-                    notifyItemRemoved(i-itemsRemoved);
-                    itemsRemoved++;
-                }
-            }
+            removeItemsAnimation(oldFilteredList, userInterestFilter.getFilteredList());
             return;
         }
         //we want to add items
         if (newFilter == ToolbarSpinnerAdapter.FILTER_ALL){
-            Set<WikiDataEntryData> oldFilteredSet = new HashSet<>(oldFilteredList);
-            int tempToAdd = 0;
-            int oldFilteredListIndex = 0;
-            int itemsAdded =0;
-            for (int i=0; i<userInterestFilter.size(); i++){
-                WikiDataEntryData newData = userInterestFilter.get(i);
-                if (!oldFilteredSet.contains(newData)){
-                    tempToAdd++;
-                } else {
-                    if (tempToAdd > 0){
-                        notifyItemRangeInserted(oldFilteredListIndex+itemsAdded, tempToAdd);
-                        itemsAdded += tempToAdd;
-                        tempToAdd = 0;
-                    }
-                    oldFilteredListIndex++;
-                }
-            }
-            //to handle when the last item should be added
-            if (tempToAdd > 0){
-                notifyItemRangeInserted(oldFilteredListIndex+itemsAdded, tempToAdd);
-            }
+            addItemsAnimation(oldFilteredList, userInterestFilter.getFilteredList());
             return;
         }
 
         //the rest
         notifyDataSetChanged();
 
+    }
+
+    private void removeItemsAnimation(List<WikiDataEntryData> oldList, List<WikiDataEntryData> newList){
+        //make the list a set to make it easier to search
+        Set<WikiDataEntryData> newSet = new HashSet<>(newList);
+        int itemsRemoved = 0;
+        for (int i=0; i<oldList.size(); i++){
+            WikiDataEntryData oldItem = oldList.get(i);
+            if (!newSet.contains(oldItem)){
+                notifyItemRemoved(i-itemsRemoved);
+                itemsRemoved++;
+            }
+        }
+    }
+
+    private void addItemsAnimation(List<WikiDataEntryData> oldList, List<WikiDataEntryData> newList){
+        //make the list a set to make it easier to search
+        Set<WikiDataEntryData> oldSet = new HashSet<>(oldList);
+        int tempToAdd = 0;
+        int insertItemStartIndex = 0;
+        for (int i=0; i<newList.size(); i++){
+            WikiDataEntryData newData = newList.get(i);
+            if (!oldSet.contains(newData)){
+                //in case we are adding multiple items in a row,
+                // don't notify as soon as we find an item to add,
+                // but keep track and add it when we find an item
+                // that we shouldn't add
+                tempToAdd++;
+            } else if (tempToAdd > 0){
+                notifyItemRangeInserted(insertItemStartIndex, tempToAdd);
+                insertItemStartIndex += tempToAdd;
+                tempToAdd = 0;
+                //if the item is not to be added, we should increment
+                insertItemStartIndex++;
+            } else {
+                //if the item is not to be added, we should increment
+                insertItemStartIndex++;
+            }
+        }
+        //to handle when the last item should be added
+        if (tempToAdd > 0){
+            notifyItemRangeInserted(insertItemStartIndex, tempToAdd);
+        }
     }
 }

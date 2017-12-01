@@ -97,13 +97,9 @@ class LessonDetailsAdapter
     public void onBindViewHolder(final LessonDetailsViewHolder holder, int position) {
         LessonInstanceData data = allInstances.get(position);
         StringBuilder allInterestsLabelBuilder = new StringBuilder();
-        Set<String> duplicates = new HashSet<>(data.getInterestLabels().size());
-        for (String interestLabel : data.getInterestLabels()) {
-            if (!duplicates.contains(interestLabel)) {
+        for (String interestLabel : data.uniqueInterestLabels()) {
                 allInterestsLabelBuilder.append(interestLabel);
                 allInterestsLabelBuilder.append(" + ");
-            }
-            duplicates.add(interestLabel);
         }
         String allInterestsLabel = allInterestsLabelBuilder.toString();
         if (allInterestsLabel.equals("")){

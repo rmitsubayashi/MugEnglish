@@ -1,6 +1,7 @@
 package com.linnca.pelicann.db;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -11,11 +12,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessondetails.LessonInstanceDataQuestionSet;
 import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
@@ -38,6 +42,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -127,8 +132,8 @@ public class FirebaseDB extends Database{
     public void searchQuestions(String lessonKey, List<WikiDataEntryData> userInterests, int toPopulate,
                                          final List<String> questionSetIDsToAvoid,
                                          final OnResultListener onResultListener){
-        final List<String> questionSetIDsToReturn = Collections.synchronizedList(
-                new ArrayList<String>(toPopulate)
+        final List<QuestionSet> questionSetsToReturn = Collections.synchronizedList(
+                new ArrayList<QuestionSet>(toPopulate)
         );
         final List<WikiDataEntryData> userInterestsAlreadyChecked = Collections.synchronizedList(
                 new ArrayList<WikiDataEntryData>(userInterests.size())
@@ -137,7 +142,7 @@ public class FirebaseDB extends Database{
         final AtomicInteger userInterestsLooped = new AtomicInteger(0);
         final int userInterestsToLoop = userInterests.size();
         DatabaseReference questionSetRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTION_SET_IDS_PER_USER_INTEREST_PER_LESSON + "/" +
+                FirebaseDBHeaders.QUESTION_SETS + "/" +
                         lessonKey);
 
         for (final WikiDataEntryData userInterest : userInterests){
@@ -147,7 +152,9 @@ public class FirebaseDB extends Database{
                 break;
             }
 
-            DatabaseReference userInterestQuestionSetRef = questionSetRef.child(userInterest.getWikiDataID());
+            Query userInterestQuestionSetRef = questionSetRef
+                    .orderByChild(FirebaseDBHeaders.QUESTION_SET_INTEREST_ID)
+                    .equalTo(userInterest.getWikiDataID());
 
             userInterestQuestionSetRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -156,11 +163,6 @@ public class FirebaseDB extends Database{
                     if (questionSetsToPopulateAtomicInt.get() == 0){
                         return;
                     }
-                    //this means someone already checked and it didn't match
-                    //TODO a value here can't be null?
-                    if (dataSnapshot.exists() && dataSnapshot.getValue() == null){
-                        userInterestsAlreadyChecked.add(userInterest);
-                    }
 
                     //check the question sets to see if we have one the user hasn't had yet.
                     //we can't just check for the user interest ID because the user might have
@@ -168,17 +170,17 @@ public class FirebaseDB extends Database{
                     if (dataSnapshot.exists() && dataSnapshot.getValue() != null){
                         userInterestsAlreadyChecked.add(userInterest);
 
-                        for (DataSnapshot questionSetIDSnapshot : dataSnapshot.getChildren()){
-                            String questionSetID = questionSetIDSnapshot.getValue(String.class);
-                            if (!questionSetIDsToAvoid.contains(questionSetID)) {
-                                questionSetIDsToReturn.add(questionSetID);
+                        for (DataSnapshot questionSetSnapshot : dataSnapshot.getChildren()){
+                            QuestionSet questionSet = questionSetSnapshot.getValue(QuestionSet.class);
+                            if (!questionSetIDsToAvoid.contains(questionSet.getKey())) {
+                                questionSetsToReturn.add(questionSet);
                                 if (questionSetsToPopulateAtomicInt.decrementAndGet() == 0) break;
                             }
                         }
 
                         //we have found enough questions from the database alone
                         if (questionSetsToPopulateAtomicInt.get() == 0) {
-                            onResultListener.onQuestionsQueried(questionSetIDsToReturn,
+                            onResultListener.onQuestionsQueried(questionSetsToReturn,
                                     userInterestsAlreadyChecked);
                             return;
                         }
@@ -186,7 +188,7 @@ public class FirebaseDB extends Database{
 
                     //if this is the last one, we should finish
                     if (userInterestsLooped.incrementAndGet() == userInterestsToLoop){
-                        onResultListener.onQuestionsQueried(questionSetIDsToReturn,
+                        onResultListener.onQuestionsQueried(questionSetsToReturn,
                                 userInterestsAlreadyChecked);
                     }
                 }
@@ -207,20 +209,10 @@ public class FirebaseDB extends Database{
         //this is the actual question information for when we want to show
         // questions to the user
         DatabaseReference questionSetRef = db.getReference(
-                FirebaseDBHeaders.QUESTION_SETS
-        );
-        //this is for lesson generation so that we can find question sets the user
-        // hasn't had yet
-        DatabaseReference questionSetIDsPerLessonRef = db.getReference(
-                FirebaseDBHeaders.QUESTION_SET_IDS_PER_USER_INTEREST_PER_LESSON + "/" +
+                FirebaseDBHeaders.QUESTION_SETS + "/" +
                         lessonKey
         );
-        //this is for lesson generation so that when none of the user's interests match
-        // (nor the related interests), we can 'randomly' generate questions
-        DatabaseReference randomQuestionSetIDsRef = db.getReference(
-                FirebaseDBHeaders.RANDOM_QUESTION_SET_IDS + "/" +
-                        lessonKey
-        );
+
         //any new vocabulary examples
         DatabaseReference vocabularyRef = db.getReference(
                 FirebaseDBHeaders.VOCABULARY
@@ -263,131 +255,22 @@ public class FirebaseDB extends Database{
             //save the question set (pretty much the same thing as the
             //questionDataWrapper but just the IDs
             String questionSetKey = questionSetRef.push().getKey();
-            QuestionSet questionSet = new QuestionSet(questionSetKey, questionDataWrapper.getInterestLabel(),
-                    questionIDs, vocabularyIDs);
+            //the initial count should be 0 since we don't know if the user calling this
+            //is adding this to his lesson instance
+            // (we may be creating extra question sets not needed by the current user)
+            QuestionSet questionSet = new QuestionSet(questionSetKey, questionDataWrapper.getWikiDataID(),
+                    questionDataWrapper.getInterestLabel(),
+                    questionIDs, vocabularyIDs, 0);
             questionSetRef.child(questionSetKey).setValue(questionSet);
 
-            //save just the id of the question set we just created
-            // so we can easily query question sets we haven't had yet
-            // without too much data transfer
-            questionSetIDsPerLessonRef.child(questionSetWikiDataID).push().setValue(questionSetKey);
-
-            DatabaseReference randomQuestionSetIDRef = randomQuestionSetIDsRef.push();
-            randomQuestionSetIDRef.child(FirebaseDBHeaders.RANDOM_QUESTION_SET_ID).setValue(questionSetKey);
-            randomQuestionSetIDRef.child(FirebaseDBHeaders.RANDOM_QUESTION_SET_DATE).setValue(ServerValue.TIMESTAMP);
-
-            onResultListener.onQuestionSetAdded(questionSetKey, questionIDs,
-                    questionDataWrapper.getInterestLabel(), vocabularyIDs);
+            onResultListener.onQuestionSetAdded(questionSet);
         }
 
         onResultListener.onQuestionsAdded();
     }
 
     @Override
-    public void getRelatedUserInterests(final Collection<WikiDataEntryData> userInterests, int categoryOfQuestion,
-                                        int searchCtPerUserInterest, final OnResultListener onResultListener){
-        //have atomic int & atomic list.
-        //for each user interest, get related interests, and populate.
-        //if atomic int == user interest count (done searching every interest),
-        // copy the atomic list into user interests and re-try populating the questions
-        // with the related questions
-        final AtomicInteger relatedInterestsSearched = new AtomicInteger(0);
-        final List<WikiDataEntryData> relatedUserInterests = Collections.synchronizedList(
-                new ArrayList<WikiDataEntryData>(userInterests.size() * searchCtPerUserInterest)
-        );
-        final int allUserInterestCt = userInterests.size();
-        for (WikiDataEntryData userInterest : userInterests){
-            //the nodes in the recommendation map have categories
-            // so we can filter out interests that are guaranteed to be false
-            DatabaseReference relatedInterestRef = FirebaseDatabase.getInstance().getReference(
-                    FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
-                            userInterest.getWikiDataID() + "/" +
-                            Integer.toString(categoryOfQuestion)
-            );
-            //get #(relatedUserInterestsToSearch) of the most relevant interests
-            // (the nodes with the highest wight edges)
-            Query relatedInterestQuery = relatedInterestRef.orderByChild(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT)
-                    .limitToLast(searchCtPerUserInterest);
-            relatedInterestQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    for (DataSnapshot childSnapshot : dataSnapshot.getChildren()){
-                        WikiDataEntryData data = childSnapshot.child(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA)
-                                .getValue(WikiDataEntryData.class);
-                        if (!userInterests.contains(data))
-                            relatedUserInterests.add(data);
-                    }
-
-                    //we are done looping through all of the user's interests
-                    if (relatedInterestsSearched.incrementAndGet() == allUserInterestCt){
-                        onResultListener.onRelatedUserInterestsQueried(relatedUserInterests);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }
-
-    @Override
-    public void getRandomQuestions(final String lessonKey, int userQuestionHistorySize,
-                                   final List<String> questionSetsToAvoid, int totalQuestionSetsToPopulate,
-                                   final OnResultListener onResultListener){
-        DatabaseReference randomIDsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.RANDOM_QUESTION_SET_IDS + "/" +
-                        lessonKey
-        );
-
-        //by pigeon hole principle, we are guaranteed to get questions the user hasn't had
-        final int minimumFetchCount = userQuestionHistorySize + totalQuestionSetsToPopulate;
-        //this is to guarantee that all random questions will be used
-        // (oldest ones used -> put back into the bottom of the stack)
-        Query allRandomIDsQuery = randomIDsRef.orderByChild(FirebaseDBHeaders.RANDOM_QUESTION_SET_DATE)
-                .limitToFirst(minimumFetchCount);
-        allRandomIDsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //we are ordering by date, so it's likely that a user will get two sets created at the same time
-                // (i.e. with the same user interest),
-                // so shuffle them to make sure this won't happen
-                List<DataSnapshot> questionSetSnapshots = new ArrayList<>();
-                for (DataSnapshot questionSetSnapshot : dataSnapshot.getChildren()) {
-                    questionSetSnapshots.add(questionSetSnapshot);
-                }
-                Collections.shuffle(questionSetSnapshots);
-
-                List<String> questionSetIDs = new ArrayList<>(questionSetSnapshots.size());
-                for (DataSnapshot questionSetSnapshot : questionSetSnapshots){
-                    String questionSetID = questionSetSnapshot.child(FirebaseDBHeaders.RANDOM_QUESTION_SET_ID).getValue(String.class);
-                    //if the user hasn't had the question yet and is not in their current question set
-                    if (!questionSetsToAvoid.contains(questionSetID)) {
-                        questionSetIDs.add(questionSetID);
-                    }
-
-                    //refresh timestamp so this goes to the back of the stack
-                    String key = questionSetSnapshot.getKey();
-                    FirebaseDatabase.getInstance().getReference(FirebaseDBHeaders.RANDOM_QUESTION_SET_IDS + "/" +
-                            lessonKey + "/" +
-                            key + "/" +
-                            FirebaseDBHeaders.RANDOM_QUESTION_SET_DATE
-                    ).setValue(ServerValue.TIMESTAMP);
-                }
-
-                onResultListener.onRandomQuestionsQueried(questionSetIDs);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    public void getQuestionSets(List<String> questionSetIDs, final OnResultListener onResultListener){
+    public void getQuestionSets(String lessonKey, List<String> questionSetIDs, final OnResultListener onResultListener){
         //to check each listener to see if all listeners have completed
         final AtomicInteger questionSetsRetrievedCt = new AtomicInteger(0);
         final List<QuestionSet> questionSetsRetrieved = Collections.synchronizedList(
@@ -395,7 +278,9 @@ public class FirebaseDB extends Database{
         );
         final int questionSetsToRetrieve = questionSetIDs.size();
         DatabaseReference questionSetsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTION_SETS);
+                FirebaseDBHeaders.QUESTION_SETS + "/" +
+                        lessonKey
+        );
         for (final String questionSetID : questionSetIDs){
             DatabaseReference questionSetRef = questionSetsRef.child(questionSetID);
             questionSetRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -414,6 +299,76 @@ public class FirebaseDB extends Database{
                 }
             });
         }
+    }
+
+    @Override
+    public void changeQuestionSetCount(String lessonKey, String questionSetID, final int amount, OnResultListener onResultListener){
+        DatabaseReference questionSetCountRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.QUESTION_SETS + "/" +
+                        lessonKey + "/" +
+                        questionSetID + "/" +
+                        FirebaseDBHeaders.QUESTION_SET_COUNT
+        );
+        questionSetCountRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Integer currentValue = mutableData.getValue(Integer.class);
+                int newValue;
+                newValue = currentValue == null ? amount : currentValue + amount;
+                mutableData.setValue(newValue);
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
+    }
+
+    @Override
+    public void getPopularQuestionSets(String lessonKey, final List<String> questionSetsToAvoid,
+                                       final int questionSetsToPopulate,
+                                       final OnResultListener onResultListener){
+        //by pigeon hole, we can guarantee that we get enough question sets
+        // (only if there are enough questions sets available)
+        int toGet = questionSetsToAvoid.size() + questionSetsToPopulate;
+        DatabaseReference questionSetsRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.QUESTION_SETS + "/" +
+                        lessonKey
+        );
+        //since ordering goes 1, 2, ..., 10
+        // we want the last ones because they are the most popular
+        Query questionSetPopularityQuery = questionSetsRef.orderByChild(FirebaseDBHeaders.QUESTION_SET_COUNT)
+                .limitToLast(toGet);
+        questionSetPopularityQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<QuestionSet> questionSets = new LinkedList<>();
+                for (DataSnapshot questionSetSnapshot : dataSnapshot.getChildren()){
+                    QuestionSet questionSet = questionSetSnapshot.getValue(QuestionSet.class);
+                    //first filter out every question set that we should avoid
+                    if (questionSet != null &&
+                            !questionSetsToAvoid.contains(questionSet.getKey())){
+                        questionSets.add(questionSet);
+                    }
+                }
+                //then adjust the size so we only get enough to fill the lesson instance
+                if (questionSets.size() > questionSetsToPopulate){
+                    //the last ones are the most popular so cut everything in the front of the list
+                    questionSets = new LinkedList<>(
+                            questionSets.subList(questionSets.size()-questionSetsToPopulate,
+                            questionSets.size())
+                    );
+                }
+                onResultListener.onPopularQuestionSetsQueried(questionSets);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -456,7 +411,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getLessonInstances(String lessonKey, final OnResultListener onResultListener){
+    public void getLessonInstances(String lessonKey, boolean persistentConnection, final OnResultListener onResultListener){
         DatabaseReference lessonInstancesRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.LESSON_INSTANCES + "/"+
                         getUserID()+"/"+
@@ -480,7 +435,11 @@ public class FirebaseDB extends Database{
             }
         };
 
-        lessonInstancesRef.addValueEventListener(lessonInstancesListener);
+        if (persistentConnection) {
+            lessonInstancesRef.addValueEventListener(lessonInstancesListener);
+        } else {
+            lessonInstancesRef.addListenerForSingleValueEvent(lessonInstancesListener);
+        }
         refListenerPairs.add(new RefListenerPair(lessonInstancesRef, lessonInstancesListener));
     }
 
@@ -512,11 +471,11 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void removeLessonInstance(String lessonKey, String instanceID, final OnResultListener onResultListener){
+    public void removeLessonInstance(String lessonKey, LessonInstanceData instance, final OnResultListener onResultListener){
         String instancesPath = FirebaseDBHeaders.LESSON_INSTANCES + "/"+
                 getUserID()+"/"+
                 lessonKey + "/" +
-                instanceID;
+                instance.getId();
         DatabaseReference instanceRef = FirebaseDatabase.getInstance().getReference(
                 instancesPath
         );
@@ -526,6 +485,19 @@ public class FirebaseDB extends Database{
                 onResultListener.onLessonInstanceRemoved();
             }
         });
+        //if any of the question sets were part of the popularity rankings,
+        //decrement the ranking count
+        for (LessonInstanceDataQuestionSet set : instance.getQuestionSets()){
+            if (set.isPartOfPopularityRating()){
+                this.changeQuestionSetCount(lessonKey, set.getId(), -1,
+                        new OnResultListener() {
+                            @Override
+                            public void onQuestionSetCountChanged() {
+                                super.onQuestionSetCountChanged();
+                            }
+                        });
+            }
+        }
     }
 
     @Override
@@ -900,44 +872,6 @@ public class FirebaseDB extends Database{
                 onResultListener.onUserInterestsAdded();
             }
         });
-        /*
-        //we need to add to the user's interest list and update the recommendation edges
-        //grab the current user interests so we can update the recommendation edges
-        DatabaseReference allUserInterestsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.USER_INTERESTS + "/" +
-                        getUserID()
-        );
-        allUserInterestsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                //now update the recommendation edges
-                List<WikiDataEntryData> allInterests = new ArrayList<>((int)dataSnapshot.getChildrenCount() +
-                        userInterestsToAdd.size());
-                //we need to make sure we connect edges between interests we are adding
-                allInterests.addAll(userInterestsToAdd);
-                for (DataSnapshot child : dataSnapshot.getChildren()){
-                    WikiDataEntryData childData = child.getValue(WikiDataEntryData.class);
-                    allInterests.add(childData);
-                }
-                for (WikiDataEntryData toAddInterest : userInterestsToAdd) {
-                    for (WikiDataEntryData toConnectInterest : allInterests) {
-                        //we don't want to add a recommendation path to the same interest
-                        if (!toAddInterest.equals(toConnectInterest)) {
-                            connectRecommendationEdge(toConnectInterest, toAddInterest);
-                            connectRecommendationEdge(toAddInterest, toConnectInterest);
-                        }
-                    }
-                    //make sure we don't connect a to-add interest to another to-add interest
-                    allInterests.remove(toAddInterest);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
     }
 
     @Override
@@ -962,82 +896,6 @@ public class FirebaseDB extends Database{
         classificationRef.setValue(classification);
     }
 
-    /*
-    @Override
-    protected void connectRecommendationEdge(final WikiDataEntryData fromInterest, final WikiDataEntryData toInterest){
-        //we have two references.
-        //one is for recommending interests to users.
-        //the other is for searching related interests for lesson generation.
-        //(we need to query by category type and count for lesson generation).
-        //consistency between the two maps isn't of too much importance so
-        //update them separately
-        DatabaseReference edgeRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                        fromInterest.getWikiDataID() + "/" +
-                        toInterest.getWikiDataID() + "/" +
-                        FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
-
-        );
-        edgeRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Long edgeWeight = mutableData.getValue(Long.class);
-                //first edge
-                if (edgeWeight == null){
-                    mutableData.setValue(1);
-                    FirebaseDatabase.getInstance().getReference(
-                            FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                                    fromInterest.getWikiDataID() + "/" +
-                                    toInterest.getWikiDataID() + "/" +
-                                    FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA
-                    ).setValue(toInterest);
-                } else {
-                    mutableData.setValue(edgeWeight + 1);
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-            }
-        });
-
-        DatabaseReference edge2Ref = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
-                        fromInterest.getWikiDataID() + "/" +
-                        Integer.toString(toInterest.getClassification()) + "/" +
-                        toInterest.getWikiDataID() + "/" +
-                        FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
-
-        );
-        edge2Ref.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Long edgeWeight = mutableData.getValue(Long.class);
-                //first edge
-                if (edgeWeight == null){
-                    mutableData.setValue(1);
-                    FirebaseDatabase.getInstance().getReference(
-                            FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
-                                    fromInterest.getWikiDataID() + "/" +
-                                    Integer.toString(toInterest.getClassification()) + "/" +
-                                    toInterest.getWikiDataID() + "/" +
-                                    FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA
-                    ).setValue(toInterest);
-                } else {
-                    mutableData.setValue(edgeWeight + 1);
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-            }
-        });
-    }*/
-
     @Override
     public void removeUserInterests(final List<WikiDataEntryData> userInterestsToRemove, final OnResultListener onResultListener){
         //remove all the interests first so the UI updates as soon as the items are deleted
@@ -1055,162 +913,6 @@ public class FirebaseDB extends Database{
                         onResultListener.onUserInterestsRemoved();
                     }
                 });
-
-        /*
-        //fetch all of the user's current interests first.
-        //we need them so we can remove the recommendation edges
-        DatabaseReference allUserInterestsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.USER_INTERESTS + "/" +
-                        getUserID()
-        );
-
-        allUserInterestsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //now update the edges one by one.
-                //each of the current user interests has an edge to
-                //each of the user interests to remove.
-                //we need to decrement each of these edges.
-                List<WikiDataEntryData> allUserInterests = new ArrayList<>((int)dataSnapshot.getChildrenCount());
-                for (DataSnapshot child : dataSnapshot.getChildren()){
-                    WikiDataEntryData childData = child.getValue(WikiDataEntryData.class);
-                    if (childData != null) {
-                        allUserInterests.add(childData);
-                    }
-                }
-                //we don't know if the dataSnapshot comes before or after we added,
-                //so just add it if it doesn't exist yet
-                for (WikiDataEntryData data : userInterestsToRemove){
-                    if (!allUserInterests.contains(data))
-                        allUserInterests.add(data);
-                }
-
-                for (WikiDataEntryData data : userInterestsToRemove) {
-                    //don't want to remove a recommendation edge to itself. (it doesn't exist)
-                    //removing the data to remove here also prevents removing an edge
-                    // from an interest we are removing to another interest we are removing
-                    // twice.
-                    allUserInterests.remove(data);
-                    for (WikiDataEntryData userInterest : allUserInterests) {
-                        disconnectRecommendationEdge(userInterest, data);
-                        disconnectRecommendationEdge(data, userInterest);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-    }
-
-    /*
-    @Override
-    protected void disconnectRecommendationEdge(final WikiDataEntryData fromInterest, final WikiDataEntryData toInterest){
-        //remove from two maps
-        DatabaseReference edgeRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                        fromInterest.getWikiDataID() + "/" +
-                        toInterest.getWikiDataID() + "/" +
-                        FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
-        );
-        //since we are decrementing,
-        //we don't want to overwrite existing data.
-        //so we are running the update in a transaction
-        edgeRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Long edgeWeight = mutableData.getValue(Long.class);
-                if (edgeWeight != null){
-                    if (edgeWeight == 1){
-                        mutableData.setValue(null);
-                        FirebaseDatabase.getInstance().getReference(
-                                FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                                        fromInterest.getWikiDataID() + "/" +
-                                        toInterest.getWikiDataID()
-                        ).removeValue();
-                    } else {
-                        mutableData.setValue(edgeWeight - 1);
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-            }
-        });
-
-        DatabaseReference edge2Ref = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
-                        fromInterest.getWikiDataID() + "/" +
-                        Integer.toString(toInterest.getClassification()) + "/" +
-                        toInterest.getWikiDataID() + "/" +
-                        FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT
-        );
-        edge2Ref.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Long edgeWeight = mutableData.getValue(Long.class);
-                if (edgeWeight != null){
-                    if (edgeWeight == 1){
-                        mutableData.setValue(null);
-                        FirebaseDatabase.getInstance().getReference(
-                                FirebaseDBHeaders.RECOMMENDATION_MAP_FOR_LESSON_GENERATION + "/" +
-                                        fromInterest.getWikiDataID() + "/" +
-                                        Integer.toString(toInterest.getClassification()) + "/" +
-                                        toInterest.getWikiDataID()
-                        ).removeValue();
-                    } else {
-                        mutableData.setValue(edgeWeight - 1);
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-            }
-        });
-    }*/
-
-    @Override
-    public void getRecommendations(final Collection<WikiDataEntryData> userInterests, String targetUserInterestID, int recommendationCt, final OnResultListener onResultListener){
-        final DatabaseReference recommendationRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.RECOMMENDATION_MAP + "/" +
-                        targetUserInterestID
-        );
-        //pigeon-hole so we are guaranteed to get recommendations
-        //the user doesn't have yet
-        int fetchCt = userInterests.size() + recommendationCt;
-        Query recommendationRefQuery = recommendationRef
-                .orderByChild(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_COUNT)
-                .limitToLast(fetchCt);
-        recommendationRefQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<WikiDataEntryData> recommendations = new ArrayList<>();
-                for (DataSnapshot child : dataSnapshot.getChildren()){
-                    WikiDataEntryData recommendationData = child.child(FirebaseDBHeaders.RECOMMENDATION_MAP_EDGE_DATA)
-                            .getValue(WikiDataEntryData.class);
-                    recommendations.add(recommendationData);
-                }
-                //we need to reverse this because the recommendations are ordered by count
-                // (1,3,5,10, etc)
-                //so we can get the most recommended one on top
-                Collections.reverse(recommendations);
-                recommendations.removeAll(userInterests);
-                onResultListener.onRecommendationsQueried(recommendations);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 
     @Override

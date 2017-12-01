@@ -32,8 +32,6 @@ public class MockFirebaseDB extends Database {
     public Map<String, QuestionData> questions = new HashMap<>();
     //ID -> question set
     public Map<String, QuestionSet> questionSets = new HashMap<>();
-    //timeStamp -> question set ID
-    public Map<String, String> randomQuestionSets = new HashMap<>();
     //ID -> lesson instance
     public Map<String, LessonInstanceData > lessonInstances = new HashMap<>();
     //ID -> word
@@ -42,8 +40,6 @@ public class MockFirebaseDB extends Database {
     public Map<String, VocabularyWord> vocabularyWords = new HashMap<>();
     //ID -> word
     public Map<String, VocabularyListWord> vocabularyListWords = new HashMap<>();
-    //user interest ID -> ID -> set IDs
-    public Map<String, List<String>> questionSetsPerUserInterestPerQuestion = new HashMap<>();
     public List<WikiDataEntryData> recommendations = new ArrayList<>();
 
     @Override
@@ -68,29 +64,29 @@ public class MockFirebaseDB extends Database {
     @Override
     public void searchQuestions(String lessonKey, List<WikiDataEntryData> userInterests, int toPopulate,
                                 List<String> questionSetIDsToAvoid, OnResultListener onResultListener) {
-        List<String> questionSetIDsToReturn = new ArrayList<>(toPopulate);
+        List<QuestionSet> questionSetsToReturn = new ArrayList<>(toPopulate);
         List<WikiDataEntryData> userInterestsChecked = new ArrayList<>(userInterests.size());
         if (toPopulate == 0){
-            onResultListener.onQuestionsQueried(questionSetIDsToReturn, userInterestsChecked);
+            onResultListener.onQuestionsQueried(questionSetsToReturn, userInterestsChecked);
         }
         for (WikiDataEntryData userInterest : userInterests){
-            if (questionSetsPerUserInterestPerQuestion.containsKey(userInterest.getWikiDataID())){
-                List<String> questionSetIDs = questionSetsPerUserInterestPerQuestion.get(userInterest.getWikiDataID());
-                for (String id : questionSetIDs){
-                    if (!questionSetIDsToAvoid.contains(id) &&
-                            toPopulate != 0){
-                        questionSetIDsToReturn.add(id);
-                        toPopulate--;
-                    }
+            for (Map.Entry<String, QuestionSet> setEntry : questionSets.entrySet()) {
+                QuestionSet set = setEntry.getValue();
+                if (set.getInterestID().equals(userInterest.getWikiDataID()) &&
+                        !questionSetIDsToAvoid.contains(set.getKey()) &&
+                        toPopulate != 0) {
+                    questionSetsToReturn.add(set);
+                    toPopulate--;
+
                 }
-                userInterestsChecked.add(userInterest);
             }
-            if (toPopulate == 0){
+            userInterestsChecked.add(userInterest);
+            if (toPopulate == 0) {
                 break;
             }
         }
 
-        onResultListener.onQuestionsQueried(questionSetIDsToReturn, userInterestsChecked);
+        onResultListener.onQuestionsQueried(questionSetsToReturn, userInterestsChecked);
 
     }
 
@@ -124,19 +120,12 @@ public class MockFirebaseDB extends Database {
 
             }
             String setID = "setID" + mockQuestionSetID++;
-            List<String> questionSetsPerUserInterest =
-                    questionSetsPerUserInterestPerQuestion.get(wrapper.getInterestLabel()) == null ?
-                            new ArrayList<String>() :
-                            questionSetsPerUserInterestPerQuestion.get(wrapper.getInterestLabel()) ;
-            questionSetsPerUserInterest.add(setID);
-            questionSetsPerUserInterestPerQuestion.put(wrapper.getWikiDataID(), questionSetsPerUserInterest);
-            QuestionSet questionSet = new QuestionSet(setID, wrapper.getInterestLabel(),
-                    questionIDs, vocabularyIDs);
+            QuestionSet questionSet = new QuestionSet(setID, wrapper.getWikiDataID(),
+                    wrapper.getInterestLabel(),
+                    questionIDs, vocabularyIDs, 0);
             questionSets.put(setID, questionSet);
-            String dateTime = "dateTime" + mockDateTime++;
-            randomQuestionSets.put(dateTime, setID);
 
-            onResultListener.onQuestionSetAdded(setID, questionIDs, wrapper.getInterestLabel(),vocabularyIDs);
+            onResultListener.onQuestionSetAdded(questionSet);
 
         }
 
@@ -144,22 +133,8 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getRelatedUserInterests(Collection<WikiDataEntryData> userInterests, int categoryOfQuestion, int searchCtPerUserInterest, OnResultListener onResultListener) {
-        onResultListener.onRelatedUserInterestsQueried(new ArrayList<WikiDataEntryData>());
-    }
-
-    @Override
-    public void getRandomQuestions(String lessonKey, int userQuestionHistorySize, List<String> questionSetIDsToAvoid, int totalQuestionSetsToPopulate, OnResultListener onResultListener) {
-        List<String> randomQuestionSetIDs = new ArrayList<>(randomQuestionSets.size());
-        for (Map.Entry<String, String> entry : randomQuestionSets.entrySet()){
-            if (!questionSetIDsToAvoid.contains(entry.getValue()))
-                randomQuestionSetIDs.add(entry.getValue());
-        }
-        onResultListener.onRandomQuestionsQueried(randomQuestionSetIDs);
-    }
-
-    @Override
-    public void getQuestionSets(List<String> questionSetIDs, OnResultListener onResultListener) {
+    public void getQuestionSets(String lessonKey, List<String> questionSetIDs, OnResultListener onResultListener) {
+        //don't care about lesson key
         List<QuestionSet> questionSets = new ArrayList<>(questionSetIDs.size());
         for (String id : questionSetIDs){
             QuestionSet match = this.questionSets.get(id);
@@ -168,6 +143,29 @@ public class MockFirebaseDB extends Database {
             }
         }
         onResultListener.onQuestionSetsQueried(questionSets);
+    }
+
+    @Override
+    public void changeQuestionSetCount(String lessonKey, String questionSetID, int amount, OnResultListener onResultListener){
+
+    }
+
+    @Override
+    public void getPopularQuestionSets(String lessonKey, final List<String> questionSetsToAvoid,
+                                       final int questionSetsToPopulate,
+                                       final OnResultListener onResultListener){
+        //don't care about popularity (just get enough questions0
+        List<QuestionSet> result = new ArrayList<>(questionSetsToPopulate);
+        for (Map.Entry<String, QuestionSet> entry : questionSets.entrySet()){
+            QuestionSet set = entry.getValue();
+            if (!questionSetsToAvoid.contains(set.getKey())){
+                result.add(set);
+            }
+            if (result.size() == questionSetsToPopulate){
+                break;
+            }
+        }
+        onResultListener.onPopularQuestionSetsQueried(result);
     }
 
     @Override
@@ -186,7 +184,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getLessonInstances(String lessonKey, OnResultListener onResultListener) {
+    public void getLessonInstances(String lessonKey, boolean persistentConnection, OnResultListener onResultListener) {
         // we are assuming a single lesson so we don't need to filter by lesson key
         List<LessonInstanceData> instancesList = new ArrayList<>();
 
@@ -202,7 +200,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void removeLessonInstance(String lessonKey, String instanceID, OnResultListener onResultListener) {
+    public void removeLessonInstance(String lessonKey, LessonInstanceData instanceData, OnResultListener onResultListener) {
 
     }
 
@@ -261,21 +259,6 @@ public class MockFirebaseDB extends Database {
     @Override
     public void setClassification(String userInterestID, int classification){
 
-    }
-
-    @Override
-    public void getRecommendations(Collection<WikiDataEntryData> userInterests, String targetUserInterestID, int recommendationCt, OnResultListener onResultListener) {
-        //don't care about filtering out user interests for the mock database.
-        //also don't care about the weight of each recommendation edge for mocking.
-        //but make sure we retrieve the right number of recommendations
-        List<WikiDataEntryData> result;
-        recommendationCt = recommendationCt + userInterests.size();
-        if (recommendationCt >= recommendations.size()){
-            result = new ArrayList<>(recommendations);
-        } else {
-            result = new ArrayList<>(recommendations.subList(0, recommendationCt));
-        }
-        onResultListener.onRecommendationsQueried(result);
     }
 
     @Override

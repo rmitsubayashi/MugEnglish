@@ -6,10 +6,10 @@ import android.widget.Button;
 
 import com.linnca.pelicann.R;
 
-class SearchResultsFooterViewHolder extends RecyclerView.ViewHolder {
+class SearchResultsRecommendationFooterViewHolder extends RecyclerView.ViewHolder {
     private final Button button;
 
-    SearchResultsFooterViewHolder(View itemView){
+    SearchResultsRecommendationFooterViewHolder(View itemView){
         super(itemView);
         button = itemView.findViewById(R.id.search_interests_recommendations_more_button);
     }

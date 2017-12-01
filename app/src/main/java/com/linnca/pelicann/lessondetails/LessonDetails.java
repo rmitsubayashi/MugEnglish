@@ -163,7 +163,7 @@ public class LessonDetails extends Fragment {
                         super.onLessonInstanceRemoved();
                     }
                 };
-                db.removeLessonInstance(lessonData.getKey(), longClickData.getId(), onResultListener);
+                db.removeLessonInstance(lessonData.getKey(), longClickData, onResultListener);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -209,7 +209,7 @@ public class LessonDetails extends Fragment {
             }
         };
 
-        db.getLessonInstances(lessonData.getKey(), onResultListener);
+        db.getLessonInstances(lessonData.getKey(), true, onResultListener);
     }
 
 

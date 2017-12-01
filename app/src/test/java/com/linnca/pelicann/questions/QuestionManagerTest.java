@@ -2,6 +2,7 @@ package com.linnca.pelicann.questions;
 
 import com.linnca.pelicann.db.MockFirebaseDB;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessondetails.LessonInstanceDataQuestionSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,14 +38,18 @@ public class QuestionManagerTest {
             
         };
         questionManager = new QuestionManager(db, listener);
-        List<String> questionSetIDs = new ArrayList<>(1);
-        questionSetIDs.add("questionSetID1");
-        List<String> questionIDs = new ArrayList<>(1);
-        questionIDs.add("question1");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
-                questionSetIDs, questionIDs, interestLabels);
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        List<List<String>> questionIDs = new ArrayList<>(2);
+        List<String> question1 = new ArrayList<>();
+        question1.add("questionID1");
+        questionIDs.add(question1);
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                questionIDs, new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
+        //ids are set during adding
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
         questionManager.startQuestions(lessonInstanceData, "lessonKey1");
         assertTrue(called[0]);
     }
@@ -64,14 +69,14 @@ public class QuestionManagerTest {
             
         };
         questionManager = new QuestionManager(db, listener);
-        List<String> questionSetIDs = new ArrayList<>(1);
-        questionSetIDs.add("questionSetID1");
-        List<String> questionIDs = new ArrayList<>(1);
-        questionIDs.add("questionID1");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
-                questionSetIDs, questionIDs, interestLabels);
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
+        //ids are set during adding
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
@@ -96,14 +101,14 @@ public class QuestionManagerTest {
             
         };
         questionManager = new QuestionManager(db, listener);
-        List<String> questionSetIDs = new ArrayList<>(1);
-        questionSetIDs.add("questionSetID1");
-        List<String> questionIDs = new ArrayList<>(1);
-        questionIDs.add("questionID1");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
-                questionSetIDs, questionIDs, interestLabels);
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
+        //ids are set during adding
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");
 
     }
@@ -124,14 +129,14 @@ public class QuestionManagerTest {
             
         };
         questionManager = new QuestionManager(db, listener);
-        List<String> questionSetIDs = new ArrayList<>(1);
-        questionSetIDs.add("questionSetID1");
-        List<String> questionIDs = new ArrayList<>(1);
-        questionIDs.add("questionID1");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
-                questionSetIDs, questionIDs, interestLabels);
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
+        //ids are set during adding
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");
 
     }
@@ -153,16 +158,21 @@ public class QuestionManagerTest {
             
         };
         questionManager = new QuestionManager(db, listener);
-        List<String> questionSetIDs = new ArrayList<>(2);
-        questionSetIDs.add("questionSetID1");
-        questionSetIDs.add("questionSetID2");
-        List<String> questionIDs = new ArrayList<>(2);
-        questionIDs.add("questionID1");
-        questionIDs.add("questionID2");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
-                questionSetIDs, questionIDs, interestLabels);
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        List<List<String>> questionIDs = new ArrayList<>(2);
+        List<String> question1 = new ArrayList<>();
+        question1.add("questionID1");
+        questionIDs.add(question1);
+        List<String> question2 = new ArrayList<>();
+        question2.add("questionID2");
+        questionIDs.add(question2);
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                questionIDs, new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
+        //ids are set during adding
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
@@ -189,20 +199,23 @@ public class QuestionManagerTest {
             public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs, List<QuestionData> missedQuestions) {
                 //not testing this
             }
-
-            
         };
         questionManager = new QuestionManager(db, listener);
-        List<String> questionSetIDs = new ArrayList<>(2);
-        questionSetIDs.add("questionSetID1");
-        questionSetIDs.add("questionSetID2");
-        List<String> questionIDs = new ArrayList<>(2);
-        questionIDs.add("questionID1");
-        questionIDs.add("questionID2");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
-                questionSetIDs, questionIDs, interestLabels);
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        List<List<String>> questionIDs = new ArrayList<>(2);
+        List<String> question1 = new ArrayList<>();
+        question1.add("questionID1");
+        questionIDs.add(question1);
+        List<String> question2 = new ArrayList<>();
+        question2.add("questionID2");
+        questionIDs.add(question2);
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                questionIDs, new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
+        //ids are set during adding
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
@@ -232,16 +245,14 @@ public class QuestionManagerTest {
             
         };
         questionManager = new QuestionManager(db, listener);
-        List<String> questionSetIDs = new ArrayList<>(2);
-        questionSetIDs.add("questionSetID1");
-        questionSetIDs.add("questionSetID2");
-        List<String> questionIDs = new ArrayList<>(2);
-        questionIDs.add("questionID1");
-        questionIDs.add("questionID2");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("instanceID",
-                questionSetIDs, questionIDs, interestLabels);
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
+        //ids are set during adding
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);

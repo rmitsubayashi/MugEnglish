@@ -12,20 +12,16 @@ class FirebaseDBHeaders {
     static final String LESSON_INSTANCES = "lessonInstances";
     static final String LESSON_INSTANCE_VOCABULARY = "lessonInstanceVocabulary";
     static final String QUESTIONS = "questions";
-    static final String QUESTION_SET_IDS_PER_USER_INTEREST_PER_LESSON = "questionSetIDsPerUserInterestPerLesson";
+    //static final String QUESTION_SET_IDS_PER_USER_INTEREST_PER_LESSON = "questionSetIDsPerUserInterestPerLesson";
     static final String QUESTION_SETS = "questionSets";
-    static final String RANDOM_QUESTION_SET_IDS = "randomQuestionSets";
-    static final String RANDOM_QUESTION_SET_ID = "setID";
-    static final String RANDOM_QUESTION_SET_DATE = "date";
+    //make sure these headers matches the fields in QuestionSet
+    static final String QUESTION_SET_COUNT = "count";
+    static final String QUESTION_SET_INTEREST_ID = "interestID";
     static final String INSTANCE_RECORDS = "instanceRecords";
     static final String UTILS = "utils";
     static final String UTILS_SPORTS_VERB_MAPPINGS = "sportsVerbMapping";
     static final String UTILS_SPORT_VERB_MAPPING_OBJECT = "object";
     static final String UTILS_SPORT_VERB_MAPPING_VERB = "verb";
-    static final String RECOMMENDATION_MAP = "recommendationMap";
-    static final String RECOMMENDATION_MAP_EDGE_COUNT = "count";
-    static final String RECOMMENDATION_MAP_EDGE_DATA = "data";
-    static final String RECOMMENDATION_MAP_FOR_LESSON_GENERATION = "recommendationMapForLessonGeneration";
     static final String APP_USAGE = "appUsage";
     static final String VOCABULARY = "vocabulary";
     static final String VOCABULARY_LIST = "vocabularyList";

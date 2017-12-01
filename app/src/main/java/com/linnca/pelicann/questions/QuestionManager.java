@@ -73,7 +73,7 @@ public class QuestionManager{
 		if (questionMkr == lessonInstanceData.questionCount()) {
 			instanceRecordManager.markInstanceCompleted();
 			questionManagerListener.onQuestionsFinished(instanceRecordManager.getInstanceRecord(),
-					new ArrayList<>(lessonInstanceData.getQuestionIds()),
+					new ArrayList<>(lessonInstanceData.allQuestionIds()),
 					new ArrayList<>(missedQuestionsForReview));
 			//the user will not be able to go back and redo this question again,
 			// so we can reset everything
@@ -81,7 +81,7 @@ public class QuestionManager{
 			return;
 		}
 		//next question
-		String questionID = lessonInstanceData.getQuestionIdAt(questionMkr);
+		String questionID = lessonInstanceData.questionIdAt(questionMkr);
 		OnResultListener onResultListener = new OnResultListener() {
 			@Override
 			public void onQuestionQueried(QuestionData questionData) {

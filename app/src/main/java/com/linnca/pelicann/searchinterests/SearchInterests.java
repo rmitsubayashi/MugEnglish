@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -163,6 +164,22 @@ public class SearchInterests extends Fragment {
                     @Override
                     public boolean onQueryTextChange(String query) {
                         if (query.length() > 0){
+                            //check if the currently displayed results is empty.
+                            //if it is empty, show a loading progress bar.
+                            //make sure to check if there already is a loading progress bar
+                            // displayed
+                            lock.lock();
+                            try {
+                                if (adapter.getSearchResultSize() == 0 && !adapter.isLoading()) {
+                                    WikiDataEntryData loadingData = new WikiDataEntryData();
+                                    loadingData.setWikiDataID(adapter.VIEW_TYPE_LOADING_WIKIDATA_ID);
+                                    List<WikiDataEntryData> dataList = new ArrayList<>(1);
+                                    dataList.add(loadingData);
+                                    adapter.updateEntries(dataList);
+                                }
+                            } finally {
+                                lock.unlock();
+                            }
                             searchHelper.search(getSearchHandler(query), query);
                         }
                         return true;
@@ -242,10 +259,10 @@ public class SearchInterests extends Fragment {
         return new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntryData> results, boolean showLoadMoreButton) {
-                adapter.showRecommendations(results);
-                if (!showLoadMoreButton){
+                adapter.showRecommendations(results, showLoadMoreButton);
+                /*if (!showLoadMoreButton){
                     adapter.removeFooter();
-                }
+                }*/
             }
         };
     }
@@ -282,8 +299,9 @@ public class SearchInterests extends Fragment {
                     try {
                         //filter out all of the user's interests
                         result.removeAll(userInterests);
-                        //remove disambiguation pages (we will never need them)
+                        //remove entities we will never need
                         removeDisambiguationPages(result);
+                        removeWikiNewsArticlePages(result);
                         //display empty state if the results are empty
                         if (result.size() == 0) {
                             WikiDataEntryData emptyState = new WikiDataEntryData();
@@ -302,6 +320,20 @@ public class SearchInterests extends Fragment {
                 }
             }
         };
+    }
+
+    private void removeWikiNewsArticlePages(List<WikiDataEntryData> result){
+        for (Iterator<WikiDataEntryData> iterator = result.iterator(); iterator.hasNext();){
+            WikiDataEntryData data = iterator.next();
+            String description = data.getDescription();
+            //not sure if these cover every case
+            if (description != null &&
+                    (description.equals("ウィキニュースの記事") ||
+                            description.equals("Wikinews article"))
+                    ){
+                iterator.remove();
+            }
+        }
     }
 
     private void removeDisambiguationPages(List<WikiDataEntryData> result){

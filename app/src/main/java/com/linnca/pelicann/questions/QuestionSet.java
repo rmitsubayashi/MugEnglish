@@ -1,12 +1,15 @@
 package com.linnca.pelicann.questions;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 //very similar to QuestionDataWrapper
 //except for that we only have the IDs,
 //not the actual data
 public class QuestionSet {
     private String key;
+    private String interestID;
     private String interestLabel;
     //question 1
     //   |
@@ -16,15 +19,19 @@ public class QuestionSet {
     // ....
     private List<List<String>> questionIDs;
     private List<String> vocabularyIDs;
+    //how many of this question set is used currently by users
+    private int count;
 
     public QuestionSet() {
     }
 
-    public QuestionSet(String key, String interestLabel, List<List<String>> questionIDs, List<String> vocabularyIDs) {
+    public QuestionSet(String key, String interestID, String interestLabel, List<List<String>> questionIDs, List<String> vocabularyIDs, int count) {
         this.key = key;
+        this.interestID = interestID;
         this.interestLabel = interestLabel;
         this.questionIDs = questionIDs;
         this.vocabularyIDs = vocabularyIDs;
+        this.count = count;
     }
 
     public String getKey() {
@@ -33,6 +40,14 @@ public class QuestionSet {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getInterestID() {
+        return interestID;
+    }
+
+    public void setInterestID(String interestID) {
+        this.interestID = interestID;
     }
 
     public String getInterestLabel() {
@@ -57,5 +72,25 @@ public class QuestionSet {
 
     public void setVocabularyIDs(List<String> vocabularyIDs) {
         this.vocabularyIDs = vocabularyIDs;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    //choose random questions that will be used for an instance
+    public List<String> pickQuestions(){
+        Random random = new Random();
+        List<String> questions = new ArrayList<>();
+        for (List<String> questionVariations : questionIDs){
+            int index = random.nextInt(questionVariations.size());
+            String questionToAdd = questionVariations.get(index);
+            questions.add(questionToAdd);
+        }
+        return questions;
     }
 }

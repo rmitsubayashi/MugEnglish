@@ -36,9 +36,9 @@ public class LessonListViewerTest {
                 titleCount = new HashMap<>();
 
                 row = new LessonListRow();
-                col1Data = new LessonData("key1", "title", 1, null, 100, R.color.lblue300, 1);
-                col2Data = new LessonData("key2", "title", null, null, 100, R.color.lblue700, 1);
-                col3Data = new LessonData("key3", "title", null, null, 100, R.color.lblue700, 1);
+                col1Data = new LessonData("key1", "title", 1, null, 100, 1, 1);
+                col2Data = new LessonData("key2", "title", null, null, 100, 1, 1);
+                col3Data = new LessonData("key3", "title", null, null, 100, 1, 1);
                 row.setCol1(col1Data);
                 row.setCol2(col2Data);
                 row.setCol3(col3Data);
@@ -52,13 +52,13 @@ public class LessonListViewerTest {
 
                 lessonRows = new ArrayList<>(1);
                 row = new LessonListRow();
-                col1Data = new LessonData("key4", "title4", null, null, 100, R.color.lblue300, 1);
+                col1Data = new LessonData("key4", "title4", null, null, 100, 1, 1);
                 row.setCol1(col1Data);
                 lessonRows.add(row);
 
                 lessonRows = new ArrayList<>(1);
                 row = new LessonListRow();
-                col1Data = new LessonData("key5", "title5", null, null, 100, R.color.lblue300, 1);
+                col1Data = new LessonData("key5", "title5", null, null, 100, 1, 1);
                 row.setCol1(col1Data);
                 lessonRows.add(row);
 

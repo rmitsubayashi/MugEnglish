@@ -1,6 +1,7 @@
 package com.linnca.pelicann.db;
 
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessondetails.LessonInstanceDataQuestionSet;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionSet;
@@ -40,7 +41,7 @@ public class TestMockFirebaseDB {
         final boolean[] called = new boolean[]{false};
         OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched) {
+            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched) {
                 called[0] = true;
             }
         };
@@ -60,7 +61,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
             @Override
-            public void onQuestionSetAdded(String questionSetKey, List<List<String>> questionIDs, String interestLabel, List<String> vocabularyWordKeys) {
+            public void onQuestionSetAdded(QuestionSet questionSet) {
                 called[1] = true;
             }
         };
@@ -75,37 +76,6 @@ public class TestMockFirebaseDB {
     }
 
     @Test
-    public void getRelatedInterests_call_resultListenerShouldBeCalled(){
-        final boolean[] called = new boolean[]{false};
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onRelatedUserInterestsQueried(List<WikiDataEntryData> userInterestsSearched) {
-                called[0] = true;
-            }
-        };
-        db.getRelatedUserInterests(new ArrayList<WikiDataEntryData>(),
-                WikiDataEntryData.CLASSIFICATION_OTHER,
-                0,
-                onResultListener);
-        assertTrue(called[0]);
-    }
-
-    @Test
-    public void getRandomQuestions_call_resultListenerShouldBeCalled(){
-        final boolean[] called = new boolean[]{false};
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onRandomQuestionsQueried(List<String> questionSetIDs) {
-                called[0] = true;
-            }
-        };
-        db.getRandomQuestions("",0,
-                new ArrayList<String>(), 0,
-                onResultListener);
-        assertTrue(called[0]);
-    }
-
-    @Test
     public void getQuestionSets_call_resultListenerShouldBeCalled(){
         final boolean[] called = new boolean[]{false};
         OnResultListener onResultListener = new OnResultListener() {
@@ -114,7 +84,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.getQuestionSets(new ArrayList<String>(), onResultListener);
+        db.getQuestionSets("",new ArrayList<String>(), onResultListener);
         assertTrue(called[0]);
     }
 
@@ -152,7 +122,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.getLessonInstances("", onResultListener);
+        db.getLessonInstances("", false, onResultListener);
     }
 
     @Test
@@ -201,19 +171,6 @@ public class TestMockFirebaseDB {
             }
         };
         db.addUserInterests(new ArrayList<WikiDataEntryData>(), onResultListener);
-    }
-
-    @Test
-    public void getRecommendations_call_resultListenerShouldBeCalled(){
-        final boolean[] called = new boolean[]{false};
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onRecommendationsQueried(List<WikiDataEntryData> recommendations) {
-                called[0] = true;
-            }
-        };
-        db.getRecommendations(new ArrayList<WikiDataEntryData>(), "userInterest1",
-                0, onResultListener);
     }
 
     @Test
@@ -401,28 +358,6 @@ public class TestMockFirebaseDB {
     }
 
     @Test
-    public void question_addQuestion_shouldAddQuestionSetIDPerUserInterestPerLesson(){
-        List<QuestionDataWrapper> questionList = new ArrayList<>(1);
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
-                "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
-        List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
-        newQuestionSet.add(newQuestions);
-        questionList.add(new QuestionDataWrapper(newQuestionSet, "wikidataID1",
-                "interestLabel1", new ArrayList<VocabularyWord>()));
-
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onQuestionsAdded() {
-                Map<String, List<String>> questionSetIDs = db.questionSetsPerUserInterestPerQuestion;
-                assertTrue(questionSetIDs.containsKey("wikidataID1"));
-            }
-        };
-
-        db.addQuestions("lessonID1", questionList, onResultListener);
-    }
-
-    @Test
     public void question_addOneQuestion_shouldAddOnlyOneQuestionSet(){
         List<QuestionDataWrapper> questionList = new ArrayList<>(1);
         List<QuestionData> newQuestions = new ArrayList<>(1);
@@ -438,28 +373,6 @@ public class TestMockFirebaseDB {
             public void onQuestionsAdded() {
                 Map<String, QuestionSet> questionSet = db.questionSets;
                 assertEquals(1, questionSet.size());
-            }
-        };
-
-        db.addQuestions("lessonID1", questionList, onResultListener);
-    }
-
-    @Test
-    public void question_addOneQuestion_shouldAddOnlyOneRandomQuestionSet(){
-        List<QuestionDataWrapper> questionList = new ArrayList<>(1);
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
-                "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
-        List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
-        newQuestionSet.add(newQuestions);
-        questionList.add(new QuestionDataWrapper(newQuestionSet, "wikidataID1",
-                "interestLabel1", new ArrayList<VocabularyWord>()));
-
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onQuestionsAdded() {
-                Map<String, String> randomQuestionSet = db.randomQuestionSets;
-                assertEquals(1, randomQuestionSet.size());
             }
         };
 
@@ -521,15 +434,16 @@ public class TestMockFirebaseDB {
     @Test
     public void question_searchQuestionWithMatchingUserInterest_shouldReturnQuestionSetID(){
         String wikidataID = "wikidataID1";
-        List<String> questionSets = new ArrayList<>(1);
         final String questionSetID = "questionSetID1";
-        questionSets.add(questionSetID);
-        db.questionSetsPerUserInterestPerQuestion.put(wikidataID, questionSets);
+        QuestionSet set = new QuestionSet(questionSetID, wikidataID, "interestLabel",
+                null, null, 0);
+        db.questionSets.put(questionSetID, set);
 
         OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched) {
-                assertTrue(questionSetIDs.contains(questionSetID));
+            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched) {
+                assertEquals(1, questionSets.size());
+                assertEquals(questionSetID, questionSets.get(0).getKey());
             }
         };
         List<WikiDataEntryData> userInterests = new ArrayList<>(1);
@@ -542,10 +456,10 @@ public class TestMockFirebaseDB {
     @Test
     public void question_searchQuestionWithMatchingUserInterest_shouldMarkUserInterestAsAlreadyChecked(){
         String wikidataID = "wikidataID1";
-        List<String> questionSets = new ArrayList<>(1);
         String questionSetID = "questionSetID1";
-        questionSets.add(questionSetID);
-        db.questionSetsPerUserInterestPerQuestion.put(wikidataID, questionSets);
+        QuestionSet set = new QuestionSet(questionSetID, wikidataID, "interestLabel",
+                null, null, 0);
+        db.questionSets.put(questionSetID, set);
 
         List<WikiDataEntryData> userInterests = new ArrayList<>(1);
         final WikiDataEntryData userInterest1 = new WikiDataEntryData("label1","desc1", wikidataID,
@@ -555,7 +469,7 @@ public class TestMockFirebaseDB {
 
         OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched) {
+            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched) {
                 assertTrue(userInterestsSearched.contains(userInterest1));
             }
         };
@@ -566,16 +480,16 @@ public class TestMockFirebaseDB {
     @Test
     public void question_searchQuestionWithMatchingUserInterestsMoreThanToPopulateCount_shouldOnlyReturnToPopulateNumberOfQuestionSetIDs(){
         String wikidataID1 = "wikidataID1";
-        List<String> questionSets = new ArrayList<>(1);
         String questionSetID = "questionSetID1";
-        questionSets.add(questionSetID);
-        db.questionSetsPerUserInterestPerQuestion.put(wikidataID1, questionSets);
+        QuestionSet set = new QuestionSet(questionSetID, wikidataID1, "interestLabel",
+                null, null, 0);
+        db.questionSets.put(questionSetID, set);
 
         String wikidataID2 = "wikidataID2";
-        List<String> questionSets2 = new ArrayList<>(1);
         String questionSetID2 = "questionSetID2";
-        questionSets2.add(questionSetID2);
-        db.questionSetsPerUserInterestPerQuestion.put(wikidataID2, questionSets2);
+        QuestionSet set2 = new QuestionSet(questionSetID2, wikidataID2, "interestLabel2",
+                null, null, 0);
+        db.questionSets.put(questionSetID2, set2);
 
         List<WikiDataEntryData> userInterests = new ArrayList<>(1);
         WikiDataEntryData userInterest1 = new WikiDataEntryData("label1","desc1", wikidataID1,
@@ -588,8 +502,8 @@ public class TestMockFirebaseDB {
 
         OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched) {
-                assertEquals(1, questionSetIDs.size());
+            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched) {
+                assertEquals(1, questionSets.size());
             }
         };
         db.searchQuestions("", userInterests, 1,
@@ -597,8 +511,8 @@ public class TestMockFirebaseDB {
         //to make sure toPopulateCt is what's affecting it
         OnResultListener onResultListener2 = new OnResultListener() {
             @Override
-            public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched) {
-                assertEquals(2, questionSetIDs.size());
+            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched) {
+                assertEquals(2, questionSets.size());
             }
         };
         db.searchQuestions("", userInterests, 2,
@@ -615,8 +529,8 @@ public class TestMockFirebaseDB {
 
         OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched) {
-                assertEquals(0, questionSetIDs.size());
+            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched) {
+                assertEquals(0, questionSets.size());
             }
         };
         db.searchQuestions("", userInterests, 1,
@@ -627,8 +541,8 @@ public class TestMockFirebaseDB {
     public void question_searchQuestionWithNoUserInterests_shouldReturnEmptyList(){
         OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched) {
-                assertEquals(0, questionSetIDs.size());
+            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched) {
+                assertEquals(0, questionSets.size());
             }
         };
         db.searchQuestions("", new ArrayList<WikiDataEntryData>(), 1,
@@ -653,8 +567,9 @@ public class TestMockFirebaseDB {
     @Test
     public void questions_getQuestionSets_shouldGetQuestionSets(){
         final String questionSetID = "questionSetID1";
-        final QuestionSet questionSet = new QuestionSet(questionSetID,"interestLabel",
-                new ArrayList<List<String>>(), new ArrayList<String>());
+        final QuestionSet questionSet = new QuestionSet(questionSetID, "wikiDataID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
         db.questionSets.put(questionSetID, questionSet);
         OnResultListener onResultListener = new OnResultListener() {
             @Override
@@ -670,14 +585,15 @@ public class TestMockFirebaseDB {
         };
         List<String> toGetSetIDs = new ArrayList<>(1);
         toGetSetIDs.add(questionSetID);
-        db.getQuestionSets(toGetSetIDs, onResultListener);
+        db.getQuestionSets("",toGetSetIDs, onResultListener);
     }
 
     @Test
     public void questions_getOneQuestionSet_shouldGetOneQuestionSet(){
         final String questionSetID = "questionSetID1";
-        QuestionSet questionSet = new QuestionSet(questionSetID,"interestLabel",
-                new ArrayList<List<String>>(), new ArrayList<String>());
+        QuestionSet questionSet = new QuestionSet(questionSetID, "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
         db.questionSets.put(questionSetID, questionSet);
         OnResultListener onResultListener = new OnResultListener() {
             @Override
@@ -687,20 +603,19 @@ public class TestMockFirebaseDB {
         };
         List<String> toGetSetIDs = new ArrayList<>(1);
         toGetSetIDs.add(questionSetID);
-        db.getQuestionSets(toGetSetIDs, onResultListener);
+        db.getQuestionSets("",toGetSetIDs, onResultListener);
     }
 
     @Test
     public void lessonInstance_addLessonInstance_shouldAddInstanceInDatabase(){
-        List<String> questionSetIDs = new ArrayList<>(1);
-        questionSetIDs.add("set1");
-        List<String> questionIDs = new ArrayList<>(1);
-        questionIDs.add("question1");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("", questionSetIDs, questionIDs,
-                interestLabels);
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onLessonInstanceAdded() {
@@ -714,15 +629,14 @@ public class TestMockFirebaseDB {
 
     @Test
     public void lessonInstance_getLessonInstances_shouldGetInstances(){
-        List<String> questionSetIDs = new ArrayList<>(1);
-        questionSetIDs.add("set1");
-        List<String> questionIDs = new ArrayList<>(1);
-        questionIDs.add("question1");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        QuestionSet questionSet = new QuestionSet("set1", "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("id1", questionSetIDs, questionIDs,
-                interestLabels);
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
@@ -740,20 +654,19 @@ public class TestMockFirebaseDB {
         };
         db.lessonInstances.put(lessonInstanceData.getId(), lessonInstanceData);
 
-        db.getLessonInstances("lessonID1",onResultListener);
+        db.getLessonInstances("lessonID1", false, onResultListener);
     }
 
     @Test
     public void lessonInstance_addLessonInstance_shouldAddIDToInstance(){
-        List<String> questionSetIDs = new ArrayList<>(1);
-        questionSetIDs.add("set1");
-        List<String> questionIDs = new ArrayList<>(1);
-        questionIDs.add("question1");
-        List<String> interestLabels = new ArrayList<>(1);
-        interestLabels.add("interestLabel1");
+        List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+        QuestionSet questionSet = new QuestionSet("questionSetID", "wikiDatID",
+                "interestLabel",
+                new ArrayList<List<String>>(), new ArrayList<String>(), 1);
+        questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
-        LessonInstanceData lessonInstanceData = new LessonInstanceData("", questionSetIDs, questionIDs,
-                interestLabels);
+        LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
+                0L, new ArrayList<String>(), questionSets);
         OnResultListener onResultListener = new OnResultListener() {
             @Override
             public void onLessonInstanceAdded() {
@@ -817,56 +730,6 @@ public class TestMockFirebaseDB {
             }
         };
         db.addVocabularyWord(word, onResultListener);
-    }
-
-    @Test
-    public void recommendations_getLessRecommendationsThanInDatabase_shouldReturnRequestCountOfRecommendations(){
-        List<WikiDataEntryData> recommendations = new ArrayList<>(2);
-        recommendations.add(new WikiDataEntryData("label1", "desc1", "wikidataID1", "label1", WikiDataEntryData.CLASSIFICATION_OTHER));
-        recommendations.add(new WikiDataEntryData("label2", "desc2", "wikidataID2", "label2", WikiDataEntryData.CLASSIFICATION_OTHER));
-        db.recommendations = recommendations;
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onRecommendationsQueried(List<WikiDataEntryData> results) {
-                assertEquals(1, results.size());
-            }
-        };
-        db.getRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
-                1, onResultListener);
-    }
-
-    @Test
-    public void recommendations_getMoreRecommendationsThanInDatabase_shouldReturnDatabaseCountOfRecommendations(){
-        List<WikiDataEntryData> recommendations = new ArrayList<>(2);
-        recommendations.add(new WikiDataEntryData("label1", "desc1", "wikidataID1", "label1", WikiDataEntryData.CLASSIFICATION_OTHER));
-        recommendations.add(new WikiDataEntryData("label2", "desc2", "wikidataID2", "label2", WikiDataEntryData.CLASSIFICATION_OTHER));
-        db.recommendations = recommendations;
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onRecommendationsQueried(List<WikiDataEntryData> results) {
-                assertEquals(2, results.size());
-            }
-        };
-        db.getRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
-                3, onResultListener);
-    }
-
-    @Test
-    public void recommendations_getRecommendationsWithUserInterests_shouldReturnUserInterestPlusRecommendationCt(){
-        List<WikiDataEntryData> recommendations = new ArrayList<>(2);
-        recommendations.add(new WikiDataEntryData("label1", "desc1", "wikidataID1", "label1", WikiDataEntryData.CLASSIFICATION_OTHER));
-        recommendations.add(new WikiDataEntryData("label2", "desc2", "wikidataID2", "label2", WikiDataEntryData.CLASSIFICATION_OTHER));
-        db.recommendations = recommendations;
-        OnResultListener onResultListener = new OnResultListener() {
-            @Override
-            public void onRecommendationsQueried(List<WikiDataEntryData> results) {
-                assertEquals(2, results.size());
-            }
-        };
-        List<WikiDataEntryData> userInterests = new ArrayList<>(1);
-        userInterests.add(new WikiDataEntryData("label3", "desc3", "wikidataID3", "label3", WikiDataEntryData.CLASSIFICATION_OTHER));
-        db.getRecommendations(userInterests, "wikiDataID4",
-                1, onResultListener);
     }
 
 }

@@ -17,15 +17,15 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class OnResultListener {
-    public void onQuestionsQueried(List<String> questionSetIDs, List<WikiDataEntryData> userInterestsSearched){}
+    public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched){}
     //for each question set that we add
-    public void onQuestionSetAdded(String questionSetKey, List<List<String>> questionIDs, String interestLabel, List<String> vocabularyWordKeys){}
+    public void onQuestionSetAdded(QuestionSet questionSet){}
     //once we are done adding all the question sets to the database
     public void onQuestionsAdded(){}
-    public void onRelatedUserInterestsQueried(List<WikiDataEntryData> relatedUserInterests){}
-    public void onRandomQuestionsQueried(List<String> questionSetIDs){}
     //once we are done getting all question sets
     public void onQuestionSetsQueried(List<QuestionSet> questionSets){}
+    public void onQuestionSetCountChanged(){}
+    public void onPopularQuestionSetsQueried(List<QuestionSet> questionSets){}
 
     public void onQuestionQueried(QuestionData questionData){}
 
@@ -44,7 +44,6 @@ public abstract class OnResultListener {
     public void onUserInterestsAdded(){}
     public void onUserInterestsRemoved(){}
 
-    public void onRecommendationsQueried(List<WikiDataEntryData> recommendations){}
 
     public void onClearedLessonsQueried(Set<String> clearedLessonKeys){}
     public void onClearedLessonAdded(boolean firstTimeCleared){}

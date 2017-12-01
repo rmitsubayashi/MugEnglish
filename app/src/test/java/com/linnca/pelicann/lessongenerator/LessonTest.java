@@ -102,7 +102,7 @@ public class LessonTest {
                         assertFalse(noMatch);
                     }
                 };
-                db.getLessonInstances(Goodbye_bye.KEY, onResultListener);
+                db.getLessonInstances(Goodbye_bye.KEY, false, onResultListener);
             }
         };
         Lesson lessonWithOnlyGenericQuestions = LessonFactory.parseLesson(Goodbye_bye.KEY, null, db, lessonListener);
@@ -279,15 +279,13 @@ public class LessonTest {
     }
 
     @Test
-    public void lessonWithDynamicQuestions_createInstanceWithNoUserInterests_lessonShouldBeCreatedWithRandomQuestions(){
+    public void lessonWithDynamicQuestions_createInstanceWithNoUserInterests_lessonShouldBeCreatedWithExistingQuestions(){
         //adding preset data
-        db.randomQuestionSets.put("date1", "questionSetID1");
-        db.randomQuestionSets.put("date2", "questionSetID2");
         List<List<String>> questionSet1 = new ArrayList<>(1);
         List<String> questions1 = new ArrayList<>(1);
         questions1.add("questionID1");
         questionSet1.add(questions1);
-        db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "interestLabel1", questionSet1, new ArrayList<String>()));
+        db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "wikiDataLabel1", "interestLabel1", questionSet1, new ArrayList<String>(),1));
         QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", questionData1);
@@ -295,7 +293,7 @@ public class LessonTest {
         List<String> questions2 = new ArrayList<>(1);
         questions2.add("questionID2");
         questionSet2.add(questions2);
-        db.questionSets.put("questionSetID2", new QuestionSet("questionSetID2", "interestLabel2", questionSet2, new ArrayList<String>()));
+        db.questionSets.put("questionSetID2", new QuestionSet("questionSetID2", "wikiDataLabel2", "interestLabel2", questionSet2, new ArrayList<String>(),1));
         QuestionData questionData2 = new QuestionData("questionID2","lessonID2", "topic2", Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", questionData2);
@@ -355,12 +353,11 @@ public class LessonTest {
         userInterests.add(new WikiDataEntryData("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntryData.CLASSIFICATION_PERSON));
         db.userInterests = userInterests;
         //adding preset data
-        db.randomQuestionSets.put("date1", "questionSetID1");
         List<List<String>> questionSet1 = new ArrayList<>(1);
         List<String> questions1 = new ArrayList<>(1);
         questions1.add("questionID1");
         questionSet1.add(questions1);
-        db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "interestLabel1", questionSet1, new ArrayList<String>()));
+        db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "WikiDataLabel1", "interestLabel1", questionSet1, new ArrayList<String>(),1));
         QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", questionData1);
