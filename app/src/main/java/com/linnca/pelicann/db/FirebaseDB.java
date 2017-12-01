@@ -14,7 +14,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.linnca.pelicann.lessondetails.LessonData;
@@ -54,6 +53,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 //  connect to an actual database)
 
 public class FirebaseDB extends Database{
+    //we can't save an instance of the database because it isn't serializable
+    //FirebaseDatabase db = FirebaseDatabase.getInstance();
     //Firebase requires both the reference and the listener attached to it
     // to remove the listener.
     private class RefListenerPair {
@@ -204,17 +205,16 @@ public class FirebaseDB extends Database{
 
     @Override
     public void addQuestions(String lessonKey, List<QuestionDataWrapper> questions, OnResultListener onResultListener){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference questionRef = db.getReference(FirebaseDBHeaders.QUESTIONS);
+        DatabaseReference questionRef = FirebaseDatabase.getInstance().getReference(FirebaseDBHeaders.QUESTIONS);
         //this is the actual question information for when we want to show
         // questions to the user
-        DatabaseReference questionSetRef = db.getReference(
+        DatabaseReference questionSetRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.QUESTION_SETS + "/" +
                         lessonKey
         );
 
         //any new vocabulary examples
-        DatabaseReference vocabularyRef = db.getReference(
+        DatabaseReference vocabularyRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.VOCABULARY
         );
         //we are looping through each question set.
@@ -251,7 +251,6 @@ public class FirebaseDB extends Database{
                 }
             }
 
-            String questionSetWikiDataID = questionDataWrapper.getWikiDataID();
             //save the question set (pretty much the same thing as the
             //questionDataWrapper but just the IDs
             String questionSetKey = questionSetRef.push().getKey();
@@ -872,6 +871,11 @@ public class FirebaseDB extends Database{
                 onResultListener.onUserInterestsAdded();
             }
         });
+
+        //add to rankings
+        for (WikiDataEntryData data : userInterestsToAdd) {
+            this.changeUserInterestRanking(data, 1);
+        }
     }
 
     @Override
@@ -883,6 +887,14 @@ public class FirebaseDB extends Database{
                 FirebaseDBHeaders.USER_INTERESTS_PRONUNCIATION
         );
         pronunciationRef.setValue(pronunciation);
+        //also update the pronunciation in the user interest rankings
+        DatabaseReference rankingPronunciationRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.USER_INTEREST_RANKINGS + "/" +
+                        userInterestID + "/" +
+                        FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA + "/" +
+                        FirebaseDBHeaders.USER_INTERESTS_PRONUNCIATION
+        );
+        rankingPronunciationRef.setValue(pronunciation);
     }
 
     @Override
@@ -894,6 +906,14 @@ public class FirebaseDB extends Database{
                         FirebaseDBHeaders.USER_INTERESTS_CLASSIFICATION
         );
         classificationRef.setValue(classification);
+        //also update the classification in the user interest rankings
+        DatabaseReference rankingClassificationRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.USER_INTEREST_RANKINGS + "/" +
+                        userInterestID + "/" +
+                        FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA + "/" +
+                        FirebaseDBHeaders.USER_INTERESTS_CLASSIFICATION
+        );
+        rankingClassificationRef.setValue(classification);
     }
 
     @Override
@@ -913,6 +933,77 @@ public class FirebaseDB extends Database{
                         onResultListener.onUserInterestsRemoved();
                     }
                 });
+        for (WikiDataEntryData data : userInterestsToRemove){
+            this.changeUserInterestRanking(data, -1);
+        }
+    }
+
+    @Override
+    public void changeUserInterestRanking(final WikiDataEntryData data, final int count){
+        DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.USER_INTEREST_RANKINGS + "/" +
+                        data.getWikiDataID()
+        );
+        rankingRef.runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                Integer currentCt = mutableData
+                        .child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
+                        .getValue(Integer.class);
+                if (currentCt == null){
+                    //this is a new interest no one else has ranked
+                    mutableData.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
+                            .setValue(count);
+                    mutableData.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA)
+                            .setValue(data);
+                } else {
+                    int newCt = currentCt + count;
+                    if (newCt <= 0){
+                        //remove if the count goes below 0
+                        mutableData.setValue(null);
+                    } else {
+                        mutableData.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
+                                .setValue(newCt);
+                    }
+                }
+                return Transaction.success(mutableData);
+            }
+
+            @Override
+            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+            }
+        });
+    }
+    
+    @Override
+    public void getPopularUserInterests(int count, final OnResultListener onResultListener){
+        DatabaseReference popularUserInterestRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.USER_INTEREST_RANKINGS
+        );
+        Query popularUserInterestQuery = popularUserInterestRef
+                .orderByChild(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
+                .limitToLast(count);
+        popularUserInterestQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<WikiDataEntryData> userInterests = new LinkedList<>();
+                //since the ordering is 1, 2, ... , 10,
+                //reverse the order
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    userInterests.add(0, 
+                            snapshot.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA)
+                                    .getValue(WikiDataEntryData.class)
+                    );
+                }
+                onResultListener.onUserInterestRankingsQueried(userInterests);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -1288,8 +1379,7 @@ public class FirebaseDB extends Database{
     //for admin use
     @Override
     public void addSport(String sportWikiDataID, String verb, String object){
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference ref = db.getReference(
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.UTILS + "/" +
                         FirebaseDBHeaders.UTILS_SPORTS_VERB_MAPPINGS + "/" +
                         sportWikiDataID

@@ -29,7 +29,7 @@ public class RecommendationGetterTest {
                 called[0] = true;
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID1",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener);
         assertTrue(called[0]);
     }
@@ -48,7 +48,7 @@ public class RecommendationGetterTest {
                 assertEquals(2, results.size());
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener);
     }
 
@@ -66,7 +66,7 @@ public class RecommendationGetterTest {
 
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener);
 
         RecommendationGetter.RecommendationGetterListener listener2 = new RecommendationGetter.RecommendationGetterListener() {
@@ -75,7 +75,7 @@ public class RecommendationGetterTest {
                 assertEquals(2, results.size());
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID4",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener2);
 
     }
@@ -94,7 +94,7 @@ public class RecommendationGetterTest {
                 assertEquals(1, results.size());
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener);
         RecommendationGetter.RecommendationGetterListener listener2 = new RecommendationGetter.RecommendationGetterListener() {
             @Override
@@ -102,7 +102,7 @@ public class RecommendationGetterTest {
                 assertEquals(2, results.size());
             }
         };
-        recommendationGetter.loadMoreRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID4",
+        recommendationGetter.loadMoreRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener2);
     }
 
@@ -121,7 +121,7 @@ public class RecommendationGetterTest {
                 assertFalse(showLoadMoreButton);
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener);
     }
 
@@ -139,7 +139,7 @@ public class RecommendationGetterTest {
 
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener);
         RecommendationGetter.RecommendationGetterListener listener2 = new RecommendationGetter.RecommendationGetterListener() {
             @Override
@@ -147,7 +147,7 @@ public class RecommendationGetterTest {
                 assertFalse(showLoadMoreButton);
             }
         };
-        recommendationGetter.loadMoreRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
+        recommendationGetter.loadMoreRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener2);
     }
 
@@ -165,7 +165,7 @@ public class RecommendationGetterTest {
                 assertFalse(showLoadMoreButton);
             }
         };
-        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(), "wikiDataID3",
+        recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntryData>(),
                 listener);
     }
 
@@ -189,7 +189,7 @@ public class RecommendationGetterTest {
         List<WikiDataEntryData> userInterests = new ArrayList<>();
         userInterests.add(new WikiDataEntryData("label4", "desc4", "wikidataID4", "label4", WikiDataEntryData.CLASSIFICATION_OTHER));
         userInterests.add(new WikiDataEntryData("label5", "desc5", "wikidataID5", "label5", WikiDataEntryData.CLASSIFICATION_OTHER));
-        recommendationGetter.getNewRecommendations(userInterests, "wikiDataID6",
+        recommendationGetter.getNewRecommendations(userInterests,
                 listener);
         //clear the database so we know we aren't pulling data from the database when we load more
         db.recommendations.clear();
@@ -199,7 +199,7 @@ public class RecommendationGetterTest {
                 assertEquals(2, results.size());
             }
         };
-        recommendationGetter.loadMoreRecommendations(userInterests, "wikiDataID6",
+        recommendationGetter.loadMoreRecommendations(userInterests,
                 listener2);
     }
 
@@ -221,7 +221,7 @@ public class RecommendationGetterTest {
         //we should retrieve 1 + 1 = 2 recommendations in total
         List<WikiDataEntryData> userInterests = new ArrayList<>();
         userInterests.add(new WikiDataEntryData("label3", "desc3", "wikidataID3", "label3", WikiDataEntryData.CLASSIFICATION_OTHER));
-        recommendationGetter.getNewRecommendations(userInterests, "wikiDataID4",
+        recommendationGetter.getNewRecommendations(userInterests,
                 listener);
         //clear the database so we know we retrieved the next data from the database
         db.recommendations.clear();
@@ -231,7 +231,7 @@ public class RecommendationGetterTest {
                 assertEquals(0, results.size());
             }
         };
-        recommendationGetter.loadMoreRecommendations(userInterests, "wikiDataID5",
+        recommendationGetter.loadMoreRecommendations(userInterests,
                 listener2);
     }
 

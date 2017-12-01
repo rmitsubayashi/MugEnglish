@@ -42,7 +42,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     interface SearchResultsAdapterListener {
         void onAddInterest(WikiDataEntryData data);
-        void onLoadMoreRecommendations(WikiDataEntryData wikiDataEntryData);
+        void onLoadMoreRecommendations();
     }
 
     SearchResultsAdapter(SearchResultsAdapterListener listener){
@@ -132,15 +132,14 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             });
         } else if (viewHolder instanceof SearchResultsRecommendationHeaderViewHolder){
-            boolean recommendationsAvailable = getSearchResultSize() != 0;
             ((SearchResultsRecommendationHeaderViewHolder) viewHolder)
-                    .setTitle(headerLabel, recommendationsAvailable);
+                    .setTitle(headerLabel);
         } else if (viewHolder instanceof SearchResultsRecommendationFooterViewHolder){
             ((SearchResultsRecommendationFooterViewHolder) viewHolder)
                     .setButtonListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    searchResultsAdapterListener.onLoadMoreRecommendations(recommendationWikiDataEntryData);
+                    searchResultsAdapterListener.onLoadMoreRecommendations();
                 }
             });
         } else if (viewHolder instanceof SearchResultsEmptyStateViewHolder){

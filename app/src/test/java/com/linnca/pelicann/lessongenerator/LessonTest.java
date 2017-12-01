@@ -93,7 +93,7 @@ public class LessonTest {
                         }
                         boolean noMatch = false;
                         for (LessonInstanceData instance : lessonInstances){
-                            List<String> questions = instance.getQuestionIds();
+                            List<String> questions = instance.allQuestionIds();
                             for (String id : questions){
                                 if (!genericQuestionIDs.contains(id))
                                     noMatch = true;
@@ -267,7 +267,7 @@ public class LessonTest {
                 Map<String, LessonInstanceData> instanceDataMap = db.lessonInstances;
                 //only one loop (assertion of only one lesson instance is in a different test)
                 for (Map.Entry<String, LessonInstanceData> entry : instanceDataMap.entrySet()) {
-                    int instanceQuestionSize = entry.getValue().getQuestionIds().size();
+                    int instanceQuestionSize = entry.getValue().allQuestionIds().size();
                     assertTrue("instance size:" + instanceQuestionSize +
                             " generic question size:" + genericQuestionCt,
                             instanceQuestionSize > genericQuestionCt);
@@ -334,7 +334,7 @@ public class LessonTest {
                 Map<String, LessonInstanceData> instanceDataMap = db.lessonInstances;
                 //only one loop (assertion of only one lesson instance is in a different test)
                 for (Map.Entry<String, LessonInstanceData> entry : instanceDataMap.entrySet()) {
-                    List<String> questionSetIds = entry.getValue().getQuestionSetIds();
+                    List<String> questionSetIds = entry.getValue().questionSetIds();
                     assertTrue(questionSetIds.contains("questionSetID1"));
                     //this means a dynamic question set was created
                     // (random question set) + @
@@ -375,7 +375,7 @@ public class LessonTest {
                 Map<String, LessonInstanceData> instanceDataMap = db.lessonInstances;
                 //only one loop (assertion of only one lesson instance is in a different test)
                 for (Map.Entry<String, LessonInstanceData> entry : instanceDataMap.entrySet()) {
-                    List<String> questionSetIds = entry.getValue().getQuestionSetIds();
+                    List<String> questionSetIds = entry.getValue().questionSetIds();
                     assertTrue(questionSetIds.contains("questionSetID1"));
                     assertTrue(questionSetIds.contains("questionSetID2"));
                 }

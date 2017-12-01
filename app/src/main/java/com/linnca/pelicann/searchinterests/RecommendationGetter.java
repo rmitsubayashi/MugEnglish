@@ -36,14 +36,14 @@ class RecommendationGetter {
         return toDisplayRecommendationCt;
     }
 
-    void getNewRecommendations(List<WikiDataEntryData> userInterests, String wikiDataID,
+    void getNewRecommendations(List<WikiDataEntryData> userInterests,
                             RecommendationGetterListener recommendationGetterListener){
         //reset the recommendation count to the default
         toDisplayRecommendationCt = defaultRecommendationCt;
-        getRecommendations(userInterests, wikiDataID, recommendationGetterListener);
+        getRecommendations(userInterests, recommendationGetterListener);
     }
 
-    void loadMoreRecommendations(List<WikiDataEntryData> userInterests, String wikiDataID,
+    void loadMoreRecommendations(List<WikiDataEntryData> userInterests,
                                  RecommendationGetterListener recommendationGetterListener){
         toDisplayRecommendationCt += loadMoreRecommendationCt;
         //check first if we can still populate the recommendations with
@@ -56,36 +56,40 @@ class RecommendationGetter {
             recommendationGetterListener.onGetRecommendations(toDisplay, true);
         } else {
             //grab more from the database
-            getRecommendations(userInterests, wikiDataID, recommendationGetterListener);
+            getRecommendations(userInterests, recommendationGetterListener);
         }
     }
 
-    private void getRecommendations(final List<WikiDataEntryData> userInterests, String wikiDataID,
+    private void getRecommendations(final List<WikiDataEntryData> userInterests,
                                     final RecommendationGetterListener recommendationGetterListener){
-        /*OnResultListener onResultListener = new OnResultListener() {
+        OnResultListener onResultListener = new OnResultListener() {
             @Override
-            public void onRecommendationsQueried(List<WikiDataEntryData> recommendations) {
+            public void onUserInterestRankingsQueried(List<WikiDataEntryData> rankings) {
                 //clearing out all of the user interests is handled in the database,
                 // but this guarantees that user interests will be left out
-                recommendations.removeAll(userInterests);
+                rankings.removeAll(userInterests);
                 //save all of the list for future use
                 savedRecommendations.clear();
-                savedRecommendations.addAll(recommendations);
+                savedRecommendations.addAll(rankings);
+
                 boolean showLoadMoreButton = true;
                 //if we have more than we need
-                if (recommendations.size() > toDisplayRecommendationCt){
-                    recommendations = recommendations.subList(0, toDisplayRecommendationCt);
+                if (rankings.size() > toDisplayRecommendationCt){
+                    rankings = rankings.subList(0, toDisplayRecommendationCt);
                 } else {
                     showLoadMoreButton = false;
                 }
-                recommendationGetterListener.onGetRecommendations(recommendations, showLoadMoreButton);
+                recommendationGetterListener.onGetRecommendations(rankings, showLoadMoreButton);
             }
         };
 
         //we get the to display recommendation count + 1 so we know
-        // whether we can load more recommendations
-        db.getRecommendations(userInterests, wikiDataID,
-                toDisplayRecommendationCt+1, onResultListener);*/
+        // whether we can load more recommendations.
+        // we want to get at least the number of the user interests
+        // so we guarantee that the returned list will contain new items
+        int toGetUserInterestCt = userInterests.size() +
+                toDisplayRecommendationCt + 1;
+        db.getPopularUserInterests(toGetUserInterestCt, onResultListener);
     }
 
 }

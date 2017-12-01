@@ -44,6 +44,7 @@ public abstract class OnResultListener {
     public void onUserInterestsAdded(){}
     public void onUserInterestsRemoved(){}
 
+    public void onUserInterestRankingsQueried(List<WikiDataEntryData> userInterests){}
 
     public void onClearedLessonsQueried(Set<String> clearedLessonKeys){}
     public void onClearedLessonAdded(boolean firstTimeCleared){}

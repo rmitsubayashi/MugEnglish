@@ -63,6 +63,9 @@ public abstract class Database implements Serializable{
     public abstract void setPronunciation(String userInterestID, String pronunciation);
     public abstract void setClassification(String userInterestID, int classification);
 
+    public abstract void changeUserInterestRanking(WikiDataEntryData data, int count);
+    public abstract void getPopularUserInterests(int count, OnResultListener onResultListener);
+
     public abstract void addInstanceRecord(InstanceRecord record, OnResultListener onResultListener);
 
     public abstract void getClearedLessons(int lessonLevel, boolean persistentConnection, OnResultListener onResultListener);

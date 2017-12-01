@@ -252,6 +252,21 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
+    public void changeUserInterestRanking(WikiDataEntryData data, int count){}
+
+    @Override
+    public void getPopularUserInterests(int count, OnResultListener onResultListener){
+        if (count > recommendations.size()){
+            count = recommendations.size();
+        }
+        //we don't care about order
+        List<WikiDataEntryData> popularUserInterestList = new ArrayList<>(
+                recommendations.subList(0, count)
+        );
+        onResultListener.onUserInterestRankingsQueried(popularUserInterestList);
+    }
+
+    @Override
     public void setPronunciation(String userInterestID, String pronunciation){
 
     }

@@ -212,9 +212,8 @@
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>
     <string name="search_interests_add">追加</string>
-    <string name="search_interests_recommendations_success">追加しました！</string>
-    <string name="search_interests_recommendations_title">%1$sが好きな人はこんなものも追加しています</string>
-    <string name="search_interests_recommendations_title_no_recommendations">この中で好きなものはありますか？</string>
+    <string name="search_interests_recommendations_success">%1$sを追加しました！</string>
+    <string name="search_interests_recommendations_rankings_title">おすすめランキング</string>
     <string name="search_interests_recommendations_more">もっと表示する</string>
     <string name="search_interests_empty_state_title">「%1$s」の検索結果　0件</string>
     <string name="search_interests_empty_state_title_backup">見つかりませんでした</string>

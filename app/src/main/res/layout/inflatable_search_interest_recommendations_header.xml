@@ -6,17 +6,20 @@
           android:padding="16dp"
     >
     <TextView
+        android:id="@+id/search_interests_recommendations_success_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="24dp"
         android:textSize="21sp"
         android:textColor="?attr/color500"
         android:text="@string/search_interests_recommendations_success"/>
     <TextView
-        android:id="@+id/search_interests_recommendations_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="12dp"
         android:textSize="17sp"
-        android:text="@string/search_interests_recommendations_title"/>
+        android:textColor="?attr/colorAccent500"
+        android:text="@string/search_interests_recommendations_rankings_title"/>
 
 </LinearLayout>

@@ -642,7 +642,7 @@ public class TestMockFirebaseDB {
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
                 boolean matched = true;
                 for (LessonInstanceData data : lessonInstances){
-                    List<String> dataQuestionSets = data.getQuestionSetIds();
+                    List<String> dataQuestionSets = data.questionSetIds();
                     for (String setID : dataQuestionSets){
                         if (!setID.equals("set1")){
                             matched = false;

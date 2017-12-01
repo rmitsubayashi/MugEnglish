@@ -231,7 +231,7 @@ public class SearchInterests extends Fragment {
                         // so it can give feedback to teh user
                         adapter.setRecommendationWikiDataEntryData(data);
                         //get recommendations for the user
-                        recommendationGetter.getNewRecommendations(userInterests, data.getWikiDataID(),
+                        recommendationGetter.getNewRecommendations(userInterests,
                                 getRecommendationGetterListener());
                     }
                 };
@@ -243,14 +243,9 @@ public class SearchInterests extends Fragment {
             }
 
             @Override
-            public void onLoadMoreRecommendations(WikiDataEntryData data){
-                recommendationGetter.loadMoreRecommendations(userInterests, data.getWikiDataID(),
+            public void onLoadMoreRecommendations(){
+                recommendationGetter.loadMoreRecommendations(userInterests,
                         getRecommendationGetterListener());
-
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Load More Recommendations");
-                bundle.putInt(FirebaseAnalytics.Param.VALUE, recommendationGetter.getToDisplayRecommendationCt());
-                firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
             }
         };
     }
