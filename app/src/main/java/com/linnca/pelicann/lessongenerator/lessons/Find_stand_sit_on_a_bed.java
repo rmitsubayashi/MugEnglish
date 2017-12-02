@@ -33,61 +33,35 @@ public class Find_stand_sit_on_a_bed extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(5);
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(5);
         List<QuestionData> multipleChoiceQuestion1 = multipleChoiceQuestion1();
-        questions.addAll(multipleChoiceQuestion1);
+        questionSet.add(multipleChoiceQuestion1);
         List<QuestionData> multipleChoiceQuestion2 = multipleChoiceQuestion2();
-        questions.addAll(multipleChoiceQuestion2);
+        questionSet.add(multipleChoiceQuestion2);
         List<QuestionData> multipleChoiceQuestion3 = multipleChoiceQuestion3();
-        questions.addAll(multipleChoiceQuestion3);
+        questionSet.add(multipleChoiceQuestion3);
         List<QuestionData> translateQuestion = translateQuestion();
-        questions.addAll(translateQuestion);
+        questionSet.add(translateQuestion);
         List<QuestionData> actionQuestion = actionQuestion();
-        questions.addAll(actionQuestion);
-        for (int i=0; i<5; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>(5);
-        for (int i=1; i<=5; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+        questionSet.add(actionQuestion);
 
         return questionSet;
+
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(4);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "bed"),
-                "bed","ベッド","Sit on the bed.","ベッドに座ってください", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "find"),
+        words.add(new VocabularyWord("", "bed","ベッド",
+                "Sit on the bed.","ベッドに座ってください", KEY));
+        words.add(new VocabularyWord("",
                 "find","探す","Find a bed.","ベッドを探してください", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "sit"),
-                "sit","座る","Sit on the bed.","ベッドに座ってください", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "stand"),
-                "stand","立つ","Stand on the bed.","ベッドの上で立ってください", KEY));
+        words.add(new VocabularyWord("", "sit","座る",
+                "Sit on the bed.","ベッドに座ってください", KEY));
+        words.add(new VocabularyWord("", "stand","立つ",
+                "Stand on the bed.","ベッドの上で立ってください", KEY));
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(4);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "find"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "bed"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "stand"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "sit"));
-        return ids;
     }
 
     private String multipleChoiceQuestionQuestion1(){

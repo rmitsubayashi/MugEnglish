@@ -367,33 +367,14 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSets = new ArrayList<>(2);
-        List<QuestionData> toSave1 = createTranslateQuestionGeneric();
-        int toSave1Size = toSave1.size();
-        for ( int i=1; i<=2; i++){
-            List<String> questionIDs = new ArrayList<>();
-            questionIDs.add(formatGenericQuestionID(KEY, i));
-            questionSets.add(questionIDs);
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
+        List<QuestionData> translateQuestion2 = createTranslateQuestionGeneric2();
+        List<List<QuestionData>> questionsSet = new ArrayList<>(2);
+        questionsSet.add(translateQuestion);
+        questionsSet.add(translateQuestion2);
 
-        return questionSets;
-    }
-
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> toSaveSet1 = createTranslateQuestionGeneric();
-        List<QuestionData> toSaveSet2 = createTranslateQuestionGeneric2();
-        List<QuestionData> questions = new ArrayList<>(2);
-        questions.addAll(toSaveSet1);
-        questions.addAll(toSaveSet2);
-        int questionSize = questions.size();
-        for (int i=1; i<= questionSize; i++){
-            String id = formatGenericQuestionID(KEY, i);
-            questions.get(i-1).setId(id);
-        }
-
-        return questions;
+        return questionsSet;
 
     }
 }

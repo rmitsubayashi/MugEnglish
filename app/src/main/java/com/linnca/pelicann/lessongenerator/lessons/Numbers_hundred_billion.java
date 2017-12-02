@@ -35,53 +35,19 @@ public class Numbers_hundred_billion extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>();
-        List<QuestionData> spellingQuestions = spellingQuestions();
-        questions.addAll(spellingQuestions);
-        List<QuestionData> translateQuestions = translateQuestions();
-        questions.addAll(translateQuestions);
-        List<QuestionData> translateQuestions2 = translateQuestions2();
-        questions.addAll(translateQuestions2);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<Integer> ids = new ArrayList<>(12);
-        List<Integer> temp = new ArrayList<>(20);
-        for (int i=0; i<4; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        for (Integer i : temp){
-            ids.add(i+1);
-            ids.add(i+5);
-        }
-        temp.clear();
-        for (int i=9; i<29; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        for (int i=0; i<4; i++){
-            ids.add(temp.get(i));
-        }
-
-        List<List<String>> questionSet = new ArrayList<>();
-        for (Integer i : ids) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>();
+        List<List<QuestionData>> spellingQuestions = spellingQuestions();
+        questionSet.addAll(spellingQuestions);
+        List<List<QuestionData>> translateQuestions = translateQuestions();
+        questionSet.addAll(translateQuestions);
+        List<QuestionData> translateQuestions2_1 = translateQuestions2_1();
+        questionSet.add(translateQuestions2_1);
+        List<QuestionData> translateQuestions2_2 = translateQuestions2_2();
+        questionSet.add(translateQuestions2_2);
 
         return questionSet;
+
     }
 
     @Override
@@ -92,20 +58,10 @@ public class Numbers_hundred_billion extends Lesson {
         for (int i=0; i<4; i++) {
             String word = wordList.get(i);
             String translation = translationList.get(i);
-            words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, word),
-                    word, translation, "", "", KEY));
+            words.add(new VocabularyWord("", word, translation,
+                    "", "", KEY));
         }
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(4);
-        List<String> wordList = english();
-        for (String word : wordList) {
-            ids.add(formatGenericQuestionVocabularyID(lessonKey, word));
-        }
-        return ids;
     }
 
     private List<String> numbers(){
@@ -126,8 +82,8 @@ public class Numbers_hundred_billion extends Lesson {
         return choices;
     }
 
-    private List<QuestionData> translateQuestions(){
-        List<QuestionData> questions = new ArrayList<>(4);
+    private List<List<QuestionData>> translateQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(4);
         List<String> answers = english();
         List<String> numbers = numbers();
         for (int i=0; i<4; i++) {
@@ -141,14 +97,16 @@ public class Numbers_hundred_billion extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
     }
 
-    private List<QuestionData> spellingQuestions(){
-        List<QuestionData> questions = new ArrayList<>(4);
+    private List<List<QuestionData>> spellingQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(4);
         List<String> answers = english();
         List<String> numbers = numbers();
         for (int i=0; i<4; i++) {
@@ -162,7 +120,9 @@ public class Numbers_hundred_billion extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
@@ -220,11 +180,39 @@ public class Numbers_hundred_billion extends Lesson {
         return numberStrings;
     }
 
-    private List<QuestionData> translateQuestions2(){
+    private List<QuestionData> translateQuestions2_1(){
         List<QuestionData> questions = new ArrayList<>(20);
         List<String> answers = getRandomNumberWords();
         List<String> numbers = getRandomNumberStrings();
-        for (int i=0; i<20; i++) {
+        int limit = answers.size() / 2;
+        for (int i=0; i<limit; i++) {
+            QuestionData data = new QuestionData();
+            String answer = answers.get(i);
+            //allow twenty two instead of twenty-two
+            String acceptableAnswer = answer.replace("-"," ");
+            List<String> acceptableAnswers = new ArrayList<>(1);
+            acceptableAnswers.add(acceptableAnswer);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+            data.setQuestion(numbers.get(i));
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(acceptableAnswers);
+
+            questions.add(data);
+        }
+
+        return questions;
+    }
+
+    private List<QuestionData> translateQuestions2_2(){
+        List<QuestionData> questions = new ArrayList<>(20);
+        List<String> answers = getRandomNumberWords();
+        List<String> numbers = getRandomNumberStrings();
+        int start = answers.size() / 2;
+        int end = answers.size();
+        for (int i=start; i<end; i++) {
             QuestionData data = new QuestionData();
             String answer = answers.get(i);
             //allow twenty two instead of twenty-two

@@ -32,39 +32,23 @@ public class I_turned_left_right extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(6);
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(6);
         List<QuestionData> multipleChoiceQuestion1 = multipleChoiceQuestion1();
-        questions.addAll(multipleChoiceQuestion1);
+        questionSet.add(multipleChoiceQuestion1);
         List<QuestionData> multipleChoiceQuestion2 = multipleChoiceQuestion2();
-        questions.addAll(multipleChoiceQuestion2);
+        questionSet.add(multipleChoiceQuestion2);
         List<QuestionData> actionQuestion1 = actionQuestion1();
-        questions.addAll(actionQuestion1);
+        questionSet.add(actionQuestion1);
         List<QuestionData> multipleChoiceQuestion3 = multipleChoiceQuestion3();
-        questions.addAll(multipleChoiceQuestion3);
+        questionSet.add(multipleChoiceQuestion3);
         List<QuestionData> actionQuestion2 = actionQuestion2();
-        questions.addAll(actionQuestion2);
+        questionSet.add(actionQuestion2);
         List<QuestionData> multipleChoiceQuestion4 = multipleChoiceQuestion4();
-        questions.addAll(multipleChoiceQuestion4);
-        for (int i=0; i<6; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>(6);
-        for (int i=1; i<=6; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+        questionSet.add(multipleChoiceQuestion4);
 
         return questionSet;
+
     }
 
     private String multipleChoiceQuestionQuestion1(){

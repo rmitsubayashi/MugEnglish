@@ -197,34 +197,18 @@ public class NAME_drives_a_car extends Lesson {
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(KEY + "_generic1");
-        List<String> questionIDs2 = new ArrayList<>();
-        questionIDs2.add(KEY + "_generic2");
-        List<List<String>> questionSets = new ArrayList<>();
-        questionSets.add(questionIDs);
-        questionSets.add(questionIDs2);
-        return questionSets;
-    }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translateQuestion = createTranslateQuestion();
+        List<QuestionData> spellingQuestion = createSpellingQuestion();
 
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        QuestionData toSave1 = createTranslateQuestion();
-        String id1 = formatGenericQuestionID(KEY, 1);
-        toSave1.setId(id1);
-        QuestionData toSave2 = createSpellingQuestion();
-        String id2 = formatGenericQuestionID(KEY, 2);
-        toSave2.setId(id2);
-
-        List<QuestionData> questions = new ArrayList<>(2);
-        questions.add(toSave1);
-        questions.add(toSave2);
-        return questions;
+        List<List<QuestionData>> questionList = new ArrayList<>(2);
+        questionList.add(translateQuestion);
+        questionList.add(spellingQuestion);
+        return questionList;
 
     }
 
-    private QuestionData createSpellingQuestion(){
+    private List<QuestionData> createSpellingQuestion(){
         String question = "運転";
         String answer = "drive";
         QuestionData data = new QuestionData();
@@ -237,11 +221,12 @@ public class NAME_drives_a_car extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
-
-        return data;
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
     }
 
-    private QuestionData createTranslateQuestion(){
+    private List<QuestionData> createTranslateQuestion(){
         String question = "car";
         String answer = "車";
         QuestionData data = new QuestionData();
@@ -254,7 +239,8 @@ public class NAME_drives_a_car extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
-
-        return data;
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
     }
 }

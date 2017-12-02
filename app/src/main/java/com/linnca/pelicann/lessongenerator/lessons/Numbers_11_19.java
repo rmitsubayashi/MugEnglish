@@ -34,43 +34,15 @@ public class Numbers_11_19 extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>();
-        List<QuestionData> spellingQuestions = spellingQuestions();
-        questions.addAll(spellingQuestions);
-        List<QuestionData> translateQuestions = translateQuestions();
-        questions.addAll(translateQuestions);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<Integer> ids = new ArrayList<>(18);
-        List<Integer> temp = new ArrayList<>(9);
-        for (int i=0; i<9; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        for (Integer i : temp){
-            ids.add(i+1);
-            ids.add(i+10);
-        }
-
-        List<List<String>> questionSet = new ArrayList<>();
-        for (Integer i : ids) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>();
+        List<List<QuestionData>> spellingQuestions = spellingQuestions();
+        questionSet.addAll(spellingQuestions);
+        List<List<QuestionData>> translateQuestions = translateQuestions();
+        questionSet.addAll(translateQuestions);
 
         return questionSet;
+
     }
 
     @Override
@@ -81,20 +53,10 @@ public class Numbers_11_19 extends Lesson {
         for (int i=0; i<9; i++) {
             String word = wordList.get(i);
             String translation = translationList.get(i);
-            words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, word),
-                    word, translation, "", "", KEY));
+            words.add(new VocabularyWord("", word, translation,
+                    "", "", KEY));
         }
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(9);
-        List<String> wordList = english();
-        for (String word : wordList) {
-            ids.add(formatGenericQuestionVocabularyID(lessonKey, word));
-        }
-        return ids;
     }
 
     private List<String> numbers(){
@@ -125,8 +87,8 @@ public class Numbers_11_19 extends Lesson {
         return choices;
     }
 
-    private List<QuestionData> translateQuestions(){
-        List<QuestionData> questions = new ArrayList<>(9);
+    private List<List<QuestionData>> translateQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(9);
         List<String> answers = english();
         List<String> numbers = numbers();
         for (int i=0; i<9; i++) {
@@ -140,14 +102,16 @@ public class Numbers_11_19 extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
     }
 
-    private List<QuestionData> spellingQuestions(){
-        List<QuestionData> questions = new ArrayList<>(9);
+    private List<List<QuestionData>> spellingQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(9);
         List<String> answers = english();
         List<String> numbers = numbers();
         for (int i=0; i<9; i++) {
@@ -161,7 +125,9 @@ public class Numbers_11_19 extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;

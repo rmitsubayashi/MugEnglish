@@ -34,58 +34,32 @@ public class Hi_hey_whats_up extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(6);
-        List<QuestionData> chatMultipleChoiceQuestions = chatMultipleChoiceQuestions();
-        questions.addAll(chatMultipleChoiceQuestions);
-        List<QuestionData> chatQuestions = chatQuestions();
-        questions.addAll(chatQuestions);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>();
-        for (int i=1; i<=6; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(6);
+        List<List<QuestionData>> chatMultipleChoiceQuestions = chatMultipleChoiceQuestions();
+        questionSet.addAll(chatMultipleChoiceQuestions);
+        List<List<QuestionData>> chatQuestions = chatQuestions();
+        questionSet.addAll(chatQuestions);
 
         return questionSet;
+
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(3);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "hi"),
-                "hi","こんにちは","Hi!","こんにちは！", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "hey"),
-                "hey","こんにちは","Hey!","こんにちは！", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "what\'s up"),
-                "what\'s up","こんにちは","What\'s up!","こんにちは！", KEY));
+        words.add(new VocabularyWord("", "hi","こんにちは",
+                "Hi!","こんにちは！", KEY));
+        words.add(new VocabularyWord("", "hey","こんにちは",
+                "Hey!","こんにちは！", KEY));
+        words.add(new VocabularyWord("", "what\'s up","こんにちは",
+                "What\'s up!","こんにちは！", KEY));
         return words;
     }
 
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(3);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "hi"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "hey"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "what\'s up"));
-        return ids;
-    }
-
     //every choice is correct
-    private List<QuestionData> chatMultipleChoiceQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    private List<List<QuestionData>> chatMultipleChoiceQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
         List<String> answers = choices();
         for (String answer : answers) {
             QuestionData data = new QuestionData();
@@ -105,7 +79,9 @@ public class Hi_hey_whats_up extends Lesson {
             alternateAnswers.remove(answer);
             data.setAcceptableAnswers(alternateAnswers);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
@@ -122,13 +98,13 @@ public class Hi_hey_whats_up extends Lesson {
     private FeedbackPair helloFeedback(){
         List<String> responses = new ArrayList<>(1);
         responses.add("hello");
-        String feedback = "馴れ馴れしく挨拶をしてくれているので、helloとよそよそしい挨拶はできるだけ避けましょう。";
+        String feedback = "馴れ馴れしく挨拶をしてくれているので、よそよそしい挨拶は避けましょう。";
         return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
     }
 
     //every choice is correct
-    private List<QuestionData> chatQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    private List<List<QuestionData>> chatQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
         List<String> answers = choices();
         for (String answer : answers) {
             QuestionData data = new QuestionData();
@@ -156,7 +132,9 @@ public class Hi_hey_whats_up extends Lesson {
             feedbackPairs.add(feedbackPair);
             data.setFeedback(feedbackPairs);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;

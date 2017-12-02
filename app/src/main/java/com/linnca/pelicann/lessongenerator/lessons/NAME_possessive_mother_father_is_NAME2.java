@@ -295,49 +295,14 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        int index = 1;
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(2);
+        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
+        questionSet.add(translateQuestion);
+        List<QuestionData> translateQuestion2 = createTranslateQuestionGeneric2();
+        questionSet.add(translateQuestion2);
 
-        List<String> questionIDs = new ArrayList<>();
-        List<QuestionData> toSave1 = createTranslateQuestionGeneric();
-        int toSave1Size = toSave1.size();
-        while (index <= toSave1Size){
-            questionIDs.add(formatGenericQuestionID(KEY, index));
-            index++;
-        }
-        List<List<String>> questionSets = new ArrayList<>();
-        questionSets.add(questionIDs);
-
-        questionIDs = new ArrayList<>();
-        List<QuestionData> toSave2 = createTranslateQuestionGeneric2();
-        int toSave2Size = toSave2.size() + index - 1;
-        while (index <= toSave2Size){
-            questionIDs.add(formatGenericQuestionID(KEY, index));
-            index++;
-        }
-        questionSets.add(questionIDs);
-        return questionSets;
-    }
-
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(2);
-        List<QuestionData> toSaveSet1 = createTranslateQuestionGeneric();
-        int set1Size = toSaveSet1.size();
-        for (int i=1; i<= set1Size; i++){
-            String id = formatGenericQuestionID(KEY, i);
-            toSaveSet1.get(i-1).setId(id);
-            questions.add(toSaveSet1.get(i-1));
-        }
-        List<QuestionData> toSaveSet2 = createTranslateQuestionGeneric2();
-        int set2Size = toSaveSet2.size();
-        for (int i=1; i<=set2Size; i++){
-            String id = formatGenericQuestionID(KEY, i+set1Size);
-            toSaveSet2.get(i-1).setId(id);
-            questions.add(toSaveSet2.get(i-1));
-        }
-
-        return questions;
+        return questionSet;
 
     }
 

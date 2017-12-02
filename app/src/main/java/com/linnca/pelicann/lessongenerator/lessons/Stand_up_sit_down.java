@@ -32,51 +32,27 @@ public class Stand_up_sit_down extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
-        List<QuestionData> spellingSuggestiveQuestion1 = multipleChoiceQuestion1();
-        questions.addAll(spellingSuggestiveQuestion1);
-        List<QuestionData> spellingSuggestiveQuestion2 = multipleChoiceQuestion2();
-        questions.addAll(spellingSuggestiveQuestion2);
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(3);
+        List<QuestionData> multipleChoiceQuestion1 = multipleChoiceQuestion1();
+        questionSet.add(multipleChoiceQuestion1);
+        List<QuestionData> multipleChoiceQuestion2 = multipleChoiceQuestion2();
+        questionSet.add(multipleChoiceQuestion2);
         List<QuestionData> actionQuestion = actionQuestion();
-        questions.addAll(actionQuestion);
-        for (int i=0; i<3; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>(3);
-        for (int i=1; i<4; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+        questionSet.add(actionQuestion);
 
         return questionSet;
+
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "stand up"),
-                "stand up","立つ","Stand up.","立ってください。", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "sit down"),
-                "sit down","座る","Sit down.","座ってください。", KEY));
+        words.add(new VocabularyWord("", "stand up","立つ",
+                "Stand up.","立ってください。", KEY));
+        words.add(new VocabularyWord("", "sit down","座る",
+                "Sit down.","座ってください。", KEY));
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(2);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "stand up"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "sit down"));
-        return ids;
     }
 
     private String multipleChoiceQuestionQuestion1(){

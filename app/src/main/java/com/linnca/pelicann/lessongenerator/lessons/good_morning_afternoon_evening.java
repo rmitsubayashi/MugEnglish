@@ -40,79 +40,33 @@ public class good_morning_afternoon_evening extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(9);
-        List<QuestionData> chatQuestions = chatMultipleChoiceQuestions();
-        questions.addAll(chatQuestions);
-        List<QuestionData> multipleChoiceQuestions = multipleChoiceQuestions();
-        questions.addAll(multipleChoiceQuestions);
-        List<QuestionData> fillInBlankQuestions = fillInBlankQuestions();
-        questions.addAll(fillInBlankQuestions);
-        for (int i=0; i<9; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(9);
+        List<List<QuestionData>> chatMultipleChoiceQuestions = chatMultipleChoiceQuestions();
+        questionSet.addAll(chatMultipleChoiceQuestions);
+        List<List<QuestionData>> multipleChoiceQuestions = multipleChoiceQuestions();
+        questionSet.addAll(multipleChoiceQuestions);
+        List<List<QuestionData>> fillInBlankQuestions = fillInBlankQuestions();
+        questionSet.addAll(fillInBlankQuestions);
 
-        return questions;
+        return questionSet;
 
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(3);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good morning"),
-                "good morning","おはよう","Good morning!","おはよう！", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good afternoon"),
-                "good afternoon","こんにちは","Good afternoon!","こんにちは！", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good evening"),
-                "good evening","こんばんは","Good evening!","こんばんは！", KEY));
+        words.add(new VocabularyWord("", "good morning","おはよう",
+                "Good morning!","おはよう！", KEY));
+        words.add(new VocabularyWord("", "good afternoon","こんにちは",
+                "Good afternoon!","こんにちは！", KEY));
+        words.add(new VocabularyWord("", "good evening","こんばんは",
+                "Good evening!","こんばんは！", KEY));
         return words;
     }
 
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(3);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good morning"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good afternoon"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good evening"));
-        return ids;
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<Integer> ids = new ArrayList<>(9);
-        //the first three chat questions are introductory
-        // and should all be displayed first
-        List<Integer> temp = new ArrayList<>(3);
-        for (int i=1; i<4; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        ids.addAll(temp);
-        temp.clear();
-        //the multiple choice and fill in blank
-        //questions can be alternating
-        for (int i=4; i<7; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        for (Integer i : temp) {
-            ids.add(i);
-            ids.add(i+3);
-        }
-
-        List<List<String>> questionSet = new ArrayList<>();
-        for (Integer i : ids) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
-
-        return questionSet;
-    }
-
-    private List<QuestionData> chatMultipleChoiceQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    private List<List<QuestionData>> chatMultipleChoiceQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
         List<String> answers = multipleChoiceChoices();
         for (String answer : answers) {
             QuestionData data = new QuestionData();
@@ -130,7 +84,9 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
@@ -152,8 +108,8 @@ public class good_morning_afternoon_evening extends Lesson {
         return choices;
     }
 
-    private List<QuestionData> multipleChoiceQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    private List<List<QuestionData>> multipleChoiceQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
         List<String> enAnswers = multipleChoiceChoices();
         List<String> jpAnswers = multipleChoiceChoicesJP();
         for (int i=0; i<3; i++) {
@@ -168,14 +124,16 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
     }
 
-    private List<QuestionData> fillInBlankQuestions(){
-        List<QuestionData> questions = new ArrayList<>();
+    private List<List<QuestionData>> fillInBlankQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>();
         List<String> enAnswers = multipleChoiceChoices();
         List<String> jpAnswers = multipleChoiceChoicesJP();
         for (int i=0; i<3; i++) {
@@ -190,7 +148,9 @@ public class good_morning_afternoon_evening extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;

@@ -34,48 +34,29 @@ public class Numbers_21_99 extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>();
-        List<QuestionData> spellingQuestions = spellingQuestions();
-        questions.addAll(spellingQuestions);
-        List<QuestionData> translateQuestions = translateQuestions();
-        questions.addAll(translateQuestions);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>();
+        List<QuestionData> spellingQuestion1 = spellingQuestion1();
+        questionSet.add(spellingQuestion1);
+        List<QuestionData> spellingQuestion2 = spellingQuestion2();
+        questionSet.add(spellingQuestion2);
+        List<QuestionData> spellingQuestion3 = spellingQuestion3();
+        questionSet.add(spellingQuestion3);
+        List<QuestionData> translateQuestion1 = translateQuestion1();
+        questionSet.add(translateQuestion1);
+        List<QuestionData> translateQuestion2 = translateQuestion2();
+        questionSet.add(translateQuestion2);
+        List<QuestionData> translateQuestion3 = translateQuestion3();
+        questionSet.add(translateQuestion3);
 
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<Integer> ids = new ArrayList<>(10);
-        List<Integer> temp = new ArrayList<>(5);
-        for (int i=1; i<=79; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        for (int i=0; i<5; i++){
-            ids.add(i+temp.get(i));
-            ids.add(i+temp.get(i)+79);
-        }
-
-        List<List<String>> questionSet = new ArrayList<>();
-        for (Integer i : ids) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
 
         return questionSet;
+
     }
 
-    private List<QuestionData> translateQuestions(){
-        List<QuestionData> questions = new ArrayList<>(79);
-        for (int i=21; i<=99; i++) {
+    private List<QuestionData> translateQuestion1(){
+        List<QuestionData> questions = new ArrayList<>(27);
+        for (int i=21; i<47; i++) {
             QuestionData data = new QuestionData();
             String answer = StringUtils.convertIntToWord(i);
             //also accept twenty two (not just twenty-two)
@@ -96,9 +77,93 @@ public class Numbers_21_99 extends Lesson {
         return questions;
     }
 
-    private List<QuestionData> spellingQuestions(){
-        List<QuestionData> questions = new ArrayList<>(79);
-        for (int i=21; i<=99; i++) {
+    private List<QuestionData> translateQuestion2(){
+        List<QuestionData> questions = new ArrayList<>(27);
+        for (int i=47; i<73; i++) {
+            QuestionData data = new QuestionData();
+            String answer = StringUtils.convertIntToWord(i);
+            //also accept twenty two (not just twenty-two)
+            String acceptableAnswer = answer.replace("-", " ");
+            List<String> acceptableAnswers = new ArrayList<>(1);
+            acceptableAnswers.add(acceptableAnswer);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+            data.setQuestion(Integer.toString(i));
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(acceptableAnswers);
+
+            questions.add(data);
+        }
+
+        return questions;
+    }
+
+    private List<QuestionData> translateQuestion3(){
+        List<QuestionData> questions = new ArrayList<>(27);
+        for (int i=73; i<=99; i++) {
+            QuestionData data = new QuestionData();
+            String answer = StringUtils.convertIntToWord(i);
+            //also accept twenty two (not just twenty-two)
+            String acceptableAnswer = answer.replace("-", " ");
+            List<String> acceptableAnswers = new ArrayList<>(1);
+            acceptableAnswers.add(acceptableAnswer);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+            data.setQuestion(Integer.toString(i));
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(acceptableAnswers);
+
+            questions.add(data);
+        }
+
+        return questions;
+    }
+
+    private List<QuestionData> spellingQuestion1(){
+        List<QuestionData> questions = new ArrayList<>(27);
+        for (int i=21; i<43; i++) {
+            QuestionData data = new QuestionData();
+            String answer = StringUtils.convertIntToWord(i);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_Spelling.QUESTION_TYPE);
+            data.setQuestion(Integer.toString(i));
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+
+            questions.add(data);
+        }
+
+        return questions;
+    }
+
+    private List<QuestionData> spellingQuestion2(){
+        List<QuestionData> questions = new ArrayList<>(27);
+        for (int i=47; i<73; i++) {
+            QuestionData data = new QuestionData();
+            String answer = StringUtils.convertIntToWord(i);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_Spelling.QUESTION_TYPE);
+            data.setQuestion(Integer.toString(i));
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+
+            questions.add(data);
+        }
+
+        return questions;
+    }
+
+    private List<QuestionData> spellingQuestion3(){
+        List<QuestionData> questions = new ArrayList<>(27);
+        for (int i=73; i<=99; i++) {
             QuestionData data = new QuestionData();
             String answer = StringUtils.convertIntToWord(i);
             data.setId("");

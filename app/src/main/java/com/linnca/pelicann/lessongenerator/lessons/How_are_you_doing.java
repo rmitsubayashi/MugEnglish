@@ -107,19 +107,11 @@ public class How_are_you_doing extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"),
-                "How are you doing?","元気ですか","How are you doing?\nGood.","元気ですか。元気です。", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good"),
-                "good","元気です","How are you doing?\nGood.","元気ですか。元気です。", KEY));
+        words.add(new VocabularyWord("", "How are you doing?","元気ですか",
+                "How are you doing?\nGood.","元気ですか。元気です。", KEY));
+        words.add(new VocabularyWord("", "good","元気です",
+                "How are you doing?\nGood.","元気ですか。元気です。", KEY));
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(2);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good"));
-        return ids;
     }
 
     private List<QuestionData> createChatQuestion(QueryResult qr){
@@ -155,30 +147,14 @@ public class How_are_you_doing extends Lesson {
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(formatGenericQuestionID(KEY, 1));
-        List<List<String>> questionSets = new ArrayList<>();
-        questionSets.add(questionIDs);
-        questionIDs = new ArrayList<>();
-        questionIDs.add(formatGenericQuestionID(KEY, 2));
-        questionSets.add(questionIDs);
-        return questionSets;
-    }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion();
+        List<QuestionData> translateQuestion = createTranslateQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(2);
+        questionSet.add(sentencePuzzleQuestion);
+        questionSet.add(translateQuestion);
 
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> toSave1 = createSentencePuzzleQuestion();
-        List<QuestionData> toSave2 = createTranslateQuestion();
-        List<QuestionData> allQuestions = new ArrayList<>(2);
-        allQuestions.addAll(toSave1);
-        allQuestions.addAll(toSave2);
-        int questionSize = allQuestions.size();
-        for (int i=0; i<questionSize; i++){
-            allQuestions.get(i).setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return allQuestions;
+        return questionSet;
 
     }
 

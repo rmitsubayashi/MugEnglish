@@ -36,54 +36,28 @@ public class Thanks_no_problem extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(4);
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(4);
         List<QuestionData> chatMultipleChoiceQuestion = chatMultipleChoiceQuestion();
-        questions.addAll(chatMultipleChoiceQuestion);
+        questionSet.add(chatMultipleChoiceQuestion);
         List<QuestionData> chatQuestion = chatQuestion();
-        questions.addAll(chatQuestion);
+        questionSet.add(chatQuestion);
         List<QuestionData> spellingQuestion = spellingQuestion();
-        questions.addAll(spellingQuestion);
+        questionSet.add(spellingQuestion);
         List<QuestionData> translateQuestion = translateQuestion();
-        questions.addAll(translateQuestion);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>();
-        for (int i=1; i<=6; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
-
+        questionSet.add(translateQuestion);
         return questionSet;
+
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "thanks"),
-                "thanks","ありがとう","Thanks! No problem.","ありがとう！どういたしまして。", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "no problem"),
-                "no problem","どういたしまして","Thanks! No problem.","ありがとう！どういたしまして。", KEY));
+        words.add(new VocabularyWord("", "thanks","ありがとう",
+                "Thanks! No problem.","ありがとう！どういたしまして。", KEY));
+        words.add(new VocabularyWord("", "no problem",
+                "どういたしまして","Thanks! No problem.","ありがとう！どういたしまして。", KEY));
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(2);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "bye"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "goodbye"));
-        return ids;
     }
 
     //only one choice

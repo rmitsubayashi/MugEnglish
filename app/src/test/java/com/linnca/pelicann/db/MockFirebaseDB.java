@@ -117,7 +117,7 @@ public class MockFirebaseDB extends Database {
 
             }
             String setID = "setID" + mockQuestionSetID++;
-            QuestionSet questionSet = new QuestionSet(setID, wrapper.getWikiDataID(),
+            QuestionSet questionSet = new QuestionSet(setID, wrapper.getInterestID(),
                     wrapper.getInterestLabel(),
                     questionIDs, vocabularyIDs, 0);
             questionSets.put(setID, questionSet);

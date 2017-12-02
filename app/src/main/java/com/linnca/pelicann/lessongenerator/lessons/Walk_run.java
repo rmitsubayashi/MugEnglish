@@ -32,51 +32,27 @@ public class Walk_run extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(3);
         List<QuestionData> spellingSuggestiveQuestion1 = spellingSuggestiveQuestion1();
-        questions.addAll(spellingSuggestiveQuestion1);
+        questionSet.add(spellingSuggestiveQuestion1);
         List<QuestionData> spellingSuggestiveQuestion2 = spellingSuggestiveQuestion2();
-        questions.addAll(spellingSuggestiveQuestion2);
+        questionSet.add(spellingSuggestiveQuestion2);
         List<QuestionData> actionQuestion = actionQuestion();
-        questions.addAll(actionQuestion);
-        for (int i=0; i<3; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>(3);
-        for (int i=1; i<4; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+        questionSet.add(actionQuestion);
 
         return questionSet;
+
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "run"),
-                "run","走る","Run.","走ってください", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "walk"),
-                "walk","歩く","Walk.","歩いてください", KEY));
+        words.add(new VocabularyWord("", "run","走る",
+                "Run.","走ってください", KEY));
+        words.add(new VocabularyWord("", "walk","歩く",
+                "Walk.","歩いてください", KEY));
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(2);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "run"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "walk"));
-        return ids;
     }
 
     private List<QuestionData> spellingSuggestiveQuestion1(){

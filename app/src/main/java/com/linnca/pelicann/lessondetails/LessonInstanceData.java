@@ -14,17 +14,21 @@ public class LessonInstanceData implements Serializable{
     private String lessonKey;
     //for displaying to the user
     private long createdTimeStamp;
-    private List<String> genericQuestionIds;
+    //generic questions to put before the main question sets
+    private List<String> preGenericQuestionIds;
+    //generic questions to put after the main question sets
+    private List<String> postGenericQuestionIds;
     private List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
 
     public LessonInstanceData(){
     }
 
-    public LessonInstanceData(String id, String lessonKey, long createdTimeStamp, List<String> genericQuestionIds, List<LessonInstanceDataQuestionSet> questionSets) {
+    public LessonInstanceData(String id, String lessonKey, long createdTimeStamp, List<String> preGenericQuestionIds, List<String> postGenericQuestionIds, List<LessonInstanceDataQuestionSet> questionSets) {
         this.id = id;
         this.lessonKey = lessonKey;
         this.createdTimeStamp = createdTimeStamp;
-        this.genericQuestionIds = genericQuestionIds;
+        this.preGenericQuestionIds = preGenericQuestionIds;
+        this.postGenericQuestionIds = postGenericQuestionIds;
         this.questionSets = new ArrayList<>(questionSets);
     }
 
@@ -52,12 +56,20 @@ public class LessonInstanceData implements Serializable{
         this.questionSets = questionSets;
     }
 
-    public List<String> getGenericQuestionIds() {
-        return genericQuestionIds;
+    public List<String> getPreGenericQuestionIds() {
+        return preGenericQuestionIds;
     }
 
-    public void setGenericQuestionIds(List<String> genericQuestionIDs) {
-        this.genericQuestionIds = genericQuestionIDs;
+    public void setPreGenericQuestionIds(List<String> preGenericQuestionIds) {
+        this.preGenericQuestionIds = preGenericQuestionIds;
+    }
+
+    public List<String> getPostGenericQuestionIds() {
+        return postGenericQuestionIds;
+    }
+
+    public void setPostGenericQuestionIds(List<String> postGenericQuestionIds) {
+        this.postGenericQuestionIds = postGenericQuestionIds;
     }
 
     public List<String> questionSetIds() {
@@ -75,10 +87,11 @@ public class LessonInstanceData implements Serializable{
 
     public List<String> allQuestionIds() {
         List<String> questionIDs = new ArrayList<>();
-        questionIDs.addAll(genericQuestionIds);
+        questionIDs.addAll(preGenericQuestionIds);
         for (LessonInstanceDataQuestionSet set : questionSets){
             questionIDs.addAll(set.getQuestionIDs());
         }
+        questionIDs.addAll(postGenericQuestionIds);
 
         return questionIDs;
     }
@@ -119,9 +132,5 @@ public class LessonInstanceData implements Serializable{
     public synchronized void addQuestionSet(QuestionSet questionSet, boolean partOfPopularityRating){
         LessonInstanceDataQuestionSet set = new LessonInstanceDataQuestionSet(questionSet, partOfPopularityRating);
         questionSets.add(set);
-    }
-
-    public void addGenericQuestions(List<String> questionIDs){
-        this.genericQuestionIds = new ArrayList<>(questionIDs);
     }
 }

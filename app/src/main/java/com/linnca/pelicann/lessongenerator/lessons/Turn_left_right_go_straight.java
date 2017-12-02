@@ -33,62 +33,35 @@ public class Turn_left_right_go_straight extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(4);
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(4);
         List<QuestionData> multipleChoiceQuestion1 = multipleChoiceQuestion1();
-        questions.addAll(multipleChoiceQuestion1);
+        questionSet.add(multipleChoiceQuestion1);
         List<QuestionData> multipleChoiceQuestion2 = multipleChoiceQuestion2();
-        questions.addAll(multipleChoiceQuestion2);
+        questionSet.add(multipleChoiceQuestion2);
         List<QuestionData> spellingQuestion = spellingQuestion();
-        questions.addAll(spellingQuestion);
+        questionSet.add(spellingQuestion);
         List<QuestionData> actionQuestion = actionQuestion();
-        questions.addAll(actionQuestion);
-        for (int i=0; i<4; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>(4);
-        for (int i=1; i<=4; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+        questionSet.add(actionQuestion);
 
         return questionSet;
+
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(5);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "turn"),
-                "turn","曲がる","Turn left.","左折してください。", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "left"),
-                "left","左","Turn left.","左折してください。", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "right"),
-                "right","右","Turn right.","右折してください。", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "straight"),
-                "straight","まっすぐ","Go straight.","まっすぐに行ってください。", KEY));
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "go"),
-                "go","行く","Go straight.","まっすぐに行ってください。", KEY));
+        words.add(new VocabularyWord("", "turn","曲がる",
+                "Turn left.","左折してください。", KEY));
+        words.add(new VocabularyWord("", "left","左",
+                "Turn left.","左折してください。", KEY));
+        words.add(new VocabularyWord("", "right","右",
+                "Turn right.","右折してください。", KEY));
+        words.add(new VocabularyWord("", "straight","まっすぐ",
+                "Go straight.","まっすぐに行ってください。", KEY));
+        words.add(new VocabularyWord("", "go","行く",
+                "Go straight.","まっすぐに行ってください。", KEY));
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(5);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "turn"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "left"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "right"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "go"));
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "straight"));
-        return ids;
     }
 
     private String multipleChoiceQuestionQuestion1(){

@@ -289,20 +289,11 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(formatGenericQuestionID(KEY, 1));
-        List<List<String>> questionSets = new ArrayList<>();
-        questionSets.add(questionIDs);
-        return questionSets;
-    }
-
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = spellingQuestionGeneric();
-        String id1 = formatGenericQuestionID(KEY, 1);
-        questions.get(0).setId(id1);
-        return questions;
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet =new ArrayList<>(1);
+        List<QuestionData> spellingQuestion = spellingQuestionGeneric();
+        questionSet.add(spellingQuestion);
+        return questionSet;
 
     }
 

@@ -38,52 +38,17 @@ public class Numbers_4_6 extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>();
-        List<QuestionData> multipleChoiceQuestions = multipleChoiceQuestions();
-        questions.addAll(multipleChoiceQuestions);
-        List<QuestionData> translateQuestions = translateQuestions();
-        questions.addAll(translateQuestions);
-        List<QuestionData> fillInBlankQuestions = fillInBlankQuestions();
-        questions.addAll(fillInBlankQuestions);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<Integer> ids = new ArrayList<>(9);
-        List<Integer> temp = new ArrayList<>(3);
-        for (int i=0; i<3; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        for (Integer i : temp){
-            ids.add(i+1);
-        }
-        Collections.shuffle(temp);
-        for (Integer i : temp){
-            ids.add(i+4);
-        }
-        Collections.shuffle(temp);
-        for (Integer i : temp){
-            ids.add(i+7);
-        }
-
-        List<List<String>> questionSet = new ArrayList<>();
-        for (Integer i : ids) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>();
+        List<List<QuestionData>> multipleChoiceQuestions = multipleChoiceQuestions();
+        questionSet.addAll(multipleChoiceQuestions);
+        List<List<QuestionData>> translateQuestions = translateQuestions();
+        questionSet.addAll(translateQuestions);
+        List<List<QuestionData>> fillInBlankQuestions = fillInBlankQuestions();
+        questionSet.addAll(fillInBlankQuestions);
 
         return questionSet;
+
     }
 
     @Override
@@ -94,20 +59,10 @@ public class Numbers_4_6 extends Lesson {
         for (int i=0; i<3; i++) {
             String word = wordList.get(i);
             String translation = translationList.get(i);
-            words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, word),
+            words.add(new VocabularyWord("",
                     word, translation, "", "", KEY));
         }
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(3);
-        List<String> wordList = english();
-        for (String word : wordList) {
-            ids.add(formatGenericQuestionVocabularyID(lessonKey, word));
-        }
-        return ids;
     }
 
     private List<String> japanese(){
@@ -134,8 +89,8 @@ public class Numbers_4_6 extends Lesson {
         return choices;
     }
 
-    private List<QuestionData> translateQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    private List<List<QuestionData>> translateQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
         List<String> answers = english();
         List<String> numbers = japanese();
         for (int i=0; i<3; i++) {
@@ -149,14 +104,16 @@ public class Numbers_4_6 extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
     }
 
-    private List<QuestionData> fillInBlankQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    private List<List<QuestionData>> fillInBlankQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
         List<String> answers = numbers();
         List<String> numbers = english();
         for (int i=0; i<3; i++) {
@@ -170,14 +127,16 @@ public class Numbers_4_6 extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
     }
 
-    private List<QuestionData> multipleChoiceQuestions(){
-        List<QuestionData> questions = new ArrayList<>(3);
+    private List<List<QuestionData>> multipleChoiceQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
         List<String> answers = english();
         List<String> numbers = numbers();
         for (int i=0; i<3; i++) {
@@ -192,7 +151,9 @@ public class Numbers_4_6 extends Lesson {
             data.setChoices(answers);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;

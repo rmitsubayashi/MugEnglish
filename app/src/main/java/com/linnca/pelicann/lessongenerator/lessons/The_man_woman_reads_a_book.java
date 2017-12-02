@@ -34,53 +34,29 @@ public class The_man_woman_reads_a_book extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>(5);
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(5);
         List<QuestionData> translateQuestion1 = translateQuestion1();
-        questions.addAll(translateQuestion1);
+        questionSet.add(translateQuestion1);
         List<QuestionData> translateQuestion2 = translateQuestion2();
-        questions.addAll(translateQuestion2);
+        questionSet.add(translateQuestion2);
         List<QuestionData> spellingQuestion = spellingQuestion();
-        questions.addAll(spellingQuestion);
+        questionSet.add(spellingQuestion);
         List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion();
-        questions.addAll(sentencePuzzleQuestion);
+        questionSet.add(sentencePuzzleQuestion);
         List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion();
-        questions.addAll(fillInBlankInputQuestion);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
-
-        return questions;
-
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>();
-        for (int i=1; i<=5; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+        questionSet.add(fillInBlankInputQuestion);
 
         return questionSet;
+
     }
 
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(1);
-        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "read"),
-                "read","読む","The man reads a book.","男は本を読みます。", KEY));
+        words.add(new VocabularyWord("", "read","読む",
+                "The man reads a book.","男は本を読みます。", KEY));
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(1);
-        ids.add(formatGenericQuestionVocabularyID(lessonKey, "read"));
-        return ids;
     }
 
     private List<QuestionData> translateQuestion1(){

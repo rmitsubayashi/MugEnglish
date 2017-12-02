@@ -85,14 +85,8 @@ public abstract class Lesson {
 	//asynchronous methods act synchronously
 	private void startFlow(){
 		//fill generic questions first
-		List<List<String>> genericQuestionSets = getGenericQuestionIDSets();
-		//make a temporary question set so we can pick questions
-		QuestionSet tempSet = new QuestionSet();
-		tempSet.setQuestionIDs(genericQuestionSets);
-		List<String> pickGenericQuestions = tempSet.pickQuestions();
-		lessonInstanceData.addGenericQuestions(pickGenericQuestions);
-        List<String> genericQuestionVocabularyIDs = getGenericQuestionVocabularyIDs();
-        lessonInstanceVocabularyWordIDs.addAll(genericQuestionVocabularyIDs);
+		addGenericQuestionIDsToInstance();
+        addGenericVocabularyIDsToInstance();
 		if (getSPARQLQuery().equals("")){
 			//we have a lesson without any dynamic questions
 			saveInstance();
@@ -420,14 +414,13 @@ public abstract class Lesson {
 		return String.format(query, entity);
 	}
 
-	//override these if we want to add generic questions to the beginning
-	protected List<List<String>> getGenericQuestionIDSets(){
+	//override these if we want to add generic questions to the beginning or end.
+	//generally, pre questions are introductory questions and post questions are applications/summaries
+	protected List<List<QuestionData>> getPreGenericQuestions(){
 		return new ArrayList<>(1);
 	}
-    protected List<QuestionData> getGenericQuestions(){
-        return new ArrayList<>(1);
-    }
-    protected List<String> getGenericQuestionVocabularyIDs(){return new ArrayList<>(1);}
+    protected List<List<QuestionData>> getPostGenericQuestions(){ return new ArrayList<>(1);}
+	//for both the pre and post
     protected List<VocabularyWord> getGenericQuestionVocabulary(){return new ArrayList<>(1);}
 
 	//since we are requesting IDs for generic questions, we need some way of having
@@ -435,19 +428,93 @@ public abstract class Lesson {
 	//this will be called by the maintenance team to pre-populate
 	//generic questions
 	void saveGenericQuestions(){
-		List<QuestionData> questions = getGenericQuestions();
-
+		List<List<QuestionData>> preQuestions = getPreGenericQuestions();
+		List<List<QuestionData>> postQuestions = getPostGenericQuestions();
+		setGenericQuestionIDs(preQuestions, postQuestions);
         List<VocabularyWord> vocabularyWords = getGenericQuestionVocabulary();
-
-        db.addGenericQuestions(questions, vocabularyWords);
+        setGenericVocabularyIDs(vocabularyWords);
+        List<QuestionData> allQuestions = new ArrayList<>();
+        for (List<QuestionData> questionVariations : preQuestions){
+        	allQuestions.addAll(questionVariations);
+		}
+		for (List<QuestionData> questionVariations : postQuestions){
+			allQuestions.addAll(questionVariations);
+		}
+        db.addGenericQuestions(allQuestions, vocabularyWords);
 	}
 
-	protected String formatGenericQuestionID(String lessonKey, int questionNumber){
+	private void setGenericQuestionIDs(List<List<QuestionData>> preQuestions, List<List<QuestionData>> postQuestions){
+		int index = 1;
+		for (List<QuestionData> questionVariations : preQuestions){
+			for (QuestionData question : questionVariations){
+				question.setId(formatGenericQuestionID(lessonKey, index));
+				index++;
+			}
+		}
+
+		for (List<QuestionData> questionVariations : postQuestions){
+			for (QuestionData question : questionVariations){
+				question.setId(formatGenericQuestionID(lessonKey, index));
+				index++;
+			}
+		}
+	}
+
+	private void setGenericVocabularyIDs(List<VocabularyWord> words){
+		for (VocabularyWord word : words){
+			String id = formatGenericQuestionVocabularyID(lessonKey, word.getWord());
+			word.setId(id);
+		}
+	}
+
+	private String formatGenericQuestionID(String lessonKey, int questionNumber){
 		return lessonKey + "_generic" + Integer.toString(questionNumber);
 	}
 
-	protected String formatGenericQuestionVocabularyID(String lessonKey, String word){
+	private String formatGenericQuestionVocabularyID(String lessonKey, String word){
 		word = word.replaceAll(" ", "_");
 		return lessonKey + "_generic_" + word;
+	}
+
+	private void addGenericQuestionIDsToInstance(){
+		List<List<QuestionData>> preGenericQuestions = getPreGenericQuestions();
+		List<List<QuestionData>> postGenericQuestions = getPostGenericQuestions();
+		setGenericQuestionIDs(preGenericQuestions, postGenericQuestions);
+		//make a temporary question set so we can pick questions
+		QuestionSet tempSet = new QuestionSet();
+		List<List<String>> preGenericQuestionIDs = new ArrayList<>(preGenericQuestions.size());
+		for (List<QuestionData> questionVariations : preGenericQuestions){
+			List<String> questionVariationIDs = new ArrayList<>(questionVariations.size());
+			for (QuestionData question : questionVariations){
+				questionVariationIDs.add(question.getId());
+			}
+			preGenericQuestionIDs.add(questionVariationIDs);
+		}
+		tempSet.setQuestionIDs(preGenericQuestionIDs);
+		List<String> pickPreGenericQuestions = tempSet.pickQuestions();
+		lessonInstanceData.setPreGenericQuestionIds(pickPreGenericQuestions);
+		//do the same for the post questions
+		tempSet = new QuestionSet();
+		List<List<String>> postGenericQuestionIDs = new ArrayList<>(postGenericQuestions.size());
+		for (List<QuestionData> questionVariations : postGenericQuestions){
+			List<String> questionVariationIDs = new ArrayList<>(questionVariations.size());
+			for (QuestionData question : questionVariations){
+				questionVariationIDs.add(question.getId());
+			}
+			postGenericQuestionIDs.add(questionVariationIDs);
+		}
+		tempSet.setQuestionIDs(postGenericQuestionIDs);
+		List<String> pickPostGenericQuestions = tempSet.pickQuestions();
+		lessonInstanceData.setPostGenericQuestionIds(pickPostGenericQuestions);
+	}
+
+	private void addGenericVocabularyIDsToInstance(){
+		List<VocabularyWord> vocabularyWords = getGenericQuestionVocabulary();
+		setGenericVocabularyIDs(vocabularyWords);
+		List<String> genericVocabularyIDs = new ArrayList<>(vocabularyWords.size());
+		for (VocabularyWord word : vocabularyWords){
+			genericVocabularyIDs.add(word.getId());
+		}
+		lessonInstanceVocabularyWordIDs.addAll(genericVocabularyIDs);
 	}
 }

@@ -262,41 +262,26 @@ public class Hello_my_name_is_NAME extends Lesson {
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(formatGenericQuestionID(KEY, 1));
-        List<String> questionIDs2 = new ArrayList<>();
-        questionIDs2.add(formatGenericQuestionID(KEY, 2));
-        List<String> questionIDs3 = new ArrayList<>();
-        questionIDs3.add(formatGenericQuestionID(KEY, 3));
-        List<List<String>> questionSets = new ArrayList<>();
-        questionSets.add(questionIDs);
-        questionSets.add(questionIDs2);
-        questionSets.add(questionIDs3);
-        return questionSets;
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> spellingSuggestiveQuestion = createSpellingSuggestiveQuestion();
+        List<QuestionData> spellingQuestion = createSpellingQuestion();
+
+        List<List<QuestionData>> questionSet = new ArrayList<>(2);
+        questionSet.add(spellingSuggestiveQuestion);
+        questionSet.add(spellingQuestion);
+        return questionSet;
+
     }
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        QuestionData toSave1 = createSpellingSuggestiveQuestion();
-        String id1 = formatGenericQuestionID(KEY, 1);
-        toSave1.setId(id1);
-        QuestionData toSave2 = createSpellingQuestion();
-        String id2 = formatGenericQuestionID(KEY, 2);
-        toSave2.setId(id2);
-        QuestionData toSave3 = createInstructionQuestion();
-        String id3 = formatGenericQuestionID(KEY, 3);
-        toSave3.setId(id3);
-
-        List<QuestionData> questions = new ArrayList<>(3);
-        questions.add(toSave1);
-        questions.add(toSave2);
-        questions.add(toSave3);
-        return questions;
-
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructionsQuestion = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructionsQuestion);
+        return questionSet;
     }
 
-    private QuestionData createSpellingSuggestiveQuestion(){
+    private List<QuestionData> createSpellingSuggestiveQuestion(){
         String question = "こんにちは";
         String answer = "hello";
         QuestionData data = new QuestionData();
@@ -309,11 +294,13 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
 
-        return data;
+        return dataList;
     }
 
-    private QuestionData createSpellingQuestion(){
+    private List<QuestionData> createSpellingQuestion(){
         String question = "こんにちは";
         String answer = "hello";
         QuestionData data = new QuestionData();
@@ -326,8 +313,10 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
 
-        return data;
+        return dataList;
     }
 
     //lets the user freely introduce themselves
@@ -351,7 +340,7 @@ public class Hello_my_name_is_NAME extends Lesson {
 
     }
 
-    private QuestionData createInstructionQuestion(){
+    private List<QuestionData> createInstructionQuestion(){
         String question = this.instructionQuestionQuestion();
         String answer = instructionQuestionAnswer();
         List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
@@ -365,6 +354,9 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
 
-        return data;
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
     }
 }

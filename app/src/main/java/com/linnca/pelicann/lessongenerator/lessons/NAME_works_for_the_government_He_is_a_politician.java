@@ -300,30 +300,14 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> set = new ArrayList<>(3);
-        for (int index=1; index<=3; index++){
-            List<String> questionIDs = new ArrayList<>(1);
-            questionIDs.add(formatGenericQuestionID(KEY, index));
-            set.add(questionIDs);
-        }
-        return set;
-    }
-
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> toSaveSet1 = createTranslateQuestionGeneric();
-        List<QuestionData> toSaveSet2 = createSpellingQuestionGeneric();
-        List<QuestionData> toSaveSet3 = createSpellingQuestionGeneric2();
-        List<QuestionData> questions = new ArrayList<>(3);
-        questions.addAll(toSaveSet1);
-        questions.addAll(toSaveSet2);
-        questions.addAll(toSaveSet3);
-        int questionSize = questions.size();
-        for (int i=1; i<= questionSize; i++){
-            String id = formatGenericQuestionID(KEY, i);
-            questions.get(i-1).setId(id);
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
+        List<QuestionData> spellingQuestion = createSpellingQuestionGeneric();
+        List<QuestionData> spellingQuestion2 = createSpellingQuestionGeneric2();
+        List<List<QuestionData>> questions = new ArrayList<>(3);
+        questions.add(translateQuestion);
+        questions.add(spellingQuestion);
+        questions.add(spellingQuestion2);
 
         return questions;
 

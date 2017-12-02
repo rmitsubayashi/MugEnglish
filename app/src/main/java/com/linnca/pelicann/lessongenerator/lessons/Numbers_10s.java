@@ -33,53 +33,17 @@ public class Numbers_10s extends Lesson {
     protected void processResultsIntoClassWrappers(Document document){}
 
     @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> questions = new ArrayList<>();
-        List<QuestionData> spellingQuestions = spellingQuestions();
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>();
+        List<List<QuestionData>> spellingQuestions = spellingQuestions();
         questions.addAll(spellingQuestions);
-        List<QuestionData> fillInBlankQuestions = fillInBlankQuestions();
-        questions.addAll(fillInBlankQuestions);
-        int questionCt = questions.size();
-        for (int i=0; i<questionCt; i++){
-            QuestionData data = questions.get(i);
-            data.setId(formatGenericQuestionID(KEY, i+1));
-        }
+        List<QuestionData> fillInBlankQuestion1 = fillInBlankQuestion1();
+        questions.add(fillInBlankQuestion1);
+        List<QuestionData> fillInBlankQuestion2 = fillInBlankQuestion2();
+        questions.add(fillInBlankQuestion2);
 
         return questions;
 
-    }
-
-    @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<Integer> ids = new ArrayList<>(14);
-        //the first three questions are introductory
-        // and should all be displayed first
-        List<Integer> temp = new ArrayList<>(9);
-        for (int i=1; i<=9; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        ids.addAll(temp);
-        temp.clear();
-
-        int equationSize = fillInBlankQuestionQuestions().size();
-        for (int i=0; i<equationSize; i++){
-            temp.add(i);
-        }
-        Collections.shuffle(temp);
-        //we want five questions
-        for (int i=0; i<5; i++) {
-            ids.add(temp.get(i) + 10);
-        }
-
-        List<List<String>> questionSet = new ArrayList<>();
-        for (Integer i : ids) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
-
-        return questionSet;
     }
 
     @Override
@@ -90,20 +54,10 @@ public class Numbers_10s extends Lesson {
         for (int i=0; i<9; i++) {
             String word = wordList.get(i);
             String translation = translationList.get(i);
-            words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, word),
-                    word, translation, "", "", KEY));
+            words.add(new VocabularyWord("", word, translation,
+                    "", "", KEY));
         }
         return words;
-    }
-
-    @Override
-    protected List<String> getGenericQuestionVocabularyIDs(){
-        List<String> ids =new ArrayList<>(9);
-        List<String> wordList = english();
-        for (String word : wordList) {
-            ids.add(formatGenericQuestionVocabularyID(lessonKey, word));
-        }
-        return ids;
     }
 
     private List<String> english(){
@@ -134,8 +88,8 @@ public class Numbers_10s extends Lesson {
         return choices;
     }
 
-    private List<QuestionData> spellingQuestions(){
-        List<QuestionData> questions = new ArrayList<>(9);
+    private List<List<QuestionData>> spellingQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(9);
         List<String> answers = english();
         List<String> numbers = numbers();
         for (int i=0; i<9; i++) {
@@ -149,7 +103,9 @@ public class Numbers_10s extends Lesson {
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
 
-            questions.add(data);
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
         }
 
         return questions;
@@ -211,12 +167,36 @@ public class Numbers_10s extends Lesson {
 
     }
 
-    private List<QuestionData> fillInBlankQuestions(){
+    private List<QuestionData> fillInBlankQuestion1(){
         List<QuestionData> questions = new ArrayList<>();
         List<String> equation = fillInBlankQuestionQuestions();
         List<String> answers = fillInBlankQuestionAnswers();
-        int equationSize = equation.size();
-        for (int i=0; i<equationSize; i++) {
+        int limit = equation.size() / 2;
+        for (int i=0; i<limit; i++) {
+            QuestionData data = new QuestionData();
+            String answer = answers.get(i);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+            data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
+            data.setChoices(null);
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+
+            questions.add(data);
+        }
+
+        return questions;
+    }
+
+    private List<QuestionData> fillInBlankQuestion2(){
+        List<QuestionData> questions = new ArrayList<>();
+        List<String> equation = fillInBlankQuestionQuestions();
+        List<String> answers = fillInBlankQuestionAnswers();
+        int start = equation.size() / 2;
+        int limit = equation.size();
+        for (int i=start; i<limit; i++) {
             QuestionData data = new QuestionData();
             String answer = answers.get(i);
             data.setId("");

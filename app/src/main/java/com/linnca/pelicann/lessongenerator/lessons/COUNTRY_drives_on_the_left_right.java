@@ -341,34 +341,17 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
     }
 
     @Override
-    protected List<List<String>> getGenericQuestionIDSets(){
-        List<List<String>> questionSet = new ArrayList<>(4);
-        for (int i=1; i<3; i++) {
-            List<String> questions = new ArrayList<>();
-            questions.add(formatGenericQuestionID(KEY, i));
-            questionSet.add(questions);
-        }
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
+        List<QuestionData> spellingQuestion1 = createSpellingQuestionGeneric1();
+        List<QuestionData> spellingQuestion2 = createSpellingQuestionGeneric2();
+
+        List<List<QuestionData>> questionSet = new ArrayList<>(3);
+        questionSet.add(translateQuestion);
+        questionSet.add(spellingQuestion1);
+        questionSet.add(spellingQuestion2);
 
         return questionSet;
-    }
-
-    @Override
-    protected List<QuestionData> getGenericQuestions(){
-        List<QuestionData> toSaveSet1 = createTranslateQuestionGeneric();
-        List<QuestionData> toSaveSet2 = createSpellingQuestionGeneric1();
-        List<QuestionData> toSaveSet3 = createSpellingQuestionGeneric2();
-
-        List<QuestionData> questions = new ArrayList<>(3);
-        questions.addAll(toSaveSet1);
-        questions.addAll(toSaveSet2);
-        questions.addAll(toSaveSet3);
-        int setSize = questions.size();
-        for (int i=1; i<= setSize; i++){
-            String id = formatGenericQuestionID(KEY, i);
-            questions.get(i-1).setId(id);
-        }
-
-        return questions;
 
     }
 }
