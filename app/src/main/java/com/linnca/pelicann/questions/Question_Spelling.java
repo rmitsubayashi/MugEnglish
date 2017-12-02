@@ -26,7 +26,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
-public class Question_Spelling extends Question_General {
+public class Question_Spelling extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 7;
     private TableLayout grid;
     private TextView questionTextView;

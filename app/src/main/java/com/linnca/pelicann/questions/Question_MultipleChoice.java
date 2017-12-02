@@ -13,7 +13,7 @@ import com.linnca.pelicann.R;
 
 import java.util.List;
 
-public class Question_MultipleChoice extends Question_General {
+public class Question_MultipleChoice extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 2;
     private TextView questionTextView;
     private LinearLayout choicesLayout;

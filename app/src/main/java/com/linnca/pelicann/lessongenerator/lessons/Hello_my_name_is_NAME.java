@@ -12,9 +12,13 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionDataWrapper;
 import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_Chat;
+import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.userinterests.WikiDataEntryData;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -25,6 +29,12 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+/*
+* Goals for this lesson:
+* The user should be able to greet each other
+* and introduce themselves
+* */
 
 public class Hello_my_name_is_NAME extends Lesson {
     public static final String KEY = "Hello_my_name_is_NAME";
@@ -100,10 +110,14 @@ public class Hello_my_name_is_NAME extends Lesson {
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> chatQuestion = createChatQuestion(qr);
-            questionSet.add(chatQuestion);
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
+            List<QuestionData> chatMultipleChoice = createChatMultipleChoiceQuestion(qr);
+            questionSet.add(chatMultipleChoice);
+            List<QuestionData> chat = createChatQuestion(qr);
+            questionSet.add(chat);
+            List<QuestionData> sentencePuzzle = createSentencePuzzleQuestion(qr);
+            questionSet.add(sentencePuzzle);
+            List<QuestionData> fillInBlank = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlank);
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
             super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
@@ -111,11 +125,11 @@ public class Hello_my_name_is_NAME extends Lesson {
     }
 
     private String formatSentenceEN(QueryResult qr){
-        return "Hello, my name is " + qr.personEN + ".";
+        return "Hello. My name is " + qr.personEN + ".";
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return "こんにちは、私の名前は" + qr.personJP + "です。";
+        return "こんにちは。私の名前は" + qr.personJP + "です。";
     }
 
     private List<VocabularyWord> getVocabularyWords(QueryResult qr){
@@ -135,6 +149,34 @@ public class Hello_my_name_is_NAME extends Lesson {
         return words;
     }
 
+    //straight-forward question so the user understands that this is a natural response
+    private List<QuestionData> createChatMultipleChoiceQuestion(QueryResult qr){
+        String from = qr.personJP;
+        ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
+        ChatQuestionItem chatItem2 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
+        List<ChatQuestionItem> chatItems = new ArrayList<>(2);
+        chatItems.add(chatItem1);
+        chatItems.add(chatItem2);
+        String question = QuestionUtils.formatChatQuestion(from, chatItems);
+        String answer = "hello";
+        List<String> choices = new ArrayList<>(1);
+        choices.add(answer);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
+    }
+
+    //enforces the idea of the previous chat question and also practices spelling
     private List<QuestionData> createChatQuestion(QueryResult qr){
         String from = qr.personJP;
         ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
@@ -154,13 +196,12 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
-
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
         return dataList;
     }
 
-    //puzzle pieces for sentence puzzle question
+    //this introduces the whole phrase
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add("hello");
@@ -193,15 +234,47 @@ public class Hello_my_name_is_NAME extends Lesson {
         return dataList;
     }
 
+    //lets users practice  the latter part of introductions
+    private String fillInBlankQuestion(QueryResult qr){
+        return "Hello. " +
+                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + " " + qr.personEN + ".";
+    }
+
+    private String fillInBlankAnswer(){
+        return "My name is";
+    }
+
+    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankQuestion(qr);
+        String answer = fillInBlankAnswer();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
     @Override
     protected List<List<String>> getGenericQuestionIDSets(){
         List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(KEY + "_generic1");
+        questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 1));
         List<String> questionIDs2 = new ArrayList<>();
-        questionIDs2.add(KEY + "_generic2");
+        questionIDs2.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 2));
+        List<String> questionIDs3 = new ArrayList<>();
+        questionIDs3.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 3));
         List<List<String>> questionSets = new ArrayList<>();
         questionSets.add(questionIDs);
         questionSets.add(questionIDs2);
+        questionSets.add(questionIDs3);
         return questionSets;
     }
 
@@ -213,10 +286,14 @@ public class Hello_my_name_is_NAME extends Lesson {
         QuestionData toSave2 = createSpellingQuestion();
         String id2 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 2);
         toSave2.setId(id2);
+        QuestionData toSave3 = createInstructionQuestion();
+        String id3 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 3);
+        toSave3.setId(id3);
 
-        List<QuestionData> questions = new ArrayList<>(2);
+        List<QuestionData> questions = new ArrayList<>(3);
         questions.add(toSave1);
         questions.add(toSave2);
+        questions.add(toSave3);
         return questions;
 
     }
@@ -251,6 +328,44 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
+
+        return data;
+    }
+
+    //lets the user freely introduce themselves
+    private String instructionQuestionQuestion(){
+        return "自己紹介をしてください";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "Hello. My name is " + QuestionResponseChecker.ANYTHING + ".";
+    }
+
+    private List<String> instructionQuestionAcceptableAnswers(){
+        String acceptableAnswer1 = "Hello my name is " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer2 = "Hello, my name is " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer3 = "My name is " + QuestionResponseChecker.ANYTHING + ".";
+        List<String> acceptableAnswers = new ArrayList<>(3);
+        acceptableAnswers.add(acceptableAnswer1);
+        acceptableAnswers.add(acceptableAnswer2);
+        acceptableAnswers.add(acceptableAnswer3);
+        return acceptableAnswers;
+
+    }
+
+    private QuestionData createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
 
         return data;
     }

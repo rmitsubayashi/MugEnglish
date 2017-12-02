@@ -19,7 +19,7 @@ import org.apmem.tools.layouts.FlowLayout;
 import java.util.List;
 
 
-public class Question_SentencePuzzle extends Question_General {
+public class Question_SentencePuzzle extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 3;
     private FlowLayout answerLayout;
     private FlowLayout choicesLayout;

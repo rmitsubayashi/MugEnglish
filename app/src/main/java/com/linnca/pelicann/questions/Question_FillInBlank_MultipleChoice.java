@@ -1,7 +1,6 @@
 package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
@@ -18,7 +17,7 @@ import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 import java.util.List;
 
-public class Question_FillInBlank_MultipleChoice extends Question_General {
+public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 5;
     public static final String FILL_IN_BLANK_MULTIPLE_CHOICE = "@blankMC@";
     private TextView questionTextView;

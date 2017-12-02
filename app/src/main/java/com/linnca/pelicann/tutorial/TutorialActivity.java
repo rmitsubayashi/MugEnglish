@@ -20,7 +20,7 @@ import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.Question_General;
+import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 
@@ -29,7 +29,7 @@ public class TutorialActivity extends AppCompatActivity implements
         Tutorial_ChoosePerson.Tutorial_ChoosePersonListener,
         Tutorial_ConfirmPerson.Tutorial_ConfirmPersonListener,
         LessonDescription.LessonDescriptionListener,
-        Question_General.QuestionListener
+        QuestionFragmentInterface.QuestionListener
 {
     private OnboardingPersonBundle selectedPerson;
     private FragmentManager fragmentManager;
@@ -182,9 +182,9 @@ public class TutorialActivity extends AppCompatActivity implements
                 "男性", null, "man", null, null);
         Fragment fragment = new Question_Spelling_Suggestive();
         Bundle bundle = new Bundle();
-        bundle.putInt(Question_General.BUNDLE_QUESTION_NUMBER, questionMkr);
-        bundle.putInt(Question_General.BUNDLE_QUESTION_TOTAL_QUESTIONS, 3);
-        bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA, questionData);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_NUMBER, questionMkr);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_TOTAL_QUESTIONS, 3);
+        bundle.putSerializable(QuestionFragmentInterface.BUNDLE_QUESTION_DATA, questionData);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.tutorial_activity_fragment_container, fragment, FRAGMENT_QUESTION1);
@@ -197,9 +197,9 @@ public class TutorialActivity extends AppCompatActivity implements
                 "女性", null, "woman", null, null);
         Fragment fragment = new Question_Spelling_Suggestive();
         Bundle bundle = new Bundle();
-        bundle.putInt(Question_General.BUNDLE_QUESTION_NUMBER, questionMkr);
-        bundle.putInt(Question_General.BUNDLE_QUESTION_TOTAL_QUESTIONS, 3);
-        bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA, questionData);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_NUMBER, questionMkr);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_TOTAL_QUESTIONS, 3);
+        bundle.putSerializable(QuestionFragmentInterface.BUNDLE_QUESTION_DATA, questionData);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.tutorial_activity_fragment_container, fragment, FRAGMENT_QUESTION1);
@@ -215,9 +215,9 @@ public class TutorialActivity extends AppCompatActivity implements
                 question, null, answerString, null, null);
         Fragment fragment = new Question_TrueFalse();
         Bundle bundle = new Bundle();
-        bundle.putInt(Question_General.BUNDLE_QUESTION_NUMBER, questionMkr);
-        bundle.putInt(Question_General.BUNDLE_QUESTION_TOTAL_QUESTIONS, 3);
-        bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA, questionData);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_NUMBER, questionMkr);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_TOTAL_QUESTIONS, 3);
+        bundle.putSerializable(QuestionFragmentInterface.BUNDLE_QUESTION_DATA, questionData);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.tutorial_activity_fragment_container, fragment, FRAGMENT_QUESTION1);

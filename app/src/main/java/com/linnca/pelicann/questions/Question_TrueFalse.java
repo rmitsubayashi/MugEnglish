@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 
-public class Question_TrueFalse extends Question_General {
+public class Question_TrueFalse extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 1;
     public static final String TRUE_FALSE_QUESTION_TRUE = "true";
     public static final String TRUE_FALSE_QUESTION_FALSE = "false";

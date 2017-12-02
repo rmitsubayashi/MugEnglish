@@ -291,6 +291,8 @@
     <string name="question_choose_correct_spelling_instructions">正しいつづりを選択してください</string>
     <string name="question_actions_instructions">指示に従ってください</string>
     <string name="question_actions_start">スタート</string>
+    <string name="question_instructions_hint">解答を記入してください</string>
+    <string name="question_instructions_submit">確定</string>
 
     <!--vocabulary-->
     <string name="vocabulary_list_item_delete">消去</string>

@@ -20,7 +20,7 @@ import com.linnca.pelicann.R;
 
 import java.util.List;
 
-public class Question_Actions extends Question_General {
+public class Question_Actions extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 12;
     public static String ANSWER_FINISHED = "@finished@";
     private Button startButton;

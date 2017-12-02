@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Locale;
 
 //sets methods common for all question GUIs
-public abstract class Question_General extends Fragment {
+public abstract class QuestionFragmentInterface extends Fragment {
     public static final String TAG = "Question Fragment";
     public static final String BUNDLE_QUESTION_DATA = "bundleQuestionData";
     public static final String BUNDLE_QUESTION_NUMBER = "bundleQuestionNumber";

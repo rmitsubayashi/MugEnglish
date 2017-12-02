@@ -73,14 +73,17 @@ class QuestionFeedbackFormatter {
                 }
             }
         }
+
         int questionType = questionData.getQuestionType();
         //no feedback for true/false except if there is specific feedback
         // ('the answer was true, not false!' doesn't give any information)
         if (questionType == Question_TrueFalse.QUESTION_TYPE){
             return "";
         }
-        //default should be just 'Answer: answer'
+
         String answer = questionData.getAnswer();
+        //we need to remove any tags we have
+        answer = answer.replaceAll(QuestionResponseChecker.ANYTHING, "~");
         if (questionType == Question_SentencePuzzle.QUESTION_TYPE){
             answer = answer.replace("|", " ");
         }

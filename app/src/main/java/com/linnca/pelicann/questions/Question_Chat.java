@@ -15,7 +15,7 @@ import com.linnca.pelicann.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Question_Chat extends Question_General {
+public class Question_Chat extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 10;
     private TextView fromTextView;
     private LinearLayout chatItemsLayout;

@@ -19,7 +19,7 @@ import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExc
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionFragmentFactory;
-import com.linnca.pelicann.questions.Question_General;
+import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.results.ReviewResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
@@ -177,10 +177,10 @@ class MainActivityFragmentManager {
 
         Fragment fragment = QuestionFragmentFactory.getQuestionFragment(questionData.getQuestionType());
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA,
+        bundle.putSerializable(QuestionFragmentInterface.BUNDLE_QUESTION_DATA,
                 questionData);
-        bundle.putInt(Question_General.BUNDLE_QUESTION_NUMBER, questionNumber);
-        bundle.putInt(Question_General.BUNDLE_QUESTION_TOTAL_QUESTIONS, totalQuestionCount);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_NUMBER, questionNumber);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_TOTAL_QUESTIONS, totalQuestionCount);
         fragment.setArguments(bundle);
         //do not add to the back stack because we don't want the user going back to a question
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -189,7 +189,7 @@ class MainActivityFragmentManager {
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                 R.anim.slide_in_left, R.anim.slide_out_right
         );
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, Question_General.TAG);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, QuestionFragmentInterface.TAG);
         fragmentTransaction.commit();
     }
 
@@ -201,10 +201,10 @@ class MainActivityFragmentManager {
 
         Fragment fragment = QuestionFragmentFactory.getQuestionFragment(questionData.getQuestionType());
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Question_General.BUNDLE_QUESTION_DATA,
+        bundle.putSerializable(QuestionFragmentInterface.BUNDLE_QUESTION_DATA,
                 questionData);
-        bundle.putInt(Question_General.BUNDLE_QUESTION_NUMBER, questionNumber);
-        bundle.putInt(Question_General.BUNDLE_QUESTION_TOTAL_QUESTIONS, totalQuestionCount);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_NUMBER, questionNumber);
+        bundle.putInt(QuestionFragmentInterface.BUNDLE_QUESTION_TOTAL_QUESTIONS, totalQuestionCount);
         fragment.setArguments(bundle);
         //do not add to the back stack because we don't want the user going back to a question
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -212,12 +212,12 @@ class MainActivityFragmentManager {
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                 R.anim.slide_in_left, R.anim.slide_out_right
         );
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, Question_General.TAG);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, QuestionFragmentInterface.TAG);
         fragmentTransaction.commit();
     }
 
     void fromQuestionToFragment(){
-        Fragment questionFragment = getFragment(Question_General.TAG);
+        Fragment questionFragment = getFragment(QuestionFragmentInterface.TAG);
         if (questionFragment != null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(questionFragment);
@@ -236,7 +236,7 @@ class MainActivityFragmentManager {
         fragment.setArguments(bundle);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment questionFragment = fragmentManager.findFragmentByTag(Question_General.TAG);
+        Fragment questionFragment = fragmentManager.findFragmentByTag(QuestionFragmentInterface.TAG);
         if (questionFragment != null) {
             fragmentTransaction.remove(questionFragment);
             fragmentTransaction.commit();
@@ -251,7 +251,7 @@ class MainActivityFragmentManager {
 
     void questionToReviewResults(){
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment questionFragment = fragmentManager.findFragmentByTag(Question_General.TAG);
+        Fragment questionFragment = fragmentManager.findFragmentByTag(QuestionFragmentInterface.TAG);
         if (questionFragment != null) {
             fragmentTransaction.remove(questionFragment);
             fragmentTransaction.commit();

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/fragment_question_instructions"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/question_instructions_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <TextView
+            android:id="@+id/question_instructions_instructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/questions_instructions"/>
+        <EditText
+            android:id="@+id/question_instructions_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:hint="@string/question_instructions_hint"/>
+        <Button
+            android:id="@+id/question_instructions_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/question_instructions_input"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            style="@style/questions_submit_button"
+            android:text="@string/question_instructions_submit"/>
+
+    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 
-public class Question_TranslateWord extends Question_General {
+public class Question_TranslateWord extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 8;
     private EditText questionInput;
     private TextView wordToTranslateTextView;

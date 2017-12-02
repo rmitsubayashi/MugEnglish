@@ -13,7 +13,7 @@ import com.linnca.pelicann.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Question_ChooseCorrectSpelling extends Question_General {
+public class Question_ChooseCorrectSpelling extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 11;
     private TextView questionTextView;
     private LinearLayout choicesLayout;

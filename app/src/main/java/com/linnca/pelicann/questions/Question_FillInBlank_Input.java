@@ -1,7 +1,6 @@
 package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -20,7 +19,7 @@ import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 //we only have one blank per question
 //to make it easier for the user to solve
 
-public class Question_FillInBlank_Input extends Question_General {
+public class Question_FillInBlank_Input extends QuestionFragmentInterface {
     public static final int QUESTION_TYPE = 4;
     public static final String FILL_IN_BLANK_TEXT = "@blankText@";
     public  static final String FILL_IN_BLANK_NUMBER = "@blankNum@";

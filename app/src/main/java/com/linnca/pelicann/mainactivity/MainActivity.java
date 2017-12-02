@@ -47,7 +47,7 @@ import com.linnca.pelicann.questions.InstanceReviewManager;
 import com.linnca.pelicann.questions.LessonsReviewManager;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionManager;
-import com.linnca.pelicann.questions.Question_General;
+import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.results.ReviewResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements
         LessonList.LessonListListener,
         UserInterests.UserInterestListener,
         SearchInterests.SearchInterestsListener,
-        Question_General.QuestionListener,
+        QuestionFragmentInterface.QuestionListener,
         LessonDetails.LessonDetailsListener,
         Results.ResultsListener,
         ReviewResults.ReviewResultsListener,
@@ -293,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements
         //not necessary for a lot of cases
         GUIUtils.hideKeyboard(getCurrentFocus());
 
-        if (fragmentManager.isVisible(Question_General.TAG)){
+        if (fragmentManager.isVisible(QuestionFragmentInterface.TAG)){
             if (questionManager.questionsStarted()) {
                 questionManager.resetManager();
             }
