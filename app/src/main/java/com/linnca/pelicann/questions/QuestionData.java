@@ -5,6 +5,7 @@ import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import java.io.Serializable;
 import java.util.List;
 
+//Used to store questions
 public class QuestionData implements Serializable{
     private String id;
     private String lessonId;

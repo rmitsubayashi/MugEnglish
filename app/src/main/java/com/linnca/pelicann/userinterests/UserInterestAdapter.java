@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
+import com.linnca.pelicann.mainactivity.ToolbarSpinnerAdapter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,12 +52,12 @@ class UserInterestAdapter
 
     @Override
     public void onBindViewHolder(final UserInterestViewHolder holder, int position){
-        final WikiDataEntryData data = userInterestFilter.get(position);
+        final WikiDataEntity data = userInterestFilter.get(position);
         holder.setLabel(data.getLabel());
         holder.setDescription(data.getDescription());
         boolean isSelected = isSelected(position);
         holder.setIcon(data.getClassification(), isSelected);
-        holder.setWikiDataEntryData(data);
+        holder.setWikiDataEntity(data);
 
         if (isSelected){
             holder.itemView.setBackgroundResource(R.drawable.gray_button);
@@ -103,11 +103,11 @@ class UserInterestAdapter
         notifyItemChanged(position);
     }
 
-    List<WikiDataEntryData> getSelectedItems(){
-        List<WikiDataEntryData> copyList = new ArrayList<>(selectedDataPositions.size());
+    List<WikiDataEntity> getSelectedItems(){
+        List<WikiDataEntity> copyList = new ArrayList<>(selectedDataPositions.size());
         for (Integer selectedItemPosition : selectedDataPositions){
-            WikiDataEntryData selectedItem = userInterestFilter.get(selectedItemPosition);
-            WikiDataEntryData copy = new WikiDataEntryData(selectedItem);
+            WikiDataEntity selectedItem = userInterestFilter.get(selectedItemPosition);
+            WikiDataEntity copy = new WikiDataEntity(selectedItem);
             copyList.add(copy);
         }
         return copyList;
@@ -124,7 +124,7 @@ class UserInterestAdapter
         }
     }
 
-    void setInterests(List<WikiDataEntryData> updatedList){
+    void setInterests(List<WikiDataEntity> updatedList){
         //just update if the displayed list is empty
         //(can be the initial call or just if there is nothing on
         // the screen now)
@@ -138,7 +138,7 @@ class UserInterestAdapter
         // the list of user interests have changed (!not filtered!)
         // so animate the inserted/removed items.
         //save the previous list so we can animate
-        List<WikiDataEntryData> originalList = new ArrayList<>(
+        List<WikiDataEntity> originalList = new ArrayList<>(
                 userInterestFilter.getFilteredList());
         //updating the user interests takes care of filtering as well
         userInterestFilter.setUserInterests(updatedList);
@@ -173,7 +173,7 @@ class UserInterestAdapter
         //get the current state so we can
         //animate the changes
         int oldFilter = userInterestFilter.getFilter();
-        List<WikiDataEntryData> oldFilteredList = new ArrayList<>(
+        List<WikiDataEntity> oldFilteredList = new ArrayList<>(
                 userInterestFilter.getFilteredList());
         userInterestFilter.setFilter(newFilter);
         //should animate filtered list,
@@ -198,12 +198,12 @@ class UserInterestAdapter
 
     }
 
-    private void removeItemsAnimation(List<WikiDataEntryData> oldList, List<WikiDataEntryData> newList){
+    private void removeItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){
         //make the list a set to make it easier to search
-        Set<WikiDataEntryData> newSet = new HashSet<>(newList);
+        Set<WikiDataEntity> newSet = new HashSet<>(newList);
         int itemsRemoved = 0;
         for (int i=0; i<oldList.size(); i++){
-            WikiDataEntryData oldItem = oldList.get(i);
+            WikiDataEntity oldItem = oldList.get(i);
             if (!newSet.contains(oldItem)){
                 notifyItemRemoved(i-itemsRemoved);
                 itemsRemoved++;
@@ -211,13 +211,13 @@ class UserInterestAdapter
         }
     }
 
-    private void addItemsAnimation(List<WikiDataEntryData> oldList, List<WikiDataEntryData> newList){
+    private void addItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){
         //make the list a set to make it easier to search
-        Set<WikiDataEntryData> oldSet = new HashSet<>(oldList);
+        Set<WikiDataEntity> oldSet = new HashSet<>(oldList);
         int tempToAdd = 0;
         int insertItemStartIndex = 0;
         for (int i=0; i<newList.size(); i++){
-            WikiDataEntryData newData = newList.get(i);
+            WikiDataEntity newData = newList.get(i);
             if (!oldSet.contains(newData)){
                 //in case we are adding multiple items in a row,
                 // don't notify as soon as we find an item to add,

@@ -62,7 +62,7 @@ public class Question_TranslateWord extends QuestionFragmentInterface {
         instructions.setText(R.string.question_translate_word_number_instructions);
 
         wordToTranslateTextView.setText(
-                QuestionUtils.clickToSpeechTextViewSpannable(wordToTranslateTextView, question, new SpannableString(question), textToSpeech)
+                TextToSpeechHelper.clickToSpeechTextViewSpannable(wordToTranslateTextView, question, new SpannableString(question), textToSpeech)
         );
         if (question.length() < 10){
             wordToTranslateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 32);
@@ -85,7 +85,7 @@ public class Question_TranslateWord extends QuestionFragmentInterface {
 
     @Override
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
-        QuestionUtils.disableTextToSpeech(wordToTranslateTextView);
+        TextToSpeechHelper.disableTextToSpeech(wordToTranslateTextView);
     }
 
     @Override

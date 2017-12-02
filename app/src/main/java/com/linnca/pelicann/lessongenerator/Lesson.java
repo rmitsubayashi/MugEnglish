@@ -2,12 +2,12 @@ package com.linnca.pelicann.lessongenerator;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.QuestionSet;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -40,12 +40,12 @@ public abstract class Lesson {
 	private final List<String> questionSetIDs = new ArrayList<>();
     //where we will populate new questions for this instance
 	// (+ extra questions not needed in the current instance)
-	protected final List<QuestionDataWrapper> newQuestions = new ArrayList<>();
+	protected final List<QuestionSetData> newQuestions = new ArrayList<>();
 	//question set ids that are chosen by the user's interests.
 	//we will increment this to identify popular question sets for this lesson
 	private final List<String> questionSetIDsToIncrementCount = new ArrayList<>();
 	//interests to search
-	private Set<WikiDataEntryData> userInterests;
+	private Set<WikiDataEntity> userInterests;
 	//makes sure we are not giving duplicate questions
 	// from previous instances of the user.
 	// Storing the IDs of the question sets
@@ -104,29 +104,29 @@ public abstract class Lesson {
 	}
 
 	private void populateUserInterests(){
-		OnResultListener onResultListener = new OnResultListener() {
+		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
-			public void onUserInterestsQueried(List<WikiDataEntryData> queriedUserInterests) {
-				userInterests = Collections.synchronizedSet(new HashSet<WikiDataEntryData>(
+			public void onUserInterestsQueried(List<WikiDataEntity> queriedUserInterests) {
+				userInterests = Collections.synchronizedSet(new HashSet<WikiDataEntity>(
 						queriedUserInterests.size())
 				);
-				for (WikiDataEntryData interest : queriedUserInterests){
+				for (WikiDataEntity interest : queriedUserInterests){
 					//filter by category so we don't have to search for user interests
 					// that are guaranteed not to work
 					if (interest.getClassification() == categoryOfQuestion ||
-							interest.getClassification() == WikiDataEntryData.CLASSIFICATION_NOT_SET) {
+							interest.getClassification() == WikiDataEntity.CLASSIFICATION_NOT_SET) {
 						userInterests.add(interest);
 					}
 				}
 				populateUserQuestionHistory();
 			}
 		};
-		db.getUserInterests(onResultListener);
+		db.getUserInterests(onDBResultListener);
 	}
 
 	//we need to skip over questions the user has already solved
 	private void populateUserQuestionHistory(){
-		OnResultListener onResultListener = new OnResultListener() {
+		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
 			public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
 				for (LessonInstanceData instanceData : lessonInstances){
@@ -136,7 +136,7 @@ public abstract class Lesson {
 				fillQuestionsFromDatabase();
 			}
 		};
-		db.getLessonInstances(lessonKey, false, onResultListener);
+		db.getLessonInstances(lessonKey, false, onDBResultListener);
 	}
 
 
@@ -155,13 +155,13 @@ public abstract class Lesson {
 		//but more of a problem when the user starts 10 lessons and 9 of them include
 		//Leonardo Dicaprio because he is first on the list in the database.
 		//set -> list so we can shuffle
-		final List<WikiDataEntryData> userInterestList = new ArrayList<>(userInterests);
+		final List<WikiDataEntity> userInterestList = new ArrayList<>(userInterests);
 		Collections.shuffle(userInterestList);
 		//we don't want to match any question the user has already had
 		List<String> questionSetIDsToAvoid = new ArrayList<>(userQuestionHistory);
-		OnResultListener onResultListener = new OnResultListener() {
+		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
-			public void onQuestionsQueried(List<QuestionSet> questionSetsFound, List<WikiDataEntryData> userInterestsSearched) {
+			public void onQuestionsQueried(List<QuestionSet> questionSetsFound, List<WikiDataEntity> userInterestsSearched) {
 				for (QuestionSet set : questionSetsFound) {
 					lessonInstanceData.addQuestionSet(set, true);
 					questionSetIDsToIncrementCount.add(set.getKey());
@@ -181,26 +181,26 @@ public abstract class Lesson {
 					//we still need to create questions.
 					//we don't need to check for interests we've already matched or
 					// know we can't match
-					Set<WikiDataEntryData> copy = new HashSet<>(userInterests);
+					Set<WikiDataEntity> copy = new HashSet<>(userInterests);
 					copy.removeAll(userInterestsSearched);
 					searchWikiData(copy);
 				}
 			}
 		};
 		db.searchQuestions(lessonKey, userInterestList, questionSetsLeftToPopulate,
-				questionSetIDsToAvoid, onResultListener);
+				questionSetIDsToAvoid, onDBResultListener);
 	}
 	
 	//検索するのは特定のentityひとつに対するクエリー
 	//UNIONしてまとめて検索してもいいけど時間が異常にかかる
 	protected abstract String getSPARQLQuery();
 	//一つ一つのクエリーを送って、まとめる
-	private void searchWikiData(Set<WikiDataEntryData> interests){
+	private void searchWikiData(Set<WikiDataEntity> interests){
 		//shuffle so we don't get the same interests over and over
-		ArrayList<WikiDataEntryData> interestList = new ArrayList<>(interests);
+		ArrayList<WikiDataEntity> interestList = new ArrayList<>(interests);
 		Collections.shuffle(interestList);
 		ArrayList<String> allQueries = new ArrayList<>(interestList.size());
-		for (WikiDataEntryData interest : interestList){
+		for (WikiDataEntity interest : interestList){
 			String entityID = interest.getWikiDataID();
 			String query = addEntityToQuery(entityID);
 			allQueries.add(query);
@@ -267,7 +267,7 @@ public abstract class Lesson {
 	//we may create more questions than the user will be getting,
 	//but this is so all questions possible for one lesson are created.
 	protected void saveNewQuestions(){
-    	OnResultListener onResultListener = new OnResultListener() {
+    	OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
 			public void onQuestionSetAdded(QuestionSet questionSet) {
 				//only add to the user's current set of questions if
@@ -293,7 +293,7 @@ public abstract class Lesson {
 			}
 		};
 
-    	db.addQuestions(lessonKey, newQuestions, onResultListener);
+    	db.addQuestions(lessonKey, newQuestions, onDBResultListener);
 
 	}
 
@@ -301,7 +301,7 @@ public abstract class Lesson {
 	//first, we check any questions in the db non-related to the user.
 	//if that doesn't work, then repeat the user's existing questions
 	private void fillRemainingQuestions(){
-		OnResultListener onResultListener = new OnResultListener() {
+		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
 			public void onPopularQuestionSetsQueried(List<QuestionSet> questionSetsQueried) {
 				for (QuestionSet questionSet : questionSetsQueried){
@@ -331,7 +331,7 @@ public abstract class Lesson {
 		questionSetIDsToAvoid.addAll(lessonInstanceData.questionSetIds());
 		questionSetIDsToAvoid.addAll(userQuestionHistory);
 		db.getPopularQuestionSets(lessonKey, questionSetIDsToAvoid,
-				questionSetsLeftToPopulate, onResultListener);
+				questionSetsLeftToPopulate, onDBResultListener);
 	}
 
 	private void addQuestionsFromUserQuestionHistory(){
@@ -365,7 +365,7 @@ public abstract class Lesson {
 			saveInstance();
 			return;
 		}
-		OnResultListener onResultListener = new OnResultListener() {
+		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
 			public void onQuestionSetsQueried(List<QuestionSet> questionSets) {
 				for (QuestionSet questionSet : questionSets){
@@ -381,7 +381,7 @@ public abstract class Lesson {
 			}
 		};
 
-		db.getQuestionSets(lessonKey, questionSetIDs, onResultListener);
+		db.getQuestionSets(lessonKey, questionSetIDs, onDBResultListener);
 	}
 
 	private void saveInstance(){
@@ -393,7 +393,7 @@ public abstract class Lesson {
 
 		lessonInstanceData.setCreatedTimeStamp(System.currentTimeMillis());
 
-		OnResultListener onLessonInstanceAddedResultListener = new OnResultListener() {
+		OnDBResultListener onLessonInstanceAddedResultListener = new OnDBResultListener() {
 			@Override
 			public void onLessonInstanceAdded() {
 				lessonListener.onLessonCreated();
@@ -403,7 +403,7 @@ public abstract class Lesson {
 				onLessonInstanceAddedResultListener);
 
 		//this can be asynchronous
-		OnResultListener onQuestionSetCountChangeResultListener = new OnResultListener() {
+		OnDBResultListener onQuestionSetCountChangeResultListener = new OnDBResultListener() {
 			@Override
 			public void onQuestionSetCountChanged() {
 				super.onQuestionSetCountChanged();
@@ -440,5 +440,14 @@ public abstract class Lesson {
         List<VocabularyWord> vocabularyWords = getGenericQuestionVocabulary();
 
         db.addGenericQuestions(questions, vocabularyWords);
+	}
+
+	protected String formatGenericQuestionID(String lessonKey, int questionNumber){
+		return lessonKey + "_generic" + Integer.toString(questionNumber);
+	}
+
+	protected String formatGenericQuestionVocabularyID(String lessonKey, String word){
+		word = word.replaceAll(" ", "_");
+		return lessonKey + "_generic_" + word;
 	}
 }

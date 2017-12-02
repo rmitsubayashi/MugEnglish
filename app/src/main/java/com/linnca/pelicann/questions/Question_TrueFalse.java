@@ -49,13 +49,13 @@ public class Question_TrueFalse extends QuestionFragmentInterface {
 
     @Override
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
-        QuestionUtils.disableTextToSpeech(questionTextView);
+        TextToSpeechHelper.disableTextToSpeech(questionTextView);
     }
 
     private void populateQuestion(){
         String question = questionData.getQuestion();
         questionTextView.setText(
-                QuestionUtils.clickToSpeechTextViewSpannable(
+                TextToSpeechHelper.clickToSpeechTextViewSpannable(
                         questionTextView, question, new SpannableString(question),textToSpeech)
         );
     }

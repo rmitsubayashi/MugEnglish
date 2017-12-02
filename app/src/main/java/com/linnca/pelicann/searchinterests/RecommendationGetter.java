@@ -1,8 +1,8 @@
 package com.linnca.pelicann.searchinterests;
 
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.OnResultListener;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +18,12 @@ class RecommendationGetter {
     // to guarantee populating recommendations,
     //so save the leftovers and when the user loads more,
     // we can check this first
-    private List<WikiDataEntryData> savedRecommendations = new ArrayList<>();
+    private List<WikiDataEntity> savedRecommendations = new ArrayList<>();
 
     //the interface is to determine what will happen to the UI.
     //the results here should only contain enough items to display (not the entire list)
     interface RecommendationGetterListener {
-        void onGetRecommendations(List<WikiDataEntryData> results, boolean showLoadMoreButton);
+        void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton);
     }
 
     RecommendationGetter(int defaultRecommendationCt, Database db, int loadMoreRecommendationCt){
@@ -36,14 +36,14 @@ class RecommendationGetter {
         return toDisplayRecommendationCt;
     }
 
-    void getNewRecommendations(List<WikiDataEntryData> userInterests,
+    void getNewRecommendations(List<WikiDataEntity> userInterests,
                             RecommendationGetterListener recommendationGetterListener){
         //reset the recommendation count to the default
         toDisplayRecommendationCt = defaultRecommendationCt;
         getRecommendations(userInterests, recommendationGetterListener);
     }
 
-    void loadMoreRecommendations(List<WikiDataEntryData> userInterests,
+    void loadMoreRecommendations(List<WikiDataEntity> userInterests,
                                  RecommendationGetterListener recommendationGetterListener){
         toDisplayRecommendationCt += loadMoreRecommendationCt;
         //check first if we can still populate the recommendations with
@@ -51,7 +51,7 @@ class RecommendationGetter {
         if (savedRecommendations.size() > toDisplayRecommendationCt){
             //we technically can display the list if we have recommendations equal to the display count,
             // but then we don't know whether we should show the load more button or not.
-            List<WikiDataEntryData> toDisplay = new ArrayList<>(
+            List<WikiDataEntity> toDisplay = new ArrayList<>(
                     savedRecommendations.subList(0, toDisplayRecommendationCt));
             recommendationGetterListener.onGetRecommendations(toDisplay, true);
         } else {
@@ -60,11 +60,11 @@ class RecommendationGetter {
         }
     }
 
-    private void getRecommendations(final List<WikiDataEntryData> userInterests,
+    private void getRecommendations(final List<WikiDataEntity> userInterests,
                                     final RecommendationGetterListener recommendationGetterListener){
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
-            public void onUserInterestRankingsQueried(List<WikiDataEntryData> rankings) {
+            public void onUserInterestRankingsQueried(List<WikiDataEntity> rankings) {
                 //clearing out all of the user interests is handled in the database,
                 // but this guarantees that user interests will be left out
                 rankings.removeAll(userInterests);
@@ -89,7 +89,7 @@ class RecommendationGetter {
         // so we guarantee that the returned list will contain new items
         int toGetUserInterestCt = userInterests.size() +
                 toDisplayRecommendationCt + 1;
-        db.getPopularUserInterests(toGetUserInterestCt, onResultListener);
+        db.getPopularUserInterests(toGetUserInterestCt, onDBResultListener);
     }
 
 }

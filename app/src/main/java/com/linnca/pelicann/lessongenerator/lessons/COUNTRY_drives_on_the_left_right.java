@@ -7,16 +7,14 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.questions.Question_TrueFalse;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -54,7 +52,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
     public COUNTRY_drives_on_the_left_right(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 3;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.lessonKey = KEY;
 
     }
@@ -90,7 +88,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
-            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
+            countryID = WikiDataEntity.getWikiDataIDFromReturnedResult(countryID);
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String sideEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "sideEN");
@@ -120,7 +118,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
             List<QuestionData> translateQuestion2 = createTranslateQuestion2(qr);
             questionSet.add(translateQuestion2);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, null));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.countryID, qr.countryJP, null));
         }
 
     }
@@ -145,7 +143,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
@@ -347,7 +345,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         List<List<String>> questionSet = new ArrayList<>(4);
         for (int i=1; i<3; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -366,7 +364,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         questions.addAll(toSaveSet3);
         int setSize = questions.size();
         for (int i=1; i<= setSize; i++){
-            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i);
+            String id = formatGenericQuestionID(KEY, i);
             questions.get(i-1).setId(id);
         }
 

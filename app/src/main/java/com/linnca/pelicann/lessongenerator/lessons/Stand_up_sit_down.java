@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Actions;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
@@ -43,7 +42,7 @@ public class Stand_up_sit_down extends Lesson {
         questions.addAll(actionQuestion);
         for (int i=0; i<3; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -55,7 +54,7 @@ public class Stand_up_sit_down extends Lesson {
         List<List<String>> questionSet = new ArrayList<>(3);
         for (int i=1; i<4; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -65,9 +64,9 @@ public class Stand_up_sit_down extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand up"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "stand up"),
                 "stand up","立つ","Stand up.","立ってください。", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit down"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "sit down"),
                 "sit down","座る","Sit down.","座ってください。", KEY));
         return words;
     }
@@ -75,8 +74,8 @@ public class Stand_up_sit_down extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(2);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand up"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit down"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "stand up"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "sit down"));
         return ids;
     }
 

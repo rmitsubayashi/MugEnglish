@@ -12,8 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.lessongenerator.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
@@ -71,7 +73,7 @@ public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
     @Override
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
         for (TextView toDisable : chatItemTextViews){
-            QuestionUtils.disableTextToSpeech(toDisable);
+            TextToSpeechHelper.disableTextToSpeech(toDisable);
         }
         View answerChatItemView = getLayoutInflater().inflate(R.layout.inflatable_question_chat_item_user, chatItemsLayout, false);
         TextView answerTextView = answerChatItemView.findViewById(R.id.question_chat_item_message);
@@ -94,7 +96,7 @@ public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
         //dynamically add buttons because
         //we may have multiple choice questions with 3 or 4 questions
         List<String> choices = questionData.getChoices();
-        QuestionUtils.shuffle(choices);
+        Collections.shuffle(choices);
 
         for (String choice : choices){
             Button choiceButton = (Button)inflater.
@@ -110,11 +112,11 @@ public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
                     toggleChoicesLayout();
                 }
             });
-            if (QuestionUtils.isAlphanumeric(choice)) {
+            if (StringUtils.isAlphanumeric(choice)) {
                 choiceButton.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        QuestionUtils.startTextToSpeech(textToSpeech, fChoice);
+                        TextToSpeechHelper.startTextToSpeech(textToSpeech, fChoice);
                         return true;
                     }
                 });
@@ -138,9 +140,9 @@ public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
         final int chatItemDisplayDelay = 200;
         chatBoxEditText.setEnabled(false);
         String question = questionData.getQuestion();
-        String from = QuestionUtils.getChatQuestionFrom(question);
+        String from = Question_Chat.getPersonFromString(question);
         fromTextView.setText(from);
-        List<ChatQuestionItem> chatItems = QuestionUtils.getChatQuestionChatItems(question);
+        List<ChatQuestionItem> chatItems = Question_Chat.getChatItemsFromString(question);
 
         chatItemTextViews = new ArrayList<>(chatItems.size());
         int chatItemCt = chatItems.size();
@@ -171,7 +173,7 @@ public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
             TextView messageTextView = chatItemLayout.findViewById(R.id.question_chat_item_message);
             messageTextView.setText(text);
             messageTextView.setText(
-                    QuestionUtils.clickToSpeechTextViewSpannable(messageTextView, text, new SpannableString(text), textToSpeech)
+                    TextToSpeechHelper.clickToSpeechTextViewSpannable(messageTextView, text, new SpannableString(text), textToSpeech)
             );
             chatItemTextViews.add(messageTextView);
             chatItemsLayout.postDelayed(new Runnable() {

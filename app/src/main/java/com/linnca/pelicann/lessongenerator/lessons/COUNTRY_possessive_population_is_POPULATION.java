@@ -9,13 +9,13 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
+import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -60,7 +60,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     public COUNTRY_possessive_population_is_POPULATION(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
 
         super(connector, db, listener);
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
 
@@ -107,14 +107,14 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
 
-            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
+            countryID = WikiDataEntity.getWikiDataIDFromReturnedResult(countryID);
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String populationString = SPARQLDocumentParserHelper.findValueByNodeName(head, "populationCt");
             int population = Integer.parseInt(populationString);
             //optional
             String year = SPARQLDocumentParserHelper.findValueByNodeName(head, "year");
-            year = LessonGeneratorUtils.getYearFromFullISO8601DateTime(year);
+            year = StringUtils.getYearFromFullISO8601DateTime(year);
             QueryResult qr = new QueryResult(countryID, countryEN, countryJP, population, year);
 
             queryResults.add(qr);
@@ -143,7 +143,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
         }
     }
 
@@ -161,7 +161,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
 
     private String formatSentenceEN(QueryResult qr){
         String sentence = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "\'s population is " +
-                LessonGeneratorUtils.convertIntToStringWithCommas(qr.population) + ".";
+                StringUtils.convertIntToStringWithCommas(qr.population) + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
@@ -203,7 +203,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     private String fillInBlankInputQuestion1(QueryResult qr){
         String sentence1 = qr.countryJP + "の人口は" + Integer.toString(qr.population) + "です。";
         String sentence2 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
-                " is " + LessonGeneratorUtils.convertIntToStringWithCommas(qr.population) + ".";
+                " is " + StringUtils.convertIntToStringWithCommas(qr.population) + ".";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         String sentence3 = "";
         if (!qr.yearString.equals("")){
@@ -239,7 +239,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
 
     private String fillInBlankInputQuestion2(QueryResult qr){
         String sentence1 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s population is " +
-                LessonGeneratorUtils.convertIntToWord(qr.population) + ".";
+                StringUtils.convertIntToWord(qr.population) + ".";
         sentence1 = GrammarRules.uppercaseFirstLetterOfSentence(sentence1);
         String sentence2 = qr.countryJP + "の人口は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + "です。";
         String sentence3 = "";
@@ -301,7 +301,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     @Override
     protected List<List<String>> getGenericQuestionIDSets(){
         List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 1));
+        questionIDs.add(formatGenericQuestionID(KEY, 1));
         List<List<String>> questionSets = new ArrayList<>();
         questionSets.add(questionIDs);
         return questionSets;
@@ -310,7 +310,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
     @Override
     protected List<QuestionData> getGenericQuestions(){
         List<QuestionData> questions = spellingSuggestiveQuestionGeneric();
-        String id1 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 1);
+        String id1 = formatGenericQuestionID(KEY, 1);
         questions.get(0).setId(id1);
         return questions;
 

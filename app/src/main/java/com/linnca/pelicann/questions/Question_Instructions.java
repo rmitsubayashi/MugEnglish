@@ -10,7 +10,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
 
 //the question replaces the instructions with the question and just
 // has an open text field for the user to follow the instructions
@@ -53,7 +52,7 @@ public class Question_Instructions extends QuestionFragmentInterface {
     private void createQuestionLayout(){
         String instructionText = questionData.getQuestion();
         instructions.setText(
-                QuestionUtils.clickToSpeechTextViewSpannable(instructions, instructionText, new SpannableString(instructionText), textToSpeech)
+                TextToSpeechHelper.clickToSpeechTextViewSpannable(instructions, instructionText, new SpannableString(instructionText), textToSpeech)
         );
 
         //set button
@@ -62,6 +61,6 @@ public class Question_Instructions extends QuestionFragmentInterface {
 
     @Override
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
-        QuestionUtils.disableTextToSpeech(instructions);
+        TextToSpeechHelper.disableTextToSpeech(instructions);
     }
 }

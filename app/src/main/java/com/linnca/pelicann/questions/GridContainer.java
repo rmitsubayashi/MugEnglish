@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
+//adjusts the layout so it's a square based on width
 public class GridContainer extends RelativeLayout {
     public GridContainer(Context context) {
         super(context);

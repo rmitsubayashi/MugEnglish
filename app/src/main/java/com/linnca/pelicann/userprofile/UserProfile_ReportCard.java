@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 
 import java.util.List;
@@ -81,14 +81,14 @@ public class UserProfile_ReportCard extends Fragment {
             });
             list.setAdapter(adapter);
         }
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onReportCardQueried(List<UserProfile_ReportCardDataWrapper> reportCardInfo) {
                 adapter.setData(reportCardInfo);
             }
         };
 
-        db.getReportCard(lessonLevel, onResultListener);
+        db.getReportCard(lessonLevel, onDBResultListener);
 
     }
 

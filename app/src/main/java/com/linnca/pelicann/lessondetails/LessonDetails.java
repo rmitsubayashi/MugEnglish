@@ -29,12 +29,12 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
 
@@ -157,13 +157,13 @@ public class LessonDetails extends Fragment {
                 getInstanceDetails(longClickData);
                 return true;
             case R.id.lesson_details_item_menu_delete:
-                OnResultListener onResultListener = new OnResultListener() {
+                OnDBResultListener onDBResultListener = new OnDBResultListener() {
                     @Override
                     public void onLessonInstanceRemoved() {
                         super.onLessonInstanceRemoved();
                     }
                 };
-                db.removeLessonInstance(lessonData.getKey(), longClickData, onResultListener);
+                db.removeLessonInstance(lessonData.getKey(), longClickData, onDBResultListener);
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -201,7 +201,7 @@ public class LessonDetails extends Fragment {
         //so we can long click the list items to show the context menu options
         registerForContextMenu(list);
 
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
                 loading.setVisibility(View.GONE);
@@ -209,13 +209,13 @@ public class LessonDetails extends Fragment {
             }
         };
 
-        db.getLessonInstances(lessonData.getKey(), true, onResultListener);
+        db.getLessonInstances(lessonData.getKey(), true, onDBResultListener);
     }
 
 
     private void setLessonColor(int attrID){
         //background for whole activity
-        mainLayout.setBackgroundColor(ApplicationThemeManager.getColorFromAttribute(attrID, getContext()));
+        mainLayout.setBackgroundColor(ThemeColorChanger.getColorFromAttribute(attrID, getContext()));
 
         /*
         //status bar (post-lollipop)
@@ -283,7 +283,7 @@ public class LessonDetails extends Fragment {
             public void run() {
                 if (LessonDetails.this.isVisible()) {
                     createButton.setBackgroundTintList(ColorStateList.valueOf(
-                            ApplicationThemeManager.getColorFromAttribute(R.attr.colorAccent500, getContext())));
+                            ThemeColorChanger.getColorFromAttribute(R.attr.colorAccent500, getContext())));
                     createButton.setEnabled(true);
                 }
             }
@@ -320,13 +320,13 @@ public class LessonDetails extends Fragment {
     }
 
     private void getInstanceDetails(final LessonInstanceData instanceData){
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstanceDetailsQueried(List<InstanceRecord> records) {
                 showInstanceDetailDialog(instanceData, records);
             }
         };
-        db.getLessonInstanceDetails(lessonData.getKey(), instanceData.getId(), onResultListener);
+        db.getLessonInstanceDetails(lessonData.getKey(), instanceData.getId(), onDBResultListener);
     }
 
     private void showInstanceDetailDialog(LessonInstanceData instanceData, List<InstanceRecord> allRecords){

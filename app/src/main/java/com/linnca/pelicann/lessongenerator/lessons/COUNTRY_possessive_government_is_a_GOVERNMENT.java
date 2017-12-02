@@ -9,14 +9,13 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -60,7 +59,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     public COUNTRY_possessive_government_is_a_GOVERNMENT(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
 
         super(connector, db, listener);
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
 
@@ -110,7 +109,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
 
-            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
+            countryID = WikiDataEntity.getWikiDataIDFromReturnedResult(countryID);
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String governmentEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "governmentEN");
@@ -150,7 +149,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
         }
 
 
@@ -340,7 +339,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     @Override
     protected List<List<String>> getGenericQuestionIDSets(){
         List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 1));
+        questionIDs.add(formatGenericQuestionID(KEY, 1));
         List<List<String>> questionSets = new ArrayList<>();
         questionSets.add(questionIDs);
         return questionSets;
@@ -349,7 +348,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     @Override
     protected List<QuestionData> getGenericQuestions(){
         List<QuestionData> questions = spellingSuggestiveQuestionGeneric();
-        String id1 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 1);
+        String id1 = formatGenericQuestionID(KEY, 1);
         questions.get(0).setId(id1);
         return questions;
 

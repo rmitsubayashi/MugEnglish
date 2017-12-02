@@ -3,10 +3,9 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_Chat;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_MultipleChoice;
@@ -51,7 +50,7 @@ public class good_morning_afternoon_evening extends Lesson {
         questions.addAll(fillInBlankQuestions);
         for (int i=0; i<9; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -61,11 +60,11 @@ public class good_morning_afternoon_evening extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(3);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good morning"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good morning"),
                 "good morning","おはよう","Good morning!","おはよう！", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good afternoon"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good afternoon"),
                 "good afternoon","こんにちは","Good afternoon!","こんにちは！", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good evening"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good evening"),
                 "good evening","こんばんは","Good evening!","こんばんは！", KEY));
         return words;
     }
@@ -73,9 +72,9 @@ public class good_morning_afternoon_evening extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(3);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good morning"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good afternoon"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good evening"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good morning"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good afternoon"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good evening"));
         return ids;
     }
 
@@ -105,7 +104,7 @@ public class good_morning_afternoon_evening extends Lesson {
         List<List<String>> questionSet = new ArrayList<>();
         for (Integer i : ids) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -126,7 +125,7 @@ public class good_morning_afternoon_evening extends Lesson {
             List<ChatQuestionItem> chatItems = new ArrayList<>(2);
             chatItems.add(chatItem1);
             chatItems.add(answerItem);
-            data.setQuestion(QuestionUtils.formatChatQuestion("無名", chatItems));
+            data.setQuestion(Question_Chat.formatQuestion("無名", chatItems));
             data.setChoices(multipleChoiceChoices());
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);

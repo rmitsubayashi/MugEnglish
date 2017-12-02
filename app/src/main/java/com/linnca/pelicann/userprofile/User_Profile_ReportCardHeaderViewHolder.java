@@ -29,7 +29,7 @@ public class User_Profile_ReportCardHeaderViewHolder extends RecyclerView.ViewHo
         List<String> items = new ArrayList<>(2);
         items.add(context.getString(R.string.lessons_level1));
         items.add(context.getString(R.string.lessons_level2));
-        CustomSpinnerAdapter adapter = new CustomSpinnerAdapter((Activity)context, items);
+        ReportCardLessonLevelSpinnerAdapter adapter = new ReportCardLessonLevelSpinnerAdapter((Activity)context, items);
         spinner.setAdapter(adapter);
     }
 }

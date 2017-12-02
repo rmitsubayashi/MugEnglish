@@ -7,14 +7,12 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -62,7 +60,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
     public NAME_possessive_mother_father_is_NAME2(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
 
@@ -111,7 +109,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
             Node head = allResults.item(i);
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
 
-            personID = LessonGeneratorUtils.stripWikidataID(personID);
+            personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String parentNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "parentEN");
@@ -145,7 +143,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
     }
 
@@ -219,7 +217,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
     }
 
     private List<String> puzzlePiecesAcceptableAnswers(QueryResult qr){
@@ -229,7 +227,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         pieces.add(qr.personEN);
         pieces.add("'s");
         pieces.add(qr.parentTypeEN);
-        String answer = QuestionUtils.formatPuzzlePieceAnswer(pieces);
+        String answer = Question_SentencePuzzle.formatAnswer(pieces);
         List<String> answers = new ArrayList<>(1);
         answers.add(answer);
         return answers;
@@ -304,7 +302,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         List<QuestionData> toSave1 = createTranslateQuestionGeneric();
         int toSave1Size = toSave1.size();
         while (index <= toSave1Size){
-            questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, index));
+            questionIDs.add(formatGenericQuestionID(KEY, index));
             index++;
         }
         List<List<String>> questionSets = new ArrayList<>();
@@ -314,7 +312,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         List<QuestionData> toSave2 = createTranslateQuestionGeneric2();
         int toSave2Size = toSave2.size() + index - 1;
         while (index <= toSave2Size){
-            questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, index));
+            questionIDs.add(formatGenericQuestionID(KEY, index));
             index++;
         }
         questionSets.add(questionIDs);
@@ -327,14 +325,14 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         List<QuestionData> toSaveSet1 = createTranslateQuestionGeneric();
         int set1Size = toSaveSet1.size();
         for (int i=1; i<= set1Size; i++){
-            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i);
+            String id = formatGenericQuestionID(KEY, i);
             toSaveSet1.get(i-1).setId(id);
             questions.add(toSaveSet1.get(i-1));
         }
         List<QuestionData> toSaveSet2 = createTranslateQuestionGeneric2();
         int set2Size = toSaveSet2.size();
         for (int i=1; i<=set2Size; i++){
-            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i+set1Size);
+            String id = formatGenericQuestionID(KEY, i+set1Size);
             toSaveSet2.get(i-1).setId(id);
             questions.add(toSaveSet2.get(i-1));
         }

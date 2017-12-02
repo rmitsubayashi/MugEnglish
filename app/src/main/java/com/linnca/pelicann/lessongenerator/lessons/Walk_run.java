@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Actions;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
@@ -43,7 +42,7 @@ public class Walk_run extends Lesson {
         questions.addAll(actionQuestion);
         for (int i=0; i<3; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -55,7 +54,7 @@ public class Walk_run extends Lesson {
         List<List<String>> questionSet = new ArrayList<>(3);
         for (int i=1; i<4; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -65,9 +64,9 @@ public class Walk_run extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "run"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "run"),
                 "run","走る","Run.","走ってください", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "walk"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "walk"),
                 "walk","歩く","Walk.","歩いてください", KEY));
         return words;
     }
@@ -75,8 +74,8 @@ public class Walk_run extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(2);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "run"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "walk"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "run"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "walk"));
         return ids;
     }
 

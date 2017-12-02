@@ -1,7 +1,6 @@
 package com.linnca.pelicann.db;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,10 +21,10 @@ import com.linnca.pelicann.lessondetails.LessonInstanceDataQuestionSet;
 import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.QuestionSet;
-import com.linnca.pelicann.results.NewVocabularyWrapper;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.results.ResultsVocabularyWord;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.userprofile.UserProfile_ReportCardDataWrapper;
 import com.linnca.pelicann.vocabulary.VocabularyListWord;
@@ -130,14 +129,14 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void searchQuestions(String lessonKey, List<WikiDataEntryData> userInterests, int toPopulate,
-                                         final List<String> questionSetIDsToAvoid,
-                                         final OnResultListener onResultListener){
+    public void searchQuestions(String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
+                                final List<String> questionSetIDsToAvoid,
+                                final OnDBResultListener onDBResultListener){
         final List<QuestionSet> questionSetsToReturn = Collections.synchronizedList(
                 new ArrayList<QuestionSet>(toPopulate)
         );
-        final List<WikiDataEntryData> userInterestsAlreadyChecked = Collections.synchronizedList(
-                new ArrayList<WikiDataEntryData>(userInterests.size())
+        final List<WikiDataEntity> userInterestsAlreadyChecked = Collections.synchronizedList(
+                new ArrayList<WikiDataEntity>(userInterests.size())
         );
         final AtomicInteger questionSetsToPopulateAtomicInt = new AtomicInteger(toPopulate);
         final AtomicInteger userInterestsLooped = new AtomicInteger(0);
@@ -146,7 +145,7 @@ public class FirebaseDB extends Database{
                 FirebaseDBHeaders.QUESTION_SETS + "/" +
                         lessonKey);
 
-        for (final WikiDataEntryData userInterest : userInterests){
+        for (final WikiDataEntity userInterest : userInterests){
             //we might be finished before looping through the interests.
             //in that case, we shouldn't send a request to the database
             if (questionSetsToPopulateAtomicInt.get() == 0){
@@ -181,7 +180,7 @@ public class FirebaseDB extends Database{
 
                         //we have found enough questions from the database alone
                         if (questionSetsToPopulateAtomicInt.get() == 0) {
-                            onResultListener.onQuestionsQueried(questionSetsToReturn,
+                            onDBResultListener.onQuestionsQueried(questionSetsToReturn,
                                     userInterestsAlreadyChecked);
                             return;
                         }
@@ -189,7 +188,7 @@ public class FirebaseDB extends Database{
 
                     //if this is the last one, we should finish
                     if (userInterestsLooped.incrementAndGet() == userInterestsToLoop){
-                        onResultListener.onQuestionsQueried(questionSetsToReturn,
+                        onDBResultListener.onQuestionsQueried(questionSetsToReturn,
                                 userInterestsAlreadyChecked);
                     }
                 }
@@ -204,7 +203,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void addQuestions(String lessonKey, List<QuestionDataWrapper> questions, OnResultListener onResultListener){
+    public void addQuestions(String lessonKey, List<QuestionSetData> questions, OnDBResultListener onDBResultListener){
         DatabaseReference questionRef = FirebaseDatabase.getInstance().getReference(FirebaseDBHeaders.QUESTIONS);
         //this is the actual question information for when we want to show
         // questions to the user
@@ -220,11 +219,11 @@ public class FirebaseDB extends Database{
         //we are looping through each question set.
         // (questionDataWrapper has an extra field to store the wikiData ID
         // associated with the question set)
-        for (QuestionDataWrapper questionDataWrapper : questions){
+        for (QuestionSetData questionSetData : questions){
             List<List<String>> questionIDs = new ArrayList<>();
             List<String> vocabularyIDs = new ArrayList<>();
             //save each question in the database
-            for (List<QuestionData> question : questionDataWrapper.getQuestionSet()) {
+            for (List<QuestionData> question : questionSetData.getQuestionSet()) {
                 List<String> questionIDsForEachVariation = new ArrayList<>();
                 //each question may have multiple variations.
                 //save all variations as individual questions
@@ -240,7 +239,7 @@ public class FirebaseDB extends Database{
 
                 questionIDs.add(questionIDsForEachVariation);
 
-                List<VocabularyWord> questionSetVocabulary = questionDataWrapper.getVocabulary();
+                List<VocabularyWord> questionSetVocabulary = questionSetData.getVocabulary();
                 if (questionSetVocabulary != null) {
                     for (VocabularyWord word : questionSetVocabulary) {
                         String vocabularyKey = vocabularyRef.push().getKey();
@@ -252,24 +251,24 @@ public class FirebaseDB extends Database{
             }
 
             //save the question set (pretty much the same thing as the
-            //questionDataWrapper but just the IDs
+            //questionSetData but just the IDs
             String questionSetKey = questionSetRef.push().getKey();
             //the initial count should be 0 since we don't know if the user calling this
             //is adding this to his lesson instance
             // (we may be creating extra question sets not needed by the current user)
-            QuestionSet questionSet = new QuestionSet(questionSetKey, questionDataWrapper.getWikiDataID(),
-                    questionDataWrapper.getInterestLabel(),
+            QuestionSet questionSet = new QuestionSet(questionSetKey, questionSetData.getInterestID(),
+                    questionSetData.getInterestLabel(),
                     questionIDs, vocabularyIDs, 0);
             questionSetRef.child(questionSetKey).setValue(questionSet);
 
-            onResultListener.onQuestionSetAdded(questionSet);
+            onDBResultListener.onQuestionSetAdded(questionSet);
         }
 
-        onResultListener.onQuestionsAdded();
+        onDBResultListener.onQuestionsAdded();
     }
 
     @Override
-    public void getQuestionSets(String lessonKey, List<String> questionSetIDs, final OnResultListener onResultListener){
+    public void getQuestionSets(String lessonKey, List<String> questionSetIDs, final OnDBResultListener onDBResultListener){
         //to check each listener to see if all listeners have completed
         final AtomicInteger questionSetsRetrievedCt = new AtomicInteger(0);
         final List<QuestionSet> questionSetsRetrieved = Collections.synchronizedList(
@@ -289,7 +288,7 @@ public class FirebaseDB extends Database{
                     questionSetsRetrieved.add(questionSet);
                     if (questionSetsRetrievedCt.incrementAndGet() == questionSetsToRetrieve){
                         //all listeners have completed so continue
-                        onResultListener.onQuestionSetsQueried(questionSetsRetrieved);
+                        onDBResultListener.onQuestionSetsQueried(questionSetsRetrieved);
                     }
                 }
 
@@ -301,7 +300,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void changeQuestionSetCount(String lessonKey, String questionSetID, final int amount, OnResultListener onResultListener){
+    public void changeQuestionSetCount(String lessonKey, String questionSetID, final int amount, OnDBResultListener onDBResultListener){
         DatabaseReference questionSetCountRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.QUESTION_SETS + "/" +
                         lessonKey + "/" +
@@ -328,7 +327,7 @@ public class FirebaseDB extends Database{
     @Override
     public void getPopularQuestionSets(String lessonKey, final List<String> questionSetsToAvoid,
                                        final int questionSetsToPopulate,
-                                       final OnResultListener onResultListener){
+                                       final OnDBResultListener onDBResultListener){
         //by pigeon hole, we can guarantee that we get enough question sets
         // (only if there are enough questions sets available)
         int toGet = questionSetsToAvoid.size() + questionSetsToPopulate;
@@ -360,7 +359,7 @@ public class FirebaseDB extends Database{
                             questionSets.size())
                     );
                 }
-                onResultListener.onPopularQuestionSetsQueried(questionSets);
+                onDBResultListener.onPopularQuestionSetsQueried(questionSets);
             }
 
             @Override
@@ -371,7 +370,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getQuestion(String questionID, final OnResultListener onResultListener){
+    public void getQuestion(String questionID, final OnDBResultListener onDBResultListener){
         DatabaseReference questionRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.QUESTIONS + "/" +
                         questionID
@@ -380,7 +379,7 @@ public class FirebaseDB extends Database{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 QuestionData questionData = dataSnapshot.getValue(QuestionData.class);
-                onResultListener.onQuestionQueried(questionData);
+                onDBResultListener.onQuestionQueried(questionData);
             }
 
             @Override
@@ -392,7 +391,7 @@ public class FirebaseDB extends Database{
     @Override
     public void addLessonInstance(String lessonKey, LessonInstanceData lessonInstanceData,
                                   List<String> lessonInstanceVocabularyIDs,
-                                  final OnResultListener onResultListener){
+                                  final OnDBResultListener onDBResultListener){
         DatabaseReference lessonInstanceRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.LESSON_INSTANCES + "/" + getUserID() + "/" + lessonKey);
         String key = lessonInstanceRef.push().getKey();
@@ -404,13 +403,13 @@ public class FirebaseDB extends Database{
         FirebaseDatabase.getInstance().getReference().updateChildren(consistentUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                onResultListener.onLessonInstanceAdded();
+                onDBResultListener.onLessonInstanceAdded();
             }
         });
     }
 
     @Override
-    public void getLessonInstances(String lessonKey, boolean persistentConnection, final OnResultListener onResultListener){
+    public void getLessonInstances(String lessonKey, boolean persistentConnection, final OnDBResultListener onDBResultListener){
         DatabaseReference lessonInstancesRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.LESSON_INSTANCES + "/"+
                         getUserID()+"/"+
@@ -425,7 +424,7 @@ public class FirebaseDB extends Database{
                     LessonInstanceData instance =childSnapshot.getValue(LessonInstanceData.class);
                     lessonInstances.add(instance);
                 }
-                onResultListener.onLessonInstancesQueried(lessonInstances);
+                onDBResultListener.onLessonInstancesQueried(lessonInstances);
             }
 
             @Override
@@ -443,7 +442,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getLessonInstanceDetails(String lessonKey, String instanceID, final OnResultListener onResultListener){
+    public void getLessonInstanceDetails(String lessonKey, String instanceID, final OnDBResultListener onDBResultListener){
         DatabaseReference recordsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.INSTANCE_RECORDS + "/" +
                         getUserID() + "/" +
@@ -459,7 +458,7 @@ public class FirebaseDB extends Database{
                     allRecords.add(record);
                 }
 
-                onResultListener.onLessonInstanceDetailsQueried(allRecords);
+                onDBResultListener.onLessonInstanceDetailsQueried(allRecords);
             }
 
             @Override
@@ -470,7 +469,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void removeLessonInstance(String lessonKey, LessonInstanceData instance, final OnResultListener onResultListener){
+    public void removeLessonInstance(String lessonKey, LessonInstanceData instance, final OnDBResultListener onDBResultListener){
         String instancesPath = FirebaseDBHeaders.LESSON_INSTANCES + "/"+
                 getUserID()+"/"+
                 lessonKey + "/" +
@@ -481,7 +480,7 @@ public class FirebaseDB extends Database{
         instanceRef.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                onResultListener.onLessonInstanceRemoved();
+                onDBResultListener.onLessonInstanceRemoved();
             }
         });
         //if any of the question sets were part of the popularity rankings,
@@ -489,7 +488,7 @@ public class FirebaseDB extends Database{
         for (LessonInstanceDataQuestionSet set : instance.getQuestionSets()){
             if (set.isPartOfPopularityRating()){
                 this.changeQuestionSetCount(lessonKey, set.getId(), -1,
-                        new OnResultListener() {
+                        new OnDBResultListener() {
                             @Override
                             public void onQuestionSetCountChanged() {
                                 super.onQuestionSetCountChanged();
@@ -500,7 +499,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getVocabularyDetails(String vocabularyItemID, final OnResultListener onResultListener){
+    public void getVocabularyDetails(String vocabularyItemID, final OnDBResultListener onDBResultListener){
         DatabaseReference detailsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.VOCABULARY_DETAILS + "/" +
                         getUserID() + "/" +
@@ -514,7 +513,7 @@ public class FirebaseDB extends Database{
                     VocabularyWord word = childSnapshot.getValue(VocabularyWord.class);
                     allClusters.add(word);
                 }
-                onResultListener.onVocabularyWordQueried(allClusters);
+                onDBResultListener.onVocabularyWordQueried(allClusters);
             }
 
             @Override
@@ -526,7 +525,7 @@ public class FirebaseDB extends Database{
 
 
     @Override
-    public void getVocabularyList(final OnResultListener onResultListener){
+    public void getVocabularyList(final OnDBResultListener onDBResultListener){
         String vocabularyPath = FirebaseDBHeaders.VOCABULARY_LIST + "/" +
                 getUserID();
         DatabaseReference vocabularyRef = FirebaseDatabase.getInstance().getReference(
@@ -541,7 +540,7 @@ public class FirebaseDB extends Database{
                     VocabularyListWord word = childSnapshot.getValue(VocabularyListWord.class);
                     words.add(word);
                 }
-                onResultListener.onVocabularyListQueried(words);
+                onDBResultListener.onVocabularyListQueried(words);
             }
 
             @Override
@@ -557,7 +556,7 @@ public class FirebaseDB extends Database{
     //when the user adds a word to his list,
     // not when lesson generation adds vocabulary words
     @Override
-    public void addVocabularyWord(final VocabularyWord word, final OnResultListener onResultListener){
+    public void addVocabularyWord(final VocabularyWord word, final OnDBResultListener onDBResultListener){
         //for displaying a list of words
         DatabaseReference listRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.VOCABULARY_LIST + "/" +
@@ -578,7 +577,7 @@ public class FirebaseDB extends Database{
                     key = newItemRef.push().getKey();
                     VocabularyListWord toSave = new VocabularyListWord(word, key);
                     newItemRef.child(key).setValue(toSave);
-                    addVocabularyWordPt2(key, word, onResultListener);
+                    addVocabularyWordPt2(key, word, onDBResultListener);
                     return;
                 }
                 //only loops once
@@ -603,7 +602,7 @@ public class FirebaseDB extends Database{
                         newItemRef.child(key).setValue(toSave);
                     }
 
-                    addVocabularyWordPt2(key, word, onResultListener);
+                    addVocabularyWordPt2(key, word, onDBResultListener);
                 }
             }
 
@@ -616,7 +615,7 @@ public class FirebaseDB extends Database{
 
     //we are going to add the whole word to the details list,
     //using the key used/created when adding the item to the list before this
-    private void addVocabularyWordPt2(String key, VocabularyWord word, final OnResultListener onResultListener){
+    private void addVocabularyWordPt2(String key, VocabularyWord word, final OnDBResultListener onDBResultListener){
         DatabaseReference detailsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.VOCABULARY_DETAILS + "/" +
                         getUserID() + "/" +
@@ -625,13 +624,13 @@ public class FirebaseDB extends Database{
         detailsRef.push().setValue(word).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                onResultListener.onVocabularyWordAdded();
+                onDBResultListener.onVocabularyWordAdded();
             }
         });
     }
 
     @Override
-    public void removeVocabularyListItems(List<String> vocabularyListItemKeys, final OnResultListener onResultListener){
+    public void removeVocabularyListItems(List<String> vocabularyListItemKeys, final OnDBResultListener onDBResultListener){
         //we have two locations where we store vocabulary words.
         //one is the list node which only contains info needed to show a list of vocabulary items.
         //the other is the details node which contains more information on each vocabulary item.
@@ -655,7 +654,7 @@ public class FirebaseDB extends Database{
                 new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        onResultListener.onVocabularyListItemsRemoved();
+                        onDBResultListener.onVocabularyListItemsRemoved();
                     }
                 }
         );
@@ -663,7 +662,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getLessonVocabulary(String lessonInstanceKey, final OnResultListener onResultListener){
+    public void getLessonVocabulary(String lessonInstanceKey, final OnDBResultListener onDBResultListener){
         //first get all vocabulary for the lesson instance.
         //second, clump all duplicate vocabulary (i.e. dynamic sentences w/ the same word)
         //third, check if the user already has the word added to his list.
@@ -680,7 +679,7 @@ public class FirebaseDB extends Database{
                 List<String> vocabularyIDs = dataSnapshot.getValue(type);
                 //the lesson has no new vocabulary words
                 if (vocabularyIDs == null) {
-                    onResultListener.onLessonVocabularyQueried(null);
+                    onDBResultListener.onLessonVocabularyQueried(null);
                     return;
                 }
                 int vocabularyCt = vocabularyIDs.size();
@@ -688,7 +687,7 @@ public class FirebaseDB extends Database{
                 List<VocabularyWord> words = Collections.synchronizedList(new ArrayList<VocabularyWord>(vocabularyCt));
                 for (String id : vocabularyIDs){
                     //we only have the IDs so we need to get all information for these words
-                    fetchVocabularyWord(id, vocabularyCt, vocabularyFetched, words, onResultListener);
+                    fetchVocabularyWord(id, vocabularyCt, vocabularyFetched, words, onDBResultListener);
                     //after we'v gotten all the word info,
                     //proceed to filtering all the words the user has added already
                 }
@@ -703,7 +702,7 @@ public class FirebaseDB extends Database{
         refListenerPairs.add(new RefListenerPair(vocabularyRef, vocabularyListener));
     }
 
-    private void fetchVocabularyWord(String id, final int vocabularyToFetch, final AtomicInteger vocabularyFetched, final List<VocabularyWord> allWords, final OnResultListener onResultListener){
+    private void fetchVocabularyWord(String id, final int vocabularyToFetch, final AtomicInteger vocabularyFetched, final List<VocabularyWord> allWords, final OnDBResultListener onDBResultListener){
         DatabaseReference vocabularyRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.VOCABULARY + "/" +
                         id
@@ -715,7 +714,7 @@ public class FirebaseDB extends Database{
                 allWords.add(word);
 
                 if (vocabularyFetched.incrementAndGet() == vocabularyToFetch){
-                    clusterDuplicateVocabularyItems(allWords, onResultListener);
+                    clusterDuplicateVocabularyItems(allWords, onDBResultListener);
                 }
             }
 
@@ -734,7 +733,7 @@ public class FirebaseDB extends Database{
         }
     }
 
-    private void clusterDuplicateVocabularyItems(List<VocabularyWord> allWords, OnResultListener onResultListener){
+    private void clusterDuplicateVocabularyItems(List<VocabularyWord> allWords, OnDBResultListener onDBResultListener){
         //cluster duplicates (same words but different example sentences)
         List<List<VocabularyWord>> filteredWords = new ArrayList<>(allWords.size());
         //sort alphabetically
@@ -765,13 +764,13 @@ public class FirebaseDB extends Database{
             }
         }
 
-        checkIfAlreadyAdded(filteredWords, onResultListener);
+        checkIfAlreadyAdded(filteredWords, onDBResultListener);
     }
 
-    private void checkIfAlreadyAdded(List<List<VocabularyWord>> list, final OnResultListener onResultListener){
+    private void checkIfAlreadyAdded(List<List<VocabularyWord>> list, final OnDBResultListener onDBResultListener){
         final AtomicInteger vocabularyCheckedCt = new AtomicInteger(0);
         final int vocabularyToCheckCt = list.size();
-        final List<NewVocabularyWrapper> checkedVocabulary = Collections.synchronizedList(new ArrayList<NewVocabularyWrapper>());
+        final List<ResultsVocabularyWord> checkedVocabulary = Collections.synchronizedList(new ArrayList<ResultsVocabularyWord>());
         final Random random = new Random();
         for (final List<VocabularyWord> words : list){
             //get a random example sentence
@@ -806,10 +805,10 @@ public class FirebaseDB extends Database{
                             }
                         }
                     }
-                    checkedVocabulary.add(new NewVocabularyWrapper(wordToAdd, newWord));
+                    checkedVocabulary.add(new ResultsVocabularyWord(wordToAdd, newWord));
 
                     if (vocabularyCheckedCt.incrementAndGet() == vocabularyToCheckCt){
-                        onResultListener.onLessonVocabularyQueried(checkedVocabulary);
+                        onDBResultListener.onLessonVocabularyQueried(checkedVocabulary);
                     }
                 }
 
@@ -824,25 +823,25 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getUserInterests(final OnResultListener onResultListener){
+    public void getUserInterests(final OnDBResultListener onDBResultListener){
         String userInterestPath = FirebaseDBHeaders.USER_INTERESTS + "/" +
                 getUserID();
         DatabaseReference userInterestRef = FirebaseDatabase.getInstance()
                 .getReference(userInterestPath);
         //order alphabetically.
-        //'pronunciation' is a variable in the WikiDataEntryData class
+        //'pronunciation' is a variable in the WikiDataEntity class
         Query userInterestQuery = userInterestRef.orderByChild("pronunciation");
 
         ValueEventListener userInterestQueryListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<WikiDataEntryData> userInterests = new ArrayList<>();
+                List<WikiDataEntity> userInterests = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    WikiDataEntryData interest = snapshot.getValue(WikiDataEntryData.class);
+                    WikiDataEntity interest = snapshot.getValue(WikiDataEntity.class);
                     userInterests.add(interest);
                 }
 
-                onResultListener.onUserInterestsQueried(userInterests);
+                onDBResultListener.onUserInterestsQueried(userInterests);
             }
 
             @Override
@@ -855,11 +854,11 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void addUserInterests(final List<WikiDataEntryData> userInterestsToAdd, final OnResultListener onResultListener){
+    public void addUserInterests(final List<WikiDataEntity> userInterestsToAdd, final OnDBResultListener onDBResultListener){
         //add the interests here so we don't have to worry about whether
         // we grabbed the updated user interest list or the old one
         Map<String, Object> toAdd = new HashMap<>(userInterestsToAdd.size());
-        for (WikiDataEntryData data : userInterestsToAdd){
+        for (WikiDataEntity data : userInterestsToAdd){
             String ref = FirebaseDBHeaders.USER_INTERESTS + "/" +
                     getUserID() + "/" +
                     data.getWikiDataID();
@@ -868,12 +867,12 @@ public class FirebaseDB extends Database{
         FirebaseDatabase.getInstance().getReference().updateChildren(toAdd).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                onResultListener.onUserInterestsAdded();
+                onDBResultListener.onUserInterestsAdded();
             }
         });
 
         //add to rankings
-        for (WikiDataEntryData data : userInterestsToAdd) {
+        for (WikiDataEntity data : userInterestsToAdd) {
             this.changeUserInterestRanking(data, 1);
         }
     }
@@ -917,10 +916,10 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void removeUserInterests(final List<WikiDataEntryData> userInterestsToRemove, final OnResultListener onResultListener){
+    public void removeUserInterests(final List<WikiDataEntity> userInterestsToRemove, final OnDBResultListener onDBResultListener){
         //remove all the interests first so the UI updates as soon as the items are deleted
         Map<String, Object> toRemove = new HashMap<>(userInterestsToRemove.size());
-        for (WikiDataEntryData data : userInterestsToRemove){
+        for (WikiDataEntity data : userInterestsToRemove){
             String ref = FirebaseDBHeaders.USER_INTERESTS + "/" +
                     getUserID() + "/" +
                     data.getWikiDataID();
@@ -930,16 +929,16 @@ public class FirebaseDB extends Database{
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        onResultListener.onUserInterestsRemoved();
+                        onDBResultListener.onUserInterestsRemoved();
                     }
                 });
-        for (WikiDataEntryData data : userInterestsToRemove){
+        for (WikiDataEntity data : userInterestsToRemove){
             this.changeUserInterestRanking(data, -1);
         }
     }
 
     @Override
-    public void changeUserInterestRanking(final WikiDataEntryData data, final int count){
+    public void changeUserInterestRanking(final WikiDataEntity data, final int count){
         DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.USER_INTEREST_RANKINGS + "/" +
                         data.getWikiDataID()
@@ -977,7 +976,7 @@ public class FirebaseDB extends Database{
     }
     
     @Override
-    public void getPopularUserInterests(int count, final OnResultListener onResultListener){
+    public void getPopularUserInterests(int count, final OnDBResultListener onDBResultListener){
         DatabaseReference popularUserInterestRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.USER_INTEREST_RANKINGS
         );
@@ -987,16 +986,16 @@ public class FirebaseDB extends Database{
         popularUserInterestQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<WikiDataEntryData> userInterests = new LinkedList<>();
+                List<WikiDataEntity> userInterests = new LinkedList<>();
                 //since the ordering is 1, 2, ... , 10,
                 //reverse the order
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     userInterests.add(0, 
                             snapshot.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA)
-                                    .getValue(WikiDataEntryData.class)
+                                    .getValue(WikiDataEntity.class)
                     );
                 }
-                onResultListener.onUserInterestRankingsQueried(userInterests);
+                onDBResultListener.onUserInterestRankingsQueried(userInterests);
             }
 
             @Override
@@ -1007,7 +1006,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getClearedLessons(int lessonLevel, boolean persistentConnection, final OnResultListener onResultListener){
+    public void getClearedLessons(int lessonLevel, boolean persistentConnection, final OnDBResultListener onDBResultListener){
         String clearedLessonsPath = FirebaseDBHeaders.CLEARED_LESSONS + "/" +
                 getUserID() + "/" +
                 lessonLevel;
@@ -1022,7 +1021,7 @@ public class FirebaseDB extends Database{
                     String lessonKey = lessonSnapshot.getKey();
                     clearedLessonKeys.add(lessonKey);
                 }
-                onResultListener.onClearedLessonsQueried(clearedLessonKeys);
+                onDBResultListener.onClearedLessonsQueried(clearedLessonKeys);
             }
 
             @Override
@@ -1038,7 +1037,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void addClearedLesson(int lessonLevel, String lessonKey, final OnResultListener onResultListener){
+    public void addClearedLesson(int lessonLevel, String lessonKey, final OnDBResultListener onDBResultListener){
         final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.CLEARED_LESSONS + "/" +
                         getUserID() + "/" +
@@ -1050,9 +1049,9 @@ public class FirebaseDB extends Database{
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()){
                     ref.setValue(true);
-                    onResultListener.onClearedLessonAdded(true);
+                    onDBResultListener.onClearedLessonAdded(true);
                 } else {
-                    onResultListener.onClearedLessonAdded(false);
+                    onDBResultListener.onClearedLessonAdded(false);
                 }
             }
 
@@ -1100,7 +1099,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void addReviewQuestion(List<String> questionIDs, final OnResultListener onResultListener){
+    public void addReviewQuestion(List<String> questionIDs, final OnDBResultListener onDBResultListener){
         DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
                         getUserID() + "/"
@@ -1113,13 +1112,13 @@ public class FirebaseDB extends Database{
         reviewRef.updateChildren(toUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                onResultListener.onReviewQuestionsAdded();
+                onDBResultListener.onReviewQuestionsAdded();
             }
         });
     }
 
     @Override
-    public void getReviewQuestions(final OnResultListener onResultListener){
+    public void getReviewQuestions(final OnDBResultListener onDBResultListener){
         DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
                         getUserID() + "/"
@@ -1136,7 +1135,7 @@ public class FirebaseDB extends Database{
                         questionKeys.add(questionSnapshot.getKey());
                     }
                 }
-                onResultListener.onReviewQuestionsQueried(questionKeys);
+                onDBResultListener.onReviewQuestionsQueried(questionKeys);
             }
 
             @Override
@@ -1148,7 +1147,7 @@ public class FirebaseDB extends Database{
 
 
     @Override
-    public void removeReviewQuestions(final OnResultListener onResultListener){
+    public void removeReviewQuestions(final OnDBResultListener onDBResultListener){
         DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
                         getUserID() + "/"
@@ -1156,13 +1155,13 @@ public class FirebaseDB extends Database{
         reviewRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                onResultListener.onReviewQuestionsRemoved();
+                onDBResultListener.onReviewQuestionsRemoved();
             }
         });
     }
 
     @Override
-    public void addInstanceRecord(InstanceRecord record, final OnResultListener onResultListener){
+    public void addInstanceRecord(InstanceRecord record, final OnDBResultListener onDBResultListener){
         final String recordKey = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.INSTANCE_RECORDS + "/" +
                         getUserID() + "/" +
@@ -1179,13 +1178,13 @@ public class FirebaseDB extends Database{
         ).setValue(record).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                onResultListener.onInstanceRecordAdded(recordKey);
+                onDBResultListener.onInstanceRecordAdded(recordKey);
             }
         });
     }
 
     @Override
-    public void getReportCard(int level, final OnResultListener onResultListener){
+    public void getReportCard(int level, final OnDBResultListener onDBResultListener){
         String reportCardPath = FirebaseDBHeaders.REPORT_CARD + "/" +
                 getUserID() + "/" +
                 Integer.toString(level);
@@ -1212,7 +1211,7 @@ public class FirebaseDB extends Database{
                     reportCardData.add(wrapper);
                 }
 
-                onResultListener.onReportCardQueried(reportCardData);
+                onDBResultListener.onReportCardQueried(reportCardData);
             }
 
             @Override
@@ -1227,7 +1226,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void addReportCard(int level, String lessonKey, final int correctCt, final int totalCt, final OnResultListener onResultListener){
+    public void addReportCard(int level, String lessonKey, final int correctCt, final int totalCt, final OnDBResultListener onDBResultListener){
         final AtomicInteger finishedCt = new AtomicInteger(0);
         final int updateLocationCt = 2;
         final DatabaseReference correctCtRef = FirebaseDatabase.getInstance().getReference(
@@ -1250,7 +1249,7 @@ public class FirebaseDB extends Database{
                     public void onSuccess(Void aVoid) {
                         //only do this if both updates are complete
                         if (finishedCt.incrementAndGet() == updateLocationCt){
-                            onResultListener.onReportCardAdded();
+                            onDBResultListener.onReportCardAdded();
                         }
                     }
                 });
@@ -1282,7 +1281,7 @@ public class FirebaseDB extends Database{
                     public void onSuccess(Void aVoid) {
                         //only do this if both updates are finished
                         if (finishedCt.incrementAndGet() == updateLocationCt){
-                            onResultListener.onReportCardAdded();
+                            onDBResultListener.onReportCardAdded();
                         }
                     }
                 });
@@ -1311,7 +1310,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getFirstAppUsageDate(final OnResultListener onResultListener){
+    public void getFirstAppUsageDate(final OnDBResultListener onDBResultListener){
         DatabaseReference usageRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.APP_USAGE + "/" +
                         getUserID()
@@ -1333,7 +1332,7 @@ public class FirebaseDB extends Database{
                             minDate = startDateTime;
                         }
                     }
-                    onResultListener.onFirstAppUsageDateQueried(minDate);
+                    onDBResultListener.onFirstAppUsageDateQueried(minDate);
                 }
             }
 
@@ -1345,7 +1344,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getAppUsageForMonths(String startMonthKey, String endMonthKey, final OnResultListener onResultListener){
+    public void getAppUsageForMonths(String startMonthKey, String endMonthKey, final OnDBResultListener onDBResultListener){
         DatabaseReference usageRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.APP_USAGE + "/" +
                         getUserID() + "/"
@@ -1366,7 +1365,7 @@ public class FirebaseDB extends Database{
                         logsForMonth.add(log);
                     }
                 }
-                onResultListener.onAppUsageForMonthsQueried(logsForMonth);
+                onDBResultListener.onAppUsageForMonthsQueried(logsForMonth);
             }
 
             @Override
@@ -1390,7 +1389,7 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void getSports(Collection<String> sportsWikiDataIDs, final OnResultListener onResultListener){
+    public void getSports(Collection<String> sportsWikiDataIDs, final OnDBResultListener onDBResultListener){
         DatabaseReference mappingsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.UTILS + "/" +
                     FirebaseDBHeaders.UTILS_SPORTS_VERB_MAPPINGS
@@ -1411,12 +1410,12 @@ public class FirebaseDB extends Database{
                         //if no match, the default (and most likely) is
                         // play + sport
 
-                        onResultListener.onSportQueried(sportID, verb, object);
+                        onDBResultListener.onSportQueried(sportID, verb, object);
                     }
 
                     //we searched the last sport
                     if (sportCt.incrementAndGet() == lastSportCt){
-                        onResultListener.onSportsQueried();
+                        onDBResultListener.onSportsQueried();
                     }
 
                 }

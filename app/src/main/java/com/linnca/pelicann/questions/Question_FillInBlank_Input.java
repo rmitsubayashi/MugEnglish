@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 //we only have one blank per question
 //to make it easier for the user to solve
@@ -58,11 +58,22 @@ public class Question_FillInBlank_Input extends QuestionFragmentInterface {
         return questionInput.getText().toString();
     }
 
+    //used for fill in the blank questions
+    static String createBlank(String answer){
+        //just slightly bigger than the answer
+        int length = answer.length() + 1;
+        StringBuilder builder = new StringBuilder();
+        for (int i=0; i<length; i++){
+            builder.append("_");
+        }
+        return builder.toString();
+    }
+
     private void createQuestionLayout(){
         String question = questionData.getQuestion();
         String answer = questionData.getAnswer();
 
-        String blank = QuestionUtils.createBlank(answer);
+        String blank = createBlank(answer);
 
         //the blanks can either be text or numbers, but only one blank
         if (question.contains(FILL_IN_BLANK_NUMBER)){
@@ -80,7 +91,7 @@ public class Question_FillInBlank_Input extends QuestionFragmentInterface {
         int startIndex = question.indexOf('_');//Emoji haha
         int endIndex = question.lastIndexOf('_') + 1;
         ForegroundColorSpan colorSpan = new ForegroundColorSpan(
-                ApplicationThemeManager.getColorFromAttribute(R.attr.color700, getContext())
+                ThemeColorChanger.getColorFromAttribute(R.attr.color700, getContext())
         );
         stringBuilder.setSpan(colorSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
@@ -89,7 +100,7 @@ public class Question_FillInBlank_Input extends QuestionFragmentInterface {
 
 
         questionTextView.setText(
-                QuestionUtils.clickToSpeechTextViewSpannable(questionTextView, question, stringBuilder, textToSpeech)
+                TextToSpeechHelper.clickToSpeechTextViewSpannable(questionTextView, question, stringBuilder, textToSpeech)
         );
 
         //slightly larger than the answer
@@ -102,6 +113,6 @@ public class Question_FillInBlank_Input extends QuestionFragmentInterface {
 
     @Override
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
-        QuestionUtils.disableTextToSpeech(questionTextView);
+        TextToSpeechHelper.disableTextToSpeech(questionTextView);
     }
 }

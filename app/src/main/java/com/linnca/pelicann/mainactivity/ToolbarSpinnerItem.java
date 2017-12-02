@@ -1,10 +1,10 @@
-package com.linnca.pelicann.mainactivity.widgets;
+package com.linnca.pelicann.mainactivity;
 
 public class ToolbarSpinnerItem {
     private final String text;
     private final int imageID;
 
-    public ToolbarSpinnerItem(String text, int imageID) {
+    ToolbarSpinnerItem(String text, int imageID) {
         this.text = text;
         this.imageID = imageID;
     }
@@ -13,7 +13,7 @@ public class ToolbarSpinnerItem {
         return text;
     }
 
-    public int getImageID() {
+    int getImageID() {
         return imageID;
     }
 }

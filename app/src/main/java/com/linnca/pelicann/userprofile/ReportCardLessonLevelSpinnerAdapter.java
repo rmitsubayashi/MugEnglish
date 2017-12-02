@@ -12,13 +12,13 @@ import com.linnca.pelicann.R;
 
 import java.util.List;
 
-class CustomSpinnerAdapter extends ArrayAdapter<String> {
+class ReportCardLessonLevelSpinnerAdapter extends ArrayAdapter<String> {
 
     private final List<String> list;
     private final LayoutInflater layoutInflater;
 
-    CustomSpinnerAdapter(Activity context, List<String> list){
-        super(context, R.layout.inflatable_spinner_item, list);
+    ReportCardLessonLevelSpinnerAdapter(Activity context, List<String> list){
+        super(context, R.layout.inflatable_user_profile_report_card_lesson_level_spinner_item, list);
         layoutInflater = context.getLayoutInflater();
         this.list = list;
 
@@ -27,10 +27,10 @@ class CustomSpinnerAdapter extends ArrayAdapter<String> {
     @Override
     public @NonNull View getView(int position, View convertView, @NonNull ViewGroup parent){
         if (convertView == null){
-            convertView = layoutInflater.inflate(R.layout.inflatable_spinner_item, parent, false);
+            convertView = layoutInflater.inflate(R.layout.inflatable_user_profile_report_card_lesson_level_spinner_item, parent, false);
         }
 
-        TextView textView = convertView.findViewById(R.id.spinner_item_text);
+        TextView textView = convertView.findViewById(R.id.user_profile_report_card_spinner_item_text);
         String item = list.get(position);
         textView.setText(item);
 
@@ -40,10 +40,10 @@ class CustomSpinnerAdapter extends ArrayAdapter<String> {
     @Override
     public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent){
         if (convertView == null){
-            convertView = layoutInflater.inflate(R.layout.inflatable_spinner_item, parent, false);
+            convertView = layoutInflater.inflate(R.layout.inflatable_user_profile_report_card_lesson_level_spinner_item, parent, false);
         }
 
-        TextView textView = convertView.findViewById(R.id.spinner_item_text);
+        TextView textView = convertView.findViewById(R.id.user_profile_report_card_spinner_item_text);
         String item = list.get(position);
         textView.setText(item);
 

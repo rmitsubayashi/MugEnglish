@@ -1,6 +1,6 @@
 package com.linnca.pelicann.preferences;
 
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 public interface PreferencesListener {
     void updateTheme();

@@ -9,13 +9,13 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
+import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -57,7 +57,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     public COUNTRY_possessive_area_is_AREA(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
 
         super(connector, db, listener);
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
 
@@ -104,7 +104,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
 
-            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
+            countryID = WikiDataEntity.getWikiDataIDFromReturnedResult(countryID);
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String areaString = SPARQLDocumentParserHelper.findValueByNodeName(head, "area");
@@ -142,7 +142,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.countryID, qr.countryJP, vocabularyWords));
         }
 
     }
@@ -161,7 +161,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
     private String formatSentenceEN(QueryResult qr){
         String sentence = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "\'s area is " +
-                LessonGeneratorUtils.convertIntToStringWithCommas(qr.area) + " km².";
+                StringUtils.convertIntToStringWithCommas(qr.area) + " km².";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
@@ -204,7 +204,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
         String sentence1 = qr.countryJP + "の面積は" + Integer.toString(qr.area) + " km²です。";
 
         String sentence2 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
-                " is " + LessonGeneratorUtils.convertIntToStringWithCommas(qr.area) + " km².";
+                " is " + StringUtils.convertIntToStringWithCommas(qr.area) + " km².";
         return sentence1 + "\n\n" + GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
     }
 
@@ -235,7 +235,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
     private String fillInBlankInputQuestion2(QueryResult qr){
         String sentence1 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s area is " +
-                LessonGeneratorUtils.convertIntToWord(qr.area) + " km².";
+                StringUtils.convertIntToWord(qr.area) + " km².";
         String sentence2 = qr.countryJP + "の面積は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " km²です。";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence1) + "\n\n" + sentence2;
     }
@@ -291,7 +291,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     @Override
     protected List<List<String>> getGenericQuestionIDSets(){
         List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 1));
+        questionIDs.add(formatGenericQuestionID(KEY, 1));
         List<List<String>> questionSets = new ArrayList<>();
         questionSets.add(questionIDs);
         return questionSets;
@@ -300,7 +300,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     @Override
     protected List<QuestionData> getGenericQuestions(){
         List<QuestionData> questions = spellingQuestionGeneric();
-        String id1 = LessonGeneratorUtils.formatGenericQuestionID(KEY, 1);
+        String id1 = formatGenericQuestionID(KEY, 1);
         questions.get(0).setId(id1);
         return questions;
 

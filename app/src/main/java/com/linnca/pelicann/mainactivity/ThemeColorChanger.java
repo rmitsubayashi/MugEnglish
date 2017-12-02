@@ -10,7 +10,7 @@ import android.view.ContextThemeWrapper;
 
 import com.linnca.pelicann.R;
 
-public class ApplicationThemeManager {
+public class ThemeColorChanger {
     public static final int BLUE = 1;
     public static final int GREEN = 2;
     public static final int YELLOW = 3;

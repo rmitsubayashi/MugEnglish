@@ -10,7 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.lessongenerator.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Question_MultipleChoice extends QuestionFragmentInterface {
@@ -53,20 +55,20 @@ public class Question_MultipleChoice extends QuestionFragmentInterface {
     private void populateQuestion(){
         String question = questionData.getQuestion();
         questionTextView.setText(
-                QuestionUtils.clickToSpeechTextViewSpannable(questionTextView,question,new SpannableString(question), textToSpeech)
+                TextToSpeechHelper.clickToSpeechTextViewSpannable(questionTextView,question,new SpannableString(question), textToSpeech)
         );
     }
 
     @Override
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
-        QuestionUtils.disableTextToSpeech(questionTextView);
+        TextToSpeechHelper.disableTextToSpeech(questionTextView);
     }
 
     private void populateButtons(LayoutInflater inflater){
         //dynamically add buttons because
         //we may have multiple choice questions with 3 or 4 questions
         List<String> choices = questionData.getChoices();
-        QuestionUtils.shuffle(choices);
+        Collections.shuffle(choices);
 
         for (String choice : choices){
             Button choiceButton = (Button)inflater.
@@ -75,12 +77,12 @@ public class Question_MultipleChoice extends QuestionFragmentInterface {
             //for checking answer
             choiceButton.setTag(choice);
             choiceButton.setOnClickListener(getResponseListener());
-            if (QuestionUtils.isAlphanumeric(choice)) {
+            if (StringUtils.isAlphanumeric(choice)) {
                 final String fChoice = choice;
                 choiceButton.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        QuestionUtils.startTextToSpeech(textToSpeech, fChoice);
+                        TextToSpeechHelper.startTextToSpeech(textToSpeech, fChoice);
                         return true;
                     }
                 });

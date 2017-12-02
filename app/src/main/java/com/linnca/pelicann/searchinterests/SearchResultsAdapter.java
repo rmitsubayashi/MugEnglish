@@ -2,13 +2,12 @@ package com.linnca.pelicann.searchinterests;
 
 import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private final int VIEW_TYPE_LOADING = 5;
     private final int VIEW_TYPE_INITIAL = 6;
 
-    private List<WikiDataEntryData> results = new ArrayList<>();
+    private List<WikiDataEntity> results = new ArrayList<>();
     private final SearchResultsAdapterListener searchResultsAdapterListener;
 
     private boolean recommendationHeaderShown = false;
@@ -35,20 +34,20 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // when the user can load more recommendations
     private boolean recommendationFooterShown = false;
     private String headerLabel = "";
-    private WikiDataEntryData recommendationWikiDataEntryData;
+    private WikiDataEntity recommendationWikiDataEntity;
 
     //prevent fast double clicks on any of the buttons
     private long lastClickTime = 0;
 
     interface SearchResultsAdapterListener {
-        void onAddInterest(WikiDataEntryData data);
+        void onAddInterest(WikiDataEntity data);
         void onLoadMoreRecommendations();
     }
 
     SearchResultsAdapter(SearchResultsAdapterListener listener){
         searchResultsAdapterListener = listener;
         //initial state
-        WikiDataEntryData initialData = new WikiDataEntryData();
+        WikiDataEntity initialData = new WikiDataEntity();
         initialData.setWikiDataID(VIEW_TYPE_INITIAL_WIKIDATA_ID);
         results.add(initialData);
     }
@@ -63,7 +62,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position){
-        WikiDataEntryData data = results.get(position);
+        WikiDataEntity data = results.get(position);
         if (data.getWikiDataID().equals(VIEW_TYPE_RECOMMENDATION_HEADER_WIKIDATA_ID)){
             return VIEW_TYPE_RECOMMENDATION_HEADER;
         }
@@ -114,10 +113,10 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position){
         if (viewHolder instanceof SearchResultsViewHolder){
-            WikiDataEntryData data = results.get(position);
+            WikiDataEntity data = results.get(position);
             ((SearchResultsViewHolder) viewHolder).setLabel(data.getLabel());
             ((SearchResultsViewHolder) viewHolder).setDescription(data.getDescription());
-            final WikiDataEntryData fData = data;
+            final WikiDataEntity fData = data;
             ((SearchResultsViewHolder)viewHolder).setButtonListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -143,7 +142,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             });
         } else if (viewHolder instanceof SearchResultsEmptyStateViewHolder){
-            WikiDataEntryData data = results.get(position);
+            WikiDataEntity data = results.get(position);
             ((SearchResultsEmptyStateViewHolder) viewHolder).setQuery(data.getLabel());
         }
     }
@@ -152,7 +151,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // headers and footers
     int getSearchResultSize(){
         int resultCt = 0;
-        for (WikiDataEntryData data : results){
+        for (WikiDataEntity data : results){
             String wikiDataID = data.getWikiDataID();
             if (!wikiDataID.equals(VIEW_TYPE_LOADING_WIKIDATA_ID) &&
                     !wikiDataID.equals(VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID) &&
@@ -167,7 +166,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     boolean isLoading(){
         boolean isLoading = false;
-        for (WikiDataEntryData data : results){
+        for (WikiDataEntity data : results){
             if (data.getWikiDataID().equals(VIEW_TYPE_LOADING_WIKIDATA_ID)){
                 isLoading = true;
                 break;
@@ -177,7 +176,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     //a whole new set of data.
-    void updateEntries(List<WikiDataEntryData> newList){
+    void updateEntries(List<WikiDataEntity> newList){
         //animate footer/header removal
         if (recommendationHeaderShown){
             notifyItemRemoved(0);
@@ -192,7 +191,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    void showRecommendations(List<WikiDataEntryData> newList, boolean showFooter){
+    void showRecommendations(List<WikiDataEntity> newList, boolean showFooter){
         //if the header and footer is shown, that means we are already showing the user
         // recommendations. so, instead of refreshing a new set of recommendation,
         //insert the data so we can animate it better.
@@ -216,7 +215,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     //add to current data (animate)
-    private void moreRecommendations(List<WikiDataEntryData> newList, boolean showFooter){
+    private void moreRecommendations(List<WikiDataEntity> newList, boolean showFooter){
         //remove the header and footer views
         int prevListCt = results.size()-2;
         int newListCt = newList.size();
@@ -238,8 +237,8 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyItemRangeInserted(prevListCt+1, recommendationsAdded);
     }
 
-    void setRecommendationWikiDataEntryData(WikiDataEntryData data){
-        this.recommendationWikiDataEntryData = data;
+    void setRecommendationWikiDataEntity(WikiDataEntity data){
+        this.recommendationWikiDataEntity = data;
         headerLabel = data.getLabel();
         //to help with distinguishing between headers/footers shown
         //in more recommendations and headers/footers shown
@@ -248,14 +247,14 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         recommendationFooterShown = false;
     }
 
-    private void addHeaderData(List<WikiDataEntryData> data){
-        WikiDataEntryData headerPlaceHolder = new WikiDataEntryData();
+    private void addHeaderData(List<WikiDataEntity> data){
+        WikiDataEntity headerPlaceHolder = new WikiDataEntity();
         headerPlaceHolder.setWikiDataID(VIEW_TYPE_RECOMMENDATION_HEADER_WIKIDATA_ID);
         data.add(0, headerPlaceHolder);
     }
 
-    private void addFooterData(List<WikiDataEntryData> data){
-        WikiDataEntryData footerPlaceHolder = new WikiDataEntryData();
+    private void addFooterData(List<WikiDataEntity> data){
+        WikiDataEntity footerPlaceHolder = new WikiDataEntity();
         footerPlaceHolder.setWikiDataID(VIEW_TYPE_RECOMMENDATION_FOOTER_WIKIDATA_ID);
         data.add(footerPlaceHolder);
     }
@@ -263,7 +262,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private void removeFooter(){
         //remove only if the footer is shown
         if (recommendationFooterShown){
-            WikiDataEntryData footerView = results.get(results.size()-1);
+            WikiDataEntity footerView = results.get(results.size()-1);
             //just make sure the last item is a footer
             if (footerView.getWikiDataID().equals(VIEW_TYPE_RECOMMENDATION_FOOTER_WIKIDATA_ID)){
                 results.remove(results.size()-1);

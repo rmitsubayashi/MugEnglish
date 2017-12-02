@@ -5,8 +5,8 @@ import android.content.Context;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
+//used for a slower view pager
 class ScrollerCustomDuration extends Scroller {
-
     private double mScrollFactor = 1;
 
     public ScrollerCustomDuration(Context context) {

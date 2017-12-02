@@ -2,16 +2,15 @@ package com.linnca.pelicann.lessonlist;
 
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
 import java.util.Set;
@@ -137,7 +136,7 @@ class LessonListAdapter
     //debugging only
     private void addClearedLessonKey(String lessonKey){
         FirebaseDB db = new FirebaseDB();
-        db.addClearedLesson(userLessonListViewer.getLessonLevel(lessonKey), lessonKey, new OnResultListener() {
+        db.addClearedLesson(userLessonListViewer.getLessonLevel(lessonKey), lessonKey, new OnDBResultListener() {
             @Override
             public void onClearedLessonAdded(boolean firstTimeCleared) {
                 super.onClearedLessonAdded(firstTimeCleared);

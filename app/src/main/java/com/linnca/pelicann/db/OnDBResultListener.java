@@ -4,8 +4,8 @@ import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSet;
-import com.linnca.pelicann.results.NewVocabularyWrapper;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.results.ResultsVocabularyWord;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.userprofile.UserProfile_ReportCardDataWrapper;
 import com.linnca.pelicann.vocabulary.VocabularyListWord;
@@ -16,8 +16,8 @@ import org.joda.time.DateTime;
 import java.util.List;
 import java.util.Set;
 
-public abstract class OnResultListener {
-    public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntryData> userInterestsSearched){}
+public abstract class OnDBResultListener {
+    public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntity> userInterestsSearched){}
     //for each question set that we add
     public void onQuestionSetAdded(QuestionSet questionSet){}
     //once we are done adding all the question sets to the database
@@ -38,13 +38,13 @@ public abstract class OnResultListener {
     public void onVocabularyListQueried(List<VocabularyListWord> vocabularyList){}
     public void onVocabularyListItemsRemoved(){}
     public void onVocabularyWordAdded(){}
-    public void onLessonVocabularyQueried(List<NewVocabularyWrapper> words){}
+    public void onLessonVocabularyQueried(List<ResultsVocabularyWord> words){}
 
-    public void onUserInterestsQueried(List<WikiDataEntryData> userInterests){}
+    public void onUserInterestsQueried(List<WikiDataEntity> userInterests){}
     public void onUserInterestsAdded(){}
     public void onUserInterestsRemoved(){}
 
-    public void onUserInterestRankingsQueried(List<WikiDataEntryData> userInterests){}
+    public void onUserInterestRankingsQueried(List<WikiDataEntity> userInterests){}
 
     public void onClearedLessonsQueried(Set<String> clearedLessonKeys){}
     public void onClearedLessonAdded(boolean firstTimeCleared){}

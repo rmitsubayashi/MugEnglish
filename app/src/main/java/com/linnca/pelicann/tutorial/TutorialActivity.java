@@ -18,7 +18,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;

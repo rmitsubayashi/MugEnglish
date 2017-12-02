@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 import java.util.List;
 
@@ -97,7 +97,7 @@ class LessonListRowViewHolder extends RecyclerView.ViewHolder {
                 int colIconColor;
                 boolean colActive = colStatus == LessonListAdapter.STATUS_CLEARED || colStatus == LessonListAdapter.STATUS_ACTIVE;
                 if (colActive) {
-                    colTextColor = ApplicationThemeManager.getColorFromAttribute(colData.getColorID(), context);
+                    colTextColor = ThemeColorChanger.getColorFromAttribute(colData.getColorID(), context);
                     colIconColor = colTextColor;
                 }
                 /*

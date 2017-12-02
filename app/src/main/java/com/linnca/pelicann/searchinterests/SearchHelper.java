@@ -5,7 +5,7 @@ import android.os.Message;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,7 +75,7 @@ class SearchHelper {
             @Override
             public void onFetchDOM(Document result) {
                 NodeList resultNodes = result.getElementsByTagName(WikiDataAPISearchConnector.ENTITY_TAG);
-                List<WikiDataEntryData> searchResults = new ArrayList<>();
+                List<WikiDataEntity> searchResults = new ArrayList<>();
                 int nodeCt = resultNodes.getLength();
                 for (int i=0; i<nodeCt; i++){
                     Node n = resultNodes.item(i);
@@ -98,7 +98,7 @@ class SearchHelper {
                         }
 
                         //set pronunciation to label for now
-                        searchResults.add(new WikiDataEntryData(label, description, wikiDataID, label, WikiDataEntryData.CLASSIFICATION_NOT_SET));
+                        searchResults.add(new WikiDataEntity(label, description, wikiDataID, label, WikiDataEntity.CLASSIFICATION_NOT_SET));
                     }
                 }
                 //also check the most recent here.

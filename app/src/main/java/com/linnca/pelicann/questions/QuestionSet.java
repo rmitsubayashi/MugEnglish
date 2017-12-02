@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-//very similar to QuestionDataWrapper
+//very similar to QuestionSetData
 //except for that we only have the IDs,
 //not the actual data
 public class QuestionSet {

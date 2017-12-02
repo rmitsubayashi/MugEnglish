@@ -7,6 +7,8 @@ import android.view.animation.Interpolator;
 
 import java.lang.reflect.Field;
 
+//the Android view pager switches screens too quick,
+// so controlling the speed with a custom view pager
 public class ViewPagerCustomDuration extends ViewPager {
 
     public ViewPagerCustomDuration(Context context) {

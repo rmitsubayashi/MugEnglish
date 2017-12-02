@@ -8,7 +8,7 @@ import android.widget.Button;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 class LessonListReviewRowViewHolder extends RecyclerView.ViewHolder {
     private final Button button;
@@ -26,7 +26,7 @@ class LessonListReviewRowViewHolder extends RecyclerView.ViewHolder {
                     listener.lessonListToReview(lessonLevel, data.getKey());
                 }
             });
-            int color = ApplicationThemeManager.getColorFromAttribute(R.attr.colorAccent500, itemView.getContext());
+            int color = ThemeColorChanger.getColorFromAttribute(R.attr.colorAccent500, itemView.getContext());
             button.setTextColor(color);
         } else {
             button.setOnClickListener(null);

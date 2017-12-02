@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 public class ReviewResults extends Fragment {
     public static final String TAG = "ReviewResults";

@@ -15,8 +15,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
+import com.linnca.pelicann.lessongenerator.StringUtils;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,8 +120,7 @@ public class Question_Spelling extends QuestionFragmentInterface {
     private void populateGridButtons(LayoutInflater inflater){
         //first guarantee that all columns/rows will be populated.
         List<Integer> filledPositions = new ArrayList<>();
-        char[] letters = questionData.getAnswer().toCharArray();
-        QuestionUtils.shuffleArray(letters);
+        String shuffledLetters = StringUtils.shuffleString(questionData.getAnswer());
 
         int letterMkr = 0;
         Set<Integer> toFillY = new HashSet<>();
@@ -130,7 +130,7 @@ public class Question_Spelling extends QuestionFragmentInterface {
         //first the x position
         for (int x=0; x<rowCt; x++){
             int y = random.nextInt(columnCt);
-            char letter = letters[letterMkr];
+            char letter = shuffledLetters.charAt(letterMkr);
             addLetterButton(inflater, x, y, letter);
             letterMkr++;
             filledPositions.add(y + x * columnCt);
@@ -152,9 +152,9 @@ public class Question_Spelling extends QuestionFragmentInterface {
              * |_d_|___|
              * but for two letters, it's not significant
              * */
-            if (letterMkr >= letters.length)
+            if (letterMkr >= shuffledLetters.length())
                 break;
-            char letter = letters[letterMkr];
+            char letter = shuffledLetters.charAt(letterMkr);
             //these are guaranteed not to overlap another letter
             addLetterButton(inflater, x, y, letter);
 
@@ -173,7 +173,7 @@ public class Question_Spelling extends QuestionFragmentInterface {
 
         int answerLength = questionData.getAnswer().length();
         while (letterMkr < answerLength){
-            char letter = letters[letterMkr];
+            char letter = shuffledLetters.charAt(letterMkr);
             int toFillPosition = toFillPositions.get(toFillMkr);
             int x = toFillPosition / columnCt;
             int y = toFillPosition % columnCt;
@@ -186,15 +186,14 @@ public class Question_Spelling extends QuestionFragmentInterface {
         //random buttons to make predictions harder
         toFillPositions = toFillPositions.subList(toFillMkr, toFillPositions.size());
         int randomButtonCt = random.nextInt(toFillPositions.size());
-        QuestionUtils.populateRandomCharacterBasedOnProbability();
+        RandomCharacterGenerator randomCharacterGenerator = new RandomCharacterGenerator();
         for (int i=0; i<randomButtonCt; i++){
-            char letter = QuestionUtils.getRandomCharacterBasedOnProbability();
+            char letter = randomCharacterGenerator.getRandomCharacter();
             int toFillPosition = toFillPositions.get(i);
             int x = toFillPosition / columnCt;
             int y = toFillPosition % columnCt;
             addLetterButton(inflater, x, y, letter);
         }
-        QuestionUtils.clearRandomCharacters();
     }
 
     private void randomLetterButtonPlacement(Button button){
@@ -266,7 +265,7 @@ public class Question_Spelling extends QuestionFragmentInterface {
 
                 Button button = answerButtons.pop();
                 button.setEnabled(true);
-                button.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+                button.setTextColor(ThemeColorChanger.getColorFromAttribute(
                         R.attr.color500, getContext()));
                 answerText.deleteCharAt(answerText.length()-1);
                 answerTextView.setText(answerText.toString());
@@ -274,6 +273,7 @@ public class Question_Spelling extends QuestionFragmentInterface {
         });
 
     }
+
 
 
 }

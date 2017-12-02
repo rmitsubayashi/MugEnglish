@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Actions;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
@@ -49,7 +48,7 @@ public class I_turned_left_right extends Lesson {
         questions.addAll(multipleChoiceQuestion4);
         for (int i=0; i<6; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -61,7 +60,7 @@ public class I_turned_left_right extends Lesson {
         List<List<String>> questionSet = new ArrayList<>(6);
         for (int i=1; i<=6; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 

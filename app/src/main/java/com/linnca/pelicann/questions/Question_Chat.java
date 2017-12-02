@@ -57,7 +57,7 @@ public class Question_Chat extends QuestionFragmentInterface {
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
         //disable all tts listeners for the chat items
         for (TextView toDisable : chatItemTextViews){
-            QuestionUtils.disableTextToSpeech(toDisable);
+            TextToSpeechHelper.disableTextToSpeech(toDisable);
         }
         //add the answer chat item (to make it look like you responded)
         View answerChatItemView = getLayoutInflater().inflate(R.layout.inflatable_question_chat_item_user, chatItemsLayout, false);
@@ -77,6 +77,71 @@ public class Question_Chat extends QuestionFragmentInterface {
         chatBoxEditText.setText("");
     }
 
+    //util methods also used in multiple choice version
+    public static String formatQuestion(String from, List<ChatQuestionItem> chatItems){
+        StringBuilder question = new StringBuilder(from + "::");
+        for (ChatQuestionItem item : chatItems){
+            if (item.isUser()){
+                question.append("(u)");
+            } else {
+                question.append("(o)");
+            }
+            question.append(item.getText());
+        }
+
+        return question.toString();
+    }
+
+    public static List<ChatQuestionItem> getChatItemsFromString(String questionString){
+        List<ChatQuestionItem> chatItems = new ArrayList<>();
+        String[] split = questionString.split("::");
+        //shouldn't happen, but just in case
+        if (split.length < 2){
+            return chatItems;
+        }
+        String chatItemsString = split[1];
+        //we are assuming (u) or (o) is the first character
+        int stringMkr = 3;
+        boolean isUser = chatItemsString.substring(0, 3).equals("(u)");
+        while (true) {
+            //indexOf() returns first occurrence
+            int userChatItemIndex = chatItemsString.indexOf("(u)",stringMkr);
+            int otherChatItemIndex = chatItemsString.indexOf("(o)", stringMkr);
+            if (userChatItemIndex == -1 && otherChatItemIndex == -1){
+                String finalText = chatItemsString.substring(stringMkr, chatItemsString.length());
+                ChatQuestionItem finalItem = new ChatQuestionItem(isUser, finalText);
+                chatItems.add(finalItem);
+                break;
+            }
+            int nextChatItemIndex;
+            boolean tmpIsUser = isUser;
+            if (userChatItemIndex == -1){
+                nextChatItemIndex = otherChatItemIndex;
+                isUser = false;
+            } else if (otherChatItemIndex == -1){
+                nextChatItemIndex = userChatItemIndex;
+                isUser = true;
+            } else {
+                isUser = userChatItemIndex < otherChatItemIndex;
+                nextChatItemIndex = isUser ?
+                        userChatItemIndex : otherChatItemIndex;
+            }
+            String text = chatItemsString.substring(stringMkr, nextChatItemIndex);
+            ChatQuestionItem item = new ChatQuestionItem(tmpIsUser, text);
+            chatItems.add(item);
+            //we want to start from after the ')'
+            stringMkr = nextChatItemIndex + 3;
+        }
+
+        return chatItems;
+    }
+
+    //gets the person who sent the chat message
+    public static String getPersonFromString(String questionString){
+        int breakIndex = questionString.indexOf("::");
+        return questionString.substring(0, breakIndex);
+    }
+
     private void setActionListeners(){
         submitButton.setOnClickListener(getResponseListener());
     }
@@ -85,9 +150,9 @@ public class Question_Chat extends QuestionFragmentInterface {
         final int chatItemDisplayDelay = 200;
         chatBoxEditText.setEnabled(false);
         String question = questionData.getQuestion();
-        String from = QuestionUtils.getChatQuestionFrom(question);
+        String from = getPersonFromString(question);
         fromTextView.setText(from);
-        List<ChatQuestionItem> chatItems = QuestionUtils.getChatQuestionChatItems(question);
+        List<ChatQuestionItem> chatItems = getChatItemsFromString(question);
 
         chatItemTextViews = new ArrayList<>(chatItems.size());
         int chatItemCt = chatItems.size();
@@ -115,7 +180,7 @@ public class Question_Chat extends QuestionFragmentInterface {
             TextView messageTextView = chatItemLayout.findViewById(R.id.question_chat_item_message);
             messageTextView.setText(text);
             messageTextView.setText(
-                    QuestionUtils.clickToSpeechTextViewSpannable(messageTextView, text, new SpannableString(text), textToSpeech)
+                    TextToSpeechHelper.clickToSpeechTextViewSpannable(messageTextView, text, new SpannableString(text), textToSpeech)
             );
             chatItemTextViews.add(messageTextView);
             chatItemsLayout.postDelayed(new Runnable() {

@@ -45,7 +45,7 @@ public class FacebookInterestFinder {//extends IntentService{
             return;
         int depth = workIntent.getIntExtra("depth",SHALLOW_SEARCH);
         try {
-            Set<WikiDataEntryData> result = findUserInterests(depth);
+            Set<WikiDataEntity> result = findUserInterests(depth);
             addUserInterests(result);
         } catch (Exception e){
             e.printStackTrace();
@@ -54,10 +54,10 @@ public class FacebookInterestFinder {//extends IntentService{
         }
     }
 
-    private Set<WikiDataEntryData> findUserInterests(int depth) throws Exception{
+    private Set<WikiDataEntity> findUserInterests(int depth) throws Exception{
         searchDepth = depth;
 
-        Set<WikiDataEntryData> results = new HashSet<>();
+        Set<WikiDataEntity> results = new HashSet<>();
 
         //first search facebook for all interests
         AccessToken.refreshCurrentAccessTokenAsync();
@@ -80,21 +80,21 @@ public class FacebookInterestFinder {//extends IntentService{
         results.addAll(locationResult);
         //also checked-in places
 
-        for (WikiDataEntryData result : results){
+        for (WikiDataEntity result : results){
             Log.d(TAG,result.getLabel());
         }
 
         return results;
     }
 
-    private void addUserInterests(final Set<WikiDataEntryData> interests){
+    private void addUserInterests(final Set<WikiDataEntity> interests){
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.USER_INTERESTS + "/" + userID);
         ref.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
-                for (WikiDataEntryData interest : interests) {
+                for (WikiDataEntity interest : interests) {
                     //add
                     AddUserInterestHelper userInterestAdder = new AddUserInterestHelper();
                     userInterestAdder.findPronunciationAndCategoryThenAdd(interest);
@@ -148,7 +148,7 @@ public class FacebookInterestFinder {//extends IntentService{
      //
     //facebook query type is for when we query wikiData.
     //wikiData divides up the facebook ids into peoples/organizations and location id
-    private WikiDataEntryData findWikiDataEntry(String name, String facebookID, String facebookQueryType) throws Exception{
+    private WikiDataEntity findWikiDataEntry(String name, String facebookID, String facebookQueryType) throws Exception{
         //search facebook url first
         AccessToken.refreshCurrentAccessTokenAsync();
         String accessToken = AccessToken.getCurrentAccessToken().getToken();
@@ -160,7 +160,7 @@ public class FacebookInterestFinder {//extends IntentService{
         //so check both
         String facebookIDQuery = searchByFacebookIDQuery(facebookID, facebookQueryType);
         Document facebookIDResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(facebookIDQuery);
-        Set<WikiDataEntryData> facebookIDEntry = getEntriesFromSPARQL(facebookIDResults, "entry");
+        Set<WikiDataEntity> facebookIDEntry = getEntriesFromSPARQL(facebookIDResults, "entry");
         if (facebookIDEntry.size() != 0){
             //return first (and only) data if it exists
             return facebookIDEntry.iterator().next();
@@ -170,7 +170,7 @@ public class FacebookInterestFinder {//extends IntentService{
         facebookURL = stripOfficialSite(facebookURL);
         String facebookURLQuery = searchByFacebookIDQuery(facebookURL, facebookQueryType);
         Document facebookURLResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(facebookURLQuery);
-        Set<WikiDataEntryData> facebookURLEntry = getEntriesFromSPARQL(facebookURLResults, "entry");
+        Set<WikiDataEntity> facebookURLEntry = getEntriesFromSPARQL(facebookURLResults, "entry");
         if (facebookURLEntry.size() != 0){
             //return first (and only) data if it exists
             return facebookURLEntry.iterator().next();
@@ -182,7 +182,7 @@ public class FacebookInterestFinder {//extends IntentService{
             String officialSiteURL = pageInfo.getString("website");
             String officialSiteQuery = searchByOfficialSiteQuery(officialSiteURL);
             Document officialSiteResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(officialSiteQuery);
-            Set<WikiDataEntryData> officialSiteEntry = getEntriesFromSPARQL(officialSiteResults, "entry");
+            Set<WikiDataEntity> officialSiteEntry = getEntriesFromSPARQL(officialSiteResults, "entry");
             if (officialSiteEntry.size() != 0){
                 return officialSiteEntry.iterator().next();
             }
@@ -196,7 +196,7 @@ public class FacebookInterestFinder {//extends IntentService{
             }
             String alternateOfficialSiteQuery = searchByOfficialSiteQuery(alternateOfficialSiteURL);
             Document alternateOfficialSiteResults = wikiDataSPARQLConnector.fetchDOMFromGetRequest(alternateOfficialSiteQuery);
-            Set<WikiDataEntryData> alternateOfficialSiteEntry = getEntriesFromSPARQL(alternateOfficialSiteResults, "entry");
+            Set<WikiDataEntity> alternateOfficialSiteEntry = getEntriesFromSPARQL(alternateOfficialSiteResults, "entry");
             if (alternateOfficialSiteEntry.size() != 0){
                 return alternateOfficialSiteEntry.iterator().next();
             }
@@ -205,7 +205,7 @@ public class FacebookInterestFinder {//extends IntentService{
         //search name
         String[] paramsForNameSearch = {name,"1"};
         Document nameResults = wikiDataSearchConnector.fetchDOMFromGetRequest(paramsForNameSearch);
-        WikiDataEntryData nameEntity = getEntryFromSearchAPI(nameResults);
+        WikiDataEntity nameEntity = getEntryFromSearchAPI(nameResults);
         if (nameEntity != null){
             //we found a match
             return  nameEntity;
@@ -252,7 +252,7 @@ public class FacebookInterestFinder {//extends IntentService{
         return trimmedOfficialSite;
     }
 
-    private WikiDataEntryData getEntryFromSearchAPI(Document document){
+    private WikiDataEntity getEntryFromSearchAPI(Document document){
         NodeList resultNodes = document.getElementsByTagName("entity");
         //should return 0 or 1
         //since we set a limit of 1 to the query
@@ -277,7 +277,7 @@ public class FacebookInterestFinder {//extends IntentService{
                     description = e.getAttribute("description");
                 }
 
-                return new WikiDataEntryData(label, description, wikiDataID, label, WikiDataEntryData.CLASSIFICATION_NOT_SET);
+                return new WikiDataEntity(label, description, wikiDataID, label, WikiDataEntity.CLASSIFICATION_NOT_SET);
             }
         }
 
@@ -285,8 +285,8 @@ public class FacebookInterestFinder {//extends IntentService{
         return null;
     }
 
-    private Set<WikiDataEntryData> getEntriesFromSPARQL(Document document, String identifier){
-        Set<WikiDataEntryData> result = new HashSet<>();
+    private Set<WikiDataEntity> getEntriesFromSPARQL(Document document, String identifier){
+        Set<WikiDataEntity> result = new HashSet<>();
         NodeList resultNodes = document.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
         int nodeCt = resultNodes.getLength();
         for (int i=0; i<nodeCt; i++){
@@ -297,17 +297,17 @@ public class FacebookInterestFinder {//extends IntentService{
 
             String description = SPARQLDocumentParserHelper.findValueByNodeName(head, identifier + "Description");
             String id = SPARQLDocumentParserHelper.findValueByNodeName(head, identifier);
-            id = LessonGeneratorUtils.stripWikidataID(id);
+            id = WikiDataEntity.getWikiDataIDFromReturnedResult(id);
 
-            WikiDataEntryData data = new WikiDataEntryData(label, description, id, label, WikiDataEntryData.CLASSIFICATION_NOT_SET);
+            WikiDataEntity data = new WikiDataEntity(label, description, id, label, WikiDataEntity.CLASSIFICATION_NOT_SET);
             result.add(data);
         }
 
         return result;
     }
 
-    private Set<WikiDataEntryData> searchEducation(JSONObject jsonObject) throws Exception{
-        Set<WikiDataEntryData> result = new HashSet<>();
+    private Set<WikiDataEntity> searchEducation(JSONObject jsonObject) throws Exception{
+        Set<WikiDataEntity> result = new HashSet<>();
         if (jsonObject.has("education")) {
             JSONArray allSchools = jsonObject.getJSONArray("education");
             int schoolCt = allSchools.length();
@@ -319,7 +319,7 @@ public class FacebookInterestFinder {//extends IntentService{
                 JSONObject schoolGeneralInfo = school.getJSONObject("school");
                 String schoolName = schoolGeneralInfo.getString("name");
                 String schoolID = schoolGeneralInfo.getString("id");
-                WikiDataEntryData data = findWikiDataEntry(schoolName, schoolID, FACEBOOK_GENERAL_SEARCH);
+                WikiDataEntity data = findWikiDataEntry(schoolName, schoolID, FACEBOOK_GENERAL_SEARCH);
                 if (data != null) {
                     result.add(data);
                     sendWordToUI(data.getLabel());
@@ -340,10 +340,10 @@ public class FacebookInterestFinder {//extends IntentService{
                 } else {
                     incrementBy = totalIncrement / remainingResultCt;
                     //prevent concurrent modification
-                    Set<WikiDataEntryData> tempResults = new HashSet<>(result);
-                    for (WikiDataEntryData school : tempResults) {
+                    Set<WikiDataEntity> tempResults = new HashSet<>(result);
+                    for (WikiDataEntity school : tempResults) {
                         String schoolID = school.getWikiDataID();
-                        Set<WikiDataEntryData> deepResult = educationDeepSearch(schoolID);
+                        Set<WikiDataEntity> deepResult = educationDeepSearch(schoolID);
                         result.addAll(deepResult);
                         currentPercent += incrementBy;
                         sendProgressPercentToUI(currentPercent);
@@ -356,8 +356,8 @@ public class FacebookInterestFinder {//extends IntentService{
     }
 
 
-    private Set<WikiDataEntryData> educationDeepSearch(String wikiDataID) throws Exception{
-        Set<WikiDataEntryData> result = new HashSet<>();
+    private Set<WikiDataEntity> educationDeepSearch(String wikiDataID) throws Exception{
+        Set<WikiDataEntity> result = new HashSet<>();
         String query =
                 "SELECT DISTINCT ?namedAfterLabel ?foundedByLabel ?location1Label ?location2Label ?childrenSchoolsLabel ?parentSchoolLabel " +
                 "        ?namedAfterDescription ?foundedByDescription ?location1Description ?location2Description ?childrenSchoolsDescription ?parentSchoolDescription " +
@@ -380,12 +380,12 @@ public class FacebookInterestFinder {//extends IntentService{
 
 
         Document resultsDOM = wikiDataSPARQLConnector.fetchDOMFromGetRequest(query);
-        Set<WikiDataEntryData> namedAfter = getEntriesFromSPARQL(resultsDOM,"namedAfter");
-        Set<WikiDataEntryData> foundedBy = getEntriesFromSPARQL(resultsDOM,"foundedBy");
-        Set<WikiDataEntryData> location1 = getEntriesFromSPARQL(resultsDOM,"location1");
-        Set<WikiDataEntryData> location2 = getEntriesFromSPARQL(resultsDOM,"location2");
-        Set<WikiDataEntryData> childrenSchools = getEntriesFromSPARQL(resultsDOM,"childrenSchools");
-        Set<WikiDataEntryData> parentSchool = getEntriesFromSPARQL(resultsDOM,"parentSchool");
+        Set<WikiDataEntity> namedAfter = getEntriesFromSPARQL(resultsDOM,"namedAfter");
+        Set<WikiDataEntity> foundedBy = getEntriesFromSPARQL(resultsDOM,"foundedBy");
+        Set<WikiDataEntity> location1 = getEntriesFromSPARQL(resultsDOM,"location1");
+        Set<WikiDataEntity> location2 = getEntriesFromSPARQL(resultsDOM,"location2");
+        Set<WikiDataEntity> childrenSchools = getEntriesFromSPARQL(resultsDOM,"childrenSchools");
+        Set<WikiDataEntity> parentSchool = getEntriesFromSPARQL(resultsDOM,"parentSchool");
 
         result.addAll(namedAfter);
         result.addAll(foundedBy);
@@ -398,9 +398,9 @@ public class FacebookInterestFinder {//extends IntentService{
         return result;
     }
 
-    private Set<WikiDataEntryData> searchHometown(JSONObject jsonObject) throws Exception{
+    private Set<WikiDataEntity> searchHometown(JSONObject jsonObject) throws Exception{
         //only one hometown allowed on fb
-        Set<WikiDataEntryData> result = new HashSet<>();
+        Set<WikiDataEntity> result = new HashSet<>();
         if (jsonObject.has("hometown")) {
             JSONObject hometown = jsonObject.getJSONObject("hometown");
             String hometownName = hometown.getString("name");
@@ -412,7 +412,7 @@ public class FacebookInterestFinder {//extends IntentService{
             //   Manchester, United Kingdom
             String[] hometownNameParts = hometownName.split(", ");
             String hometownCity = hometownNameParts[0];
-            WikiDataEntryData data = findWikiDataEntry(hometownCity, hometownID, FACEBOOK_LOCATION_SEARCH);
+            WikiDataEntity data = findWikiDataEntry(hometownCity, hometownID, FACEBOOK_LOCATION_SEARCH);
             if (data != null) {
                 result.add(data);
                 sendWordToUI(data.getLabel());
@@ -425,7 +425,7 @@ public class FacebookInterestFinder {//extends IntentService{
 
             if (searchDepth == DEEP_SEARCH) {
                 if (result.size() == 1) {
-                    Set<WikiDataEntryData> deepData = cityDeepSearch(hometownID);
+                    Set<WikiDataEntity> deepData = cityDeepSearch(hometownID);
                     result.addAll(deepData);
                 }
                 currentPercent += incrementBy;
@@ -438,8 +438,8 @@ public class FacebookInterestFinder {//extends IntentService{
     }
 
     //used for all queries regarding cities
-    private Set<WikiDataEntryData> cityDeepSearch(String wikiDataID) throws Exception{
-        Set<WikiDataEntryData> result = new HashSet<>();
+    private Set<WikiDataEntity> cityDeepSearch(String wikiDataID) throws Exception{
+        Set<WikiDataEntity> result = new HashSet<>();
 
         String query =
                 "SELECT DISTINCT ?sharesBorderWithLabel ?inLabel ?sharesBorderWithDescription ?inDescription " +
@@ -457,8 +457,8 @@ public class FacebookInterestFinder {//extends IntentService{
                 "}";
 
         Document resultsDOM = wikiDataSPARQLConnector.fetchDOMFromGetRequest(query);
-        Set<WikiDataEntryData> sharesBorderWith = getEntriesFromSPARQL(resultsDOM, "sharesBorderWith");
-        Set<WikiDataEntryData> in = getEntriesFromSPARQL(resultsDOM, "in");
+        Set<WikiDataEntity> sharesBorderWith = getEntriesFromSPARQL(resultsDOM, "sharesBorderWith");
+        Set<WikiDataEntity> in = getEntriesFromSPARQL(resultsDOM, "in");
 
         result.addAll(sharesBorderWith);
         result.addAll(in);
@@ -467,9 +467,9 @@ public class FacebookInterestFinder {//extends IntentService{
 
     //looks like there is only one location??
     //the main current location can be fetched but not the past visited locations
-    private Set<WikiDataEntryData> searchLocation(JSONObject jsonObject) throws Exception{
+    private Set<WikiDataEntity> searchLocation(JSONObject jsonObject) throws Exception{
         //only one hometown allowed on fb
-        Set<WikiDataEntryData> result = new HashSet<>();
+        Set<WikiDataEntity> result = new HashSet<>();
         if (jsonObject.has("location")) {
             JSONObject location = jsonObject.getJSONObject("location");
             String locationName = location.getString("name");
@@ -481,7 +481,7 @@ public class FacebookInterestFinder {//extends IntentService{
             //   Manchester, United Kingdom
             String[] locationNameParts = locationName.split(", ");
             String locationCity = locationNameParts[0];
-            WikiDataEntryData data = findWikiDataEntry(locationCity, locationID, FACEBOOK_LOCATION_SEARCH);
+            WikiDataEntity data = findWikiDataEntry(locationCity, locationID, FACEBOOK_LOCATION_SEARCH);
             if (data != null) {
                 result.add(data);
                 sendWordToUI(data.getLabel());
@@ -495,7 +495,7 @@ public class FacebookInterestFinder {//extends IntentService{
 
             if (searchDepth == DEEP_SEARCH) {
                 if (result.size() == 1) {
-                    Set<WikiDataEntryData> deepData = cityDeepSearch(locationID);
+                    Set<WikiDataEntity> deepData = cityDeepSearch(locationID);
                     result.addAll(deepData);
                 }
                 currentPercent += incrementBy;

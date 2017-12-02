@@ -3,9 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
@@ -51,7 +49,7 @@ public class The_man_woman_reads_a_book extends Lesson {
         int questionCt = questions.size();
         for (int i=0; i<questionCt; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -63,7 +61,7 @@ public class The_man_woman_reads_a_book extends Lesson {
         List<List<String>> questionSet = new ArrayList<>();
         for (int i=1; i<=5; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -73,7 +71,7 @@ public class The_man_woman_reads_a_book extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(1);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "read"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "read"),
                 "read","読む","The man reads a book.","男は本を読みます。", KEY));
         return words;
     }
@@ -81,7 +79,7 @@ public class The_man_woman_reads_a_book extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(1);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "read"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "read"));
         return ids;
     }
 
@@ -157,7 +155,7 @@ public class The_man_woman_reads_a_book extends Lesson {
     }
 
     private String puzzlePiecesAnswer(){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces());
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces());
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(){

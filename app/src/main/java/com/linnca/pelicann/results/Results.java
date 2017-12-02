@@ -20,12 +20,12 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.UserLessonListViewer;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
 
@@ -141,9 +141,9 @@ public class Results extends Fragment {
         //this will update the UI if this is the user's first time clearing
         // the lesson
         resultsManager.clearLesson();
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
-            public void onLessonVocabularyQueried(List<NewVocabularyWrapper> words) {
+            public void onLessonVocabularyQueried(List<ResultsVocabularyWord> words) {
                 vocabularyLoading.post(new Runnable() {
                     @Override
                     public void run() {
@@ -159,13 +159,13 @@ public class Results extends Fragment {
                     });
                     return;
                 }
-                for (NewVocabularyWrapper word : words) {
+                for (ResultsVocabularyWord word : words) {
                     View view = createVocabularyItem(word);
                     vocabularyList.addView(view);
                 }
             }
         };
-        db.getLessonVocabulary(instanceRecord.getInstanceId(), onResultListener);
+        db.getLessonVocabulary(instanceRecord.getInstanceId(), onDBResultListener);
 
         boolean needToReview = false;
         //user needs to review if the user gets a question wrong
@@ -191,7 +191,7 @@ public class Results extends Fragment {
             //change the layout of the finish button to recommend review
             // (make it borderless)
             finishButton.setBackgroundResource(R.drawable.transparent_button);
-            finishButton.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+            finishButton.setTextColor(ThemeColorChanger.getColorFromAttribute(
                     R.attr.color500, getContext()));
             finishButton.setText(R.string.results_finish_review);
             finishButton.setOnClickListener(new View.OnClickListener() {
@@ -283,7 +283,7 @@ public class Results extends Fragment {
         }
     }
 
-    private View createVocabularyItem(final NewVocabularyWrapper vocabularyWrapper){
+    private View createVocabularyItem(final ResultsVocabularyWord vocabularyWrapper){
         View view = getLayoutInflater().inflate(R.layout.inflatable_result_vocabulary_item, vocabularyList, false);
         TextView wordView = view.findViewById(R.id.results_vocabulary_item_word);
         wordView.setText(vocabularyWrapper.getVocabularyWord().getWord());
@@ -294,14 +294,14 @@ public class Results extends Fragment {
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    OnResultListener onResultListener = new OnResultListener() {
+                    OnDBResultListener onDBResultListener = new OnDBResultListener() {
                         @Override
                         public void onVocabularyWordAdded() {
                             super.onVocabularyWordAdded();
                         }
                     };
                     //add vocabulary
-                    db.addVocabularyWord(vocabularyWrapper.getVocabularyWord(), onResultListener);
+                    db.addVocabularyWord(vocabularyWrapper.getVocabularyWord(), onDBResultListener);
                     //the user shouldn't be able to click the button anymore.
                     //this should be done immediately after, not
                     //after the vocabulary word has successfully been added

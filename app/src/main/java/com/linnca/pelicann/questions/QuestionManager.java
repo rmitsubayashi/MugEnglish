@@ -2,7 +2,7 @@ package com.linnca.pelicann.questions;
 
 
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 
 import java.util.ArrayList;
@@ -82,7 +82,7 @@ public class QuestionManager{
 		}
 		//next question
 		String questionID = lessonInstanceData.questionIdAt(questionMkr);
-		OnResultListener onResultListener = new OnResultListener() {
+		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
 			public void onQuestionQueried(QuestionData questionData) {
 				currentQuestionData = questionData;
@@ -90,7 +90,7 @@ public class QuestionManager{
 				questionMkr++;
 			}
 		};
-		db.getQuestion(questionID, onResultListener);
+		db.getQuestion(questionID, onDBResultListener);
 	}
 
 	public void saveResponse(String response, Boolean correct){

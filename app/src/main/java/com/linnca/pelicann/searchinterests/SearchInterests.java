@@ -9,7 +9,6 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -24,11 +23,11 @@ import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -51,7 +50,7 @@ public class SearchInterests extends Fragment {
     //increment when we want more rows
     private Integer currentRowCt = defaultRowCt;
     //so we can filter out user interests we don't need
-    private final List<WikiDataEntryData> userInterests = new ArrayList<>();
+    private final List<WikiDataEntity> userInterests = new ArrayList<>();
     //manages threads for searching
     private SearchHelper searchHelper;
     //helps get recommendations
@@ -144,9 +143,9 @@ public class SearchInterests extends Fragment {
     private void addSearchFunctionality(){
         //we want to allow searching after we grab the user's current interests
         //because we need to be able to filter out user interests the user already has
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
-            public void onUserInterestsQueried(List<WikiDataEntryData> queriedUserInterests) {
+            public void onUserInterestsQueried(List<WikiDataEntity> queriedUserInterests) {
                 userInterests.clear();
                 userInterests.addAll(queriedUserInterests);
                 list.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -171,9 +170,9 @@ public class SearchInterests extends Fragment {
                             lock.lock();
                             try {
                                 if (adapter.getSearchResultSize() == 0 && !adapter.isLoading()) {
-                                    WikiDataEntryData loadingData = new WikiDataEntryData();
+                                    WikiDataEntity loadingData = new WikiDataEntity();
                                     loadingData.setWikiDataID(adapter.VIEW_TYPE_LOADING_WIKIDATA_ID);
-                                    List<WikiDataEntryData> dataList = new ArrayList<>(1);
+                                    List<WikiDataEntity> dataList = new ArrayList<>(1);
                                     dataList.add(loadingData);
                                     adapter.updateEntries(dataList);
                                 }
@@ -194,7 +193,7 @@ public class SearchInterests extends Fragment {
                 db.cleanup();
             }
         };
-        db.getUserInterests(onResultListener);
+        db.getUserInterests(onDBResultListener);
     }
 
 
@@ -202,8 +201,8 @@ public class SearchInterests extends Fragment {
     private SearchResultsAdapter.SearchResultsAdapterListener getSearchResultsAdapterListener(){
         return new SearchResultsAdapter.SearchResultsAdapterListener() {
             @Override
-            public void onAddInterest(final WikiDataEntryData data) {
-                OnResultListener onResultListener = new OnResultListener() {
+            public void onAddInterest(final WikiDataEntity data) {
+                OnDBResultListener onDBResultListener = new OnDBResultListener() {
                     @Override
                     public void onUserInterestsAdded() {
                         //log event
@@ -229,7 +228,7 @@ public class SearchInterests extends Fragment {
 
                         //give the data to the adapter
                         // so it can give feedback to teh user
-                        adapter.setRecommendationWikiDataEntryData(data);
+                        adapter.setRecommendationWikiDataEntity(data);
                         //get recommendations for the user
                         recommendationGetter.getNewRecommendations(userInterests,
                                 getRecommendationGetterListener());
@@ -237,9 +236,9 @@ public class SearchInterests extends Fragment {
                 };
 
                 //we are only adding one, but the method can handle more than one
-                List<WikiDataEntryData> dataList = new ArrayList<>(1);
+                List<WikiDataEntity> dataList = new ArrayList<>(1);
                 dataList.add(data);
-                db.addUserInterests(dataList, onResultListener);
+                db.addUserInterests(dataList, onDBResultListener);
             }
 
             @Override
@@ -253,7 +252,7 @@ public class SearchInterests extends Fragment {
     private RecommendationGetter.RecommendationGetterListener getRecommendationGetterListener(){
         return new RecommendationGetter.RecommendationGetterListener() {
             @Override
-            public void onGetRecommendations(List<WikiDataEntryData> results, boolean showLoadMoreButton) {
+            public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 adapter.showRecommendations(results, showLoadMoreButton);
                 /*if (!showLoadMoreButton){
                     adapter.removeFooter();
@@ -269,11 +268,11 @@ public class SearchInterests extends Fragment {
         return new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message inputMessage){
-                List<WikiDataEntryData> result;
+                List<WikiDataEntity> result;
                 try {
                     //I catch the class cast exception but Android Studio
                     // still shows the unchecked cast warning??
-                    result = (List<WikiDataEntryData>) inputMessage.obj;
+                    result = (List<WikiDataEntity>) inputMessage.obj;
                 } catch (ClassCastException e){
                     e.printStackTrace();
                     return;
@@ -299,7 +298,7 @@ public class SearchInterests extends Fragment {
                         removeWikiNewsArticlePages(result);
                         //display empty state if the results are empty
                         if (result.size() == 0) {
-                            WikiDataEntryData emptyState = new WikiDataEntryData();
+                            WikiDataEntity emptyState = new WikiDataEntity();
                             emptyState.setWikiDataID(adapter.VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID);
                             emptyState.setLabel(query);
                             result.add(emptyState);
@@ -317,9 +316,9 @@ public class SearchInterests extends Fragment {
         };
     }
 
-    private void removeWikiNewsArticlePages(List<WikiDataEntryData> result){
-        for (Iterator<WikiDataEntryData> iterator = result.iterator(); iterator.hasNext();){
-            WikiDataEntryData data = iterator.next();
+    private void removeWikiNewsArticlePages(List<WikiDataEntity> result){
+        for (Iterator<WikiDataEntity> iterator = result.iterator(); iterator.hasNext();){
+            WikiDataEntity data = iterator.next();
             String description = data.getDescription();
             //not sure if these cover every case
             if (description != null &&
@@ -331,9 +330,9 @@ public class SearchInterests extends Fragment {
         }
     }
 
-    private void removeDisambiguationPages(List<WikiDataEntryData> result){
-        for (Iterator<WikiDataEntryData> iterator = result.iterator(); iterator.hasNext();){
-            WikiDataEntryData data = iterator.next();
+    private void removeDisambiguationPages(List<WikiDataEntity> result){
+        for (Iterator<WikiDataEntity> iterator = result.iterator(); iterator.hasNext();){
+            WikiDataEntity data = iterator.next();
             String description = data.getDescription();
             //not sure if these cover every case
             if (description != null &&

@@ -14,10 +14,10 @@ import android.view.ViewGroup;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
 import java.util.Set;
@@ -101,7 +101,7 @@ public class LessonList extends Fragment {
     }
 
     private void populateLessonList(final int lessonLevel){
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
                 LessonListViewer lessonListViewer = new LessonListViewerImplementation();
@@ -119,7 +119,7 @@ public class LessonList extends Fragment {
                 }
             }
         };
-        db.getClearedLessons(lessonLevel, true, onResultListener);
+        db.getClearedLessons(lessonLevel, true, onDBResultListener);
     }
 
     @Override

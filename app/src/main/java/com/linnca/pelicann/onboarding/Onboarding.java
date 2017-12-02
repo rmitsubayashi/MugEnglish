@@ -18,11 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.userinterestcontrols.StarterPacks;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class Onboarding extends AppCompatActivity {
         for (int i = 0; i < indicators.size(); i++) {
             indicators.get(i).setColorFilter(
                     i == position ?
-                            ApplicationThemeManager.getColorFromAttribute(
+                            ThemeColorChanger.getColorFromAttribute(
                                     R.attr.colorAccent500, this):
                     ContextCompat.getColor(this, R.color.gray500)
             );
@@ -126,8 +126,8 @@ public class Onboarding extends AppCompatActivity {
     }
 
     private void addStarterPack(int starterPackSelection){
-        List<WikiDataEntryData> list = StarterPacks.getStarterPack(starterPackSelection);
-        db.addUserInterests(list, new OnResultListener() {
+        List<WikiDataEntity> list = StarterPacks.getStarterPack(starterPackSelection);
+        db.addUserInterests(list, new OnDBResultListener() {
             @Override
             public void onUserInterestsAdded() {
                 super.onUserInterestsAdded();

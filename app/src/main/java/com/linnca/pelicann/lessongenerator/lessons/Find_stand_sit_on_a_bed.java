@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Actions;
 import com.linnca.pelicann.questions.Question_MultipleChoice;
@@ -48,7 +47,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         questions.addAll(actionQuestion);
         for (int i=0; i<5; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -60,7 +59,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         List<List<String>> questionSet = new ArrayList<>(5);
         for (int i=1; i<=5; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -70,13 +69,13 @@ public class Find_stand_sit_on_a_bed extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(4);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "bed"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "bed"),
                 "bed","ベッド","Sit on the bed.","ベッドに座ってください", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "find"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "find"),
                 "find","探す","Find a bed.","ベッドを探してください", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "sit"),
                 "sit","座る","Sit on the bed.","ベッドに座ってください", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "stand"),
                 "stand","立つ","Stand on the bed.","ベッドの上で立ってください", KEY));
         return words;
     }
@@ -84,10 +83,10 @@ public class Find_stand_sit_on_a_bed extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(4);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "find"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "bed"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "stand"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "sit"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "find"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "bed"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "stand"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "sit"));
         return ids;
     }
 

@@ -7,12 +7,11 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -56,7 +55,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
     public The_DEMONYM_flag_is_COLORS(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.lessonKey = KEY;
         populateColors();
     }
@@ -105,7 +104,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
-            countryID = LessonGeneratorUtils.stripWikidataID(countryID);
+            countryID = WikiDataEntity.getWikiDataIDFromReturnedResult(countryID);
             String colorEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "colorEN");
             String colorJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "colorLabel");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
@@ -141,7 +140,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
             List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
             questionSet.add(fillInBlankInputQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.countryID, qr.countryJP, new ArrayList<VocabularyWord>()));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.countryID, qr.countryJP, new ArrayList<VocabularyWord>()));
         }
 
     }

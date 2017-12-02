@@ -9,7 +9,7 @@ import com.linnca.pelicann.R;
 
 //holder for user interest list cells
 class UserInterestViewHolder  extends RecyclerView.ViewHolder {
-    private WikiDataEntryData wikiDataEntryData;
+    private WikiDataEntity wikiDataEntity;
     private final TextView label;
     private final TextView description;
     private final ImageView icon;
@@ -42,13 +42,13 @@ class UserInterestViewHolder  extends RecyclerView.ViewHolder {
             return;
         }
         switch (classification){
-            case WikiDataEntryData.CLASSIFICATION_PERSON:
+            case WikiDataEntity.CLASSIFICATION_PERSON:
                 icon.setImageResource(R.drawable.ic_person);
                 break;
-            case WikiDataEntryData.CLASSIFICATION_PLACE:
+            case WikiDataEntity.CLASSIFICATION_PLACE:
                 icon.setImageResource(R.drawable.ic_places);
                 break;
-            case WikiDataEntryData.CLASSIFICATION_OTHER:
+            case WikiDataEntity.CLASSIFICATION_OTHER:
                 icon.setImageResource(R.drawable.ic_other);
                 break;
             default:
@@ -56,12 +56,12 @@ class UserInterestViewHolder  extends RecyclerView.ViewHolder {
         }
     }
 
-    void setWikiDataEntryData(WikiDataEntryData data){
-        this.wikiDataEntryData = data;
+    void setWikiDataEntity(WikiDataEntity data){
+        this.wikiDataEntity = data;
     }
 
-    public WikiDataEntryData getWikiDataEntryData(){
-        return this.wikiDataEntryData;
+    public WikiDataEntity getWikiDataEntity(){
+        return this.wikiDataEntity;
     }
 
 }

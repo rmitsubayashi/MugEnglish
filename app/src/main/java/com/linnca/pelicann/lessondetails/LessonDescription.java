@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.ArrayList;
 

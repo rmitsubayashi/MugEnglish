@@ -1,25 +1,25 @@
 package com.linnca.pelicann.tutorial;
 
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.io.Serializable;
 
 public class OnboardingPersonBundle implements Serializable {
-    private final WikiDataEntryData data;
+    private final WikiDataEntity data;
     private int gender;
     private String englishName = "";
     private String japaneseName = "";
     public static final int GENDER_MALE = 1;
     public static final int GENDER_FEMALE = 2;
 
-    public OnboardingPersonBundle(WikiDataEntryData data, int gender, String englishName, String japaneseName){
+    public OnboardingPersonBundle(WikiDataEntity data, int gender, String englishName, String japaneseName){
         this.data = data;
         this.englishName = englishName;
         this.japaneseName = japaneseName;
         this.gender = gender;
     }
 
-    public WikiDataEntryData getData() {
+    public WikiDataEntity getData() {
         return data;
     }
 

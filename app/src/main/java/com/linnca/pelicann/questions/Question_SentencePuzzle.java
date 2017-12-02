@@ -16,6 +16,7 @@ import com.linnca.pelicann.R;
 
 import org.apmem.tools.layouts.FlowLayout;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -47,14 +48,14 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
 
         //arbitrary values
         if (choicesLength > 60){
-            buttonLayout = R.layout.inflatable_question_puzzle_piece_choice_small;
+            buttonLayout = R.layout.inflatable_question_sentence_puzzle_puzzle_piece_small;
         } else if (choicesLength > 40){
             //if there's a large piece, more likely to create unneeded rows
             if (maxChoiceLength > 15){
-                buttonLayout = R.layout.inflatable_question_puzzle_piece_choice_small;
+                buttonLayout = R.layout.inflatable_question_sentence_puzzle_puzzle_piece_small;
             }
         } else {
-            buttonLayout = R.layout.inflatable_question_puzzle_piece_choice;
+            buttonLayout = R.layout.inflatable_question_sentence_puzzle_puzzle_piece;
         }
     }
 
@@ -100,6 +101,18 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
         return answer;
     }
 
+    public static String formatAnswer(List<String> choices){
+        StringBuilder answer = new StringBuilder("");
+        for (String choice : choices){
+            answer.append(choice);
+            answer.append("|");
+        }
+
+        String answerString = answer.substring(0, answer.length()-1);
+
+        return answerString;
+    }
+
     //no need to enable text to speech because this will always be Japanese??
     private void populateQuestion(){
         questionTextView.setText(questionData.getQuestion());
@@ -108,7 +121,7 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
 
     private void createChoiceButtons(final LayoutInflater inflater){
         List<String> choices = questionData.getChoices();
-        QuestionUtils.shuffle(choices);
+        Collections.shuffle(choices);
 
 
         //creating a new button every time is expensive?
@@ -188,7 +201,7 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
                     answerButton.setOnLongClickListener(new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View view) {
-                            QuestionUtils.startTextToSpeech(textToSpeech, answerText);
+                            TextToSpeechHelper.startTextToSpeech(textToSpeech, answerText);
                             return true;
                         }
                     });
@@ -205,7 +218,7 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
             choiceButton.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    QuestionUtils.startTextToSpeech(textToSpeech, choice);
+                    TextToSpeechHelper.startTextToSpeech(textToSpeech, choice);
                     return true;
                 }
             });

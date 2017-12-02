@@ -7,13 +7,11 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -46,7 +44,7 @@ public class NAME_writes_books extends Lesson{
     public NAME_writes_books(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
     }
@@ -79,7 +77,7 @@ public class NAME_writes_books extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
-            personID = LessonGeneratorUtils.stripWikidataID(personID);
+            personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             QueryResult qr = new QueryResult(personID, personEN, personJP);
@@ -102,7 +100,7 @@ public class NAME_writes_books extends Lesson{
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
@@ -140,7 +138,7 @@ public class NAME_writes_books extends Lesson{
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){

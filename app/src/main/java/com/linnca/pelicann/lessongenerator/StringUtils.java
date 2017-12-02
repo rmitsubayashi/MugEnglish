@@ -1,16 +1,13 @@
 package com.linnca.pelicann.lessongenerator;
 
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
-public class LessonGeneratorUtils {
-    public static String stripWikidataID(String str){
-        int lastIndexID = str.lastIndexOf('/');
-        return str.substring(lastIndexID+1);
-    }
-
+public final class StringUtils {
     //for converting ints to words
     private static final String[] specialNames = {
             "thousand",
@@ -259,12 +256,22 @@ public class LessonGeneratorUtils {
         return false;
     }
 
-    public static String formatGenericQuestionID(String lessonKey, int questionNumber){
-        return lessonKey + "_generic" + Integer.toString(questionNumber);
+    //there is no inherent method to shuffle an array
+    public static String shuffleString(String str){
+        char[] stringArray = str.toCharArray();
+        Random random = new Random(System.currentTimeMillis());
+        //Fisher-Yates
+        int startIndex = stringArray.length-1;
+        for (int i=startIndex; i>0; i--){
+            int shuffleToIndex = random.nextInt(i+1);
+            char temp = stringArray[i];
+            stringArray[i] = stringArray[shuffleToIndex];
+            stringArray[shuffleToIndex] = temp;
+        }
+        return String.valueOf(stringArray);
     }
 
-    public static String formatGenericQuestionVocabularyID(String lessonKey, String word){
-        word = word.replaceAll(" ", "_");
-        return lessonKey + "_generic_" + word;
+    public static boolean isAlphanumeric(String str){
+        return StandardCharsets.US_ASCII.newEncoder().canEncode(str);
     }
 }

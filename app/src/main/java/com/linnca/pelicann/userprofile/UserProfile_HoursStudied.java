@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 
 import org.joda.time.DateTime;
@@ -46,7 +46,7 @@ public class UserProfile_HoursStudied extends Fragment {
     }
 
     private void setCalendarMinMax(){
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onFirstAppUsageDateQueried(DateTime date) {
                 calendarView.setMin(date);
@@ -54,7 +54,7 @@ public class UserProfile_HoursStudied extends Fragment {
                 calendarView.setMax(now);
             }
         };
-        db.getFirstAppUsageDate(onResultListener);
+        db.getFirstAppUsageDate(onDBResultListener);
     }
 
     private void setUsageDataForCurrentMonth(){
@@ -73,13 +73,13 @@ public class UserProfile_HoursStudied extends Fragment {
         String prevKey = AppUsageLog.formatKey(prevMonth, prevYear);
         String nextKey = AppUsageLog.formatKey(nextMonth, nextYear);
 
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onAppUsageForMonthsQueried(List<AppUsageLog> logs) {
                 calendarView.setUsageData(logs, initial);
             }
         };
-        db.getAppUsageForMonths(prevKey, nextKey, onResultListener);
+        db.getAppUsageForMonths(prevKey, nextKey, onDBResultListener);
     }
 
     private void setCalendarListeners(){

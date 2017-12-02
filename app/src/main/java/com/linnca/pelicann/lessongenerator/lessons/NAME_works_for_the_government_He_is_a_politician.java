@@ -8,14 +8,13 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -55,7 +54,7 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
     public NAME_works_for_the_government_He_is_a_politician(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 3;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
     }
@@ -90,11 +89,11 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
-            personID = LessonGeneratorUtils.stripWikidataID(personID);
+            personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String genderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "gender");
-            genderID = LessonGeneratorUtils.stripWikidataID(genderID);
+            genderID = WikiDataEntity.getWikiDataIDFromReturnedResult(genderID);
             boolean isMale;
             switch (genderID){
                 case "Q6581097":
@@ -127,7 +126,7 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
@@ -305,7 +304,7 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
         List<List<String>> set = new ArrayList<>(3);
         for (int index=1; index<=3; index++){
             List<String> questionIDs = new ArrayList<>(1);
-            questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, index));
+            questionIDs.add(formatGenericQuestionID(KEY, index));
             set.add(questionIDs);
         }
         return set;
@@ -322,7 +321,7 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
         questions.addAll(toSaveSet3);
         int questionSize = questions.size();
         for (int i=1; i<= questionSize; i++){
-            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i);
+            String id = formatGenericQuestionID(KEY, i);
             questions.get(i-1).setId(id);
         }
 

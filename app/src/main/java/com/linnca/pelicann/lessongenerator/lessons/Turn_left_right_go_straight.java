@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Actions;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
@@ -46,7 +45,7 @@ public class Turn_left_right_go_straight extends Lesson {
         questions.addAll(actionQuestion);
         for (int i=0; i<4; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -58,7 +57,7 @@ public class Turn_left_right_go_straight extends Lesson {
         List<List<String>> questionSet = new ArrayList<>(4);
         for (int i=1; i<=4; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -68,15 +67,15 @@ public class Turn_left_right_go_straight extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(5);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "turn"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "turn"),
                 "turn","曲がる","Turn left.","左折してください。", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "left"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "left"),
                 "left","左","Turn left.","左折してください。", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "right"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "right"),
                 "right","右","Turn right.","右折してください。", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "straight"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "straight"),
                 "straight","まっすぐ","Go straight.","まっすぐに行ってください。", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "go"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "go"),
                 "go","行く","Go straight.","まっすぐに行ってください。", KEY));
         return words;
     }
@@ -84,11 +83,11 @@ public class Turn_left_right_go_straight extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(5);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "turn"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "left"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "right"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "go"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "straight"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "turn"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "left"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "right"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "go"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "straight"));
         return ids;
     }
 

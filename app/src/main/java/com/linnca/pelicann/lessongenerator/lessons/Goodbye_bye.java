@@ -3,10 +3,9 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.Question_Chat;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -44,7 +43,7 @@ public class Goodbye_bye extends Lesson {
         int questionCt = questions.size();
         for (int i=0; i<questionCt; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -56,7 +55,7 @@ public class Goodbye_bye extends Lesson {
         List<List<String>> questionSet = new ArrayList<>();
         for (int i=1; i<=4; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -66,9 +65,9 @@ public class Goodbye_bye extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "bye"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "bye"),
                 "bye","さようなら","Bye!","さようなら！", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "goodbye"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "goodbye"),
                 "goodbye","さようなら","Goodbye!","さようなら！", KEY));
         return words;
     }
@@ -76,8 +75,8 @@ public class Goodbye_bye extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(2);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "bye"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "goodbye"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "bye"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "goodbye"));
         return ids;
     }
 
@@ -96,7 +95,7 @@ public class Goodbye_bye extends Lesson {
             List<ChatQuestionItem> chatItems = new ArrayList<>(2);
             chatItems.add(chatItem1);
             chatItems.add(answerItem);
-            data.setQuestion(QuestionUtils.formatChatQuestion("無名", chatItems));
+            data.setQuestion(Question_Chat.formatQuestion("無名", chatItems));
             data.setChoices(choices());
             data.setAnswer(answer);
             List<String> alternateAnswers = choices();

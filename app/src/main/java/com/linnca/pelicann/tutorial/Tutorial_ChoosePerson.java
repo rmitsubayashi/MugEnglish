@@ -19,9 +19,8 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.mainactivity.GUIUtils;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -135,7 +134,7 @@ public class Tutorial_ChoosePerson extends Fragment {
             String searchName = params[0];
             WikiDataAPISearchConnector searchConnector = new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE);
             List<OnboardingPersonBundle> result = new ArrayList<>();
-            List<WikiDataEntryData> searchResult = null;
+            List<WikiDataEntity> searchResult = null;
             /*try {
                 searchResult = entitySearcher.search(searchName, EntitySearcher.LIMIT);
             } catch (Exception e){
@@ -145,7 +144,7 @@ public class Tutorial_ChoosePerson extends Fragment {
 
             WikiDataSPARQLConnector connector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
             //check if human
-            for ( WikiDataEntryData data : searchResult ){
+            for ( WikiDataEntity data : searchResult ){
                 String wikiDataID = data.getWikiDataID();
                 String query = formatQuery(wikiDataID);
                 List<String> queryList = new ArrayList<>(searchResult.size());
@@ -162,7 +161,7 @@ public class Tutorial_ChoosePerson extends Fragment {
                         );
                         Node head = allResults.item(0);
                         String genderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "gender");
-                        genderID = LessonGeneratorUtils.stripWikidataID(genderID);
+                        genderID = WikiDataEntity.getWikiDataIDFromReturnedResult(genderID);
                         int gender = OnboardingPersonBundle.getGender(genderID);
                         String englishNameLabel = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabelEN");
                         String japaneseNameLabel = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");

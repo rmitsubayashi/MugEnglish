@@ -3,7 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
+import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TranslateWord;
@@ -46,7 +46,7 @@ public class Numbers_hundred_billion extends Lesson {
         int questionCt = questions.size();
         for (int i=0; i<questionCt; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -77,7 +77,7 @@ public class Numbers_hundred_billion extends Lesson {
         List<List<String>> questionSet = new ArrayList<>();
         for (Integer i : ids) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -92,7 +92,7 @@ public class Numbers_hundred_billion extends Lesson {
         for (int i=0; i<4; i++) {
             String word = wordList.get(i);
             String translation = translationList.get(i);
-            words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word),
+            words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, word),
                     word, translation, "", "", KEY));
         }
         return words;
@@ -103,7 +103,7 @@ public class Numbers_hundred_billion extends Lesson {
         List<String> ids =new ArrayList<>(4);
         List<String> wordList = english();
         for (String word : wordList) {
-            ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word));
+            ids.add(formatGenericQuestionVocabularyID(lessonKey, word));
         }
         return ids;
     }
@@ -170,26 +170,26 @@ public class Numbers_hundred_billion extends Lesson {
 
     private List<String> getRandomNumberWords(){
         List<String> numberStrings = new ArrayList<>(20);
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(12000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(739));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(220090));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(30000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(1000000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(44444));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(2100000000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(8008));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(650000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(1212));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(900));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(500000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(10001));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(70095));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(400600));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(300000000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(1000000000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(23000));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(1111));
-        numberStrings.add(LessonGeneratorUtils.convertIntToWord(100034));
+        numberStrings.add(StringUtils.convertIntToWord(12000));
+        numberStrings.add(StringUtils.convertIntToWord(739));
+        numberStrings.add(StringUtils.convertIntToWord(220090));
+        numberStrings.add(StringUtils.convertIntToWord(30000));
+        numberStrings.add(StringUtils.convertIntToWord(1000000));
+        numberStrings.add(StringUtils.convertIntToWord(44444));
+        numberStrings.add(StringUtils.convertIntToWord(2100000000));
+        numberStrings.add(StringUtils.convertIntToWord(8008));
+        numberStrings.add(StringUtils.convertIntToWord(650000));
+        numberStrings.add(StringUtils.convertIntToWord(1212));
+        numberStrings.add(StringUtils.convertIntToWord(900));
+        numberStrings.add(StringUtils.convertIntToWord(500000));
+        numberStrings.add(StringUtils.convertIntToWord(10001));
+        numberStrings.add(StringUtils.convertIntToWord(70095));
+        numberStrings.add(StringUtils.convertIntToWord(400600));
+        numberStrings.add(StringUtils.convertIntToWord(300000000));
+        numberStrings.add(StringUtils.convertIntToWord(1000000000));
+        numberStrings.add(StringUtils.convertIntToWord(23000));
+        numberStrings.add(StringUtils.convertIntToWord(1111));
+        numberStrings.add(StringUtils.convertIntToWord(100034));
 
         return numberStrings;
     }

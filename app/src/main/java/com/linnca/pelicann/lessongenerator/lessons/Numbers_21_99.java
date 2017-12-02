@@ -3,7 +3,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
+import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
@@ -43,7 +43,7 @@ public class Numbers_21_99 extends Lesson {
         int questionCt = questions.size();
         for (int i=0; i<questionCt; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -66,7 +66,7 @@ public class Numbers_21_99 extends Lesson {
         List<List<String>> questionSet = new ArrayList<>();
         for (Integer i : ids) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -77,7 +77,7 @@ public class Numbers_21_99 extends Lesson {
         List<QuestionData> questions = new ArrayList<>(79);
         for (int i=21; i<=99; i++) {
             QuestionData data = new QuestionData();
-            String answer = LessonGeneratorUtils.convertIntToWord(i);
+            String answer = StringUtils.convertIntToWord(i);
             //also accept twenty two (not just twenty-two)
             String acceptableAnswer = answer.replace("-", " ");
             List<String> acceptableAnswers = new ArrayList<>(1);
@@ -100,7 +100,7 @@ public class Numbers_21_99 extends Lesson {
         List<QuestionData> questions = new ArrayList<>(79);
         for (int i=21; i<=99; i++) {
             QuestionData data = new QuestionData();
-            String answer = LessonGeneratorUtils.convertIntToWord(i);
+            String answer = StringUtils.convertIntToWord(i);
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);

@@ -8,13 +8,12 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -59,7 +58,7 @@ public class PLACE_is_a_country_city extends Lesson {
     public PLACE_is_a_country_city(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
 
         super(connector, db, listener);
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PLACE;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 5;
         super.lessonKey = KEY;
 
@@ -103,7 +102,7 @@ public class PLACE_is_a_country_city extends Lesson {
             Node head = allResults.item(i);
             String placeID = SPARQLDocumentParserHelper.findValueByNodeName(head, "place");
 
-            placeID = LessonGeneratorUtils.stripWikidataID(placeID);
+            placeID = WikiDataEntity.getWikiDataIDFromReturnedResult(placeID);
             String placeEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "placeEN");
             String placeJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "placeLabel");
             String cityOrCountryString = SPARQLDocumentParserHelper.findValueByNodeName(head, "instance");
@@ -135,7 +134,7 @@ public class PLACE_is_a_country_city extends Lesson {
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.placeID, qr.placeJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.placeID, qr.placeJP, vocabularyWords));
         }
 
     }
@@ -293,7 +292,7 @@ public class PLACE_is_a_country_city extends Lesson {
         List<QuestionData> toSave1 = createTranslateQuestionGeneric();
         int toSave1Size = toSave1.size();
         while (index <= toSave1Size){
-            questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, index));
+            questionIDs.add(formatGenericQuestionID(KEY, index));
             index++;
         }
         List<List<String>> questionSets = new ArrayList<>();
@@ -303,7 +302,7 @@ public class PLACE_is_a_country_city extends Lesson {
         List<QuestionData> toSave2 = createTranslateQuestionGeneric2();
         int toSave2Size = toSave2.size() + index - 1;
         while (index <= toSave2Size){
-            questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, index));
+            questionIDs.add(formatGenericQuestionID(KEY, index));
             index++;
         }
         questionSets.add(questionIDs);
@@ -316,14 +315,14 @@ public class PLACE_is_a_country_city extends Lesson {
         List<QuestionData> toSaveSet1 = createTranslateQuestionGeneric();
         int set1Size = toSaveSet1.size();
         for (int i=1; i<= set1Size; i++){
-            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i);
+            String id = formatGenericQuestionID(KEY, i);
             toSaveSet1.get(i-1).setId(id);
             questions.add(toSaveSet1.get(i-1));
         }
         List<QuestionData> toSaveSet2 = createTranslateQuestionGeneric2();
         int set2Size = toSaveSet2.size();
         for (int i=1; i<=set2Size; i++){
-            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i+set1Size);
+            String id = formatGenericQuestionID(KEY, i+set1Size);
             toSaveSet2.get(i-1).setId(id);
             questions.add(toSaveSet2.get(i-1));
         }

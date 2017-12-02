@@ -1,4 +1,4 @@
-package com.linnca.pelicann.mainactivity.widgets;
+package com.linnca.pelicann.mainactivity;
 
 public class ToolbarState {
     private String title;
@@ -24,7 +24,7 @@ public class ToolbarState {
         this.title = title;
     }
 
-    public boolean searchIconVisible() {
+    boolean searchIconVisible() {
         return searchIcon;
     }
 
@@ -32,7 +32,7 @@ public class ToolbarState {
         this.searchIcon = visible;
     }
 
-    public boolean spinnerVisible() {
+    boolean spinnerVisible() {
         return spinner;
     }
 
@@ -40,7 +40,7 @@ public class ToolbarState {
         this.spinner = spinner;
     }
 
-    public String getDescriptionLessonKey() {
+    String getDescriptionLessonKey() {
         return descriptionLessonKey;
     }
 

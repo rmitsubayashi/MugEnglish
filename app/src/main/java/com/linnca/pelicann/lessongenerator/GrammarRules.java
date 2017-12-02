@@ -6,7 +6,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GrammarRules {
+public final class GrammarRules {
+	private GrammarRules(){}
 	
 	public static String uppercaseFirstLetterOfSentence(String sentence){
 		char firstChar = sentence.charAt(0);

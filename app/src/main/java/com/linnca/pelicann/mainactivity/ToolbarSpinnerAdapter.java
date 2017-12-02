@@ -1,4 +1,4 @@
-package com.linnca.pelicann.mainactivity.widgets;
+package com.linnca.pelicann.mainactivity;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -21,7 +21,7 @@ public class ToolbarSpinnerAdapter extends ArrayAdapter<ToolbarSpinnerItem> {
 
     private final List<ToolbarSpinnerItem> list;
     private final LayoutInflater layoutInflater;
-    public ToolbarSpinnerAdapter(Activity context, List<ToolbarSpinnerItem> list){
+    ToolbarSpinnerAdapter(Activity context, List<ToolbarSpinnerItem> list){
         super(context, R.layout.inflatable_toolbar_spinner_top_item, list);
         layoutInflater = context.getLayoutInflater();
         this.list = list;

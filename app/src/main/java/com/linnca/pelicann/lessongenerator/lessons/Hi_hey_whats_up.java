@@ -4,10 +4,8 @@ import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionUtils;
 import com.linnca.pelicann.questions.Question_Chat;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -45,7 +43,7 @@ public class Hi_hey_whats_up extends Lesson {
         int questionCt = questions.size();
         for (int i=0; i<questionCt; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -57,7 +55,7 @@ public class Hi_hey_whats_up extends Lesson {
         List<List<String>> questionSet = new ArrayList<>();
         for (int i=1; i<=6; i++) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -67,11 +65,11 @@ public class Hi_hey_whats_up extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(3);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hi"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "hi"),
                 "hi","こんにちは","Hi!","こんにちは！", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hey"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "hey"),
                 "hey","こんにちは","Hey!","こんにちは！", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "what\'s up"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "what\'s up"),
                 "what\'s up","こんにちは","What\'s up!","こんにちは！", KEY));
         return words;
     }
@@ -79,9 +77,9 @@ public class Hi_hey_whats_up extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(3);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hi"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "hey"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "what\'s up"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "hi"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "hey"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "what\'s up"));
         return ids;
     }
 
@@ -100,7 +98,7 @@ public class Hi_hey_whats_up extends Lesson {
             List<ChatQuestionItem> chatItems = new ArrayList<>(2);
             chatItems.add(chatItem1);
             chatItems.add(answerItem);
-            data.setQuestion(QuestionUtils.formatChatQuestion("無名", chatItems));
+            data.setQuestion(Question_Chat.formatQuestion("無名", chatItems));
             data.setChoices(choices());
             data.setAnswer(answer);
             List<String> alternateAnswers = choices();
@@ -143,7 +141,7 @@ public class Hi_hey_whats_up extends Lesson {
             List<ChatQuestionItem> chatItems = new ArrayList<>(2);
             chatItems.add(chatItem1);
             chatItems.add(answerItem);
-            data.setQuestion(QuestionUtils.formatChatQuestion("無名", chatItems));
+            data.setQuestion(Question_Chat.formatQuestion("無名", chatItems));
             data.setChoices(choices());
             data.setAnswer(answer);
             List<String> alternateAnswers = choices();

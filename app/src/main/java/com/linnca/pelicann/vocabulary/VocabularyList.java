@@ -20,10 +20,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -104,7 +104,7 @@ public class VocabularyList extends Fragment {
 
     private void populateList(){
         listView.setLayoutManager(new LinearLayoutManager(getContext()));
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onVocabularyListQueried(List<VocabularyListWord> vocabularyList) {
                 //alphabetical order
@@ -113,7 +113,7 @@ public class VocabularyList extends Fragment {
                 listView.setAdapter(adapter);
             }
         };
-        db.getVocabularyList(onResultListener);
+        db.getVocabularyList(onDBResultListener);
     }
 
     private VocabularyListAdapter.VocabularyListAdapterListener getVocabularyListAdapterListener(){
@@ -179,7 +179,7 @@ public class VocabularyList extends Fragment {
                 actionMode = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                     getActivity().getWindow().setStatusBarColor(
-                            ApplicationThemeManager.getColorFromAttribute(
+                            ThemeColorChanger.getColorFromAttribute(
                                     R.attr.color700, getContext())
                     );
                 }
@@ -208,13 +208,13 @@ public class VocabularyList extends Fragment {
             String key = word.getKey();
             keys.add(key);
         }
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onVocabularyListItemsRemoved() {
                 //show the undo bar
             }
         };
-        db.removeVocabularyListItems(keys, onResultListener);
+        db.removeVocabularyListItems(keys, onDBResultListener);
     }
 
     @Override

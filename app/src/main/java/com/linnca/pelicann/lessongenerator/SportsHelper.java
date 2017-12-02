@@ -6,6 +6,7 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.connectors.WikipediaConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -107,7 +108,7 @@ public class SportsHelper {
 					String url = SPARQLDocumentParserHelper.findValueByNodeName(n, "sitelink");
 					int lastIndexURL = url.lastIndexOf('/');
 					url = url.substring(lastIndexURL+1);
-					final String id = LessonGeneratorUtils.stripWikidataID(
+					final String id = WikiDataEntity.getWikiDataIDFromReturnedResult(
 							SPARQLDocumentParserHelper.findValueByNodeName(n, "sport")
 					);
 					//decide verb

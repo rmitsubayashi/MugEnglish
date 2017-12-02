@@ -7,14 +7,12 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -53,7 +51,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
     public TEAM_is_a_SPORT_team(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 4;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_OTHER;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_OTHER;
         super.lessonKey = KEY;
 
     }
@@ -89,7 +87,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String teamID = SPARQLDocumentParserHelper.findValueByNodeName(head, "team");
-            teamID = LessonGeneratorUtils.stripWikidataID(teamID);
+            teamID = WikiDataEntity.getWikiDataIDFromReturnedResult(teamID);
             String teamEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "teamEN");
             String teamJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "teamLabel");
             String sportEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "sportEN");
@@ -115,7 +113,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.teamID, qr.teamJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.teamID, qr.teamJP, vocabularyWords));
         }
 
     }
@@ -155,7 +153,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){

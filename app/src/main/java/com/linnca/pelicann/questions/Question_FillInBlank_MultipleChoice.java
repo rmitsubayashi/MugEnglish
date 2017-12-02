@@ -13,8 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.lessongenerator.StringUtils;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterface {
@@ -57,13 +59,13 @@ public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterfa
 
     @Override
     protected void doSomethingOnFeedbackOpened(boolean correct, String response){
-        QuestionUtils.disableTextToSpeech(questionTextView);
+        TextToSpeechHelper.disableTextToSpeech(questionTextView);
     }
 
     private void populateQuestion(){
         String question = questionData.getQuestion();
         String answer = questionData.getAnswer();
-        String blank = QuestionUtils.createBlank(answer);
+        String blank = Question_FillInBlank_Input.createBlank(answer);
         question = question.replace(FILL_IN_BLANK_MULTIPLE_CHOICE, blank);
         //color underline.
         //same code in fill in blank input
@@ -71,7 +73,7 @@ public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterfa
         int startIndex = question.indexOf('_');//Emoji haha
         int endIndex = question.lastIndexOf('_') + 1;
         ForegroundColorSpan colorSpan = new ForegroundColorSpan(
-                ApplicationThemeManager.getColorFromAttribute(
+                ThemeColorChanger.getColorFromAttribute(
                         R.attr.color700, getContext())
         );
         stringBuilder.setSpan(colorSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -80,7 +82,7 @@ public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterfa
         stringBuilder.setSpan(boldSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
         questionTextView.setText(
-                QuestionUtils.clickToSpeechTextViewSpannable(
+                TextToSpeechHelper.clickToSpeechTextViewSpannable(
                         questionTextView, question, stringBuilder, textToSpeech)
         );
     }
@@ -89,7 +91,7 @@ public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterfa
         //dynamically add buttons because
         //we may have multiple choice questions with 3 or 4 questions
         List<String> choices = questionData.getChoices();
-        QuestionUtils.shuffle(choices);
+        Collections.shuffle(choices);
 
         for (String choice : choices){
             Button choiceButton = (Button)inflater.
@@ -99,12 +101,12 @@ public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterfa
             choiceButton.setTag(choice);
             choiceButton.setOnClickListener(getResponseListener());
 
-            if (QuestionUtils.isAlphanumeric(choice)) {
+            if (StringUtils.isAlphanumeric(choice)) {
                 final String fChoice = choice;
                 choiceButton.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
-                        QuestionUtils.startTextToSpeech(textToSpeech, fChoice);
+                        TextToSpeechHelper.startTextToSpeech(textToSpeech, fChoice);
                         return true;
                     }
                 });

@@ -7,16 +7,15 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionSetData;
+import com.linnca.pelicann.questions.Question_Chat;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -57,7 +56,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
     public Hello_my_name_is_NAME_I_am_a_OCCUPATION(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
     }
@@ -99,7 +98,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
-            personID = LessonGeneratorUtils.stripWikidataID(personID);
+            personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String firstNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameEN");
@@ -128,7 +127,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
             List<QuestionData> chooseCorrectSpellingQuestion = createChooseCorrectSpellingQuestion(qr);
             questionSet.add(chooseCorrectSpellingQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
@@ -148,7 +147,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
         chatItems.add(chatItem2);
         chatItems.add(chatItem3);
         chatItems.add(chatItem4);
-        String question = QuestionUtils.formatChatQuestion(from, chatItems);
+        String question = Question_Chat.formatQuestion(from, chatItems);
         String answer = qr.occupationEN;
         List<String> choices = new ArrayList<>(1);
         choices.add(answer);
@@ -181,7 +180,7 @@ public class Hello_my_name_is_NAME_I_am_a_OCCUPATION extends Lesson{
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){

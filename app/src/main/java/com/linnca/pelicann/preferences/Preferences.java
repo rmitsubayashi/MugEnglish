@@ -11,13 +11,10 @@ import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 import com.takisoft.fix.support.v7.preference.EditTextPreference;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Preferences extends PreferenceFragmentCompat {
     public static final String TAG = "Preferences";
@@ -129,9 +126,9 @@ public class Preferences extends PreferenceFragmentCompat {
         listPreference.setEntries(listEntries);
 
         String[] listValues = new String[3];
-        listValues[0] = Integer.toString(ApplicationThemeManager.BLUE);
-        listValues[1] = Integer.toString(ApplicationThemeManager.GREEN);
-        listValues[2] = Integer.toString(ApplicationThemeManager.YELLOW);
+        listValues[0] = Integer.toString(ThemeColorChanger.BLUE);
+        listValues[1] = Integer.toString(ThemeColorChanger.GREEN);
+        listValues[2] = Integer.toString(ThemeColorChanger.YELLOW);
         listPreference.setEntryValues(listValues);
 
     }

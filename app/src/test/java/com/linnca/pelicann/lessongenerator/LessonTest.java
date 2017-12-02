@@ -1,7 +1,7 @@
 package com.linnca.pelicann.lessongenerator;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.db.MockFirebaseDB;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.lessons.Goodbye_bye;
@@ -9,7 +9,7 @@ import com.linnca.pelicann.lessongenerator.lessons.Hello_my_name_is_NAME;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSet;
 import com.linnca.pelicann.questions.Question_TrueFalse;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +81,7 @@ public class LessonTest {
         Lesson.LessonListener lessonListener = new Lesson.LessonListener() {
             @Override
             public void onLessonCreated() {
-                OnResultListener onResultListener = new OnResultListener() {
+                OnDBResultListener onDBResultListener = new OnDBResultListener() {
                     @Override
                     public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
                         Lesson lesson = LessonFactory.parseLesson(Goodbye_bye.KEY, null, db, null);
@@ -102,7 +102,7 @@ public class LessonTest {
                         assertFalse(noMatch);
                     }
                 };
-                db.getLessonInstances(Goodbye_bye.KEY, false, onResultListener);
+                db.getLessonInstances(Goodbye_bye.KEY, false, onDBResultListener);
             }
         };
         Lesson lessonWithOnlyGenericQuestions = LessonFactory.parseLesson(Goodbye_bye.KEY, null, db, lessonListener);
@@ -112,9 +112,9 @@ public class LessonTest {
     @Test
     public void lessonWithDynamicQuestions_createInstanceWithUserInterests_shouldSaveQuestionSetsInDatabase(){
         //adding user interests for lesson generation
-        List<WikiDataEntryData> userInterests = new ArrayList<>(2);
-        userInterests.add(new WikiDataEntryData("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntryData.CLASSIFICATION_PERSON));
-        userInterests.add(new WikiDataEntryData("バラク・オバマ ", "desc", "Q76", "ばらくおばま", WikiDataEntryData.CLASSIFICATION_PERSON));
+        List<WikiDataEntity> userInterests = new ArrayList<>(2);
+        userInterests.add(new WikiDataEntity("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntity.CLASSIFICATION_PERSON));
+        userInterests.add(new WikiDataEntity("バラク・オバマ ", "desc", "Q76", "ばらくおばま", WikiDataEntity.CLASSIFICATION_PERSON));
         db.userInterests = userInterests;
 
         //the query returns a result with 'person', 'personEN', and 'personLabel'
@@ -166,9 +166,9 @@ public class LessonTest {
     @Test
     public void lessonWithDynamicQuestions_createInstanceWithUserInterests_shouldCreateOneLessonInstance(){
         //adding user interests for lesson generation
-        List<WikiDataEntryData> userInterests = new ArrayList<>(2);
-        userInterests.add(new WikiDataEntryData("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntryData.CLASSIFICATION_PERSON));
-        userInterests.add(new WikiDataEntryData("バラク・オバマ ", "desc", "Q76", "ばらくおばま", WikiDataEntryData.CLASSIFICATION_PERSON));
+        List<WikiDataEntity> userInterests = new ArrayList<>(2);
+        userInterests.add(new WikiDataEntity("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntity.CLASSIFICATION_PERSON));
+        userInterests.add(new WikiDataEntity("バラク・オバマ ", "desc", "Q76", "ばらくおばま", WikiDataEntity.CLASSIFICATION_PERSON));
         db.userInterests = userInterests;
 
         //the query returns a result with 'person', 'personEN', and 'personLabel'
@@ -219,9 +219,9 @@ public class LessonTest {
     @Test
     public void lessonWithDynamicQuestions_createInstanceWithUserInterests_lessonInstanceShouldHaveDynamicQuestions(){
         //adding user interests for lesson generation
-        List<WikiDataEntryData> userInterests = new ArrayList<>(2);
-        userInterests.add(new WikiDataEntryData("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntryData.CLASSIFICATION_PERSON));
-        userInterests.add(new WikiDataEntryData("バラク・オバマ ", "desc", "Q76", "ばらくおばま", WikiDataEntryData.CLASSIFICATION_PERSON));
+        List<WikiDataEntity> userInterests = new ArrayList<>(2);
+        userInterests.add(new WikiDataEntity("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntity.CLASSIFICATION_PERSON));
+        userInterests.add(new WikiDataEntity("バラク・オバマ ", "desc", "Q76", "ばらくおばま", WikiDataEntity.CLASSIFICATION_PERSON));
         db.userInterests = userInterests;
 
         //the query returns a result with 'person', 'personEN', and 'personLabel'
@@ -349,8 +349,8 @@ public class LessonTest {
     @Test
     public void lessonWithDynamicQuestions_createInstanceWithOneUserInterest_lessonShouldBeCreatedWithUserInterestAndRandomQuestions(){
         //adding one user interest for lesson generation
-        List<WikiDataEntryData> userInterests = new ArrayList<>(2);
-        userInterests.add(new WikiDataEntryData("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntryData.CLASSIFICATION_PERSON));
+        List<WikiDataEntity> userInterests = new ArrayList<>(2);
+        userInterests.add(new WikiDataEntity("安倍晋三", "desc", "Q132345", "あべしんぞう", WikiDataEntity.CLASSIFICATION_PERSON));
         db.userInterests = userInterests;
         //adding preset data
         List<List<String>> questionSet1 = new ArrayList<>(1);

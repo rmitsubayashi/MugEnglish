@@ -1,6 +1,5 @@
 package com.linnca.pelicann.searchinterests;
 
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -9,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 class SearchResultsEmptyStateViewHolder extends RecyclerView.ViewHolder {
     private final TextView titleTextView;
@@ -28,7 +27,7 @@ class SearchResultsEmptyStateViewHolder extends RecyclerView.ViewHolder {
                     itemView.getContext().getString(R.string.search_interests_empty_state_title, query)
             );
             //highlight the query to make it easier to see
-            spannableString.setSpan(new ForegroundColorSpan(ApplicationThemeManager.getColorFromAttribute(
+            spannableString.setSpan(new ForegroundColorSpan(ThemeColorChanger.getColorFromAttribute(
                     R.attr.colorAccent500, itemView.getContext())),
                     1, query.length()+1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             titleTextView.setText(spannableString);

@@ -28,7 +28,7 @@ import android.widget.Spinner;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
@@ -37,10 +37,6 @@ import com.linnca.pelicann.lessongenerator.LessonFactory;
 import com.linnca.pelicann.lessonlist.LessonList;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerItem;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
 import com.linnca.pelicann.preferences.PreferencesListener;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.InstanceReviewManager;
@@ -118,14 +114,14 @@ public class MainActivity extends AppCompatActivity implements
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //list preferences can only store string arrays
         String themeString = preferences.getString(getString(R.string.preferences_general_themeColor_key),
-                Integer.toString(ApplicationThemeManager.BLUE));
+                Integer.toString(ThemeColorChanger.BLUE));
         int theme;
         try {
             theme = Integer.parseInt(themeString);
         } catch (ClassCastException e){
-            theme = ApplicationThemeManager.BLUE;
+            theme = ThemeColorChanger.BLUE;
         }
-        ApplicationThemeManager.setTheme(this, theme);
+        ThemeColorChanger.setTheme(this, theme);
 
         setContentView(R.layout.activity_main);
 
@@ -478,22 +474,22 @@ public class MainActivity extends AppCompatActivity implements
                 //we won't need a reference to the review manager anymore
                 lessonsReviewManager = null;
                 //mark the review lesson as cleared
-                OnResultListener clearLessonOnResultListener = new OnResultListener() {
+                OnDBResultListener clearLessonOnDBResultListener = new OnDBResultListener() {
                     @Override
                     public void onClearedLessonAdded(boolean firstTimeCleared) {
                         super.onClearedLessonAdded(firstTimeCleared);
                     }
                 };
-                db.addClearedLesson(lessonLevel, reviewID, clearLessonOnResultListener);
+                db.addClearedLesson(lessonLevel, reviewID, clearLessonOnDBResultListener);
                 //the user will never need the review again,
                 // so remove the review questions we stored in the database
-                OnResultListener removeReviewOnResultListener = new OnResultListener() {
+                OnDBResultListener removeReviewOnDBResultListener = new OnDBResultListener() {
                     @Override
                     public void onReviewQuestionsRemoved() {
                         super.onReviewQuestionsRemoved();
                     }
                 };
-                db.removeReviewQuestions(removeReviewOnResultListener);
+                db.removeReviewQuestions(removeReviewOnDBResultListener);
 
                 if (textToSpeech != null){
                     textToSpeech.shutdown();

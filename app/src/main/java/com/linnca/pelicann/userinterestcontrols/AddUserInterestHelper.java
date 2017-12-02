@@ -8,8 +8,8 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.questions.QuestionUtils;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.lessongenerator.StringUtils;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +31,7 @@ public class AddUserInterestHelper {
     private final Database db = new FirebaseDB();
     private final WikiBaseEndpointConnector wikiBaseEndpointConnector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
 
-    public void addPronunciation(WikiDataEntryData dataToAdd){
+    public void addPronunciation(WikiDataEntity dataToAdd){
         if (dataToAdd == null) {
             return;
         }
@@ -46,7 +46,7 @@ public class AddUserInterestHelper {
             // pronunciation so leave it in English so we can order in English.
 
             //is in English, so don't do anything
-            if (QuestionUtils.isAlphanumeric(pronunciation)){
+            if (StringUtils.isAlphanumeric(pronunciation)){
                 return;
             } else {
                 //we want all the pronunciation to be in hiragana so we can order
@@ -63,7 +63,7 @@ public class AddUserInterestHelper {
 
     }
 
-    public void addClassification(WikiDataEntryData dataToAdd){
+    public void addClassification(WikiDataEntity dataToAdd){
         if (dataToAdd == null)
             return;
 
@@ -97,9 +97,9 @@ public class AddUserInterestHelper {
                     // the place query.
                     String isPerson = SPARQLDocumentParserHelper.findValueByNodeName(allResults.item(0), "person");
                     if (isPerson != null){
-                        db.setClassification(dataID, WikiDataEntryData.CLASSIFICATION_PERSON);
+                        db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_PERSON);
                     } else {
-                        db.setClassification(dataID, WikiDataEntryData.CLASSIFICATION_PLACE);
+                        db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_PLACE);
                     }
                     matched.getAndSet(true);
                 }
@@ -111,7 +111,7 @@ public class AddUserInterestHelper {
                     if (!matched.get()){
                         //check if we found a match.
                         //if no match, set the classification to other
-                        db.setClassification(dataID, WikiDataEntryData.CLASSIFICATION_OTHER);
+                        db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_OTHER);
                     }
                 }
             }

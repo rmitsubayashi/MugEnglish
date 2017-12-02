@@ -22,8 +22,8 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.GUIUtils;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.ArrayList;
 import java.util.List;

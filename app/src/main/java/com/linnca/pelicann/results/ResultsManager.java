@@ -1,9 +1,7 @@
 package com.linnca.pelicann.results;
 
-import android.util.Log;
-
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 import com.linnca.pelicann.lessonlist.UserLessonListViewer;
@@ -35,37 +33,37 @@ class ResultsManager {
 
     void saveInstanceRecord(){
         //save the whole instance record
-        final OnResultListener instanceRecordOnResultListener = new OnResultListener() {
+        final OnDBResultListener instanceRecordOnDBResultListener = new OnDBResultListener() {
             @Override
             public void onInstanceRecordAdded(String generatedRecordKey) {
                 super.onInstanceRecordAdded(generatedRecordKey);
             }
         };
-        db.addInstanceRecord(instanceRecord, instanceRecordOnResultListener);
+        db.addInstanceRecord(instanceRecord, instanceRecordOnDBResultListener);
 
         //save correct count for displaying the report card
         LessonListViewer lessonListViewer = new LessonListViewerImplementation();
         String lessonKey = instanceRecord.getLessonId();
         int level = lessonListViewer.getLessonLevel(lessonKey);
         final int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
-        OnResultListener reportCartOnResultListener = new OnResultListener() {
+        OnDBResultListener reportCartOnDBResultListener = new OnDBResultListener() {
             @Override
             public void onReportCardAdded() {
                 super.onReportCardAdded();
             }
         };
-        db.addReportCard(level, lessonKey, correctCt[0], correctCt[1], reportCartOnResultListener);
+        db.addReportCard(level, lessonKey, correctCt[0], correctCt[1], reportCartOnDBResultListener);
 
         //save the questions for review if the questions are in the newest section of questions.
         //we also add the cleared lesson separately, but that should never affect
         //whether we should add the questions to the review question stock because
         //the only lesson that would affect it is the review lesson, but
         // we don't update the review lessons here
-        OnResultListener clearedLessonOnResultListener = new OnResultListener() {
+        OnDBResultListener clearedLessonOnDBResultListener = new OnDBResultListener() {
             @Override
             public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
-                OnResultListener reviewQuestionOnResultListener =
-                        new OnResultListener() {
+                OnDBResultListener reviewQuestionOnDBResultListener =
+                        new OnDBResultListener() {
                             @Override
                             public void onReviewQuestionsAdded() {
                                 super.onReviewQuestionsAdded();
@@ -75,12 +73,12 @@ class ResultsManager {
                 userLessonListViewer = new UserLessonListViewer(new LessonListViewerImplementation(),
                         clearedLessonKeys);
                 if (userLessonListViewer.shouldSaveForReview(instanceRecord.getLessonId())){
-                    db.addReviewQuestion(questionIDs, reviewQuestionOnResultListener);
+                    db.addReviewQuestion(questionIDs, reviewQuestionOnDBResultListener);
                 }
             }
         };
         //we grabbed level when adding the report card
-        db.getClearedLessons(level, false, clearedLessonOnResultListener);
+        db.getClearedLessons(level, false, clearedLessonOnDBResultListener);
     }
 
     static int[] calculateCorrectCount(List<QuestionAttempt> attempts){
@@ -110,7 +108,7 @@ class ResultsManager {
         if (userLessonListViewer != null){
             clearLessonHelperMethod(userLessonListViewer);
         } else {
-            OnResultListener onResultListener = new OnResultListener() {
+            OnDBResultListener onDBResultListener = new OnDBResultListener() {
                 @Override
                 public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
 
@@ -122,7 +120,7 @@ class ResultsManager {
             LessonListViewer lessonListViewer = new LessonListViewerImplementation();
             String lessonKey = instanceRecord.getLessonId();
             int level = lessonListViewer.getLessonLevel(lessonKey);
-            db.getClearedLessons(level, false, onResultListener);
+            db.getClearedLessons(level, false, onDBResultListener);
         }
 
     }
@@ -131,7 +129,7 @@ class ResultsManager {
         LessonListViewer lessonListViewer = new LessonListViewerImplementation();
         String lessonKey = instanceRecord.getLessonId();
         int level = lessonListViewer.getLessonLevel(lessonKey);
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onClearedLessonAdded(boolean firstTimeCleared) {
                 if(firstTimeCleared){
@@ -139,6 +137,6 @@ class ResultsManager {
                 }
             }
         };
-        db.addClearedLesson(level, lessonKey, onResultListener);
+        db.addClearedLesson(level, lessonKey, onDBResultListener);
     }
 }

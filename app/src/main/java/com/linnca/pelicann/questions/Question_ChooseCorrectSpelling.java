@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Question_ChooseCorrectSpelling extends QuestionFragmentInterface {
@@ -79,11 +80,11 @@ public class Question_ChooseCorrectSpelling extends QuestionFragmentInterface {
         //odds can be based on teh length of the string.
         //long strings are more likely to change at least one character since
         // there are more characters in total, so the odds should be high.
-        List<String> misspelledChoices = QuestionUtils.createMisspelledWords(
+        List<String> misspelledChoices = MisspelledWordGenerator.createMisspelledWords(
                 answer, answer.length()/2, choiceCt-1
         );
         choices.addAll(misspelledChoices);
-        QuestionUtils.shuffle(choices);
+        Collections.shuffle(choices);
 
         //update the question data since we
         //reference the question data to see how many

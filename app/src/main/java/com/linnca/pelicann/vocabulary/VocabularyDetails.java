@@ -14,9 +14,9 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
 
@@ -88,7 +88,7 @@ public class VocabularyDetails extends Fragment{
     }
 
     private void populateDetails(){
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onVocabularyWordQueried(List<VocabularyWord> wordCluster) {
                 for (VocabularyWord word : wordCluster) {
@@ -97,7 +97,7 @@ public class VocabularyDetails extends Fragment{
                 }
             }
         };
-        db.getVocabularyDetails(key, onResultListener);
+        db.getVocabularyDetails(key, onDBResultListener);
     }
 
     private void setTitle(VocabularyWord word){

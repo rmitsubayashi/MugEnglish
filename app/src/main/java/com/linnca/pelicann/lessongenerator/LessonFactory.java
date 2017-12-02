@@ -65,7 +65,7 @@ import com.linnca.pelicann.lessongenerator.lessons.Turn_left_right_go_straight;
 import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
 import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
 
-public class LessonFactory {
+public final class LessonFactory {
     private static final String TAG = "LessonFactory";
     private LessonFactory(){}
     public static Lesson parseLesson(String lessonKey, EndpointConnectorReturnsXML connector, Database db, Lesson.LessonListener listener){

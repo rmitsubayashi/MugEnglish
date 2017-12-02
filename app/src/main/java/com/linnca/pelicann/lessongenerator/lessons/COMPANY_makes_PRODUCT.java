@@ -7,15 +7,13 @@ import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -54,7 +52,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
     public COMPANY_makes_PRODUCT(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 1;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_OTHER;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_OTHER;
         super.lessonKey = KEY;
 
     }
@@ -91,7 +89,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String companyID = SPARQLDocumentParserHelper.findValueByNodeName(head, "company");
-            companyID = LessonGeneratorUtils.stripWikidataID(companyID);
+            companyID = WikiDataEntity.getWikiDataIDFromReturnedResult(companyID);
             String companyEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "companyEN");
             String companyJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "companyLabel");
             String productEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "productEN");
@@ -126,7 +124,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.companyID, qr.companyJP, vocabularyWords));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.companyID, qr.companyJP, vocabularyWords));
         }
 
     }
@@ -163,7 +161,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces(qr));
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
@@ -334,7 +332,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         List<QuestionData> toSave1 = createTranslateQuestionGeneric();
         int toSave1Size = toSave1.size();
         while (index <= toSave1Size){
-            questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, index));
+            questionIDs.add(formatGenericQuestionID(KEY, index));
             index++;
         }
         List<List<String>> questionSets = new ArrayList<>();
@@ -350,7 +348,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         List<QuestionData> questions = new ArrayList<>(1);
         int set1Size = toSaveSet1.size();
         for (int i=1; i<= set1Size; i++){
-            String id = LessonGeneratorUtils.formatGenericQuestionID(KEY, i);
+            String id = formatGenericQuestionID(KEY, i);
             toSaveSet1.get(i-1).setId(id);
             questions.add(toSaveSet1.get(i-1));
         }

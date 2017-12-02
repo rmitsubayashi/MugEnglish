@@ -2,11 +2,11 @@ package com.linnca.pelicann.results;
 
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
-public class NewVocabularyWrapper {
+public class ResultsVocabularyWord {
     private VocabularyWord vocabularyWord;
     private boolean isNew;
 
-    public NewVocabularyWrapper(VocabularyWord vocabularyWord, boolean isNew) {
+    public ResultsVocabularyWord(VocabularyWord vocabularyWord, boolean isNew) {
         this.vocabularyWord = vocabularyWord;
         this.isNew = isNew;
     }

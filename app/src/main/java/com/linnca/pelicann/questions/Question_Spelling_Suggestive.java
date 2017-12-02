@@ -18,8 +18,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
-import com.linnca.pelicann.mainactivity.widgets.GUIUtils;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -264,7 +264,7 @@ public class Question_Spelling_Suggestive extends QuestionFragmentInterface {
     private void nextLetter(){
         Button nextLetterButton = answerButtons[answerTextProgress];
         nextLetterButton.setEnabled(true);
-        nextLetterButton.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+        nextLetterButton.setTextColor(ThemeColorChanger.getColorFromAttribute(
                 R.attr.color500, getContext()));
 
         int prevButtonIndex = answerTextProgress-1;
@@ -283,7 +283,7 @@ public class Question_Spelling_Suggestive extends QuestionFragmentInterface {
         if (answerTextProgress == 0)
             return;
         SpannableString spannableString = new SpannableString(questionData.getAnswer());
-        spannableString.setSpan(new ForegroundColorSpan(ApplicationThemeManager.getColorFromAttribute(
+        spannableString.setSpan(new ForegroundColorSpan(ThemeColorChanger.getColorFromAttribute(
                 R.attr.colorAccent500, getContext())),
                 0, answerTextProgress, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         answerTextView.setText(spannableString);
@@ -292,7 +292,7 @@ public class Question_Spelling_Suggestive extends QuestionFragmentInterface {
     @Override
     protected void doSomethingAfterResponse(){
         answerButtons[answerTextProgress-1].setTextColor(ContextCompat.getColor(getContext(), R.color.gray500));
-        answerTextView.setTextColor(ApplicationThemeManager.getColorFromAttribute(
+        answerTextView.setTextColor(ThemeColorChanger.getColorFromAttribute(
                 R.attr.colorAccent500, getContext()));
     }
 }

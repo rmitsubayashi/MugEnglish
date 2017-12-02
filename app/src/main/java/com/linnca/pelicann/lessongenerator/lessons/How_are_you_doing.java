@@ -6,15 +6,14 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionDataWrapper;
-import com.linnca.pelicann.questions.QuestionUtils;
+import com.linnca.pelicann.questions.QuestionSetData;
+import com.linnca.pelicann.questions.Question_Chat;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_TranslateWord;
-import com.linnca.pelicann.userinterests.WikiDataEntryData;
+import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -47,7 +46,7 @@ public class How_are_you_doing extends Lesson {
     public How_are_you_doing(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
-        super.categoryOfQuestion = WikiDataEntryData.CLASSIFICATION_PERSON;
+        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
 
     }
@@ -81,7 +80,7 @@ public class How_are_you_doing extends Lesson {
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
-            personID = LessonGeneratorUtils.stripWikidataID(personID);
+            personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String firstNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameEN");
 
@@ -100,7 +99,7 @@ public class How_are_you_doing extends Lesson {
             List<QuestionData> chatQuestion = createChatQuestion(qr);
             questionSet.add(chatQuestion);
 
-            super.newQuestions.add(new QuestionDataWrapper(questionSet, qr.personID, qr.personJP, null));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, null));
         }
 
     }
@@ -108,9 +107,9 @@ public class How_are_you_doing extends Lesson {
     @Override
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"),
                 "How are you doing?","元気ですか","How are you doing?\nGood.","元気ですか。元気です。", KEY));
-        words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good"),
+        words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, "good"),
                 "good","元気です","How are you doing?\nGood.","元気ですか。元気です。", KEY));
         return words;
     }
@@ -118,8 +117,8 @@ public class How_are_you_doing extends Lesson {
     @Override
     protected List<String> getGenericQuestionVocabularyIDs(){
         List<String> ids =new ArrayList<>(2);
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"));
-        ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, "good"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "How are you doing?"));
+        ids.add(formatGenericQuestionVocabularyID(lessonKey, "good"));
         return ids;
     }
 
@@ -134,7 +133,7 @@ public class How_are_you_doing extends Lesson {
         chatItems.add(chatItem2);
         chatItems.add(chatItem3);
         chatItems.add(chatItem4);
-        String question = QuestionUtils.formatChatQuestion(from, chatItems);
+        String question = Question_Chat.formatQuestion(from, chatItems);
         String answer = "good";
         List<String> choices = new ArrayList<>(2);
         choices.add("good");
@@ -158,11 +157,11 @@ public class How_are_you_doing extends Lesson {
     @Override
     protected List<List<String>> getGenericQuestionIDSets(){
         List<String> questionIDs = new ArrayList<>();
-        questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 1));
+        questionIDs.add(formatGenericQuestionID(KEY, 1));
         List<List<String>> questionSets = new ArrayList<>();
         questionSets.add(questionIDs);
         questionIDs = new ArrayList<>();
-        questionIDs.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, 2));
+        questionIDs.add(formatGenericQuestionID(KEY, 2));
         questionSets.add(questionIDs);
         return questionSets;
     }
@@ -176,7 +175,7 @@ public class How_are_you_doing extends Lesson {
         allQuestions.addAll(toSave2);
         int questionSize = allQuestions.size();
         for (int i=0; i<questionSize; i++){
-            allQuestions.get(i).setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            allQuestions.get(i).setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return allQuestions;
@@ -202,7 +201,7 @@ public class How_are_you_doing extends Lesson {
     }
 
     private String puzzlePiecesAnswer(){
-        return QuestionUtils.formatPuzzlePieceAnswer(puzzlePieces());
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces());
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(){

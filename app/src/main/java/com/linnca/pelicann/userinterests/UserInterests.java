@@ -26,11 +26,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnResultListener;
-import com.linnca.pelicann.mainactivity.ApplicationThemeManager;
+import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarSpinnerAdapter;
-import com.linnca.pelicann.mainactivity.widgets.ToolbarState;
+import com.linnca.pelicann.mainactivity.ToolbarSpinnerAdapter;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
 
@@ -138,9 +138,9 @@ public class UserInterests extends Fragment {
         );
         listView.setAdapter(userInterestListAdapter);
 
-        OnResultListener onResultListener = new OnResultListener() {
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
-            public void onUserInterestsQueried(List<WikiDataEntryData> userInterests) {
+            public void onUserInterestsQueried(List<WikiDataEntity> userInterests) {
                 //if the user has something selected while updating interests
                 //(which shouldn't happen unless working from two devices)
                 //we should de-select everything first
@@ -150,7 +150,7 @@ public class UserInterests extends Fragment {
             }
         };
 
-        db.getUserInterests(onResultListener);
+        db.getUserInterests(onDBResultListener);
     }
 
 
@@ -197,7 +197,7 @@ public class UserInterests extends Fragment {
                 .show();
     }
     
-    private void showUndoSnackBar(final List<WikiDataEntryData> dataToRecover){
+    private void showUndoSnackBar(final List<WikiDataEntity> dataToRecover){
         if (undoOnTouchListener != null) {
             listView.removeOnItemTouchListener(undoOnTouchListener);
             undoOnTouchListener = null;
@@ -234,7 +234,7 @@ public class UserInterests extends Fragment {
                     @Override
                     public void onClick(View view) {
                         //undo
-                        OnResultListener onResultListener = new OnResultListener() {
+                        OnDBResultListener onDBResultListener = new OnDBResultListener() {
                             @Override
                             public void onUserInterestsRemoved() {
                                 if (undoOnTouchListener != null) {
@@ -243,7 +243,7 @@ public class UserInterests extends Fragment {
                                 }
                             }
                         };
-                        db.addUserInterests(dataToRecover, onResultListener);
+                        db.addUserInterests(dataToRecover, onDBResultListener);
                     }
                 }
         );
@@ -274,16 +274,16 @@ public class UserInterests extends Fragment {
             public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.user_interest_item_menu_delete:
-                        final List<WikiDataEntryData> toRemove =
+                        final List<WikiDataEntity> toRemove =
                                 userInterestListAdapter.getSelectedItems();
-                        OnResultListener onResultListener = new OnResultListener() {
+                        OnDBResultListener onDBResultListener = new OnDBResultListener() {
                             @Override
                             public void onUserInterestsRemoved() {
                                 showUndoSnackBar(toRemove);
                                 mode.finish();
                             }
                         };
-                        db.removeUserInterests(toRemove, onResultListener);
+                        db.removeUserInterests(toRemove, onDBResultListener);
                         return true;
 
                     default:
@@ -297,7 +297,7 @@ public class UserInterests extends Fragment {
                 actionMode = null;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
                     getActivity().getWindow().setStatusBarColor(
-                            ApplicationThemeManager.getColorFromAttribute(R.attr.color700, getContext())
+                            ThemeColorChanger.getColorFromAttribute(R.attr.color700, getContext())
                     );
                 }
             }

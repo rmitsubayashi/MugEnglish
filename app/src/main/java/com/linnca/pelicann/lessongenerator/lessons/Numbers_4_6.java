@@ -3,7 +3,6 @@ package com.linnca.pelicann.lessongenerator.lessons;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonGeneratorUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_MultipleChoice;
@@ -50,7 +49,7 @@ public class Numbers_4_6 extends Lesson {
         int questionCt = questions.size();
         for (int i=0; i<questionCt; i++){
             QuestionData data = questions.get(i);
-            data.setId(LessonGeneratorUtils.formatGenericQuestionID(KEY, i+1));
+            data.setId(formatGenericQuestionID(KEY, i+1));
         }
 
         return questions;
@@ -80,7 +79,7 @@ public class Numbers_4_6 extends Lesson {
         List<List<String>> questionSet = new ArrayList<>();
         for (Integer i : ids) {
             List<String> questions = new ArrayList<>();
-            questions.add(LessonGeneratorUtils.formatGenericQuestionID(KEY, i));
+            questions.add(formatGenericQuestionID(KEY, i));
             questionSet.add(questions);
         }
 
@@ -95,7 +94,7 @@ public class Numbers_4_6 extends Lesson {
         for (int i=0; i<3; i++) {
             String word = wordList.get(i);
             String translation = translationList.get(i);
-            words.add(new VocabularyWord(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word),
+            words.add(new VocabularyWord(formatGenericQuestionVocabularyID(lessonKey, word),
                     word, translation, "", "", KEY));
         }
         return words;
@@ -106,7 +105,7 @@ public class Numbers_4_6 extends Lesson {
         List<String> ids =new ArrayList<>(3);
         List<String> wordList = english();
         for (String word : wordList) {
-            ids.add(LessonGeneratorUtils.formatGenericQuestionVocabularyID(lessonKey, word));
+            ids.add(formatGenericQuestionVocabularyID(lessonKey, word));
         }
         return ids;
     }
