@@ -5,12 +5,16 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_Instructions;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -79,6 +83,7 @@ public class NAME_is_AGE_years_old extends Lesson {
         super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -131,11 +136,14 @@ public class NAME_is_AGE_years_old extends Lesson {
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
-            questionSet.add(fillInBlankQuestion);
+            List<QuestionData> sentencePuzzle = createSentencePuzzleQuestion(qr);
+            questionSet.add(sentencePuzzle);
 
-            List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
-            questionSet.add(fillInBlankQuestion2);
+            List<QuestionData> fillInBlank = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlank);
+
+            List<QuestionData> fillInBlank2 = createFillInBlankQuestion2(qr);
+            questionSet.add(fillInBlank2);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -158,11 +166,50 @@ public class NAME_is_AGE_years_old extends Lesson {
     }
 
     private String formatSentenceEN(QueryResult qr){
-        return qr.personEN + " is " + qr.age + " years old.";
+        //one year old vs two years old
+        String yearString = qr.singular ? "year" : "years";
+        return qr.personEN + " is " + qr.age + " " + yearString + " old.";
     }
 
     private String formatSentenceJP(QueryResult qr){
         return qr.personJP + "は" + qr.age + "歳です。";
+    }
+
+    //this introduces the whole phrase
+    private List<String> puzzlePieces(QueryResult qr){
+        List<String> pieces = new ArrayList<>();
+        pieces.add(qr.personEN);
+        pieces.add("is");
+        pieces.add(Integer.toString(qr.age));
+        //one year old vs two years old
+        String yearString = qr.singular ? "year" : "years";
+        pieces.add(yearString);
+        pieces.add("old");
+        return pieces;
+    }
+
+    private String puzzlePiecesAnswer(QueryResult qr){
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
+    }
+
+    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
+        String question = this.formatSentenceJP(qr);
+        List<String> choices = this.puzzlePieces(qr);
+        String answer = puzzlePiecesAnswer(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
     }
 
     private String fillInBlankQuestion(QueryResult qr){
@@ -259,6 +306,52 @@ public class NAME_is_AGE_years_old extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(alternateAnswers);
 
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructions = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructions);
+        return questionSet;
+    }
+
+    private String instructionQuestionQuestion(){
+        return "あなたは何歳ですか。";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "I am " + QuestionResponseChecker.ANYTHING + " years old.";
+    }
+
+    private List<String> instructionQuestionAcceptableAnswers(){
+        String acceptableAnswer1 = "I am " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer2 = QuestionResponseChecker.ANYTHING + " years old.";
+        List<String> acceptableAnswers = new ArrayList<>(2);
+        acceptableAnswers.add(acceptableAnswer1);
+        acceptableAnswers.add(acceptableAnswer2);
+        return acceptableAnswers;
+
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

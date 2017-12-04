@@ -19,17 +19,23 @@ public class LessonInstanceData implements Serializable{
     //generic questions to put after the main question sets
     private List<String> postGenericQuestionIds;
     private List<LessonInstanceDataQuestionSet> questionSets = new ArrayList<>();
+    private int questionOrder;
+    public static final int QUESTION_ORDER_ORDER_BY_QUESTION = 1;
+    public static final int QUESTION_ORDER_ORDER_BY_SET = 2;
 
     public LessonInstanceData(){
     }
 
-    public LessonInstanceData(String id, String lessonKey, long createdTimeStamp, List<String> preGenericQuestionIds, List<String> postGenericQuestionIds, List<LessonInstanceDataQuestionSet> questionSets) {
+    public LessonInstanceData(String id, String lessonKey, long createdTimeStamp,
+                              List<String> preGenericQuestionIds, List<String> postGenericQuestionIds,
+                              List<LessonInstanceDataQuestionSet> questionSets, int questionOrder) {
         this.id = id;
         this.lessonKey = lessonKey;
         this.createdTimeStamp = createdTimeStamp;
         this.preGenericQuestionIds = preGenericQuestionIds;
         this.postGenericQuestionIds = postGenericQuestionIds;
         this.questionSets = new ArrayList<>(questionSets);
+        this.questionOrder =questionOrder;
     }
 
     public String getId() {
@@ -72,6 +78,22 @@ public class LessonInstanceData implements Serializable{
         this.postGenericQuestionIds = postGenericQuestionIds;
     }
 
+    public long getCreatedTimeStamp() {
+        return createdTimeStamp;
+    }
+
+    public void setCreatedTimeStamp(long createdTimeStamp) {
+        this.createdTimeStamp = createdTimeStamp;
+    }
+
+    public int getQuestionOrder() {
+        return questionOrder;
+    }
+
+    public void setQuestionOrder(int questionOrder) {
+        this.questionOrder = questionOrder;
+    }
+
     public List<String> questionSetIds() {
         List<String> questionSetIds = new ArrayList<>(questionSets.size());
         for (LessonInstanceDataQuestionSet set : questionSets){
@@ -87,11 +109,22 @@ public class LessonInstanceData implements Serializable{
 
     public List<String> allQuestionIds() {
         List<String> questionIDs = new ArrayList<>();
-        questionIDs.addAll(preGenericQuestionIds);
-        for (LessonInstanceDataQuestionSet set : questionSets){
-            questionIDs.addAll(set.getQuestionIDs());
+        if (preGenericQuestionIds != null)
+            questionIDs.addAll(preGenericQuestionIds);
+        if (questionOrder == QUESTION_ORDER_ORDER_BY_SET) {
+            for (LessonInstanceDataQuestionSet set : questionSets) {
+                questionIDs.addAll(set.getQuestionIDs());
+            }
+        } else if (questionOrder == QUESTION_ORDER_ORDER_BY_QUESTION) {
+            int questionCtPerSet = questionSets.get(0).getQuestionIDs().size();
+            for (int i=0; i<questionCtPerSet; i++){
+                for (LessonInstanceDataQuestionSet set : questionSets){
+                    questionIDs.add(set.getQuestionIDs().get(i));
+                }
+            }
         }
-        questionIDs.addAll(postGenericQuestionIds);
+        if (postGenericQuestionIds != null)
+            questionIDs.addAll(postGenericQuestionIds);
 
         return questionIDs;
     }
@@ -116,14 +149,6 @@ public class LessonInstanceData implements Serializable{
             interestLabels.add(set.getInterestLabel());
         }
         return interestLabels;
-    }
-
-    public long getCreatedTimeStamp() {
-        return createdTimeStamp;
-    }
-
-    public void setCreatedTimeStamp(long createdTimeStamp) {
-        this.createdTimeStamp = createdTimeStamp;
     }
 
     //this is synchronized so when we fetch FireBase multiple times

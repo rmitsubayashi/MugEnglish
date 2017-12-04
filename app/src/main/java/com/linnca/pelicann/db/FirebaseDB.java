@@ -389,16 +389,24 @@ public class FirebaseDB extends Database{
     }
 
     @Override
-    public void addLessonInstance(String lessonKey, LessonInstanceData lessonInstanceData,
+    public void addLessonInstance(LessonInstanceData lessonInstanceData,
                                   List<String> lessonInstanceVocabularyIDs,
                                   final OnDBResultListener onDBResultListener){
         DatabaseReference lessonInstanceRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.LESSON_INSTANCES + "/" + getUserID() + "/" + lessonKey);
+                FirebaseDBHeaders.LESSON_INSTANCES + "/" +
+                        getUserID() + "/" +
+                        lessonInstanceData.getLessonKey());
         String key = lessonInstanceRef.push().getKey();
         lessonInstanceData.setId(key);
         Map<String, Object> consistentUpdate = new HashMap<>();
-        consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCES + "/" + getUserID() + "/" + lessonKey + "/" + key, lessonInstanceData);
-        consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCE_VOCABULARY + "/" + key, lessonInstanceVocabularyIDs);
+        consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCES + "/" +
+                getUserID() + "/" +
+                lessonInstanceData.getLessonKey() + "/" +
+                key,
+                lessonInstanceData);
+        consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCE_VOCABULARY + "/" +
+                key,
+                lessonInstanceVocabularyIDs);
 
         FirebaseDatabase.getInstance().getReference().updateChildren(consistentUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

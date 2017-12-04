@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
@@ -21,12 +22,13 @@ import java.util.List;
 * This lesson only uses the three terms
 * so no dynamic content
 * */
-public class good_morning_afternoon_evening extends Lesson {
-    public static final String KEY = "good_morning_afternoon_evening";
+public class Good_morning_afternoon_evening extends Lesson {
+    public static final String KEY = "Good_morning_afternoon_evening";
 
-    public good_morning_afternoon_evening(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
+    public Good_morning_afternoon_evening(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected int getQueryResultCt(){return 0;}
@@ -42,15 +44,28 @@ public class good_morning_afternoon_evening extends Lesson {
     @Override
     protected List<List<QuestionData>> getPreGenericQuestions(){
         List<List<QuestionData>> questionSet = new ArrayList<>(9);
-        List<List<QuestionData>> chatMultipleChoiceQuestions = chatMultipleChoiceQuestions();
-        questionSet.addAll(chatMultipleChoiceQuestions);
-        List<List<QuestionData>> multipleChoiceQuestions = multipleChoiceQuestions();
-        questionSet.addAll(multipleChoiceQuestions);
-        List<List<QuestionData>> fillInBlankQuestions = fillInBlankQuestions();
-        questionSet.addAll(fillInBlankQuestions);
-
+        List<List<QuestionData>> chatMultipleChoice = chatMultipleChoiceQuestions();
+        questionSet.addAll(chatMultipleChoice);
+        List<List<QuestionData>> multipleChoice = multipleChoiceQuestions();
+        questionSet.addAll(multipleChoice);
+        List<List<QuestionData>> fillInBlank = fillInBlankQuestions();
+        questionSet.addAll(fillInBlank);
+        List<List<QuestionData>> multipleChoice2 = multipleChoiceQuestions2();
+        questionSet.addAll(multipleChoice2);
         return questionSet;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> chatMultipleChoiceQuestions = preGenericQuestions.subList(0,3);
+        Collections.shuffle(chatMultipleChoiceQuestions);
+        List<List<QuestionData>> multipleChoiceQuestions = preGenericQuestions.subList(3,6);
+        Collections.shuffle(multipleChoiceQuestions);
+        List<List<QuestionData>> fillInBlankQuestions = preGenericQuestions.subList(6,9);
+        Collections.shuffle(fillInBlankQuestions);
+        List<List<QuestionData>> multipleChoiceQuestions2 = preGenericQuestions.subList(9,12);
+        Collections.shuffle(multipleChoiceQuestions2);
     }
 
     @Override
@@ -150,6 +165,54 @@ public class good_morning_afternoon_evening extends Lesson {
 
             List<QuestionData> dataList = new ArrayList<>();
             dataList.add(data);
+            questions.add(dataList);
+        }
+
+        return questions;
+    }
+
+    private List<List<String>> getTimesMultipleChoiceQuestion2(){
+        List<String> morningTimes = new ArrayList<>(3);
+        morningTimes.add("8:00AM");
+        morningTimes.add("9:00AM");
+        morningTimes.add("10:00AM");
+        List<String> afternoonTimes = new ArrayList<>(3);
+        afternoonTimes.add("1:00PM");
+        afternoonTimes.add("2:00PM");
+        afternoonTimes.add("3:00PM");
+        List<String> eveningTimes = new ArrayList<>(3);
+        eveningTimes.add("6:00PM");
+        eveningTimes.add("7:00PM");
+        eveningTimes.add("8:00PM");
+        List<List<String>> allTimes = new ArrayList<>(3);
+        allTimes.add(morningTimes);
+        allTimes.add(afternoonTimes);
+        allTimes.add(eveningTimes);
+        return allTimes;
+
+    }
+
+    private List<List<QuestionData>> multipleChoiceQuestions2(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
+        List<String> enAnswers = multipleChoiceChoices();
+        List<List<String>> allTimes = getTimesMultipleChoiceQuestion2();
+        for (int i=0; i<3; i++) {
+            List<QuestionData> dataList = new ArrayList<>();
+            List<String> times = allTimes.get(i);
+            for (String time : times) {
+                QuestionData data = new QuestionData();
+                String answer = enAnswers.get(i);
+                data.setId("");
+                data.setLessonId(lessonKey);
+                data.setTopic(TOPIC_GENERIC_QUESTION);
+                data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
+                data.setQuestion(time);
+                data.setChoices(multipleChoiceChoices());
+                data.setAnswer(answer);
+                data.setAcceptableAnswers(null);
+
+                dataList.add(data);
+            }
             questions.add(dataList);
         }
 

@@ -29,9 +29,12 @@ public abstract class Lesson {
 	//there are lessons that need to access the database,
 	//so make this protected
 	protected Database db;
+	//each lesson will have a unique key
 	protected String lessonKey;
 	//the lesson instance we will be creating
 	private final LessonInstanceData lessonInstanceData = new LessonInstanceData();
+	//how we will order the questions
+	protected int questionOrder;
     //vocabulary words for the lesson instance
     //(we have these in a separate location in the db)
     private final List<String> lessonInstanceVocabularyWordIDs = new ArrayList<>();
@@ -386,6 +389,8 @@ public abstract class Lesson {
 		}
 
 		lessonInstanceData.setCreatedTimeStamp(System.currentTimeMillis());
+		lessonInstanceData.setQuestionOrder(questionOrder);
+		lessonInstanceData.setLessonKey(lessonKey);
 
 		OnDBResultListener onLessonInstanceAddedResultListener = new OnDBResultListener() {
 			@Override
@@ -393,7 +398,7 @@ public abstract class Lesson {
 				lessonListener.onLessonCreated();
 			}
 		};
-		db.addLessonInstance(lessonKey, lessonInstanceData, lessonInstanceVocabularyWordIDs,
+		db.addLessonInstance(lessonInstanceData, lessonInstanceVocabularyWordIDs,
 				onLessonInstanceAddedResultListener);
 
 		//this can be asynchronous
@@ -420,7 +425,11 @@ public abstract class Lesson {
 		return new ArrayList<>(1);
 	}
     protected List<List<QuestionData>> getPostGenericQuestions(){ return new ArrayList<>(1);}
-	//for both the pre and post
+    //if we have three items like good morning, good afternoon, and good evening,
+	//we don't want them to appear in teh same order every instance.
+	//so, shuffle them up AFTER we set the IDs.
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){ return;}
+    //for both the pre and post
     protected List<VocabularyWord> getGenericQuestionVocabulary(){return new ArrayList<>(1);}
 
 	//since we are requesting IDs for generic questions, we need some way of having
@@ -480,6 +489,7 @@ public abstract class Lesson {
 		List<List<QuestionData>> preGenericQuestions = getPreGenericQuestions();
 		List<List<QuestionData>> postGenericQuestions = getPostGenericQuestions();
 		setGenericQuestionIDs(preGenericQuestions, postGenericQuestions);
+		shufflePreGenericQuestions(preGenericQuestions);
 		//make a temporary question set so we can pick questions
 		QuestionSet tempSet = new QuestionSet();
 		List<List<String>> preGenericQuestionIDs = new ArrayList<>(preGenericQuestions.size());

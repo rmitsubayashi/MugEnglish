@@ -5,13 +5,19 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
+import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -50,10 +56,10 @@ public class NAME_is_a_GENDER extends Lesson {
 
     public NAME_is_a_GENDER(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
-        super.questionSetsToPopulate = 2;
+        super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
     }
 
     @Override
@@ -119,14 +125,11 @@ public class NAME_is_a_GENDER extends Lesson {
     protected void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
+            List<QuestionData> multipleChoice = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(multipleChoice);
 
-            List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
-            questionSet.add(spellingQuestion);
-
-            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
-            questionSet.add(fillInBlankQuestion);
+            List<QuestionData> fillInBlank = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlank);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -158,56 +161,45 @@ public class NAME_is_a_GENDER extends Lesson {
         return qr.personJP + "は" + qr.genderJP + "です。";
     }
 
-    //puzzle pieces for sentence puzzle question
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personEN);
-        pieces.add("is");
-        pieces.add("a " + qr.genderEN);
-        return pieces;
+    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String sentence = qr.personEN + " is a " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
-    private String puzzlePiecesAnswer(QueryResult qr){
-        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
+    private String fillInBlankMultipleChoiceAnswer(QueryResult qr){
+        return qr.genderEN;
     }
 
-    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
-        String question = this.formatSentenceJP(qr);
-        List<String> choices = this.puzzlePieces(qr);
-        String answer = puzzlePiecesAnswer(qr);
+    private List<String> fillInBlankMultipleChoiceChoices(QueryResult qr){
+        List<String> choices = new ArrayList<>(3);
+        choices.add("man");
+        choices.add("woman");
+        //for ambiguous people
+        if (!choices.contains(qr.genderEN)){
+            choices.add(qr.genderEN);
+        }
+        return choices;
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion(qr);
+        String answer = fillInBlankMultipleChoiceAnswer(qr);
+        List<QuestionData> questionDataList = new ArrayList<>();
+        List<String> choices = fillInBlankMultipleChoiceChoices(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
 
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-        return dataList;
-    }
+        questionDataList.add(data);
 
-    private List<QuestionData> createSpellingQuestion(QueryResult qr){
-        String question = qr.genderJP;
-        String answer = qr.genderEN;
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-        return dataList;
+        return questionDataList;
     }
 
     private String fillInBlankQuestion(QueryResult qr){
@@ -241,6 +233,91 @@ public class NAME_is_a_GENDER extends Lesson {
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> spellingSuggestive = createSpellingSuggestiveQuestion();
+        List<QuestionData> instructions = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(2);
+        questionSet.add(spellingSuggestive);
+        questionSet.add(instructions);
+        return questionSet;
+    }
+
+    private List<QuestionData> createSpellingSuggestiveQuestion(){
+        String question = "私は～";
+        String answer = "I am";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    //use the knowledge from previous question
+    private String instructionQuestionQuestion(){
+        return "あなたは男ですか。女ですか。";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "I am a man.";
+    }
+
+    private List<String> instructionQuestionAcceptableAnswers(){
+        String acceptableAnswer1 = "I am a woman.";
+        String acceptableAnswer2 = "I am man.";
+        String acceptableAnswer3 = "I am woman.";
+        String acceptableAnswer4 = "man";
+        String acceptableAnswer5 = "woman";
+        List<String> acceptableAnswers = new ArrayList<>(5);
+        acceptableAnswers.add(acceptableAnswer1);
+        acceptableAnswers.add(acceptableAnswer2);
+        acceptableAnswers.add(acceptableAnswer3);
+        acceptableAnswers.add(acceptableAnswer4);
+        acceptableAnswers.add(acceptableAnswer5);
+        return acceptableAnswers;
+
+    }
+
+    private FeedbackPair instructionFeedback(){
+        List<String> responses = new ArrayList<>(2);
+        responses.add("man");
+        responses.add("woman");
+        String feedback = "次は I am を使ってみましょう";
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(instructionFeedback());
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+        data.setFeedback(allFeedback);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

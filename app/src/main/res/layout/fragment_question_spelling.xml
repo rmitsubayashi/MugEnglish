@@ -18,12 +18,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/question_spelling_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/question_spelling_instructions"
                 style="@style/questions_instructions"/>
             <TextView
+                android:id="@+id/question_spelling_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/questions_question"/>

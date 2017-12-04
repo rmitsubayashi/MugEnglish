@@ -63,7 +63,7 @@ import com.linnca.pelicann.lessongenerator.lessons.The_emergency_phone_number_of
 import com.linnca.pelicann.lessongenerator.lessons.The_man_woman_reads_a_book;
 import com.linnca.pelicann.lessongenerator.lessons.Turn_left_right_go_straight;
 import com.linnca.pelicann.lessongenerator.lessons.Walk_run;
-import com.linnca.pelicann.lessongenerator.lessons.good_morning_afternoon_evening;
+import com.linnca.pelicann.lessongenerator.lessons.Good_morning_afternoon_evening;
 
 public final class LessonFactory {
     private static final String TAG = "LessonFactory";
@@ -96,8 +96,8 @@ public final class LessonFactory {
                         db, listener
                 );
             }
-            case good_morning_afternoon_evening.KEY :{
-                return new good_morning_afternoon_evening(
+            case Good_morning_afternoon_evening.KEY :{
+                return new Good_morning_afternoon_evening(
                         connector,
                         db, listener
                 );
@@ -433,8 +433,8 @@ public final class LessonFactory {
     }
 
     public static void saveGenericQuestions(Database db){
-
-        Lesson lesson = new good_morning_afternoon_evening(null, db, null);
+        /*
+        Lesson lesson = new Good_morning_afternoon_evening(null, db, null);
         lesson.saveGenericQuestions();
         lesson = new Hello_my_name_is_NAME(null, db, null);
         lesson.saveGenericQuestions();
@@ -498,6 +498,13 @@ public final class LessonFactory {
         lesson.saveGenericQuestions();
         lesson = new NAME_worked_for_the_government_He_was_a_politician(null, db, null);
         lesson.saveGenericQuestions();
+        lesson = new NAME_is_AGE_years_old(null, db, null);
+        lesson.saveGenericQuestions();
+        lesson = new NAME_is_a_GENDER(null, db, null);
+        lesson.saveGenericQuestions();
+        lesson = new NAME_is_AGE_years_old_NAME_is_a_GENDER(null, db, null);
+        lesson.saveGenericQuestions();
+        */
 
     }
 }

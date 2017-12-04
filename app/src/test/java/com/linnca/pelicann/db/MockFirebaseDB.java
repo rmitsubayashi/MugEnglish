@@ -173,10 +173,10 @@ public class MockFirebaseDB extends Database {
 
     private int incrementLessonInstance = 1;
     @Override
-    public void addLessonInstance(String lessonKey, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs, OnDBResultListener onDBResultListener) {
+    public void addLessonInstance(LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs, OnDBResultListener onDBResultListener) {
         String id = "testID" + incrementLessonInstance++;
         lessonInstanceData.setId(id);
-        lessonInstances.put(lessonKey, lessonInstanceData);
+        lessonInstances.put(lessonInstanceData.getLessonKey(), lessonInstanceData);
         onDBResultListener.onLessonInstanceAdded();
     }
 

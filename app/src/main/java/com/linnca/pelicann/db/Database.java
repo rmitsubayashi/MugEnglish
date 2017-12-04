@@ -41,7 +41,7 @@ public abstract class Database implements Serializable{
 
     public abstract void getQuestion(String questionID, OnDBResultListener onDBResultListener);
 
-    public abstract void addLessonInstance(String lessonKey, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs,
+    public abstract void addLessonInstance(LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs,
                                            OnDBResultListener onDBResultListener);
     public abstract void getLessonInstances(String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener);
     public abstract void getLessonInstanceDetails(String lessonKey, String instanceID, OnDBResultListener onDBResultListener);

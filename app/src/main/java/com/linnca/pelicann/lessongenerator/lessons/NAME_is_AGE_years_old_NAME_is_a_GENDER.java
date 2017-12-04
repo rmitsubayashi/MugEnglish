@@ -9,8 +9,12 @@ import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_Instructions;
+import com.linnca.pelicann.questions.Question_MultipleChoice;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -25,6 +29,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
@@ -40,8 +45,8 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         private final String personJP;
         private final String genderEN;
         private final String genderJP;
-        private final boolean isMale;
         private final int age;
+        private final boolean isMale;
         private boolean singular;
         private final String birthday;
 
@@ -59,7 +64,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
             this.birthday = getBirthday(birthdayString);
             this.genderEN = getGenderEN(gender);
             this.genderJP = getGenderJP(gender);
-            this.isMale = getMale(gender);
+            this.isMale = isMale(gender);
         }
 
         private int getAge(String birthdayString){
@@ -81,7 +86,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
             return birthdayFormat.print(birthday);
         }
 
-        private boolean getMale(String genderID){
+        private boolean isMale(String genderID){
             switch (genderID){
                 case "Q6581097":
                     return true;
@@ -90,6 +95,10 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
                 default:
                     return true;
             }
+        }
+
+        private boolean isAdult(){
+            return age >= 18;
         }
 
         private String getGenderEN(String genderID){
@@ -197,14 +206,8 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
-            questionSet.add(fillInBlankQuestion);
-
-            List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
-            questionSet.add(fillInBlankQuestion2);
-
-            List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
-            questionSet.add(trueFalseQuestion);
+            List<QuestionData> fillInBlankMultipleChoice = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(fillInBlankMultipleChoice);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -334,87 +337,256 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         return dataList;
     }
 
-    private String getTrueFalseLabel(boolean isAdult, boolean isMale){
-        if (isAdult){
-            if (isMale){
-                return "man";
-            } else {
-                return "woman";
-            }
-        } else {
-            if (isMale){
-                return "boy";
-            } else {
-                return "girl";
-            }
-        }
+    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String yearString = qr.singular ? "year" : "years";
+        String sentence1 = qr.personEN + " is " + Integer.toString(qr.age) + " " +
+                yearString + " old.";
+        sentence1 = GrammarRules.uppercaseFirstLetterOfSentence(sentence1);
+        String sentence2 = qr.personEN + " is a " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE
+                + ".";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + "\n" + sentence2;
     }
 
-    private FeedbackPair getTrueFalseFeedback(String response, QueryResult qr, boolean isAdult, boolean isMale){
-        String isAdultString = isAdult ? "大人" : "子供";
-        String isMaleString = isMale ? "男性" : "女性";
+    private String fillInBlankMultipleChoiceAnswer(QueryResult qr){
+        return qr.genderEN;
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices(QueryResult qr){
+        List<String> choices = new ArrayList<>(5);
+        choices.add("man");
+        choices.add("woman");
+        choices.add("boy");
+        choices.add("girl");
+        if (!choices.contains(qr.genderEN)){
+            choices.add(qr.genderEN);
+        }
+        return choices;
+    }
+
+    private FeedbackPair fillInBlankMultipleChoiceFeedback(QueryResult qr){
+        String isAdultString = qr.isAdult() ? "大人" : "子供";
+        String isMaleString = qr.isMale ? "男性" : "女性";
         String feedback = isAdultString + "の" + isMaleString + "なので" + qr.genderJP + "です";
-        List<String> responses = new ArrayList<>(1);
-        responses.add(response);
+        List<String> responses = new ArrayList<>(5);
+        responses.addAll(fillInBlankMultipleChoiceChoices(qr));
+        responses.remove(qr.genderEN);
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
+        List<String> choices = fillInBlankMultipleChoiceChoices(qr);
+        String question = fillInBlankMultipleChoiceQuestion(qr);
+        String answer = fillInBlankMultipleChoiceAnswer(qr);
+        FeedbackPair wrongFeedback = fillInBlankFeedback(qr);
+        List<FeedbackPair> feedback = new ArrayList<>(1);
+        feedback.add(wrongFeedback);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(feedback);
 
-    private String trueFalseQuestion(QueryResult qr, boolean isAdult, boolean isMale){
-        //one year old vs two years old
-        String yearString = qr.singular ? "year" : "years";
-        String sentence = qr.personEN + " is " + Integer.toString(qr.age) + " " + yearString + " old.";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        String sentence2 = qr.personEN + " is a " +
-                getTrueFalseLabel(isAdult, isMale) + ".";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-        return sentence + "\n" + sentence2;
+        List<QuestionData> questionDataList = new ArrayList<>(1);
+        questionDataList.add(data);
+
+        return questionDataList;
     }
 
-    private List<String> trueFalseAlternateAnswers(QueryResult qr){
-        if (qr.genderEN.equals("man/woman") || qr.genderJP.equals("boy/girl")){
-            List<String> answers = new ArrayList<>(2);
-            answers.add(Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE);
-            answers.add(Question_TrueFalse.TRUE_FALSE_QUESTION_FALSE);
-            return answers;
-        }
-        return null;
+
+    private List<String> multipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(4);
+        choices.add("man");
+        choices.add("woman");
+        choices.add("boy");
+        choices.add("girl");
+        return choices;
     }
 
-    private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
-        List<QuestionData> dataList = new ArrayList<>();
+    private List<String> multipleChoiceAnswers(){
+        List<String> answers = new ArrayList<>(4);
+        answers.add("man");
+        answers.add("woman");
+        answers.add("boy");
+        answers.add("girl");
+        return answers;
+    }
+
+    private List<String> multipleChoiceQuestions(){
+        List<String> questions = new ArrayList<>(4);
+        questions.add("大人の男");
+        questions.add("大人の女");
+        questions.add("男の子");
+        questions.add("女の子");
+        return questions;
+    }
+
+    private List<List<QuestionData>> createMultipleChoiceQuestions(){
+        List<List<QuestionData>> allQuestions = new ArrayList<>(4);
+        List<String> answers = multipleChoiceAnswers();
+        List<String> questions = multipleChoiceQuestions();
         for (int i=0; i<4; i++) {
-            boolean isMale = i > 2;
-            boolean isAdult = i % 2 == 0;
-            String question = this.trueFalseQuestion(qr, isAdult, isMale);
-            boolean isTrue = true;
-            if (isMale != qr.isMale)
-                isTrue = false;
-            if (isAdult != qr.age >= 18){
-                isTrue = false;
-            }
-            String answer = Question_TrueFalse.getTrueFalseString(isTrue);
-            FeedbackPair feedbackPair = getTrueFalseFeedback(
-                    Question_TrueFalse.getTrueFalseString(!isTrue), qr,
-                    isAdult, isMale
-            );
-            List<FeedbackPair> feedbackPairs = new ArrayList<>(1);
-            feedbackPairs.add(feedbackPair);
-            List<String> acceptableAnswers = trueFalseAlternateAnswers(qr);
+            String question = questions.get(i);
+            String answer = answers.get(i);
+
+            List<String> choices = multipleChoiceChoices();
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(qr.personJP);
-            data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(question);
-            data.setChoices(null);
+            data.setChoices(choices);
             data.setAnswer(answer);
-            data.setAcceptableAnswers(acceptableAnswers);
-            data.setFeedback(feedbackPairs);
+            data.setAcceptableAnswers(null);
 
-            dataList.add(data);
+            List<QuestionData> questionDataList = new ArrayList<>(4);
+            questionDataList.add(data);
+            allQuestions.add(questionDataList);
         }
 
+        return allQuestions;
+    }
+
+    private List<String> multipleChoiceQuestions2(){
+        List<String> answers = new ArrayList<>(4);
+        answers.add("I am a man. I am...");
+        answers.add("I am a woman. I am...");
+        answers.add("I am a boy. I am...");
+        answers.add("I am a girl. I am...");
+        return answers;
+    }
+    
+    //three variations
+    private List<List<String>> multipleChoiceChoices2(){
+        List<List<String>> choices = new ArrayList<>(3);
+        List<String> variation1 = new ArrayList<>(4);
+        variation1.add("34歳 男性");
+        variation1.add("42歳 女性");
+        variation1.add("5歳 男性");
+        variation1.add("4歳 女性");
+        choices.add(variation1);
+        List<String> variation2 = new ArrayList<>(4);
+        variation2.add("68歳 男性");
+        variation2.add("90歳 女性");
+        variation2.add("10歳 男性");
+        variation2.add("12歳 女性");
+        choices.add(variation2);
+        List<String> variation3 = new ArrayList<>(4);
+        variation3.add("50歳 男性");
+        variation3.add("32歳 女性");
+        variation3.add("9歳 男性");
+        variation3.add("13歳 女性");
+        choices.add(variation3);
+        return choices;
+    }
+
+    private List<List<QuestionData>> createMultipleChoiceQuestions2(){
+        List<List<QuestionData>> allQuestions = new ArrayList<>(4);
+        List<String> questions = multipleChoiceQuestions2();
+        List<List<String>> allChoices = multipleChoiceChoices2();
+        for (int i=0; i<4; i++) {
+            List<QuestionData> questionDataList = new ArrayList<>(4);
+            String question = questions.get(i);
+            //three variations
+            for (int j=0; j<3; j++) {
+                List<String> choices = allChoices.get(j);
+                String answer = choices.get(i);
+                QuestionData data = new QuestionData();
+                data.setId("");
+                data.setLessonId(lessonKey);
+                data.setTopic(TOPIC_GENERIC_QUESTION);
+                data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
+                data.setQuestion(question);
+                data.setChoices(choices);
+                data.setAnswer(answer);
+                data.setAcceptableAnswers(null);
+
+                questionDataList.add(data);
+            }
+            allQuestions.add(questionDataList);
+        }
+
+        return allQuestions;
+    }
+
+
+
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        List<List<QuestionData>> multipleChoice = createMultipleChoiceQuestions();
+        List<List<QuestionData>> multipleChoice2 = createMultipleChoiceQuestions2();
+        questionSet.addAll(multipleChoice);
+        questionSet.addAll(multipleChoice2);
+        return questionSet;
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> multipleChoiceQuestions = preGenericQuestions.subList(0,4);
+        Collections.shuffle(multipleChoiceQuestions);
+        List<List<QuestionData>> multipleChoiceQuestions2 = preGenericQuestions.subList(4,8);
+        Collections.shuffle(multipleChoiceQuestions2);
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructions = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructions);
+        return questionSet;
+    }
+
+    private String instructionQuestionQuestion(){
+        return "あなたは何歳ですか。あなたは大人の男ですか。大人の女ですか。男の子ですか。女の子ですか。";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "I am " + QuestionResponseChecker.ANYTHING + " years old. I am a man.";
+    }
+
+    private List<String> instructionQuestionAcceptableAnswers(){
+        String acceptableAnswer1 = "I am " + QuestionResponseChecker.ANYTHING + " years old. I am a woman.";
+        String acceptableAnswer2 = "I am " + QuestionResponseChecker.ANYTHING + " years old. I am a boy.";
+        String acceptableAnswer3 = "I am " + QuestionResponseChecker.ANYTHING + " years old. I am a girl.";
+        String acceptableAnswer4 = "I am " + QuestionResponseChecker.ANYTHING + ". I am a man.";
+        String acceptableAnswer5 = "I am " + QuestionResponseChecker.ANYTHING + ". I am a woman.";
+        String acceptableAnswer6 = "I am " + QuestionResponseChecker.ANYTHING + ". I am a boy.";
+        String acceptableAnswer7 = "I am " + QuestionResponseChecker.ANYTHING + ". I am a girl.";
+        List<String> acceptableAnswers = new ArrayList<>(7);
+        acceptableAnswers.add(acceptableAnswer1);
+        acceptableAnswers.add(acceptableAnswer2);
+        acceptableAnswers.add(acceptableAnswer3);
+        acceptableAnswers.add(acceptableAnswer4);
+        acceptableAnswers.add(acceptableAnswer5);
+        acceptableAnswers.add(acceptableAnswer6);
+        acceptableAnswers.add(acceptableAnswer7);
+        return acceptableAnswers;
+
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
 
         return dataList;
     }

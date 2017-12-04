@@ -49,7 +49,8 @@ public class QuestionManagerTest {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
         questionManager.startQuestions(lessonInstanceData, "lessonKey1");
         assertTrue(called[0]);
     }
@@ -76,7 +77,8 @@ public class QuestionManagerTest {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
@@ -108,7 +110,8 @@ public class QuestionManagerTest {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");
 
     }
@@ -136,7 +139,8 @@ public class QuestionManagerTest {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
         questionManager.startQuestions(lessonInstanceData, "lessonID1");
 
     }
@@ -172,7 +176,8 @@ public class QuestionManagerTest {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
@@ -215,7 +220,8 @@ public class QuestionManagerTest {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
@@ -252,7 +258,8 @@ public class QuestionManagerTest {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
 
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);

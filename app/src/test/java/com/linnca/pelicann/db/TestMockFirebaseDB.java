@@ -109,7 +109,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.addLessonInstance("", new LessonInstanceData(), new ArrayList<String>(),
+        db.addLessonInstance(new LessonInstanceData(), new ArrayList<String>(),
                 onDBResultListener);
     }
 
@@ -615,7 +615,8 @@ public class TestMockFirebaseDB {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION);
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstanceAdded() {
@@ -623,7 +624,7 @@ public class TestMockFirebaseDB {
                 assertEquals(1, lessonInstances.size());
             }
         };
-        db.addLessonInstance("lesson1", lessonInstanceData,
+        db.addLessonInstance(lessonInstanceData,
                 new ArrayList<String>(), onDBResultListener);
     }
 
@@ -636,7 +637,8 @@ public class TestMockFirebaseDB {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION);
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
@@ -666,7 +668,8 @@ public class TestMockFirebaseDB {
         questionSets.add(new LessonInstanceDataQuestionSet(questionSet, true));
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
-                0L, new ArrayList<String>(), questionSets);
+                0L, new ArrayList<String>(), new ArrayList<String>(),
+                questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION);
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstanceAdded() {
@@ -682,7 +685,7 @@ public class TestMockFirebaseDB {
                 assertTrue(lessonIDSet);
             }
         };
-        db.addLessonInstance("lesson1", lessonInstanceData,
+        db.addLessonInstance(lessonInstanceData,
                 new ArrayList<String>(), onDBResultListener);
     }
 

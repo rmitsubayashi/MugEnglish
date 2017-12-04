@@ -47,29 +47,12 @@ public class LessonTest {
     }
 
     @Test
-    public void lessonWithOnlyGenericQuestions_saveQuestions_DBShouldSaveGenericQuestions() throws Exception{
-        Lesson lessonWithOnlyGenericQuestions = LessonFactory.parseLesson(Goodbye_bye.KEY, null, db, null);
-        lessonWithOnlyGenericQuestions.saveGenericQuestions();
-        List<List<String>> questionIDSets = lessonWithOnlyGenericQuestions.getGenericQuestionIDSets();
-        boolean noMatch = false;
-        for (List<String> questionVariations : questionIDSets){
-            for (String questionID : questionVariations){
-                if (!db.questions.containsKey(questionID)){
-                    noMatch = true;
-                    break;
-                }
-            }
-        }
-        assertFalse(noMatch);
-    }
-
-    @Test
     public void lessonWithOnlyGenericQuestions_saveQuestions_DBShouldHaveQuestionCountEqualToNumberOfGenericQuestions() throws Exception{
         Lesson lessonWithOnlyGenericQuestions = LessonFactory.parseLesson(Goodbye_bye.KEY, null, db, null);
         lessonWithOnlyGenericQuestions.saveGenericQuestions();
-        List<List<String>> questionIDSets = lessonWithOnlyGenericQuestions.getGenericQuestionIDSets();
+        List<List<QuestionData>> preGenericQuestions = lessonWithOnlyGenericQuestions.getPreGenericQuestions();
         int questionCt = 0;
-        for (List<String> questionVariations : questionIDSets){
+        for (List<QuestionData> questionVariations : preGenericQuestions){
             questionCt += questionVariations.size();
         }
         assertEquals(questionCt, db.questions.size());
@@ -85,19 +68,11 @@ public class LessonTest {
                     @Override
                     public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
                         Lesson lesson = LessonFactory.parseLesson(Goodbye_bye.KEY, null, db, null);
-                        List<List<String>> questionIDSets = lesson.getGenericQuestionIDSets();
-                        //flatten out
-                        List<String> genericQuestionIDs = new ArrayList<>();
-                        for (List<String> questionIDs : questionIDSets){
-                            genericQuestionIDs.addAll(questionIDs);
-                        }
+                        List<List<QuestionData>> preGenericQuestions = lesson.getPreGenericQuestions();
                         boolean noMatch = false;
                         for (LessonInstanceData instance : lessonInstances){
                             List<String> questions = instance.allQuestionIds();
-                            for (String id : questions){
-                                if (!genericQuestionIDs.contains(id))
-                                    noMatch = true;
-                            }
+                            assertEquals(preGenericQuestions.size(), questions.size());
                         }
                         assertFalse(noMatch);
                     }
@@ -261,9 +236,12 @@ public class LessonTest {
         Lesson.LessonListener lessonListener = new Lesson.LessonListener() {
             @Override
             public void onLessonCreated() {
-                List<List<String>> genericQuestions = LessonFactory.parseLesson(Hello_my_name_is_NAME.KEY, null, db, null).getGenericQuestionIDSets();
+                Lesson lesson = LessonFactory.parseLesson(Hello_my_name_is_NAME.KEY, null, db, null);
+                List<List<QuestionData>> preGenericQuestions = lesson.getPreGenericQuestions();
+                List<List<QuestionData>> postGenericQuestions = lesson.getPostGenericQuestions();
                 //we only want to know how many generic questions will be in the lesson instance
-                int genericQuestionCt = genericQuestions.size();
+                int genericQuestionCt = preGenericQuestions.size() + postGenericQuestions.size();
+
                 Map<String, LessonInstanceData> instanceDataMap = db.lessonInstances;
                 //only one loop (assertion of only one lesson instance is in a different test)
                 for (Map.Entry<String, LessonInstanceData> entry : instanceDataMap.entrySet()) {

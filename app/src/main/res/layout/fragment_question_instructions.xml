@@ -17,7 +17,7 @@
             android:id="@+id/question_instructions_instructions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/questions_instructions"/>
+            style="@style/questions_question"/>
         <EditText
             android:id="@+id/question_instructions_input"
             android:layout_width="match_parent"
