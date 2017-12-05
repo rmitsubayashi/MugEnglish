@@ -53,7 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:visibility="gone"
-            android:textSize="17sp"
+            android:textSize="21sp"
+            android:textStyle="bold"
             android:text="@string/results_first_clear"/>
         <TextView
             android:id="@+id/results_unlocked_lesson_title"

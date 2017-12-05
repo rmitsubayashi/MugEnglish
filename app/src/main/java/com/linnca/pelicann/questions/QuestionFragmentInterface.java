@@ -219,6 +219,10 @@ public abstract class QuestionFragmentInterface extends Fragment {
                         return true;
                     }
                 });
+                //make sure the user knows that he clicked it (in case it lags)
+                nextButton.setBackgroundResource(R.drawable.transparent_button);
+                nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+                nextButton.setAlpha(0.3f);
                 questionListener.onNextQuestion(correct);
             }
         });

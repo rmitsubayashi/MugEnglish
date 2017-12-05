@@ -133,6 +133,7 @@ public class LessonList extends Fragment {
     public void onStop(){
         super.onStop();
         db.cleanup();
+        adapter = null;
     }
 
 }
