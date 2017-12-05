@@ -25,13 +25,13 @@ public class Thanks_no_problem extends Lesson {
         super.lessonKey = KEY;
     }
     @Override
-    protected int getQueryResultCt(){return 0;}
+    protected synchronized int getQueryResultCt(){return 0;}
     @Override
     protected String getSPARQLQuery(){
         return "";
     }
     @Override
-    protected void createQuestionsFromResults(){}
+    protected synchronized void createQuestionsFromResults(){}
     @Override
     protected void processResultsIntoClassWrappers(Document document){}
 

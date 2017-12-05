@@ -93,7 +93,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
     }
 
     @Override
-    protected void processResultsIntoClassWrappers(Document document) {
+    protected synchronized void processResultsIntoClassWrappers(Document document) {
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
         );
@@ -128,10 +128,10 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
     }
 
     @Override
-    protected int getQueryResultCt(){ return queryResults.size(); }
+    protected synchronized int getQueryResultCt(){ return queryResults.size(); }
 
     @Override
-    protected void createQuestionsFromResults(){
+    protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
             List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);

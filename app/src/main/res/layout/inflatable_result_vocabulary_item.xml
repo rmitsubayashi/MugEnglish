@@ -26,7 +26,6 @@
         android:id="@+id/results_vocabulary_item_meaning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
         android:layout_below="@id/results_vocabulary_item_word"
         android:layout_alignStart="@id/results_vocabulary_item_word"
         android:layout_toStartOf="@id/results_vocabulary_item_add"

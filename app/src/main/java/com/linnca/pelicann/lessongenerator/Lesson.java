@@ -1,5 +1,7 @@
 package com.linnca.pelicann.lessongenerator;
 
+import android.util.Log;
+
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
@@ -210,22 +212,24 @@ public abstract class Lesson {
 			public boolean shouldStop() {
 				//should stop either if we've got enough questions or
 				// we finished checking
-				return
-						getQueryResultCt() >= questionSetsLeftToPopulate ||
+				return getQueryResultCt() >= questionSetsLeftToPopulate ||
 						DOMsFetched.get() == queryCt;
 			}
 
 			@Override
 			public void onStop(){
 				//only call once
-				if (!onStoppedCalled.getAndSet(true))
+				if (!onStoppedCalled.getAndSet(true)) {
 					accessDBWhenCreatingQuestions();
+				}
 			}
 
 			@Override
 			public void onFetchDOM(Document result) {
 				DOMsFetched.incrementAndGet();
-				processResultsIntoClassWrappers(result);
+				if (!onStoppedCalled.get()) {
+					processResultsIntoClassWrappers(result);
+				}
 			}
 		};
 		try {
@@ -236,6 +240,11 @@ public abstract class Lesson {
 		}
 	}
 
+	//getQueryResultCt, processResultsIntoClassWrappers, and createQuestionsFromResults
+	// should be synchronized because multiple threads may access the list used in these
+	// methods.
+	//a synchronized list doesn't lock the list during iterations (createQuestionsFromResults),
+	// so still causes concurrent modification exceptions..
 	protected abstract int getQueryResultCt();
 
 	//wrap the data into usable classes.

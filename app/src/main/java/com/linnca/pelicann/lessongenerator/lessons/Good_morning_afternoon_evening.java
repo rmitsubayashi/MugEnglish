@@ -31,13 +31,13 @@ public class Good_morning_afternoon_evening extends Lesson {
         super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
-    protected int getQueryResultCt(){return 0;}
+    protected synchronized int getQueryResultCt(){return 0;}
     @Override
     protected String getSPARQLQuery(){
         return "";
     }
     @Override
-    protected void createQuestionsFromResults(){}
+    protected synchronized void createQuestionsFromResults(){}
     @Override
     protected void processResultsIntoClassWrappers(Document document){}
 

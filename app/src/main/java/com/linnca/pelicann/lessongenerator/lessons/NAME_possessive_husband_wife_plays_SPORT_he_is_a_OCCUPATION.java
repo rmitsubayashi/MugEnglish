@@ -166,7 +166,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
     }
 
     @Override
-    protected void processResultsIntoClassWrappers(Document document) {
+    protected synchronized void processResultsIntoClassWrappers(Document document) {
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
         );
@@ -201,10 +201,10 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
     }
 
     @Override
-    protected int getQueryResultCt(){ return queryResults.size(); }
+    protected synchronized int getQueryResultCt(){ return queryResults.size(); }
 
     @Override
-    protected void createQuestionsFromResults(){
+    protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
             List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);

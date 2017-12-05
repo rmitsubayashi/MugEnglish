@@ -38,9 +38,7 @@ import java.util.List;
 public class Hello_my_name_is_NAME extends Lesson {
     public static final String KEY = "Hello_my_name_is_NAME";
 
-    private final List<QueryResult> queryResults = Collections.synchronizedList(
-            new ArrayList<QueryResult>()
-    );
+    private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
         private final String personEN;
@@ -86,7 +84,7 @@ public class Hello_my_name_is_NAME extends Lesson {
     }
 
     @Override
-    protected void processResultsIntoClassWrappers(Document document) {
+    protected synchronized void processResultsIntoClassWrappers(Document document) {
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
         );
@@ -104,10 +102,10 @@ public class Hello_my_name_is_NAME extends Lesson {
     }
 
     @Override
-    protected int getQueryResultCt(){ return queryResults.size(); }
+    protected synchronized int getQueryResultCt(){ return queryResults.size(); }
 
     @Override
-    protected void createQuestionsFromResults(){
+    protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
             List<QuestionData> chatMultipleChoice = createChatMultipleChoiceQuestion(qr);

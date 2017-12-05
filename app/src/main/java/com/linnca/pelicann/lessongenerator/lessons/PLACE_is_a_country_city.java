@@ -90,7 +90,7 @@ public class PLACE_is_a_country_city extends Lesson {
 
     @Override
 
-    protected void processResultsIntoClassWrappers(Document document) {
+    protected synchronized void processResultsIntoClassWrappers(Document document) {
 
         NodeList allResults = document.getElementsByTagName(
                 WikiDataSPARQLConnector.RESULT_TAG
@@ -117,11 +117,11 @@ public class PLACE_is_a_country_city extends Lesson {
 
     @Override
 
-    protected int getQueryResultCt(){
+    protected synchronized int getQueryResultCt(){
         return queryResults.size();
     }
 
-    protected void createQuestionsFromResults(){
+    protected synchronized void createQuestionsFromResults(){
 
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
