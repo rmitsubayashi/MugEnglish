@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,17 +56,30 @@ class LessonDetailsAdapter
         return allInstances.size();
     }
 
-    void setLessonInstances(List<LessonInstanceData> instances){
+    void setLessonInstances(List<LessonInstanceData> updatedInstances){
+        List<LessonInstanceData> oldInstances = new ArrayList<>(allInstances);
         allInstances.clear();
-        allInstances.addAll(instances);
+        allInstances.addAll(updatedInstances);
 
+        //animate changes
+        if (oldInstances.size() > updatedInstances.size()){
+            List<Integer> toRemove = GUIUtils.getItemIndexesToRemove(oldInstances, updatedInstances);
+            for (Integer index : toRemove){
+                notifyItemRemoved(index);
+            }
+        } else if (oldInstances.size() < updatedInstances.size()){
+            List<Integer> toAdd = GUIUtils.getItemIndexesToAdd(oldInstances, updatedInstances);
+            for (Integer index : toAdd){
+                notifyItemInserted(index);
+            }
+        }
+
+        //we should handle the empty state by displaying instructions on what to do
         if (this.getItemCount() == 0){
             uiListener.onNoItems();
         } else {
             uiListener.onItems();
         }
-
-        notifyDataSetChanged();
     }
 
     @Override

@@ -57,7 +57,28 @@ public class VocabularyListWord implements Comparable<VocabularyListWord>{
     }
 
     @Override
+    public boolean equals(Object object){
+        //the words should be equal if they have the same key
+        if (object == null)
+            return false;
+
+        if (!(object instanceof VocabularyListWord))
+            return false;
+
+        VocabularyListWord word = ((VocabularyListWord) object);
+        return word.getKey().equals(this.key);
+    }
+
+    @Override
+    public int hashCode(){
+        int result = 17;
+        result = 31 * result + key.hashCode();
+        return result;
+    }
+
+    @Override
     public int compareTo(@NonNull VocabularyListWord word2){
+        //we want to order in alphabetical order
         return this.word.toLowerCase().compareTo(word2.getWord().toLowerCase());
     }
 }

@@ -86,6 +86,9 @@ public class LessonDetails extends Fragment {
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_lesson_details, container, false);
         list = view.findViewById(R.id.lesson_details_instanceList);
+        list.setLayoutManager(new LinearLayoutManager(getContext()));
+        //so we can long click the list items to show the context menu options
+        registerForContextMenu(list);
         noItemAddTextView = view.findViewById(R.id.lesson_details_no_items_add_guide);
         noItemsDescriptionTextView = view.findViewById(R.id.lesson_details_no_items_description_guide);
         loading = view.findViewById(R.id.lesson_details_loading);
@@ -165,35 +168,13 @@ public class LessonDetails extends Fragment {
     }
 
     private void populateData(){
-        list.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new LessonDetailsAdapter(
-                new LessonDetailsAdapter.LessonDetailsAdapterListener() {
-                    @Override
-                    public void onItems(){
-                        noItemAddTextView.setVisibility(View.GONE);
-                        noItemsDescriptionTextView.setVisibility(View.GONE);
-                    }
+        if (adapter == null) {
+            adapter = new LessonDetailsAdapter(
+                    getLessonDetailsAdapterListener(), lessonDetailsListener, lessonData.getKey()
+            );
 
-                    @Override
-                    public void onNoItems() {
-                        noItemAddTextView.setVisibility(View.VISIBLE);
-                        noItemsDescriptionTextView.setVisibility(View.VISIBLE);
-                    }
-                }, lessonDetailsListener, lessonData.getKey()
-        );
-        
-        /*
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                super.onItemRangeInserted(positionStart, itemCount);
-
-            }
-        });*/
-
-        list.setAdapter(adapter);
-        //so we can long click the list items to show the context menu options
-        registerForContextMenu(list);
+            list.setAdapter(adapter);
+        }
 
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
@@ -208,21 +189,24 @@ public class LessonDetails extends Fragment {
 
 
     private void setLessonColor(int attrID){
-        //background for whole activity
+        //background for whole screen
         mainLayout.setBackgroundColor(ThemeColorChanger.getColorFromAttribute(attrID, getContext()));
+    }
 
-        /*
-        //status bar (post-lollipop)
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.setStatusBarColor(color);
-        }
-        //action bar
-        appBar.setBackgroundColor(color);
-        */
+    private LessonDetailsAdapter.LessonDetailsAdapterListener getLessonDetailsAdapterListener(){
+        return new LessonDetailsAdapter.LessonDetailsAdapterListener() {
+            @Override
+            public void onItems(){
+                noItemAddTextView.setVisibility(View.GONE);
+                noItemsDescriptionTextView.setVisibility(View.GONE);
+            }
 
+            @Override
+            public void onNoItems() {
+                noItemAddTextView.setVisibility(View.VISIBLE);
+                noItemsDescriptionTextView.setVisibility(View.VISIBLE);
+            }
+        };
     }
 
     private void addActionListeners(){
@@ -390,6 +374,7 @@ public class LessonDetails extends Fragment {
     public void onStop(){
         super.onStop();
         db.cleanup();
+        adapter = null;
     }
 
 }

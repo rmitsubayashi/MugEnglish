@@ -80,12 +80,12 @@ public class WikiDataEntity implements Serializable{
 
 	@Override
 	public boolean equals(Object object){
+
 		if (object == null)
 			return false;
 
 		if (!(object instanceof WikiDataEntity))
 			return false;
-
 		WikiDataEntity data = (WikiDataEntity)object;
 		//we only check the ID because the label and description might change
 		//if a user adds the entity data after it has been modified

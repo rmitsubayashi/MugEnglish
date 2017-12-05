@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.ToolbarSpinnerAdapter;
 
 import java.util.ArrayList;
@@ -199,45 +200,16 @@ class UserInterestAdapter
     }
 
     private void removeItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){
-        //make the list a set to make it easier to search
-        Set<WikiDataEntity> newSet = new HashSet<>(newList);
-        int itemsRemoved = 0;
-        for (int i=0; i<oldList.size(); i++){
-            WikiDataEntity oldItem = oldList.get(i);
-            if (!newSet.contains(oldItem)){
-                notifyItemRemoved(i-itemsRemoved);
-                itemsRemoved++;
-            }
+        List<Integer> toRemove = GUIUtils.getItemIndexesToRemove(oldList, newList);
+        for (Integer index : toRemove){
+            notifyItemRemoved(index);
         }
     }
 
     private void addItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){
-        //make the list a set to make it easier to search
-        Set<WikiDataEntity> oldSet = new HashSet<>(oldList);
-        int tempToAdd = 0;
-        int insertItemStartIndex = 0;
-        for (int i=0; i<newList.size(); i++){
-            WikiDataEntity newData = newList.get(i);
-            if (!oldSet.contains(newData)){
-                //in case we are adding multiple items in a row,
-                // don't notify as soon as we find an item to add,
-                // but keep track and add it when we find an item
-                // that we shouldn't add
-                tempToAdd++;
-            } else if (tempToAdd > 0){
-                notifyItemRangeInserted(insertItemStartIndex, tempToAdd);
-                insertItemStartIndex += tempToAdd;
-                tempToAdd = 0;
-                //if the item is not to be added, we should increment
-                insertItemStartIndex++;
-            } else {
-                //if the item is not to be added, we should increment
-                insertItemStartIndex++;
-            }
-        }
-        //to handle when the last item should be added
-        if (tempToAdd > 0){
-            notifyItemRangeInserted(insertItemStartIndex, tempToAdd);
+        List<Integer> toAdd = GUIUtils.getItemIndexesToAdd(oldList, newList);
+        for (Integer index : toAdd){
+            notifyItemInserted(index);
         }
     }
 }

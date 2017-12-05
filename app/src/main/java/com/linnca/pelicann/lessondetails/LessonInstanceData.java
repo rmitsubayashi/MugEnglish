@@ -158,4 +158,23 @@ public class LessonInstanceData implements Serializable{
         LessonInstanceDataQuestionSet set = new LessonInstanceDataQuestionSet(questionSet, partOfPopularityRating);
         questionSets.add(set);
     }
+
+    @Override
+    public boolean equals(Object object){
+
+        if (object == null)
+            return false;
+
+        if (!(object instanceof LessonInstanceData))
+            return false;
+        LessonInstanceData data = (LessonInstanceData) object;
+        return  (data.getId().equals(this.id));
+    }
+
+    @Override
+    public int hashCode(){
+        int result = 17;
+        result = 31 * result + id.hashCode();
+        return result;
+    }
 }

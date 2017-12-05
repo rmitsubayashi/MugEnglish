@@ -5,6 +5,11 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 
 public final class GUIUtils {
     /*
@@ -39,5 +44,35 @@ public final class GUIUtils {
         return  imm != null &&
                 imm.hideSoftInputFromWindow(targetViewOfKeyboard.getWindowToken(), 0);
 
+    }
+
+    //for listViews
+    public static <Class>List<Integer> getItemIndexesToRemove(List<Class> oldList, List<Class> newList){
+        List<Integer> indexesToRemove =new ArrayList<>(oldList.size());
+        //make the list a set to make it easier to search
+        Set<Class> newSet = new HashSet<>(newList);
+        int itemsRemoved = 0;
+        for (int i=0; i<oldList.size(); i++){
+            Class oldItem = oldList.get(i);
+            if (!newSet.contains(oldItem)){
+                indexesToRemove.add(i-itemsRemoved);
+                itemsRemoved++;
+            }
+        }
+        return indexesToRemove;
+    }
+    
+    public static <Class>List<Integer> getItemIndexesToAdd(List<Class> oldList, List<Class> newList){
+        List<Integer> indexesToAdd =new ArrayList<>(newList.size());
+        //make the list a set to make it easier to search
+        Set<Class> oldSet = new HashSet<>(oldList);
+        for (int i=0; i<newList.size(); i++){
+            Class newItem = newList.get(i);
+            if (!oldSet.contains(newItem)){
+                indexesToAdd.add(i);
+            }
+        }
+
+        return indexesToAdd;
     }
 }

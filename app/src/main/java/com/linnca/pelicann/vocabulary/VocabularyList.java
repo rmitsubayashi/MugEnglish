@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -69,10 +70,8 @@ public class VocabularyList extends Fragment {
         listener.setToolbarState(new ToolbarState(getString(R.string.fragment_vocabulary_list_title),
                 false, false, null));
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null){
-            populateList();
-            actionModeCallback = getActionModeCallback();
-        }
+        populateList();
+        actionModeCallback = getActionModeCallback();
     }
 
     @Override
@@ -103,8 +102,12 @@ public class VocabularyList extends Fragment {
             public void onVocabularyListQueried(List<VocabularyListWord> vocabularyList) {
                 //alphabetical order
                 Collections.sort(vocabularyList);
-                adapter = new VocabularyListAdapter(getVocabularyListAdapterListener(), vocabularyList);
-                listView.setAdapter(adapter);
+                if (adapter == null) {
+                    adapter = new VocabularyListAdapter(getVocabularyListAdapterListener(), vocabularyList);
+                    listView.setAdapter(adapter);
+                } else {
+                    adapter.setVocabularyWords(vocabularyList);
+                }
             }
         };
         db.getVocabularyList(onDBResultListener);
@@ -215,5 +218,6 @@ public class VocabularyList extends Fragment {
     public void onStop(){
         super.onStop();
         db.cleanup();
+        adapter = null;
     }
 }

@@ -1,11 +1,13 @@
 package com.linnca.pelicann.vocabulary;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -122,7 +124,18 @@ class VocabularyListAdapter
     }
 
     void setVocabularyWords(List<VocabularyListWord> updatedList){
+        List<VocabularyListWord> oldList = new ArrayList<>(words);
         words = new ArrayList<>(updatedList);
-        notifyDataSetChanged();
+        if (oldList.size() > updatedList.size()){
+            List<Integer> toRemove = GUIUtils.getItemIndexesToRemove(oldList, updatedList);
+            for (Integer index : toRemove){
+                notifyItemRemoved(index);
+            }
+        } else if (oldList.size() < updatedList.size()){
+            List<Integer> toAdd = GUIUtils.getItemIndexesToAdd(oldList, updatedList);
+            for (Integer index : toAdd){
+                notifyItemInserted(index);
+            }
+        } //list size shouldn't be equal since we can only add or remove items
     }
 }
