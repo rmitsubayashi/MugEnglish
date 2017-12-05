@@ -31,9 +31,7 @@ import java.util.List;
 
 public class VocabularyList extends Fragment {
     public static final String TAG = "VocabularyList";
-    private String userID;
     private Database db;
-    private FirebaseAnalytics firebaseLog;
     private RecyclerView listView;
     private VocabularyListListener listener;
     private VocabularyListAdapter adapter;
@@ -48,10 +46,6 @@ public class VocabularyList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
-        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
-        firebaseLog.setUserId(userID);
         try {
             db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
         } catch (Exception e){

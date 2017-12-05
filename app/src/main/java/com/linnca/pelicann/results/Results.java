@@ -37,7 +37,6 @@ import java.util.List;
 
 public class Results extends Fragment {
     public static final String TAG = "Results";
-    private FirebaseAnalytics firebaseLog;
     private Database db;
     public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
     public static final String BUNDLE_QUESTION_IDS = "bundleQuestionIDs";
@@ -83,10 +82,6 @@ public class Results extends Fragment {
         });
 
         resultsManager.saveInstanceRecord();
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
-        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
-        firebaseLog.setUserId(userID);
     }
 
     @Override
@@ -181,10 +176,6 @@ public class Results extends Fragment {
             reviewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Review");
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, instanceRecord.getId());
-                    firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
                     resultsListener.resultsToReview();
                 }
             });
@@ -197,10 +188,6 @@ public class Results extends Fragment {
             finishButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalyticsHeaders.PARAMS_ACTION_TYPE, "Finish Instead of Review");
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, instanceRecord.getId());
-                    firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ACTION, bundle);
                     resultsListener.resultsToLessonList();
                 }
             });

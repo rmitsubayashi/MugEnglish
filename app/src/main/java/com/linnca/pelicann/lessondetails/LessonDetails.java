@@ -51,8 +51,6 @@ import java.util.Locale;
 public class LessonDetails extends Fragment {
     public static final String TAG = "LessonDetails";
     private Database db;
-    private String userID;
-    private FirebaseAnalytics firebaseLog;
     public static final String BUNDLE_LESSON_DATA = "lessonData";
     private LessonData lessonData;
     private RecyclerView list;
@@ -81,10 +79,6 @@ public class LessonDetails extends Fragment {
             //hard code a new database instance
             db = new FirebaseDB();
         }
-        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
-        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
-        firebaseLog.setUserId(userID);
     }
 
     @Override
@@ -247,17 +241,9 @@ public class LessonDetails extends Fragment {
             new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE),
             db,
             new Lesson.LessonListener() {
-                private DateTime startTime = DateTime.now();
                 @Override
                 public void onLessonCreated() {
                     enableCreateButtonAfterLoading();
-
-                    DateTime finishTime = DateTime.now();
-                    int millisecondsTaken = new Period(startTime, finishTime, PeriodType.millis()).getMillis();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(FirebaseAnalytics.Param.VALUE, millisecondsTaken);
-                    firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_LOAD, bundle);
-
                 }
             }
         );

@@ -36,7 +36,6 @@ import java.util.List;
 
 public class UserInterests extends Fragment {
     public static final String TAG = "UserInterests";
-    private FirebaseAnalytics firebaseLog;
     private Database db;
     private ViewGroup mainLayout;
     private RecyclerView listView;
@@ -56,10 +55,6 @@ public class UserInterests extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
-        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
-        firebaseLog.setUserId(userID);
         try {
             db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
         } catch (Exception e){
@@ -126,10 +121,6 @@ public class UserInterests extends Fragment {
     public void filterUserInterests(int filter){
         if (userInterestListAdapter != null)
             userInterestListAdapter.setFilter(filter);
-        Bundle bundle = new Bundle();
-        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "Filter");
-        bundle.putString(FirebaseAnalytics.Param.VALUE, ToolbarSpinnerAdapter.getSpinnerStateIdentifier(filter));
-        firebaseLog.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
     }
 
     private void setAdapter(){

@@ -36,7 +36,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SearchInterests extends Fragment {
-    private FirebaseAnalytics firebaseLog;
     private Database db;
     public static final String TAG = "SearchInterests";
     private SearchView searchView;
@@ -67,10 +66,6 @@ public class SearchInterests extends Fragment {
         super.onCreate(savedInstanceState);
         //so we can access the search view
         setHasOptionsMenu(true);
-        firebaseLog = FirebaseAnalytics.getInstance(getActivity());
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        firebaseLog.setCurrentScreen(getActivity(), TAG, TAG);
-        firebaseLog.setUserId(userID);
         try {
             db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
         } catch (Exception e){
@@ -205,12 +200,6 @@ public class SearchInterests extends Fragment {
                 OnDBResultListener onDBResultListener = new OnDBResultListener() {
                     @Override
                     public void onUserInterestsAdded() {
-                        //log event
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, data.getWikiDataID());
-                        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, data.getLabel());
-                        firebaseLog.logEvent(FirebaseAnalyticsHeaders.EVENT_ADD_ITEM, bundle);
-
                         //in the background thread, find the item's
                         //classification and pronunciation
                         AddUserInterestHelper addUserInterestHelper = new AddUserInterestHelper();
@@ -304,10 +293,6 @@ public class SearchInterests extends Fragment {
                             result.add(emptyState);
                         }
                         adapter.updateEntries(result);
-                        //log
-                        Bundle bundle = new Bundle();
-                        bundle.putString(FirebaseAnalytics.Param.SEARCH_TERM, query);
-                        firebaseLog.logEvent(FirebaseAnalytics.Event.SEARCH, bundle);
                     } finally {
                         lock.unlock();
                     }
