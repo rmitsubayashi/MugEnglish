@@ -384,6 +384,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void vocabularyListToLessonList(){
+        //since the vocabulary list is a root view,
+        //we can just call setLessonView()
+        setLessonView();
+    }
+
+    @Override
     public void vocabularyDetailsToLessonDetails(String lessonKey){
         //make sure when the user presses the back button after the redirect,
         //the user goes to the lesson list screen

@@ -14,22 +14,26 @@ import java.util.HashSet;
 import java.util.List;
 
 class VocabularyListAdapter
-    extends RecyclerView.Adapter<VocabularyListViewHolder>
+    extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     interface VocabularyListAdapterListener {
+        void vocabularyListToLessonList();
         //should allow undo-ing
         void onItemClicked(int position);
         boolean onItemLongClicked(int position);
     }
 
     private VocabularyListAdapterListener listener;
-    private List<VocabularyListWord> words;
+    private List<VocabularyListWord> words = new ArrayList<>();
     private HashSet<Integer> selectedDataPositions = new HashSet<>();
 
-    VocabularyListAdapter(VocabularyListAdapterListener listener, List<VocabularyListWord> words){
+    private final String EMPTY_STATE_ITEM = "empty state";
+    private final int headerViewType = 1;
+    private final int listItemViewType = 2;
+
+    VocabularyListAdapter(VocabularyListAdapterListener listener){
         super();
         this.listener = listener;
-        this.words = words;
     }
 
     @Override
@@ -42,48 +46,70 @@ class VocabularyListAdapter
         return position;
     }
 
-    public VocabularyListWord getItemAt(int position){
+    VocabularyListWord getItemAt(int position){
         return words.get(position);
     }
 
     @Override
-    public VocabularyListViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.inflatable_vocabulary_list_item, parent, false);
-        return new VocabularyListViewHolder(itemView);
+    public int getItemViewType(int position){
+        VocabularyListWord word = getItemAt(position);
+        if (word.getKey().equals(EMPTY_STATE_ITEM)){
+            return headerViewType;
+        } else {
+            return listItemViewType;
+        }
     }
 
     @Override
-    public void onBindViewHolder(final VocabularyListViewHolder holder, int position){
-        final VocabularyListWord data = words.get(position);
-        boolean isSelected = isSelected(position);
-
-        if (isSelected){
-            holder.itemView.setBackgroundResource(R.drawable.gray_button);
-        } else {
-            holder.itemView.setBackgroundResource(R.drawable.transparent_button);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        if (viewType == headerViewType){
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_vocabulary_list_empty_state, parent, false);
+            VocabularyListEmptyStateViewHolder holder = new VocabularyListEmptyStateViewHolder(itemView);
+            holder.setListener(listener);
+            return holder;
+        } else if (viewType == listItemViewType){
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_vocabulary_list_item, parent, false);
+            final VocabularyListViewHolder holder = new VocabularyListViewHolder(itemView);
+            //what happens when we click/long click is the same for every item
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null) {
+                        listener.onItemClicked(holder.getAdapterPosition());
+                    }
+                }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (listener != null) {
+                        return listener.onItemLongClicked(holder.getAdapterPosition());
+                    }
+                    return false;
+                }
+            });
+            return holder;
         }
+        return null;
+    }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    listener.onItemClicked(holder.getAdapterPosition());
-                }
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position){
+        final VocabularyListWord data = words.get(position);
+        if (holder instanceof VocabularyListViewHolder) {
+            boolean isSelected = isSelected(position);
+            if (isSelected) {
+                holder.itemView.setBackgroundResource(R.drawable.gray_button);
+            } else {
+                holder.itemView.setBackgroundResource(R.drawable.transparent_button);
             }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (listener != null) {
-                    return listener.onItemLongClicked(holder.getAdapterPosition());
-                }
-                return false;
-            }
-        });
 
-        holder.setWord(data.getWord());
-        holder.setMeaning(data.getMeanings());
+            ((VocabularyListViewHolder)holder).setWord(data.getWord());
+            ((VocabularyListViewHolder)holder).setMeaning(data.getMeanings());
+        }
+        //nothing to do if it's an empty state
 
     }
 
@@ -125,6 +151,23 @@ class VocabularyListAdapter
 
     void setVocabularyWords(List<VocabularyListWord> updatedList){
         List<VocabularyListWord> oldList = new ArrayList<>(words);
+        //empty state
+        if (updatedList.size() == 0){
+            notifyItemRangeRemoved(0, oldList.size());
+            VocabularyListWord emptyState = new VocabularyListWord();
+            emptyState.setKey(EMPTY_STATE_ITEM);
+            updatedList.add(emptyState);
+            words = new ArrayList<>(updatedList);
+            notifyDataSetChanged();
+            return;
+        }
+        //check if we came from an empty state
+        if (oldList.size() == 1 &&
+                oldList.get(0).getKey().equals(EMPTY_STATE_ITEM)){
+            oldList.remove(0);
+            notifyItemRemoved(0);
+        }
+
         words = new ArrayList<>(updatedList);
         if (oldList.size() > updatedList.size()){
             List<Integer> toRemove = GUIUtils.getItemIndexesToRemove(oldList, updatedList);

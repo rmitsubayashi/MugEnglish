@@ -1,5 +1,7 @@
 package com.linnca.pelicann.userinterestcontrols;
 
+import android.util.Log;
+
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsJSON;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.PronunciationAPIConnector;
@@ -96,7 +98,7 @@ public class AddUserInterestHelper {
                     //the result can be either the person query or
                     // the place query.
                     String isPerson = SPARQLDocumentParserHelper.findValueByNodeName(allResults.item(0), "person");
-                    if (isPerson != null){
+                    if (isPerson != null && !isPerson.equals("")){
                         db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_PERSON);
                     } else {
                         db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_PLACE);
@@ -194,13 +196,14 @@ public class AddUserInterestHelper {
 
     }
 
+    //not one query because multiple UNIONs time out
     private String getPersonSearchQuery(String wikidataID){
         return "SELECT ?person " +
                 "WHERE " +
                 "{" +
-                "  {?person wdt:P31 wd:Q5} " +
-                "  UNION {?person wdt:P31/wdt:P279* wd:Q15632617} " +
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en','ja'. } . " +
+                "  {?person wdt:P31 wd:Q5} " + //is a person
+                "  UNION {?person wdt:P31/wdt:P279* wd:Q15632617} " + //or a fictional person
+                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'. } . " +
                 "  BIND (wd:" + wikidataID + " as ?person)" +
                 "}";
     }
@@ -211,7 +214,7 @@ public class AddUserInterestHelper {
                 "{" +
                 "  {?place wdt:P31/wdt:P279* wd:Q2221906} " +
                 "  UNION {?place wdt:P31/wdt:P279* wd:Q3895768} . " +
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en,ja' . } " +
+                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en' . } " +
                 "  BIND (wd:" + wikidataID + " as ?place) " +
                 "}";
     }

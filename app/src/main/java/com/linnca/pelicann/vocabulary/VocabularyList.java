@@ -41,6 +41,7 @@ public class VocabularyList extends Fragment {
 
     public interface VocabularyListListener {
         void vocabularyListToVocabularyDetails(String key);
+        void vocabularyListToLessonList();
         void setToolbarState(ToolbarState state);
     }
 
@@ -103,11 +104,12 @@ public class VocabularyList extends Fragment {
                 //alphabetical order
                 Collections.sort(vocabularyList);
                 if (adapter == null) {
-                    adapter = new VocabularyListAdapter(getVocabularyListAdapterListener(), vocabularyList);
+                    adapter = new VocabularyListAdapter(getVocabularyListAdapterListener());
                     listView.setAdapter(adapter);
-                } else {
-                    adapter.setVocabularyWords(vocabularyList);
                 }
+
+                adapter.setVocabularyWords(vocabularyList);
+
             }
         };
         db.getVocabularyList(onDBResultListener);
@@ -115,6 +117,11 @@ public class VocabularyList extends Fragment {
 
     private VocabularyListAdapter.VocabularyListAdapterListener getVocabularyListAdapterListener(){
         return new VocabularyListAdapter.VocabularyListAdapterListener() {
+            @Override
+            public void vocabularyListToLessonList(){
+                listener.vocabularyListToLessonList();
+            }
+
             @Override
             public void onItemClicked(int position) {
                 if (actionMode != null) {

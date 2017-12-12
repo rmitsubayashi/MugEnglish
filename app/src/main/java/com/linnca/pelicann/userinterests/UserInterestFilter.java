@@ -73,6 +73,11 @@ public class UserInterestFilter {
         }
         for (Iterator<WikiDataEntity> iterator = filteredList.iterator(); iterator.hasNext();){
             WikiDataEntity data = iterator.next();
+            //no matter the filter,
+            //we should show the empty state
+            if (data.getWikiDataID().equals(UserInterestAdapter.EMPTY_STATE_TAG)){
+                continue;
+            }
             if (!toMatchFilter.contains(data.getClassification())){
                 iterator.remove();
             }

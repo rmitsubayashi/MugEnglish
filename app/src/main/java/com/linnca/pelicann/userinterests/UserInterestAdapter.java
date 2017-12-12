@@ -16,11 +16,15 @@ import java.util.List;
 import java.util.Set;
 
 class UserInterestAdapter
-        extends RecyclerView.Adapter<UserInterestViewHolder>
+        extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     private final UserInterestAdapterListener listener;
     private final UserInterestFilter userInterestFilter = new UserInterestFilter();
     private HashSet<Integer> selectedDataPositions = new HashSet<>();
+
+    static final String EMPTY_STATE_TAG = "empty state";
+    private final int emptyStateViewType = 1;
+    private final int userInterestItemViewType = 2;
 
     interface UserInterestAdapterListener {
         //should allow undo-ing
@@ -45,44 +49,66 @@ class UserInterestAdapter
     }
 
     @Override
-    public UserInterestViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.inflatable_user_interests_list_item, parent, false);
-        return new UserInterestViewHolder(itemView);
+    public int getItemViewType(int position){
+        WikiDataEntity item = userInterestFilter.get(position);
+        if (item.getWikiDataID().equals(EMPTY_STATE_TAG)){
+            return emptyStateViewType;
+        } else {
+            return userInterestItemViewType;
+        }
     }
 
     @Override
-    public void onBindViewHolder(final UserInterestViewHolder holder, int position){
-        final WikiDataEntity data = userInterestFilter.get(position);
-        holder.setLabel(data.getLabel());
-        holder.setDescription(data.getDescription());
-        boolean isSelected = isSelected(position);
-        holder.setIcon(data.getClassification(), isSelected);
-        holder.setWikiDataEntity(data);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        if (viewType == emptyStateViewType){
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_user_interest_empty_state, parent, false);
+            return new RecyclerView.ViewHolder(itemView){};
+        } else if (viewType == userInterestItemViewType) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_user_interests_list_item, parent, false);
 
-        if (isSelected){
-            holder.itemView.setBackgroundResource(R.drawable.gray_button);
-        } else {
-            holder.itemView.setBackgroundResource(R.drawable.transparent_button);
+            final UserInterestViewHolder holder = new UserInterestViewHolder(itemView);
+            //since these aren't dependant on the item,
+            //set the click and long click listeners here
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null) {
+                        listener.onItemClicked(holder.getAdapterPosition());
+                    }
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (listener != null) {
+                        return listener.onItemLongClicked(holder.getAdapterPosition());
+                    }
+                    return false;
+                }
+            });
+            return holder;
         }
+        return null;
+    }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) {
-                    listener.onItemClicked(holder.getAdapterPosition());
-                }
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position){
+        if (holder instanceof UserInterestViewHolder) {
+            final WikiDataEntity data = userInterestFilter.get(position);
+            ((UserInterestViewHolder)holder).setLabel(data.getLabel());
+            ((UserInterestViewHolder)holder).setDescription(data.getDescription());
+            boolean isSelected = isSelected(position);
+            ((UserInterestViewHolder)holder).setIcon(data.getClassification(), isSelected);
+            ((UserInterestViewHolder)holder).setWikiDataEntity(data);
+
+            if (isSelected) {
+                holder.itemView.setBackgroundResource(R.drawable.gray_button);
+            } else {
+                holder.itemView.setBackgroundResource(R.drawable.transparent_button);
             }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                if (listener != null) {
-                    return listener.onItemLongClicked(holder.getAdapterPosition());
-                }
-                return false;
-            }
-        });
+        }
 
     }
 
@@ -126,6 +152,15 @@ class UserInterestAdapter
     }
 
     void setInterests(List<WikiDataEntity> updatedList){
+        //empty state
+        if (updatedList.size() == 0){
+            WikiDataEntity emptyState = new WikiDataEntity();
+            emptyState.setWikiDataID(EMPTY_STATE_TAG);
+            updatedList.add(emptyState);
+            userInterestFilter.setUserInterests(updatedList);
+            notifyDataSetChanged();
+            return;
+        }
         //just update if the displayed list is empty
         //(can be the initial call or just if there is nothing on
         // the screen now)
@@ -207,6 +242,12 @@ class UserInterestAdapter
     }
 
     private void addItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){
+        //remove the empty state if it's there first
+        if (oldList.size() == 1 &&
+                oldList.get(0).getWikiDataID().equals(EMPTY_STATE_TAG)){
+            oldList.remove(0);
+            notifyItemRemoved(0);
+        }
         List<Integer> toAdd = GUIUtils.getItemIndexesToAdd(oldList, newList);
         for (Integer index : toAdd){
             notifyItemInserted(index);
