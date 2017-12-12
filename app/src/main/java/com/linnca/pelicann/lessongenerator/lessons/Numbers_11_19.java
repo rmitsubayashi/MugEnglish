@@ -106,7 +106,7 @@ public class Numbers_11_19 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
@@ -129,7 +129,7 @@ public class Numbers_11_19 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);

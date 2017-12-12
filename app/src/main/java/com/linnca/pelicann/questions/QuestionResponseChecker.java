@@ -18,6 +18,9 @@ public class QuestionResponseChecker {
         //if any of the answers match,
         // the response is correct
         for (String correctAnswer : allAnswers){
+            //clean the string so we can easily compare the strings
+            response = formatAnswer(response);
+            correctAnswer = formatAnswer(correctAnswer);
             if (compareResponse(response, correctAnswer)){
                 return true;
             }
@@ -44,10 +47,7 @@ public class QuestionResponseChecker {
         return answer;
     }
 
-    private static boolean compareResponse(String response, String answer){
-        //clean the string so we can easily compare the strings
-        response = formatAnswer(response);
-        answer = formatAnswer(answer);
+    static boolean compareResponse(String response, String answer){
         //ANYTHING says that the user can put anything in there
         if (answer.contains(ANYTHING)){
             //escapes the whole string

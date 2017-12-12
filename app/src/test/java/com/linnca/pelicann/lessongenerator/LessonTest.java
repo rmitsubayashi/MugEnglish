@@ -264,7 +264,7 @@ public class LessonTest {
         questions1.add("questionID1");
         questionSet1.add(questions1);
         db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "wikiDataLabel1", "interestLabel1", questionSet1, new ArrayList<String>(),1));
-        QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        QuestionData questionData1 = new QuestionData("questionID1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", questionData1);
         List<List<String>> questionSet2 = new ArrayList<>(1);
@@ -272,7 +272,7 @@ public class LessonTest {
         questions2.add("questionID2");
         questionSet2.add(questions2);
         db.questionSets.put("questionSetID2", new QuestionSet("questionSetID2", "wikiDataLabel2", "interestLabel2", questionSet2, new ArrayList<String>(),1));
-        QuestionData questionData2 = new QuestionData("questionID2","lessonID2", "topic2", Question_TrueFalse.QUESTION_TYPE,
+        QuestionData questionData2 = new QuestionData("questionID2","lessonID2", Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", questionData2);
 
@@ -336,7 +336,7 @@ public class LessonTest {
         questions1.add("questionID1");
         questionSet1.add(questions1);
         db.questionSets.put("questionSetID1", new QuestionSet("questionSetID1", "WikiDataLabel1", "interestLabel1", questionSet1, new ArrayList<String>(),1));
-        QuestionData questionData1 = new QuestionData("questionID1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        QuestionData questionData1 = new QuestionData("questionID1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", questionData1);
 

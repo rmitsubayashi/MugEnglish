@@ -34,19 +34,19 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
         private final String countryID;
         private final String countryEN;
-        private final String countryForeign;
+        private final String countryJP;
         private final String phoneNumber;
 
         private QueryResult(
                 String countryID,
                 String countryEN,
-                String countryForeign,
+                String countryJP,
                 String phoneNumber
         ) {
 
             this.countryID = countryID;
             this.countryEN = countryEN;
-            this.countryForeign = countryForeign;
+            this.countryJP = countryJP;
             this.phoneNumber = phoneNumber;
         }
     }
@@ -105,13 +105,13 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
             countryID = WikiDataEntity.getWikiDataIDFromReturnedResult(countryID);
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryEN");
-            String countryForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
+            String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             String phoneNumber = SPARQLDocumentParserHelper.findValueByNodeName(head, "phoneNumberLabel");
             //since we may return something like 100番
             //remove all non-digits.
             //we don't need to worry about hyphens because these are all emergency numbers
             phoneNumber = phoneNumber.replaceAll("[^\\d]", "");
-            QueryResult qr = new QueryResult(countryID, countryEN, countryForeign, phoneNumber);
+            QueryResult qr = new QueryResult(countryID, countryEN, countryJP, phoneNumber);
 
             queryResults.add(qr);
 
@@ -143,7 +143,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
 
-            super.newQuestions.add(new QuestionSetData(questionSet, qr.countryID, qr.countryForeign, new ArrayList<VocabularyWord>()));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.countryID, qr.countryJP, new ArrayList<VocabularyWord>()));
         }
 
 
@@ -151,13 +151,13 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
     }
 
     private List<QuestionData> spellingSuggestiveQuestion(QueryResult qr){
-        String question = qr.countryForeign;
+        String question = qr.countryJP;
 
         String answer = qr.countryEN;
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryForeign);
+        
         data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -182,7 +182,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
     }
 
     private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
-        String question = qr.countryForeign;
+        String question = qr.countryJP;
         String answer = qr.countryEN;
         FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
@@ -190,7 +190,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryForeign);
+        
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -207,7 +207,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
     private String fillInBlankInput1Question(QueryResult qr){
         String phoneNumber = qr.phoneNumber;
         String supportingSentence = "英単語を記入してください";
-        String sentence1 = qr.countryForeign + "の緊急通報用電話番号は" + phoneNumber + "です。";
+        String sentence1 = qr.countryJP + "の緊急通報用電話番号は" + phoneNumber + "です。";
         String sentence2 = "The emergency phone number of " + qr.countryEN + " is " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
         return supportingSentence + "\n\n" + sentence1 + "\n\n" + sentence2;
     }
@@ -273,7 +273,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryForeign);
+        
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -295,7 +295,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
 
         String sentence1 = "The emergency phone number of " + country + " is " + phoneNumberWord + ".";
 
-        String sentence2 = qr.countryForeign + "の緊急通報用電話番号は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER +
+        String sentence2 = qr.countryJP + "の緊急通報用電話番号は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER +
                 "です。";
         return sentence1 + "\n\n" + sentence2;
 
@@ -315,7 +315,7 @@ public class The_emergency_phone_number_of_COUNTRY_is_NUMBER extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryForeign);
+        
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

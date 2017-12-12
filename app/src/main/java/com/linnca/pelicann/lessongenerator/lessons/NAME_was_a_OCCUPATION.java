@@ -154,7 +154,7 @@ public class NAME_was_a_OCCUPATION extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -173,7 +173,7 @@ public class NAME_was_a_OCCUPATION extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -225,7 +225,7 @@ public class NAME_was_a_OCCUPATION extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

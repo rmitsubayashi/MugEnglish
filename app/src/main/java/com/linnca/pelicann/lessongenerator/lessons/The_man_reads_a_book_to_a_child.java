@@ -79,7 +79,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("女");
         data.setChoices(null);
@@ -97,7 +97,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("男");
         data.setChoices(null);
@@ -115,7 +115,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion("本");
         data.setChoices(null);
@@ -173,7 +173,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -187,7 +187,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -229,7 +229,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -241,7 +241,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -303,7 +303,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -317,7 +317,7 @@ public class The_man_reads_a_book_to_a_child extends Lesson {
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);

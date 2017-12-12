@@ -67,7 +67,7 @@ public class Goodbye_bye extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
             ChatQuestionItem chatItem1 = new ChatQuestionItem(false, answer);
             ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
@@ -103,7 +103,7 @@ public class Goodbye_bye extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Spelling.QUESTION_TYPE);
             data.setQuestion("さようなら");
             data.setChoices(null);
@@ -128,7 +128,7 @@ public class Goodbye_bye extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Chat.QUESTION_TYPE);
             ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "Hello");
             ChatQuestionItem chatItem2 = new ChatQuestionItem(true, "Hello");

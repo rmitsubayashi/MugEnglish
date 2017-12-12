@@ -99,7 +99,7 @@ public class Numbers_hundred_billion extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
@@ -122,7 +122,7 @@ public class Numbers_hundred_billion extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
@@ -202,7 +202,7 @@ public class Numbers_hundred_billion extends Lesson {
             acceptableAnswers.add(acceptableAnswer);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
@@ -229,7 +229,7 @@ public class Numbers_hundred_billion extends Lesson {
             acceptableAnswers.add(acceptableAnswer);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);

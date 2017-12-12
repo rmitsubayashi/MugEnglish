@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 //from the second time on, we can just read the questions in from the db
 public abstract class Lesson {
 	protected static final String TAG = "lessonGenerator";
-	protected final String TOPIC_GENERIC_QUESTION = "一般問題";
 	//there are lessons that need to access the database,
 	//so make this protected
 	protected Database db;

@@ -9,7 +9,6 @@ import java.util.List;
 public class QuestionData implements Serializable{
     private String id;
     private String lessonId;
-    private String topic;
     private Integer questionType;
     private String question;
     private List<String> choices;
@@ -20,13 +19,12 @@ public class QuestionData implements Serializable{
     public QuestionData(){}
 
     public QuestionData(String id, String lessonId,
-                        String topic, Integer questionType,
+                        Integer questionType,
                         String question, List<String> choices,
                         String answer, List<String> acceptableAnswers,
                         List<FeedbackPair> feedback) {
         this.id = id;
         this.lessonId = lessonId;
-        this.topic = topic;
         this.questionType = questionType;
         this.question = question;
         this.choices = choices;
@@ -49,14 +47,6 @@ public class QuestionData implements Serializable{
 
     public void setLessonId(String lessonId) {
         this.lessonId = lessonId;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
     }
 
     public Integer getQuestionType() {

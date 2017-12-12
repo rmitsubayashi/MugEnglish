@@ -141,7 +141,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -160,7 +160,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -179,7 +179,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -234,7 +234,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.countryJP);
+
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -265,7 +265,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.countryJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -278,7 +278,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.countryJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -315,7 +315,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.countryJP);
+
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -361,7 +361,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.countryJP);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

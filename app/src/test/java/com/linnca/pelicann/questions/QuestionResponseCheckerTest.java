@@ -13,7 +13,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponse_correctAnswer_shouldReturnCorrect(){
         String answer = "correct";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String correctResponse = "correct";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
@@ -24,7 +24,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponse_incorrectCorrectAnswer_shouldReturnIncorrect(){
         String answer = "correct";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String incorrectResponse = "incorrect";
         assertFalse(QuestionResponseChecker.checkResponse(questionData, incorrectResponse));
@@ -37,7 +37,7 @@ public class QuestionResponseCheckerTest {
         List<String> acceptableAnswers = new ArrayList<>(1);
         acceptableAnswers.add("acceptableAnswer");
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, acceptableAnswers, null);
         String acceptableResponse = "acceptableAnswer";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, acceptableResponse));
@@ -48,7 +48,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithAnythingTagInMiddle_correctAnswer_shouldReturnCorrect(){
         String answer = "answer " + QuestionResponseChecker.ANYTHING + " 1";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String correctResponse = "answer in between 1";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
@@ -59,7 +59,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithAnythingTagInMiddle_responseWithEmptyEnd_shouldReturnIncorrect(){
         String answer = "answer " + QuestionResponseChecker.ANYTHING + " 1";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String incorrectResponse = "answer in between";
         assertFalse(QuestionResponseChecker.checkResponse(questionData, incorrectResponse));
@@ -70,7 +70,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithAnythingTagInMiddle_responseWithEmptyBeginning_shouldReturnIncorrect(){
         String answer = "answer " + QuestionResponseChecker.ANYTHING + " 1";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String incorrectResponse = "in between 1";
         assertFalse(QuestionResponseChecker.checkResponse(questionData, incorrectResponse));
@@ -80,7 +80,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithAnythingAtEnd_correctResponse_shouldReturnCorrect(){
         String answer = "answer " + QuestionResponseChecker.ANYTHING;
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String correctResponse = "answer at end";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
@@ -90,7 +90,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithAnythingAtBeginning_correctResponse_shouldReturnCorrect(){
         String answer = QuestionResponseChecker.ANYTHING + " answer";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String correctResponse = "beginning answer";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
@@ -101,7 +101,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithAnythingAtEnd_responseWithNothingAtEnd_shouldReturnIncorrect(){
         String answer = "answer " + QuestionResponseChecker.ANYTHING;
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String incorrectResponse = "answer ";
         assertFalse(QuestionResponseChecker.checkResponse(questionData, incorrectResponse));
@@ -111,7 +111,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithPunctuation_responseWithNoPunctuation_shouldReturnCorrect(){
         String answer = "This is the answer.";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String correctResponse = "This is the answer";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
@@ -121,7 +121,7 @@ public class QuestionResponseCheckerTest {
     public void checkResponseWithCapitalization_responseWithLowercase_shouldReturnCorrect(){
         String answer = "This is the answer.";
         //question type doesn't matter
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String correctResponse = "this is the answer.";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
@@ -130,7 +130,7 @@ public class QuestionResponseCheckerTest {
     @Test
     public void checkResponseWithSpacing_responseWithExtraSpacing_shouldReturnCorrect(){
         String answer = "one space";
-        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData("questionID1","lessonID1",  Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
                 "question1", null, answer, null, null);
         String correctResponse = "one  space";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));

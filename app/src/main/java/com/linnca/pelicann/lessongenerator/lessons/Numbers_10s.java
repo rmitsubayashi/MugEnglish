@@ -137,7 +137,7 @@ public class Numbers_10s extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(question);
             data.setAnswer(answer);
@@ -148,7 +148,7 @@ public class Numbers_10s extends Lesson {
             data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(question);
             data.setAnswer(answer);
@@ -173,7 +173,7 @@ public class Numbers_10s extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Spelling.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
@@ -253,7 +253,7 @@ public class Numbers_10s extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
             data.setChoices(null);
@@ -277,7 +277,7 @@ public class Numbers_10s extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
             data.setChoices(null);

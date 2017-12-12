@@ -143,7 +143,7 @@ public class NAME_writes_books extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -164,7 +164,7 @@ public class NAME_writes_books extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -207,7 +207,7 @@ public class NAME_writes_books extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

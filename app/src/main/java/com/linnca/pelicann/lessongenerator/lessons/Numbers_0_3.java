@@ -114,7 +114,7 @@ public class Numbers_0_3 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
@@ -208,7 +208,7 @@ public class Numbers_0_3 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(equations.get(i));
             data.setChoices(multipleChoiceChoices());
@@ -232,7 +232,7 @@ public class Numbers_0_3 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(equations.get(i));
             data.setChoices(multipleChoiceChoices());
@@ -256,7 +256,7 @@ public class Numbers_0_3 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(equations.get(i));
             data.setChoices(multipleChoiceChoices());
@@ -309,7 +309,7 @@ public class Numbers_0_3 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER);
             data.setChoices(null);
@@ -333,7 +333,7 @@ public class Numbers_0_3 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER);
             data.setChoices(null);
@@ -357,7 +357,7 @@ public class Numbers_0_3 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER);
             data.setChoices(null);

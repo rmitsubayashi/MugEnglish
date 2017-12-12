@@ -69,7 +69,7 @@ public class Numbers_21_99 extends Lesson {
             acceptableAnswers.add(acceptableAnswer);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);
@@ -96,7 +96,7 @@ public class Numbers_21_99 extends Lesson {
             acceptableAnswers.add(acceptableAnswer);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);
@@ -123,7 +123,7 @@ public class Numbers_21_99 extends Lesson {
             acceptableAnswers.add(acceptableAnswer);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);
@@ -142,7 +142,7 @@ public class Numbers_21_99 extends Lesson {
             String answer = StringUtils.convertIntToWord(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Spelling.QUESTION_TYPE);
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);
@@ -161,7 +161,7 @@ public class Numbers_21_99 extends Lesson {
             String answer = StringUtils.convertIntToWord(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Spelling.QUESTION_TYPE);
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);
@@ -180,7 +180,7 @@ public class Numbers_21_99 extends Lesson {
             String answer = StringUtils.convertIntToWord(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Spelling.QUESTION_TYPE);
             data.setQuestion(Integer.toString(i));
             data.setAnswer(answer);

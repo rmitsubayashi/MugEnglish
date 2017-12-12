@@ -100,7 +100,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -126,7 +126,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -152,7 +152,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -188,7 +188,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -215,7 +215,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -242,7 +242,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -263,7 +263,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -286,7 +286,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Actions.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(actions);
@@ -299,7 +299,7 @@ public class Find_stand_sit_on_a_bed extends Lesson {
         data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Actions.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(actions);

@@ -103,7 +103,7 @@ public class Numbers_7_9 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
@@ -211,7 +211,7 @@ public class Numbers_7_9 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER);
             data.setChoices(null);
@@ -235,7 +235,7 @@ public class Numbers_7_9 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER);
             data.setChoices(null);
@@ -258,7 +258,7 @@ public class Numbers_7_9 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
             data.setChoices(null);
@@ -282,7 +282,7 @@ public class Numbers_7_9 extends Lesson {
             String answer = answers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(equation.get(i) + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
             data.setChoices(null);
@@ -326,7 +326,7 @@ public class Numbers_7_9 extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);

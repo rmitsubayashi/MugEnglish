@@ -78,7 +78,7 @@ public class Hi_hey_whats_up extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
             ChatQuestionItem chatItem1 = new ChatQuestionItem(false, answer);
             ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
@@ -123,7 +123,7 @@ public class Hi_hey_whats_up extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Chat.QUESTION_TYPE);
             ChatQuestionItem chatItem1 = new ChatQuestionItem(false, answer);
             ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
@@ -161,7 +161,7 @@ public class Hi_hey_whats_up extends Lesson {
             String answer = "good";
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Chat.QUESTION_TYPE);
             ChatQuestionItem chatItem1 = new ChatQuestionItem(false, greeting + ". how are you doing?");
             ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);

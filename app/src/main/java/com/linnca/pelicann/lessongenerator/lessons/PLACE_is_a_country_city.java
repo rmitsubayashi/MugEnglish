@@ -188,7 +188,7 @@ public class PLACE_is_a_country_city extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.placeJP);
+
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -224,7 +224,7 @@ public class PLACE_is_a_country_city extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.placeJP);
+
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -265,7 +265,7 @@ public class PLACE_is_a_country_city extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.placeJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -280,7 +280,7 @@ public class PLACE_is_a_country_city extends Lesson {
         data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-        data.setTopic(qr.placeJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -307,7 +307,7 @@ public class PLACE_is_a_country_city extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -334,7 +334,7 @@ public class PLACE_is_a_country_city extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

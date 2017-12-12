@@ -180,7 +180,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(qr.countryJP);
+
             data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(question);
             data.setChoices(choices);
@@ -240,7 +240,7 @@ public class The_DEMONYM_flag_is_COLORS extends Lesson{
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(qr.countryJP);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(question);
             data.setChoices(null);

@@ -194,7 +194,6 @@ public class TEAM_is_a_SPORT_team extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.teamJP);
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -216,7 +215,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.teamEN);
+        
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -249,7 +248,6 @@ public class TEAM_is_a_SPORT_team extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.teamJP);
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

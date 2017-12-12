@@ -23,16 +23,21 @@ public class QuestionFeedbackFormatter {
         if (questionData.getFeedback() != null){
             List<FeedbackPair> feedbackPairs = questionData.getFeedback();
             for (FeedbackPair feedbackPair : feedbackPairs) {
-                List<String> responses = feedbackPair.getResponse();
+                List<String> feedbackResponses = feedbackPair.getResponse();
                 if (feedbackPair.getResponseCheckType() == FeedbackPair.EXPLICIT) {
-                    if (responses.contains(response)) {
-                        return feedbackPair.getFeedback();
+                    //we don't format the answer because we might want to be catching
+                    // lowercase when it should have been uppercase
+                    for (String feedbackResponse : feedbackResponses){
+                        if (QuestionResponseChecker.compareResponse(response, feedbackResponse)){
+                            return feedbackPair.getFeedback();
+                        }
                     }
                 } else if (feedbackPair.getResponseCheckType() == FeedbackPair.IMPLICIT){
-                    String formattedResponse = QuestionResponseChecker.formatAnswer(response);
-                    for (String r : responses){
-                        String fr = QuestionResponseChecker.formatAnswer(r);
-                        if (fr.equals(formattedResponse)){
+                    //we want to format the strings
+                    response = QuestionResponseChecker.formatAnswer(response);
+                    for (String feedbackResponse : feedbackResponses){
+                        feedbackResponse = QuestionResponseChecker.formatAnswer(feedbackResponse);
+                        if (QuestionResponseChecker.compareResponse(response, feedbackResponse)){
                             return feedbackPair.getFeedback();
                         }
                     }
@@ -50,7 +55,7 @@ public class QuestionFeedbackFormatter {
             for (FeedbackPair feedbackPair : feedbackPairs) {
                 List<String> responsesToCompare = feedbackPair.getResponse();
                 if (feedbackPair.getResponseCheckType() == FeedbackPair.IMPLICIT) {
-                    //format the answer and compare
+                    //save the formatted responses so we don't have to re-format them for every feedback pair
                     if (implicitAllWrongResponses == null) {
                         implicitAllWrongResponses = new ArrayList<>();
                         for (String wrongResponse : allWrongResponses) {
@@ -58,17 +63,23 @@ public class QuestionFeedbackFormatter {
                         }
                     }
 
+                    //format the answer and compare
                     for (String responseToCompare : responsesToCompare){
                         responseToCompare = QuestionResponseChecker.formatAnswer(responseToCompare);
-                        if (implicitAllWrongResponses.contains(responseToCompare)){
-                            return feedbackPair.getFeedback();
+                        for (String wrongResponse : implicitAllWrongResponses){
+                            if (QuestionResponseChecker.compareResponse(wrongResponse, responseToCompare)){
+                                return feedbackPair.getFeedback();
+                            }
                         }
                     }
                 } else if (feedbackPair.getResponseCheckType() == FeedbackPair.EXPLICIT) {
-                    //we should check directly to avoid formatAnswer() hiding the feedback
-                    //we want to match
-                    if (!Collections.disjoint(responsesToCompare, allWrongResponses)) {
-                        return feedbackPair.getFeedback();
+                    //we should not format the string
+                    for (String wrongResponse : allWrongResponses){
+                        for (String responseToCompare : responsesToCompare){
+                            if (QuestionResponseChecker.compareResponse(wrongResponse, responseToCompare)){
+                                return feedbackPair.getFeedback();
+                            }
+                        }
                     }
                 }
             }

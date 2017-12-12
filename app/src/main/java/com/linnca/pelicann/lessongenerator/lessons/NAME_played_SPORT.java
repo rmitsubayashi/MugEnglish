@@ -42,7 +42,7 @@ public class NAME_played_SPORT extends Lesson{
     private class QueryResult {
         private String personID;
         private String personEN;
-        private String personForeign;
+        private String personJP;
         private String sportID;
         private String sportNameForeign;
         //we need these for creating questions.
@@ -51,11 +51,11 @@ public class NAME_played_SPORT extends Lesson{
         private String object = "";
 
         private QueryResult( String personID,
-                             String personEN, String personForeign,
+                             String personEN, String personJP,
                              String sportID, String sportNameEN, String sportNameForeign){
             this.personID = personID;
             this.personEN = personEN;
-            this.personForeign = personForeign;
+            this.personJP = personJP;
             this.sportID = sportID;
             this.sportNameForeign = sportNameForeign;
             //temporary. will update by connecting to db
@@ -110,7 +110,7 @@ public class NAME_played_SPORT extends Lesson{
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
-            String personForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
+            String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String sportID = SPARQLDocumentParserHelper.findValueByNodeName(head, "sport");
             // ~entity/id になってるから削る
             sportID = WikiDataEntity.getWikiDataIDFromReturnedResult(sportID);
@@ -118,7 +118,7 @@ public class NAME_played_SPORT extends Lesson{
             String sportNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "sportEN");
 
             QueryResult qr = new QueryResult(personID,
-                    personEN, personForeign,
+                    personEN, personJP,
                     sportID, sportNameEN, sportNameForeign);
 
             queryResults.add(qr);
@@ -150,7 +150,7 @@ public class NAME_played_SPORT extends Lesson{
             List<QuestionData> translateQuestion = createTranslationQuestion(qr);
             questionSet.add(translateQuestion);
 
-            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personForeign, null));
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, null));
 
         }
     }
@@ -189,7 +189,7 @@ public class NAME_played_SPORT extends Lesson{
     }
 
     private String formatSentenceForeign(QueryResult qr){
-        return qr.personForeign + "は" + qr.sportNameForeign + "をしました。";
+        return qr.personJP + "は" + qr.sportNameForeign + "をしました。";
     }
 
     private List<String> puzzlePieces(QueryResult qr){
@@ -215,7 +215,6 @@ public class NAME_played_SPORT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personForeign);
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -234,7 +233,7 @@ public class NAME_played_SPORT extends Lesson{
 
     private FeedbackPair trueFalseFeedback(QueryResult qr){
         String response = Question_TrueFalse.getTrueFalseString(true);
-        String feedback = qr.personForeign + "は引退しているので playedを使いましょう。";
+        String feedback = qr.personJP + "は引退しているので playedを使いましょう。";
         List<String> responses = new ArrayList<>(1);
         responses.add(response);
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
@@ -246,7 +245,6 @@ public class NAME_played_SPORT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personForeign);
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -261,7 +259,6 @@ public class NAME_played_SPORT extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personForeign);
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -286,7 +283,6 @@ public class NAME_played_SPORT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personForeign);
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(translateQuestion(qr));
         data.setChoices(null);

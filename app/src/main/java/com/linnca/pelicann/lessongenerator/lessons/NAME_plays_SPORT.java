@@ -282,7 +282,7 @@ public class NAME_plays_SPORT extends Lesson{
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(question);
             data.setChoices(choices);
@@ -344,7 +344,7 @@ public class NAME_plays_SPORT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -375,7 +375,7 @@ public class NAME_plays_SPORT extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -393,7 +393,7 @@ public class NAME_plays_SPORT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(qr.sportNameJP);
         data.setChoices(null);
@@ -421,7 +421,7 @@ public class NAME_plays_SPORT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -485,7 +485,7 @@ public class NAME_plays_SPORT extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Instructions.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

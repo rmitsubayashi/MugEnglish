@@ -87,7 +87,7 @@ public class Good_morning_afternoon_evening extends Lesson {
             QuestionData data = new QuestionData();
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
             ChatQuestionItem chatItem1 = new ChatQuestionItem(false, answer);
             ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
@@ -132,7 +132,7 @@ public class Good_morning_afternoon_evening extends Lesson {
             String answer = enAnswers.get(i);
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
             data.setQuestion(jpAnswers.get(i));
             data.setChoices(multipleChoiceChoices());
@@ -156,7 +156,7 @@ public class Good_morning_afternoon_evening extends Lesson {
             String answer = enAnswers.get(i).replace("good ","");
             data.setId("");
             data.setLessonId(lessonKey);
-            data.setTopic(TOPIC_GENERIC_QUESTION);
+
             data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
             data.setQuestion(jpAnswers.get(i) + "\n\ngood " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT);
             data.setChoices(null);
@@ -204,7 +204,7 @@ public class Good_morning_afternoon_evening extends Lesson {
                 String answer = enAnswers.get(i);
                 data.setId("");
                 data.setLessonId(lessonKey);
-                data.setTopic(TOPIC_GENERIC_QUESTION);
+
                 data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
                 data.setQuestion(time);
                 data.setChoices(multipleChoiceChoices());

@@ -80,7 +80,7 @@ public class Walk_turn_create_PAST extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("創りました");
         data.setChoices(null);
@@ -98,7 +98,7 @@ public class Walk_turn_create_PAST extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("曲がりました");
         data.setChoices(null);
@@ -116,7 +116,7 @@ public class Walk_turn_create_PAST extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("歩きました");
         data.setChoices(null);
@@ -134,7 +134,7 @@ public class Walk_turn_create_PAST extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("私は芸術品を創りました");
         data.setChoices(null);
@@ -152,7 +152,7 @@ public class Walk_turn_create_PAST extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("私は右に曲がりました");
         data.setChoices(null);
@@ -170,7 +170,7 @@ public class Walk_turn_create_PAST extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("私は歩きました");
         data.setChoices(null);
@@ -208,7 +208,7 @@ public class Walk_turn_create_PAST extends Lesson {
                 QuestionData data = new QuestionData();
                 data.setId("");
                 data.setLessonId(lessonKey);
-                data.setTopic(TOPIC_GENERIC_QUESTION);
+
                 data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
                 data.setQuestion(question);
                 data.setChoices(null);
@@ -248,7 +248,7 @@ public class Walk_turn_create_PAST extends Lesson {
                 QuestionData data = new QuestionData();
                 data.setId("");
                 data.setLessonId(lessonKey);
-                data.setTopic(TOPIC_GENERIC_QUESTION);
+
                 data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
                 data.setQuestion(question);
                 data.setChoices(null);
@@ -288,7 +288,7 @@ public class Walk_turn_create_PAST extends Lesson {
                 QuestionData data = new QuestionData();
                 data.setId("");
                 data.setLessonId(lessonKey);
-                data.setTopic(TOPIC_GENERIC_QUESTION);
+
                 data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
                 data.setQuestion(question);
                 data.setChoices(null);

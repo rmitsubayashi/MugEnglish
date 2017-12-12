@@ -243,7 +243,7 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -259,7 +259,7 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(qr.object);
         data.setChoices(null);
@@ -275,7 +275,7 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
         data.setQuestion(qr.sportNameJP);
         data.setChoices(null);
@@ -302,7 +302,7 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(trueFalseQuestionQuestion(qr, true));
         data.setChoices(null);
@@ -314,7 +314,7 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
+
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(trueFalseQuestionQuestion(qr, false));
         data.setChoices(null);
@@ -332,7 +332,7 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
@@ -351,7 +351,7 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);

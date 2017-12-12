@@ -76,7 +76,7 @@ public class Thanks_no_problem_youre_welcome extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion("ありがとう");
         data.setChoices(null);
@@ -93,7 +93,7 @@ public class Thanks_no_problem_youre_welcome extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion("ありがとう");
         data.setChoices(null);
@@ -128,7 +128,7 @@ public class Thanks_no_problem_youre_welcome extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Chat_MultipleChoice.QUESTION_TYPE);
         ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "thanks");
         ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
@@ -171,7 +171,7 @@ public class Thanks_no_problem_youre_welcome extends Lesson {
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
+
         data.setQuestionType(Question_Chat.QUESTION_TYPE);
         ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "thanks");
         ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);

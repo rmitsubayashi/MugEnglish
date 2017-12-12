@@ -275,7 +275,7 @@ public class TestMockFirebaseDB {
     @Test
     public void question_addGenericQuestion_shouldAddQuestionsToDatabase(){
         List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        newQuestions.add(new QuestionData("id1","lessonID1", Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
         db.addGenericQuestions(newQuestions, new ArrayList<VocabularyWord>());
         Map<String, QuestionData> questions = db.questions;
@@ -310,7 +310,7 @@ public class TestMockFirebaseDB {
     public void question_addQuestion_shouldAddQuestion(){
         List<QuestionSetData> questionList = new ArrayList<>(1);
         List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        newQuestions.add(new QuestionData("id1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
         List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
         newQuestionSet.add(newQuestions);
@@ -339,7 +339,7 @@ public class TestMockFirebaseDB {
     public void question_addOneQuestion_shouldOnlyAddOneQuestion(){
         List<QuestionSetData> questionList = new ArrayList<>(1);
         List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        newQuestions.add(new QuestionData("id1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
         List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
         newQuestionSet.add(newQuestions);
@@ -361,7 +361,7 @@ public class TestMockFirebaseDB {
     public void question_addOneQuestion_shouldAddOnlyOneQuestionSet(){
         List<QuestionSetData> questionList = new ArrayList<>(1);
         List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        newQuestions.add(new QuestionData("id1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
         List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
         newQuestionSet.add(newQuestions);
@@ -383,7 +383,7 @@ public class TestMockFirebaseDB {
     public void question_addOneQuestionWithOneVocabularyWord_shouldAddOnlyOneVocabularyWord(){
         List<QuestionSetData> questionList = new ArrayList<>(1);
         List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        newQuestions.add(new QuestionData("id1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
         List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
         newQuestionSet.add(newQuestions);
@@ -409,7 +409,7 @@ public class TestMockFirebaseDB {
     public void question_addQuestionWithVocabularyWord_shouldNotAddVocabularyList(){
         List<QuestionSetData> questionList = new ArrayList<>(1);
         List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        newQuestions.add(new QuestionData("id1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null));
         List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
         newQuestionSet.add(newQuestions);
@@ -552,7 +552,7 @@ public class TestMockFirebaseDB {
     @Test
     public void question_getQuestion_shouldGetQuestion(){
         final String questionID = "questionID1";
-        QuestionData questionData = new QuestionData(questionID,"lessonID1", "topic1", Question_TrueFalse.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData(questionID,"lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put(questionID, questionData);
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
