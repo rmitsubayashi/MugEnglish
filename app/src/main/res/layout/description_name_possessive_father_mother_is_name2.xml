@@ -26,7 +26,39 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/description_lesson_subheader"
+            android:text="@string/description_template_new_word"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             style="@style/description_lesson_text"
             android:text="@string/description_name_possessive_father_mother_is_name2_new_words"/>
+        <TableLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shrinkColumns="1">
+            <TableRow>
+                <TextView
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:textColor="?attr/color300"
+                    android:text="@string/description_name_possessive_father_mother_is_name2_word1"/>
+                <TextView
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:text="@string/description_name_possessive_father_mother_is_name2_meaning1"/>
+            </TableRow>
+            <TableRow>
+                <TextView
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:textColor="?attr/color300"
+                    android:text="@string/description_name_possessive_father_mother_is_name2_word2"/>
+                <TextView
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:text="@string/description_name_possessive_father_mother_is_name2_meaning2"/>
+            </TableRow>
+        </TableLayout>
     </LinearLayout>
 </ScrollView>

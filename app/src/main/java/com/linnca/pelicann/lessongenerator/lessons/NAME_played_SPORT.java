@@ -6,10 +6,13 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
@@ -64,25 +67,27 @@ public class NAME_played_SPORT extends Lesson{
 
     public NAME_played_SPORT(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
-        super.questionSetsToPopulate = 2;
+        super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
     protected String getSPARQLQuery(){
+        //get people at least 50 years old.
+        // since organized sports are relatively new and not many sports players
+        // are retired
         return
                 "SELECT ?person ?personEN ?personLabel " +
                         " ?sport ?sportEN ?sportLabel " +
                         "		WHERE " +
                         "		{ " +
-                        "           {?person wdt:P31 wd:Q5} UNION " + //is human
-                        "           {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                         "			?person wdt:P641 ?sport . " + //played sport
-                        "		    ?person wdt:P570 ?dateDeath . " +//is dead
+                        "		    ?person wdt:P569 ?dateBirth . " +//has birth date
                         "           ?person rdfs:label ?personEN . " + //English label
                         "           ?sport rdfs:label ?sportEN . " + //English label
+                        "           FILTER (year(NOW()) - year(?dateBirth) > 50) . " + //at least 50 years old
                         "           FILTER (LANG(?personEN) = '" +
                         WikiBaseEndpointConnector.ENGLISH + "') . " +
                         "           FILTER (LANG(?sportEN) = '" +
@@ -138,19 +143,12 @@ public class NAME_played_SPORT extends Lesson{
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
 
             List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
             questionSet.add(trueFalseQuestion);
 
-            if (!qr.object.equals("")) {
-                List<QuestionData> translateQuestion = createTranslationQuestion(qr);
-                questionSet.add(translateQuestion);
-
-                List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
-                questionSet.add(spellingQuestion);
-            }
+            List<QuestionData> translateQuestion = createTranslationQuestion(qr);
+            questionSet.add(translateQuestion);
 
             super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personForeign, null));
 
@@ -228,34 +226,22 @@ public class NAME_played_SPORT extends Lesson{
         return questionDataList;
     }
 
-    //just for true/false
-    private class SimpleQueryResult {
-        String wikiDataID;
-        String sportEN;
-        String verb;
-
-        SimpleQueryResult(String wikiDataID, String sportEN, String verb) {
-            this.wikiDataID = wikiDataID;
-            this.sportEN = sportEN;
-            this.verb = verb;
-        }
-    }
-    private List<SimpleQueryResult> popularSports(){
-        List<SimpleQueryResult> list = new ArrayList<>(5);
-        list.add(new SimpleQueryResult("Q2736", "soccer", "play"));
-        list.add(new SimpleQueryResult("Q5369", "baseball", "play"));
-        list.add(new SimpleQueryResult("Q847", "tennis", "play"));
-        return list;
-    }
-
-    private String formatFalseAnswer(QueryResult qr, SimpleQueryResult sqr){
-        //all the sports are 'play'
-        String verbObject = SportsHelper.getVerbObject(sqr.verb, sqr.sportEN, SportsHelper.PAST);
+    private String formatFalseAnswer(QueryResult qr){
+        //present instead of past
+        String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
         return qr.personEN + " " + verbObject + ".";
     }
 
+    private FeedbackPair trueFalseFeedback(QueryResult qr){
+        String response = Question_TrueFalse.getTrueFalseString(true);
+        String feedback = qr.personForeign + "は引退しているので playedを使いましょう。";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
     private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
-        List<QuestionData> questionDataList = new ArrayList<>(3);
+        List<QuestionData> questionDataList = new ArrayList<>(2);
         String question = this.NAME_played_SPORT_EN_correct(qr);
         QuestionData data = new QuestionData();
         data.setId("");
@@ -264,43 +250,35 @@ public class NAME_played_SPORT extends Lesson{
         data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
-        data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE);
+        data.setAnswer(Question_TrueFalse.getTrueFalseString(true));
         data.setAcceptableAnswers(null);
-
         questionDataList.add(data);
 
-        List<SimpleQueryResult> falseAnswers = popularSports();
-        List<QueryResult> allSports = queryResultMap.get(qr.personID);
-        for (QueryResult singleSport : allSports) {
-            for (Iterator<SimpleQueryResult> iterator = falseAnswers.iterator(); iterator.hasNext();) {
-                SimpleQueryResult sport = iterator.next();
-                if (sport.wikiDataID.equals(singleSport.sportID))
-                    iterator.remove();
-            }
-        }
 
-        Collections.shuffle(falseAnswers);
-        //we don't want too many false answers
-        //or the answers will most likely be false
-        if (falseAnswers.size()>2) {
-            falseAnswers = falseAnswers.subList(0, 2);
-        }
+        question = this.formatFalseAnswer(qr);
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(trueFalseFeedback(qr));
+        data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personForeign);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(Question_TrueFalse.getTrueFalseString(false));
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+        questionDataList.add(data);
 
-        for (SimpleQueryResult falseSport : falseAnswers){
-            question = this.formatFalseAnswer(qr, falseSport);
-            data = new QuestionData();
-            data.setId("");
-            data.setLessonId(lessonKey);
-            data.setTopic(qr.personForeign);
-            data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
-            data.setQuestion(question);
-            data.setChoices(null);
-            data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_FALSE);
-            data.setAcceptableAnswers(null);
-
-            questionDataList.add(data);
-        }
         return questionDataList;
+    }
+
+    private String translateQuestion(QueryResult qr){
+        return qr.sportNameForeign + "をしました";
+    }
+
+    private String translateAnswer(QueryResult qr){
+        return SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PAST);
     }
 
     private List<QuestionData> createTranslationQuestion(QueryResult qr){
@@ -310,25 +288,9 @@ public class NAME_played_SPORT extends Lesson{
         data.setLessonId(lessonKey);
         data.setTopic(qr.personForeign);
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
-        data.setQuestion(qr.object);
+        data.setQuestion(translateQuestion(qr));
         data.setChoices(null);
-        data.setAnswer(qr.sportNameForeign);
-        data.setAcceptableAnswers(null);
-
-        questionDataList.add(data);
-        return questionDataList;
-    }
-
-    private List<QuestionData> createSpellingQuestion(QueryResult qr){
-        List<QuestionData> questionDataList = new ArrayList<>(1);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personForeign);
-        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
-        data.setQuestion(qr.sportNameForeign);
-        data.setChoices(null);
-        data.setAnswer(qr.object);
+        data.setAnswer(translateAnswer(qr));
         data.setAcceptableAnswers(null);
 
         questionDataList.add(data);

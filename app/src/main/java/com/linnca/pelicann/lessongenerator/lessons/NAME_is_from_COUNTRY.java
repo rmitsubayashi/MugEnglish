@@ -5,10 +5,13 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
@@ -61,6 +64,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -72,8 +76,6 @@ public class NAME_is_from_COUNTRY extends Lesson {
                 " ?country ?countryEN ?countryLabel " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P27 ?country . " + //has a country of citizenship
                 "    ?country rdfs:label ?countryEN . " + //English Label
                 "    ?person rdfs:label ?personEN . " + //English label
@@ -136,6 +138,9 @@ public class NAME_is_from_COUNTRY extends Lesson {
             List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
             questionSet.add(fillInBlankQuestion2);
 
+            List<QuestionData> fillInBlankQuestion3 = createFillInBlankQuestion3(qr);
+            questionSet.add(fillInBlankQuestion3);
+
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
             super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
@@ -168,7 +173,8 @@ public class NAME_is_from_COUNTRY extends Lesson {
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personEN);
-        pieces.add("is from");
+        pieces.add("is");
+        pieces.add("from");
         pieces.add(GrammarRules.definiteArticleBeforeCountry(qr.countryEN));
         return pieces;
     }
@@ -210,8 +216,8 @@ public class NAME_is_from_COUNTRY extends Lesson {
 
         }
     }
-    private Queue<String> fillInBlankOptions(QueryResult qr, boolean english){
-        List<CountryHelper> optionList = new ArrayList<>();
+    private List<CountryHelper> fillInBlankOptions(QueryResult qr){
+        List<CountryHelper> optionList = new LinkedList<>();
         optionList.add(new CountryHelper("Q142","France","フランス"));
         optionList.add(new CountryHelper("Q17","Japan", "日本"));
         optionList.add(new CountryHelper("Q30","the United States of America","アメリカ合衆国"));
@@ -231,14 +237,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
             }
         }
         Collections.shuffle(optionList);
-        LinkedList<String> result = new LinkedList<>();
-        for (CountryHelper option : optionList){
-            if (english)
-                result.add(option.nameEN);
-            else
-                result.add(option.nameJP);
-        }
-        return result;
+        return optionList;
     }
 
     private String fillInBlankQuestion(QueryResult qr){
@@ -256,11 +255,13 @@ public class NAME_is_from_COUNTRY extends Lesson {
         String question = this.fillInBlankQuestion(qr);
         String answer = fillInBlankAnswer(qr);
         List<QuestionData> questionDataList = new ArrayList<>();
-        Queue<String> options = fillInBlankOptions(qr, false);
+        List<CountryHelper> options = fillInBlankOptions(qr);
         while (options.size() > 2) {
             List<String> choices = new ArrayList<>();
-            choices.add(options.remove());
-            choices.add(options.remove());
+            choices.add(options.get(0).nameJP);
+            choices.add(options.get(0).nameJP);
+            options.remove(0);
+            options.remove(0);
             choices.add(answer);
             QuestionData data = new QuestionData();
             data.setId("");
@@ -289,15 +290,40 @@ public class NAME_is_from_COUNTRY extends Lesson {
         return GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
     }
 
+    private FeedbackPair fillInBlankFeedback2(String answer, List<CountryHelper> falseCountries){
+        //we are displaying choices the user may not have had yet,
+        // so explain what they are
+        List<String> responses = new ArrayList<>(falseCountries.size() + 1);
+        responses.add(answer);
+        StringBuilder feedback = new StringBuilder("");
+        for (CountryHelper helper : falseCountries){
+            responses.add(helper.nameEN);
+            feedback.append(helper.nameEN);
+            feedback.append(": ");
+            feedback.append(helper.nameJP);
+            feedback.append("\n");
+        }
+        return new FeedbackPair(responses, feedback.toString(), FeedbackPair.EXPLICIT);
+    }
+
     private List<QuestionData> createFillInBlankQuestion2(QueryResult qr){
         String question = this.fillInBlankQuestion2(qr);
         String answer = fillInBlankAnswer2(qr);
         List<QuestionData> questionDataList = new ArrayList<>();
-        Queue<String> options = fillInBlankOptions(qr, true);
+        List<CountryHelper> options = fillInBlankOptions(qr);
         while (options.size() > 2) {
             List<String> choices = new ArrayList<>();
-            choices.add(options.remove());
-            choices.add(options.remove());
+            CountryHelper option1 = options.get(0);
+            CountryHelper option2 = options.get(1);
+            choices.add(option1.nameEN);
+            choices.add(option2.nameEN);
+            options.remove(0);
+            options.remove(0);
+            List<CountryHelper> falseCountries = new ArrayList<>(2);
+            falseCountries.add(option1);
+            falseCountries.add(option2);
+            List<FeedbackPair> allFeedback = new ArrayList<>(1);
+            allFeedback.add(fillInBlankFeedback2(answer, falseCountries));
             choices.add(answer);
             QuestionData data = new QuestionData();
             data.setId("");
@@ -308,10 +334,55 @@ public class NAME_is_from_COUNTRY extends Lesson {
             data.setChoices(choices);
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
-
+            data.setFeedback(allFeedback);
 
             questionDataList.add(data);
         }
+
+        return questionDataList;
+    }
+
+    private String fillInBlankQuestion3(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInBlankAnswer3(QueryResult qr){
+        return " is from " + qr.countryEN;
+    }
+
+    private FeedbackPair fillInBlankFeedback3(QueryResult qr){
+        List<String> responses = new ArrayList<>(2);
+        String response = " is from " + qr.countryEN.toLowerCase();
+        String response2 = " is from " + qr.countryEN.toLowerCase() + ".";
+        responses.add(response);
+        responses.add(response2);
+        String feedback = "国の名前は大文字で始まります";
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private List<QuestionData> createFillInBlankQuestion3(QueryResult qr){
+        String question = this.fillInBlankQuestion3(qr);
+        String answer = fillInBlankAnswer3(qr);
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(fillInBlankFeedback3(qr));
+
+        List<QuestionData> questionDataList = new ArrayList<>();
+
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+
+        questionDataList.add(data);
 
         return questionDataList;
     }

@@ -5,9 +5,12 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionFeedbackFormatter;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
@@ -80,6 +83,7 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -91,8 +95,6 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
                 " ?personGender " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P26 ?spouse . " + //has a spouse
                 "    ?person wdt:P21 ?personGender . " + //get person gender
                 "    ?person rdfs:label ?personEN . " +
@@ -148,6 +150,9 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
+            List<QuestionData> fillInBlankMultipleChoiceQuestion2 = createFillInBlankMultipleChoiceQuestion2(qr);
+            questionSet.add(fillInBlankMultipleChoiceQuestion2);
+
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
             super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
@@ -189,17 +194,37 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
     }
 
-    private List<String> puzzlePiecesAcceptableAnswers(QueryResult qr){
+    private List<String> acceptablePuzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.spouseEN);
         pieces.add("'s");
         pieces.add(qr.personTitleEN);
         pieces.add("is");
         pieces.add(qr.personEN);
+        return pieces;
+    }
+
+    private List<String> puzzlePiecesAcceptableAnswers(QueryResult qr){
+        List<String> pieces = acceptablePuzzlePieces(qr);
         String answer = Question_SentencePuzzle.formatAnswer(pieces);
         List<String> acceptableAnswers = new ArrayList<>(1);
         acceptableAnswers.add(answer);
         return acceptableAnswers;
+    }
+
+    private FeedbackPair sentencePuzzleFeedback(QueryResult qr){
+        List<String> responsePieces = acceptablePuzzlePieces(qr);
+        String responseAnswer = Question_SentencePuzzle.formatAnswer(responsePieces);
+        String response = QuestionFeedbackFormatter.formatSentencePuzzleAnswer(responseAnswer);
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        List<String> correctPieces = puzzlePieces(qr);
+        String correctAnswer =Question_SentencePuzzle.formatAnswer(correctPieces);
+        String correctFeedback = QuestionFeedbackFormatter.formatSentencePuzzleAnswer(correctAnswer);
+        String feedback = "今回は「AのBはCです」ではなくて「CはAのBです」なので、\n" +
+                correctFeedback + "\n" +
+                "のほうが良い解答です。";
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
@@ -208,6 +233,8 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         List<String> choices = this.puzzlePieces(qr);
         String answer = puzzlePiecesAnswer(qr);
         List<String> acceptableAnswers = puzzlePiecesAcceptableAnswers(qr);
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(sentencePuzzleFeedback(qr));
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -217,6 +244,7 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
+        data.setFeedback(allFeedback);
 
         dataList.add(data);
 
@@ -298,5 +326,45 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         return questionDataList;
     }
 
+    private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String sentence = qr.personEN + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " is " +
+                qr.spouseEN + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " " + qr.personTitleEN + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        return sentence;
+    }
 
+    private List<String> fillInBlankMultipleChoiceChoices2(){
+        List<String> choices = new ArrayList<>(4);
+        choices.add("   : 's");
+        choices.add("'s : 's");
+        choices.add("'s :   ");
+        return choices;
+    }
+
+    private String fillInBlankMultipleChoiceAnswer2(){
+        return "   : 's";
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        List<QuestionData> questionDataList = new ArrayList<>();
+        String question = this.fillInBlankMultipleChoiceQuestion2(qr);
+        String answer = fillInBlankMultipleChoiceAnswer2();
+        List<String> choices = fillInBlankMultipleChoiceChoices2();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+
+        questionDataList.add(data);
+
+        return questionDataList;
+    }
 }

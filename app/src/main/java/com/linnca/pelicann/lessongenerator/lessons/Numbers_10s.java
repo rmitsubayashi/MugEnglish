@@ -2,9 +2,11 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_MultipleChoice;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -20,6 +22,7 @@ public class Numbers_10s extends Lesson {
     public Numbers_10s(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected synchronized int getQueryResultCt(){return 0;}
@@ -35,6 +38,8 @@ public class Numbers_10s extends Lesson {
     @Override
     protected List<List<QuestionData>> getPreGenericQuestions(){
         List<List<QuestionData>> questions = new ArrayList<>();
+        List<List<QuestionData>> multipleChoice = multipleChoiceQuestions();
+        questions.addAll(multipleChoice);
         List<List<QuestionData>> spellingQuestions = spellingQuestions();
         questions.addAll(spellingQuestions);
         List<QuestionData> fillInBlankQuestion1 = fillInBlankQuestion1();
@@ -44,6 +49,14 @@ public class Numbers_10s extends Lesson {
 
         return questions;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> multipleChoice = preGenericQuestions.subList(0,8);
+        Collections.shuffle(multipleChoice);
+        List<List<QuestionData>> spelling = preGenericQuestions.subList(8,17);
+        Collections.shuffle(spelling);
     }
 
     @Override
@@ -87,6 +100,69 @@ public class Numbers_10s extends Lesson {
         choices.add("90");
         return choices;
     }
+
+    private List<String> singleDigits(){
+        List<String> choices = new ArrayList<>(8);
+        choices.add("two");
+        choices.add("three");
+        choices.add("four");
+        choices.add("five");
+        choices.add("six");
+        choices.add("seven");
+        choices.add("eight");
+        choices.add("nine");
+        return choices;
+    }
+
+    private List<List<QuestionData>> multipleChoiceQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(8);
+        List<String> singleDigits = singleDigits();
+        List<String> answers = english();
+        //we don't want 10
+        answers.remove(0);
+        for (int i=0; i<8; i++){
+            String singleDigit = singleDigits.get(i);
+            String question = singleDigit + " + 'ty' = ";
+            String answer = answers.get(i);
+            List<String> choices = english();
+            choices.remove(answer);
+            choices.remove(0);
+            Collections.shuffle(choices);
+            //two sets of choices
+            List<String> choices1 = new ArrayList<>(choices.subList(0,3));
+            List<String> choices2 = new ArrayList<>(choices.subList(3,6));
+            choices1.add(answer);
+            choices2.add(answer);
+            List<QuestionData> questionDataList = new ArrayList<>(2);
+            QuestionData data = new QuestionData();
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
+            data.setQuestion(question);
+            data.setAnswer(answer);
+            data.setChoices(choices1);
+            data.setAcceptableAnswers(null);
+            questionDataList.add(data);
+
+            data = new QuestionData();
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
+            data.setQuestion(question);
+            data.setAnswer(answer);
+            data.setChoices(choices2);
+            data.setAcceptableAnswers(null);
+            questionDataList.add(data);
+
+            questions.add(questionDataList);
+        }
+
+        return questions;
+    }
+
+
 
     private List<List<QuestionData>> spellingQuestions(){
         List<List<QuestionData>> questions = new ArrayList<>(9);

@@ -33,7 +33,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/description_lesson_text"
-            android:text="@string/description_name_is_at_work_he_is_at_employer_new_word"/>
+            android:text="@string/description_name_is_at_work_he_is_at_employer_review2"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/description_lesson_text"
+            android:text="@string/description_name_is_at_work_he_is_at_employer_review3"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.ChatQuestionItem;
@@ -13,6 +14,7 @@ import com.linnca.pelicann.vocabulary.VocabularyWord;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Hi_hey_whats_up extends Lesson {
@@ -21,6 +23,7 @@ public class Hi_hey_whats_up extends Lesson {
     public Hi_hey_whats_up(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected synchronized int getQueryResultCt(){return 0;}
@@ -40,9 +43,19 @@ public class Hi_hey_whats_up extends Lesson {
         questionSet.addAll(chatMultipleChoiceQuestions);
         List<List<QuestionData>> chatQuestions = chatQuestions();
         questionSet.addAll(chatQuestions);
+        List<QuestionData> chatQuestion2 = chatQuestion2();
+        questionSet.add(chatQuestion2);
 
         return questionSet;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> chatMultipleChoiceQuestions = preGenericQuestions.subList(0,3);
+        Collections.shuffle(chatMultipleChoiceQuestions);
+        List<List<QuestionData>> chat = preGenericQuestions.subList(3,6);
+        Collections.shuffle(chat);
     }
 
     @Override
@@ -138,5 +151,30 @@ public class Hi_hey_whats_up extends Lesson {
         }
 
         return questions;
+    }
+
+    private List<QuestionData> chatQuestion2(){
+        List<QuestionData> dataList = new ArrayList<>();
+        List<String> greetings = choices();
+        for (String greeting : greetings) {
+            QuestionData data = new QuestionData();
+            String answer = "good";
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_Chat.QUESTION_TYPE);
+            ChatQuestionItem chatItem1 = new ChatQuestionItem(false, greeting + ". how are you doing?");
+            ChatQuestionItem answerItem = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
+            List<ChatQuestionItem> chatItems = new ArrayList<>(2);
+            chatItems.add(chatItem1);
+            chatItems.add(answerItem);
+            data.setQuestion(Question_Chat.formatQuestion("無名", chatItems));
+            data.setChoices(choices());
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+
+            dataList.add(data);
+        }
+        return dataList;
     }
 }

@@ -5,12 +5,14 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
@@ -55,7 +57,7 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
         super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
@@ -64,8 +66,6 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
                 " ?gender " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} . " + //or fictional human
                 "    ?person wdt:P21 ?gender . " + //has gender
                 "    ?person wdt:P106 wd:Q82955 . " + //is a politician
                 "    ?person wdt:P570 ?dead . " + //is dead
@@ -118,11 +118,18 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);
-            questionSet.add(fillInBlankMultipleChoiceQuestion);
+            List<QuestionData> fillInBlankMultipleChoice = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(fillInBlankMultipleChoice);
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankMultipleChoiceQuestion2(qr);
+            List<QuestionData> fillInBlankMultipleChoice2 = createFillInBlankMultipleChoiceQuestion2(qr);
+            questionSet.add(fillInBlankMultipleChoice2);
+
+            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
+
+            List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
+            questionSet.add(fillInBlankQuestion2);
+
 
             super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, null));
         }
@@ -131,98 +138,6 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
 
     private String formatSentenceJP(QueryResult qr){
         return qr.personJP + "は政府で働いていました。" + qr.genderJP + "は政治家でした。";
-    }
-
-    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
-        String sentence = qr.personEN + " worked for the government.";
-        String sentence2 = qr.genderEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " a politician.";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-        return sentence + "\n" + sentence2;
-    }
-
-
-    private String fillInBlankMultipleChoiceAnswer(){
-        return "was";
-    }
-
-    private List<String> fillInBlankMultipleChoiceChoices(){
-        List<String> choices = new ArrayList<>(2);
-        choices.add("was");
-        choices.add("is");
-        return choices;
-    }
-
-    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
-        String question = this.fillInBlankMultipleChoiceQuestion(qr);
-        String answer = fillInBlankMultipleChoiceAnswer();
-        List<QuestionData> questionDataList = new ArrayList<>();
-        List<String> choices = fillInBlankMultipleChoiceChoices();
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(choices);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-
-        questionDataList.add(data);
-
-        return questionDataList;
-    }
-
-    private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
-        String sentence = qr.personEN + " worked " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
-        String sentence2 = qr.genderEN + " was a politician.";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-        return sentence + "\n" + sentence2;
-    }
-
-    private String fillInBlankMultipleChoiceAnswer2(){
-        return "for the government";
-    }
-
-    private List<String> fillInBlankMultipleChoiceChoices2(){
-        List<String> choices = new ArrayList<>(3);
-        choices.add("at the government");
-        choices.add("for the government");
-        choices.add("from the government");
-
-        return choices;
-    }
-
-    private FeedbackPair fillInBlankMultipleChoiceFeedback2(){
-        String response = "at the government";
-        List<String> responses = new ArrayList<>(1);
-        responses.add(response);
-        String feedback = "atは特定な場所を指すときに使います。政府（government）は具体的な政府機関ではないので、atは使いません。";
-        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
-    }
-
-    private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
-        String question = this.fillInBlankMultipleChoiceQuestion2(qr);
-        String answer = fillInBlankMultipleChoiceAnswer2();
-        List<String> choices = fillInBlankMultipleChoiceChoices2();
-        List<FeedbackPair> allFeedback = new ArrayList<>(1);
-        allFeedback.add(fillInBlankMultipleChoiceFeedback2());
-        List<QuestionData> questionDataList = new ArrayList<>();
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(choices);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-        data.setFeedback(allFeedback);
-
-        questionDataList.add(data);
-
-        return questionDataList;
     }
 
     private List<QuestionData> createTranslateQuestionGeneric(){
@@ -294,5 +209,162 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
 
         return questions;
 
+    }
+
+    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+            " for the government.";
+        String sentence3 = qr.genderEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " a politician.";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + "\n\n" + sentence2 + "\n" + sentence3;
+    }
+
+
+    private String fillInBlankMultipleChoiceAnswer(){
+        return "was";
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(2);
+        choices.add("work   : was");
+        choices.add("worked :  is");
+        choices.add("worked : was");
+        choices.add("wor    :  is");
+        return choices;
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion(qr);
+        String answer = fillInBlankMultipleChoiceAnswer();
+        List<QuestionData> questionDataList = new ArrayList<>();
+        List<String> choices = fillInBlankMultipleChoiceChoices();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+
+        questionDataList.add(data);
+
+        return questionDataList;
+    }
+
+    private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String sentence = qr.personEN + " worked " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence2 = qr.genderEN + " was a politician.";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence + "\n" + sentence2;
+    }
+
+    private String fillInBlankMultipleChoiceAnswer2(){
+        return "for the government";
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices2(){
+        List<String> choices = new ArrayList<>(4);
+        choices.add("at the government");
+        choices.add("for the government");
+        choices.add("from the government");
+        choices.add("on the government");
+
+        return choices;
+    }
+
+    private FeedbackPair fillInBlankMultipleChoiceFeedback2(){
+        String response = "at the government";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        String feedback = "atは特定な場所を指すときに使います。政府（government）は具体的な政府機関ではないので、atは使いません。";
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion2(qr);
+        String answer = fillInBlankMultipleChoiceAnswer2();
+        List<String> choices = fillInBlankMultipleChoiceChoices2();
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(fillInBlankMultipleChoiceFeedback2());
+        List<QuestionData> questionDataList = new ArrayList<>();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+
+        questionDataList.add(data);
+
+        return questionDataList;
+    }
+
+    private String fillInBlankQuestion(QueryResult qr){
+        String sentence1 = qr.personJP + "は政府で働いていました。";
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " for the government.";
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInBlankAnswer(){
+        return "worked";
+    }
+
+    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankQuestion(qr);
+        String answer = fillInBlankAnswer();
+        List<QuestionData> questionDataList = new ArrayList<>();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        questionDataList.add(data);
+
+        return questionDataList;
+    }
+
+    private String fillInBlankQuestion2(QueryResult qr){
+        String sentence1 = qr.personJP + "は政治家でした。";
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " a politician.";
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInBlankAnswer2(){
+        return "was";
+    }
+
+    private List<QuestionData> createFillInBlankQuestion2(QueryResult qr){
+        String question = this.fillInBlankQuestion2(qr);
+        String answer = fillInBlankAnswer2();
+        List<QuestionData> questionDataList = new ArrayList<>();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        questionDataList.add(data);
+
+        return questionDataList;
     }
 }

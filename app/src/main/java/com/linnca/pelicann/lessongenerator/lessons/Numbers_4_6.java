@@ -2,11 +2,13 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_MultipleChoice;
 import com.linnca.pelicann.questions.Question_TranslateWord;
+import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -25,6 +27,7 @@ public class Numbers_4_6 extends Lesson {
     public Numbers_4_6(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected synchronized int getQueryResultCt(){return 0;}
@@ -40,15 +43,29 @@ public class Numbers_4_6 extends Lesson {
     @Override
     protected List<List<QuestionData>> getPreGenericQuestions(){
         List<List<QuestionData>> questionSet = new ArrayList<>();
-        List<List<QuestionData>> multipleChoiceQuestions = multipleChoiceQuestions();
-        questionSet.addAll(multipleChoiceQuestions);
-        List<List<QuestionData>> translateQuestions = translateQuestions();
-        questionSet.addAll(translateQuestions);
-        List<List<QuestionData>> fillInBlankQuestions = fillInBlankQuestions();
-        questionSet.addAll(fillInBlankQuestions);
+        List<List<QuestionData>> multipleChoice = multipleChoiceQuestions();
+        questionSet.addAll(multipleChoice);
+        List<List<QuestionData>> translate = translateQuestions();
+        questionSet.addAll(translate);
+        List<List<QuestionData>> fillInBlank = fillInBlankQuestions();
+        questionSet.addAll(fillInBlank);
+        List<List<QuestionData>> trueFalse = trueFalseQuestions();
+        questionSet.addAll(trueFalse);
 
         return questionSet;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> multipleChoice = preGenericQuestions.subList(0,3);
+        Collections.shuffle(multipleChoice);
+        List<List<QuestionData>> translate = preGenericQuestions.subList(3,6);
+        Collections.shuffle(translate);
+        List<List<QuestionData>> fillInBlank = preGenericQuestions.subList(6,9);
+        Collections.shuffle(fillInBlank);
+        List<List<QuestionData>> trueFalse = preGenericQuestions.subList(9,12);
+        Collections.shuffle(trueFalse);
     }
 
     @Override
@@ -87,6 +104,30 @@ public class Numbers_4_6 extends Lesson {
         choices.add("five");
         choices.add("six");
         return choices;
+    }
+
+    private List<List<QuestionData>> multipleChoiceQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(3);
+        List<String> answers = english();
+        List<String> numbers = numbers();
+        for (int i=0; i<3; i++) {
+            QuestionData data = new QuestionData();
+            String answer = answers.get(i);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
+            data.setQuestion(numbers.get(i));
+            data.setAnswer(answer);
+            data.setChoices(answers);
+            data.setAcceptableAnswers(null);
+
+            List<QuestionData> dataList = new ArrayList<>();
+            dataList.add(data);
+            questions.add(dataList);
+        }
+
+        return questions;
     }
 
     private List<List<QuestionData>> translateQuestions(){
@@ -135,24 +176,39 @@ public class Numbers_4_6 extends Lesson {
         return questions;
     }
 
-    private List<List<QuestionData>> multipleChoiceQuestions(){
+    private List<List<QuestionData>> trueFalseQuestions(){
         List<List<QuestionData>> questions = new ArrayList<>(3);
-        List<String> answers = english();
-        List<String> numbers = numbers();
+        List<String> english = english();
+        List<String> japanese = japanese();
         for (int i=0; i<3; i++) {
+            List<QuestionData> dataList = new ArrayList<>();
+            //one true question and one false question
             QuestionData data = new QuestionData();
-            String answer = answers.get(i);
+            String question = english.get(i) + " = " + japanese.get(i);
+            String answer = Question_TrueFalse.getTrueFalseString(true);
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
-            data.setQuestion(numbers.get(i));
+            data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+            data.setQuestion(question);
             data.setAnswer(answer);
-            data.setChoices(answers);
+            data.setChoices(null);
             data.setAcceptableAnswers(null);
-
-            List<QuestionData> dataList = new ArrayList<>();
             dataList.add(data);
+            //false question
+            data = new QuestionData();
+            question = english.get(i) + " = " + japanese.get((i+1)%3);
+            answer = Question_TrueFalse.getTrueFalseString(false);
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+            data.setQuestion(question);
+            data.setAnswer(answer);
+            data.setChoices(null);
+            data.setAcceptableAnswers(null);
+            dataList.add(data);
+
             questions.add(dataList);
         }
 

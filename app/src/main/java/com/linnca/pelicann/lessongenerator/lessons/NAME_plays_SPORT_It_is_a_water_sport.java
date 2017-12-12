@@ -6,12 +6,16 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_MultipleChoice;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
@@ -26,8 +30,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
-    public static final String KEY = "NAME_plays_SPORT_SPORT_is_a_water_sport";
+public class NAME_plays_SPORT_It_is_a_water_sport extends Lesson{
+    public static final String KEY = "NAME_plays_SPORT_It_is_a_water_sport";
 
     private List<QueryResult> queryResults = new ArrayList<>();
 
@@ -59,12 +63,12 @@ public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
         }
     }
 
-    public NAME_plays_SPORT_SPORT_is_a_water_sport(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
+    public NAME_plays_SPORT_It_is_a_water_sport(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
@@ -74,8 +78,6 @@ public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
                         " ?sport ?sportEN ?sportLabel " +
                         "		WHERE " +
                         "		{ " +
-                        "           {?person wdt:P31 wd:Q5} UNION " + //is human
-                        "           {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                         "			?person wdt:P641 ?sport . " + //plays sport
                         //"		    FILTER NOT EXISTS { ?person wdt:P570 ?dateDeath } . " +//死んでいない（played ではなくてplays）
                         "           ?sport wdt:P279* wd:Q61065 . " + //sport is a water sport
@@ -132,8 +134,8 @@ public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
             List<QuestionData> translateQuestion = createTranslationQuestion(qr);
             questionSet.add(translateQuestion);
 
-            List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
-            questionSet.add(spellingQuestion);
+            List<QuestionData> multipleChoice = createMultipleChoiceQuestion(qr);
+            questionSet.add(multipleChoice);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -195,13 +197,40 @@ public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
     private String formatSentenceEN(QueryResult qr){
         String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
         String sentence1 = qr.personEN + " " + verbObject + ".";
-        String sentence2 = qr.sportNameEN + " is a water sport.";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        String sentence2 = "It is a water sport.";
         return sentence1 + "\n" + sentence2;
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personJP + "は" + qr.sportNameJP + "をします。" + qr.sportNameJP + "はウォータースポーツです。";
+        return qr.personJP + "は" + qr.sportNameJP + "をします。それはウォータースポーツです。";
+    }
+
+    private List<QuestionData> createTranslateQuestionGeneric(){
+        String question = "水";
+        String answer = "water";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(translateQuestion);
+        return questionSet;
+
     }
 
     private List<String> puzzlePieces(QueryResult qr){
@@ -211,7 +240,7 @@ public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
         pieces.add(verb);
         if (!qr.object.equals(""))
             pieces.add(qr.object);
-        pieces.add(qr.sportNameEN);
+        pieces.add("it");
         pieces.add("is a");
         pieces.add("water");
         pieces.add("sport");
@@ -258,48 +287,65 @@ public class NAME_plays_SPORT_SPORT_is_a_water_sport extends Lesson{
         return questionDataList;
     }
 
-    private List<QuestionData> createSpellingQuestion(QueryResult qr){
+    private String multipleChoiceQuestion(QueryResult qr){
+        String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
+        String sentence1 = qr.personEN + " " + verbObject + ".";
+        String sentence2 = Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " is a water sport.";
+        return sentence1 + "\n" + sentence2;
+    }
+
+    private String multipleChoiceAnswer(){
+        return "It";
+    }
+
+    private List<String> multipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(3);
+        choices.add("It");
+        choices.add("He");
+        choices.add("She");
+        return choices;
+    }
+
+    private FeedbackPair multipleChoiceFeedback1(){
+        String response = "He";
+        String feedback = "スポーツのことを指しているので、人の代わりになるheではなく、" +
+                "人以外の物の代わりになるitを使いましょう";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private FeedbackPair multipleChoiceFeedback2(){
+        String response = "She";
+        String feedback = "スポーツのことを指しているので、人の代わりになるsheではなく、" +
+                "人以外の物の代わりになるitを使いましょう";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private List<QuestionData> createMultipleChoiceQuestion(QueryResult qr){
         List<QuestionData> questionDataList = new ArrayList<>(1);
+        String question = multipleChoiceQuestion(qr);
+        String answer = multipleChoiceAnswer();
+        List<String> choices = multipleChoiceChoices();
+        List<FeedbackPair> allFeedback = new ArrayList<>(2);
+        allFeedback.add(multipleChoiceFeedback1());
+        allFeedback.add(multipleChoiceFeedback2());
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
-        data.setQuestion(qr.sportNameJP);
-        data.setChoices(null);
-        data.setAnswer(qr.sportNameEN);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
         data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
 
         questionDataList.add(data);
         return questionDataList;
     }
 
-
-    private List<QuestionData> createTranslateQuestionGeneric(){
-        String question = "水";
-        String answer = "water";
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    @Override
-    protected List<List<QuestionData>> getPreGenericQuestions(){
-        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
-        List<List<QuestionData>> questionSet = new ArrayList<>(1);
-        questionSet.add(translateQuestion);
-        return questionSet;
-
-    }
 }

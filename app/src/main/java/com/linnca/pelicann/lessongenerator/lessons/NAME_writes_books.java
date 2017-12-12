@@ -11,6 +11,8 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling;
+import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -54,8 +56,6 @@ public class NAME_writes_books extends Lesson{
         return "SELECT DISTINCT ?person ?personLabel ?personEN " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P106/wdt:P279* wd:Q36180 . " + //is a writer
                 "    ?person rdfs:label ?personEN . " +
                 "    FILTER (LANG(?personEN) = '" +
@@ -92,8 +92,6 @@ public class NAME_writes_books extends Lesson{
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
 
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
@@ -128,37 +126,57 @@ public class NAME_writes_books extends Lesson{
         return qr.personJP + "は本を書きます。";
     }
 
-    //puzzle pieces for sentence puzzle question
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personEN);
-        pieces.add("writes");
-        pieces.add("books");
-        return pieces;
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet =new ArrayList<>(2);
+        List<QuestionData> spellingQuestion = spellingQuestionGeneric();
+        questionSet.add(spellingQuestion);
+        List<QuestionData> spellingQuestion2 = spellingQuestionGeneric2();
+        questionSet.add(spellingQuestion2);
+        return questionSet;
+
     }
 
-    private String puzzlePiecesAnswer(QueryResult qr){
-        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
-    }
-
-    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
-        String question = this.formatSentenceJP(qr);
-        List<String> choices = this.puzzlePieces(qr);
-        String answer = puzzlePiecesAnswer(qr);
+    private List<QuestionData> spellingQuestionGeneric(){
+        String question = "書く";
+        String answer = "write";
         QuestionData data = new QuestionData();
         data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setLessonId(super.lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
         data.setQuestion(question);
-        data.setChoices(choices);
+        data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
+        data.setFeedback(null);
 
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-        return dataList;
+        List<QuestionData> questionVariations = new ArrayList<>();
+        questionVariations.add(data);
+        return questionVariations;
+
+    }
+
+    private List<QuestionData> spellingQuestionGeneric2(){
+        String question = "本";
+        String answer = "book";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(super.lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        data.setFeedback(null);
+
+        List<QuestionData> questionVariations = new ArrayList<>();
+        questionVariations.add(data);
+        return questionVariations;
+
     }
 
     private String fillInBlankQuestion(QueryResult qr){

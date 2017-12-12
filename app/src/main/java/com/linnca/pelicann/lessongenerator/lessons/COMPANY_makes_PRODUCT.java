@@ -5,6 +5,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
@@ -54,6 +55,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         super.questionSetsToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_OTHER;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -141,15 +143,6 @@ public class COMPANY_makes_PRODUCT extends Lesson{
         return words;
     }
 
-    //puzzle pieces for sentence puzzle question
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.companyEN);
-        pieces.add("makes");
-        pieces.add(qr.productEN);
-        return pieces;
-    }
-
     private String formatSentenceJP(QueryResult qr){
         //作る/造る distinction impossible to determine?
         return qr.companyJP + "は" + qr.productJP + "をつくります。";
@@ -158,6 +151,15 @@ public class COMPANY_makes_PRODUCT extends Lesson{
     private String formatSentenceEN(QueryResult qr){
         String sentence = qr.companyEN + " makes " + qr.productEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+    }
+
+    //puzzle pieces for sentence puzzle question
+    private List<String> puzzlePieces(QueryResult qr){
+        List<String> pieces = new ArrayList<>();
+        pieces.add(qr.companyEN);
+        pieces.add("makes");
+        pieces.add(qr.productEN);
+        return pieces;
     }
 
     private String puzzlePiecesAnswer(QueryResult qr){

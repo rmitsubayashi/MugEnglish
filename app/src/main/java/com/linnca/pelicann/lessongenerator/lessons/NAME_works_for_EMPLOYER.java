@@ -5,6 +5,8 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
@@ -60,7 +62,7 @@ public class NAME_works_for_EMPLOYER extends Lesson {
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
@@ -71,8 +73,6 @@ public class NAME_works_for_EMPLOYER extends Lesson {
                 " ?employer ?employerEN ?employerLabel " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P108 ?employer . " + //has an employer
                 "    ?person rdfs:label ?personEN . " + //English label
                 "    ?employer rdfs:label ?employerEN . " + //English label
@@ -213,7 +213,69 @@ public class NAME_works_for_EMPLOYER extends Lesson {
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
+        questionDataList.add(data);
 
+        return questionDataList;
+    }
+
+    private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        return  qr.personEN + " works " +
+                Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +  " " + qr.employerEN + ".";
+    }
+
+    private String fillInBlankMultipleChoiceAnswer2(){
+        return "for";
+    }
+
+    private List<String> fillInBlankMultipleChoiceAcceptableAnswers2(){
+        List<String> answers = new ArrayList<>(1);
+        answers.add("at");
+        return answers;
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices2() {
+        List<String> choices = new ArrayList<>(3);
+        choices.add("for");
+        choices.add("at");
+        choices.add("from");
+        return choices;
+    }
+
+    private FeedbackPair fillInBlankMultipleChoice2Feedback1(){
+        String feedback = "forでも正解です";
+        String response = "at";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private FeedbackPair fillInBlankMultipleChoice2Feedback2(){
+        String feedback = "atでも正解です";
+        String response = "for";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion2(qr);
+        String answer = fillInBlankMultipleChoiceAnswer2();
+        List<QuestionData> questionDataList = new ArrayList<>();
+        List<String> choices = fillInBlankMultipleChoiceChoices2();
+        List<String> acceptableAnswers = fillInBlankAcceptableAnswers();
+        List<FeedbackPair> allFeedback = new ArrayList<>(2);
+        allFeedback.add(fillInBlankMultipleChoice2Feedback1());
+        allFeedback.add(fillInBlankMultipleChoice2Feedback2());
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+        data.setFeedback(allFeedback);
 
         questionDataList.add(data);
 

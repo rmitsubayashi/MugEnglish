@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
 
-        LessonFactory.saveGenericQuestions(db);
+        //LessonFactory.saveGenericQuestions(db);
         lessonListViewer = new LessonListViewerImplementation();
 
         toolbar = findViewById(R.id.tool_bar);

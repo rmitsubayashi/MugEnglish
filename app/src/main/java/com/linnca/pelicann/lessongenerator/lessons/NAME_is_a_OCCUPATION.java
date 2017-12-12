@@ -5,6 +5,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
@@ -13,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -54,6 +56,7 @@ public class NAME_is_a_OCCUPATION extends Lesson{
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
 
     }
 
@@ -63,8 +66,6 @@ public class NAME_is_a_OCCUPATION extends Lesson{
                 " ?occupationEN ?occupationLabel " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P106 ?occupation . " + //has an occupation
                 "    ?person rdfs:label ?personEN . " +
                 "    ?occupation rdfs:label ?occupationEN . " +
@@ -108,11 +109,12 @@ public class NAME_is_a_OCCUPATION extends Lesson{
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
 
-            List<QuestionData> chooseCorrectSpellingQuestion = createChooseCorrectSpellingQuestion(qr);
-            questionSet.add(chooseCorrectSpellingQuestion);
+            List<QuestionData> spelling = createSpellingQuestion(qr);
+            questionSet.add(spelling);
+
+            List<QuestionData> chooseCorrectSpelling = createChooseCorrectSpellingQuestion(qr);
+            questionSet.add(chooseCorrectSpelling);
 
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
@@ -145,36 +147,22 @@ public class NAME_is_a_OCCUPATION extends Lesson{
         return qr.personJP + "は" + qr.occupationJP + "です。";
     }
 
-    //puzzle pieces for sentence puzzle question
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personEN);
-        pieces.add("is");
-        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN));
-        return pieces;
-    }
-
-    private String puzzlePiecesAnswer(QueryResult qr){
-        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
-    }
-
-    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
-        String question = this.formatSentenceJP(qr);
-        List<String> choices = this.puzzlePieces(qr);
-        String answer = puzzlePiecesAnswer(qr);
+    private List<QuestionData> createSpellingQuestion(QueryResult qr){
+        String question = qr.occupationJP;
+        String answer = qr.occupationEN;
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
-        data.setChoices(choices);
+        data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
 
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
+
         return dataList;
     }
 

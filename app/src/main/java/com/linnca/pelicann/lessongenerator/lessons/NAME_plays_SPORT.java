@@ -6,11 +6,17 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
@@ -71,6 +77,7 @@ public class NAME_plays_SPORT extends Lesson{
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
 
     }
 
@@ -81,8 +88,6 @@ public class NAME_plays_SPORT extends Lesson{
                         " ?sport ?sportEN ?sportLabel " +
                         "		WHERE " +
                         "		{ " +
-                        "           {?person wdt:P31 wd:Q5} UNION " + //is human
-                        "           {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                         "			?person wdt:P641 ?sport . " + //plays sport
                         "		    FILTER NOT EXISTS { ?person wdt:P570 ?dateDeath } . " +//死んでいない（played ではなくてplays）
                         "           ?person rdfs:label ?personEN . " + //English label
@@ -143,17 +148,15 @@ public class NAME_plays_SPORT extends Lesson{
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
 
             List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
             questionSet.add(trueFalseQuestion);
 
-            List<QuestionData> translateQuestion = createTranslationQuestion(qr);
-            questionSet.add(translateQuestion);
-
             List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
             questionSet.add(spellingQuestion);
+
+            List<QuestionData> fillInBlank = createFillInTheBlankQuestion(qr);
+            questionSet.add(fillInBlank);
             
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
             
@@ -223,68 +226,120 @@ public class NAME_plays_SPORT extends Lesson{
         return qr.personJP + "は" + qr.sportNameJP + "をします。";
     }
 
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personEN);
-        String verb = SportsHelper.inflectVerb(qr.verb, SportsHelper.PRESENT3RD);
-        pieces.add(verb);
-        if (!qr.object.equals(""))
-            pieces.add(qr.object);
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> multipleChoiceQuestions = createMultipleChoiceQuestions();
 
-        return pieces;
+        List<List<QuestionData>> questionSet = new ArrayList<>(4);
+        questionSet.addAll(multipleChoiceQuestions);
+        return questionSet;
     }
 
-    private String puzzlePiecesAnswer(QueryResult qr){
-        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> multipleChoiceQuestions = preGenericQuestions.subList(0,4);
+        Collections.shuffle(multipleChoiceQuestions);
     }
 
-    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
-        List<QuestionData> questionDataList = new ArrayList<>(1);
-        String question = formatSentenceJP(qr);
-        List<String> choices = puzzlePieces(qr);
-        String answer = puzzlePiecesAnswer(qr);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(choices);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
+    private List<String> multipleChoiceQuestions(){
+        List<String> questions = new ArrayList<>(4);
+        questions.add(Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+        " karate");
+        questions.add(Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " soccer");
+        questions.add(Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " baseball");
+        questions.add(Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " judo");
+        return questions;
+    }
 
-        questionDataList.add(data);
-        return questionDataList;
+    private List<String> multipleChoiceAnswers(){
+        List<String> answers = new ArrayList<>(4);
+        answers.add("does");
+        answers.add("plays");
+        answers.add("plays");
+        answers.add("does");
+        return answers;
+    }
+
+    private List<String> multipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(2);
+        choices.add("does");
+        choices.add("plays");
+        return choices;
+    }
+
+    private List<List<QuestionData>> createMultipleChoiceQuestions(){
+        List<List<QuestionData>> questions = new ArrayList<>(4);
+        List<String> allQuestions = multipleChoiceQuestions();
+        List<String> allAnswers = multipleChoiceAnswers();
+        List<String> choices = multipleChoiceChoices();
+        for (int i=0; i<4; i++ ){
+            List<QuestionData> questionDataList = new ArrayList<>(1);
+            String question = allQuestions.get(i);
+            String answer = allAnswers.get(i);
+            QuestionData data = new QuestionData();
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setTopic(TOPIC_GENERIC_QUESTION);
+            data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+            data.setQuestion(question);
+            data.setChoices(choices);
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+
+            questionDataList.add(data);
+            questions.add(questionDataList);
+        }
+        return questions;
     }
 
     //just for true/false
     private class SimpleQueryResult {
-        String wikiDataID;
-        String sportEN;
-        String verb;
+        final String wikiDataID;
+        final String sportEN;
+        final String sportJP;
+        final String verb;
 
-        SimpleQueryResult(String wikiDataID, String sportEN, String verb) {
+        SimpleQueryResult(String wikiDataID, String sportEN, String sportJP, String verb) {
             this.wikiDataID = wikiDataID;
             this.sportEN = sportEN;
+            this.sportJP = sportJP;
             this.verb = verb;
         }
     }
     private List<SimpleQueryResult> popularSports(){
         List<SimpleQueryResult> list = new ArrayList<>(5);
-        list.add(new SimpleQueryResult("Q2736", "soccer", "play"));
-        list.add(new SimpleQueryResult("Q5369", "baseball", "play"));
-        list.add(new SimpleQueryResult("Q847", "tennis", "play"));
+        list.add(new SimpleQueryResult("Q2736", "soccer", "サッカー", "play"));
+        list.add(new SimpleQueryResult("Q5369", "baseball", "野球", "play"));
+        list.add(new SimpleQueryResult("Q847", "tennis", "テニス", "play"));
+        list.add(new SimpleQueryResult("Q38108", "figure skating", "フィギュアスケート", "do"));
+        list.add(new SimpleQueryResult("Q3930", "table tennis", "卓球", "play"));
         return list;
     }
 
     private String formatFalseAnswer(QueryResult qr, SimpleQueryResult sqr){
-        //all the sports are 'play'
         String verbObject = SportsHelper.getVerbObject(sqr.verb, sqr.sportEN, SportsHelper.PRESENT3RD);
         return qr.personEN + " " + verbObject + ".";
     }
 
+    private FeedbackPair trueFalseFeedback(SimpleQueryResult sqr){
+        //we are displaying sport names the user might not have encountered yet,
+        // so explain what that sport is afterwards
+        String response1 = Question_TrueFalse.getTrueFalseString(true);
+        String response2 = Question_TrueFalse.getTrueFalseString(false);
+        String feedback = sqr.sportEN + ": " + sqr.sportJP;
+        List<String> responses = new ArrayList<>(2);
+        responses.add(response1);
+        responses.add(response2);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+
+    }
+
     private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
-        List<QuestionData> questionDataList = new ArrayList<>(3);
+        //1 true and 1 false question
+        List<QuestionData> questionDataList = new ArrayList<>(2);
         String question = this.formatSentenceEN(qr);
         QuestionData data = new QuestionData();
         data.setId("");
@@ -298,6 +353,7 @@ public class NAME_plays_SPORT extends Lesson{
 
         questionDataList.add(data);
 
+        //remove all sports the person plays
         List<SimpleQueryResult> falseAnswers = popularSports();
         List<QueryResult> allSports = queryResultMap.get(qr.personID);
         for (QueryResult singleSport : allSports) {
@@ -311,40 +367,24 @@ public class NAME_plays_SPORT extends Lesson{
         Collections.shuffle(falseAnswers);
         //we don't want too many false answers
         //or the answers will most likely be false
-        if (falseAnswers.size()>2) {
-            falseAnswers = falseAnswers.subList(0, 2);
-        }
+        SimpleQueryResult falseSport = falseAnswers.get(0);
 
-        for (SimpleQueryResult falseSport : falseAnswers){
-            question = this.formatFalseAnswer(qr, falseSport);
-            data = new QuestionData();
-            data.setId("");
-            data.setLessonId(lessonKey);
-            data.setTopic(qr.personJP);
-            data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
-            data.setQuestion(question);
-            data.setChoices(null);
-            data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_FALSE);
-            data.setAcceptableAnswers(null);
-
-            questionDataList.add(data);
-        }
-        return questionDataList;
-    }
-
-    private List<QuestionData> createTranslationQuestion(QueryResult qr){
-        List<QuestionData> questionDataList = new ArrayList<>(1);
-        QuestionData data = new QuestionData();
+        question = this.formatFalseAnswer(qr, falseSport);
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(trueFalseFeedback(falseSport));
+        data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
-        data.setQuestion(qr.sportNameEN);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
         data.setChoices(null);
-        data.setAnswer(qr.sportNameJP);
+        data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_FALSE);
         data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
 
         questionDataList.add(data);
+
         return questionDataList;
     }
 
@@ -362,5 +402,100 @@ public class NAME_plays_SPORT extends Lesson{
 
         questionDataList.add(data);
         return questionDataList;
+    }
+
+    private String fillInTheBlankQuestion(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInTheBlankAnswer(QueryResult qr){
+        return SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
+    }
+
+    private List<QuestionData> createFillInTheBlankQuestion(QueryResult qr){
+        List<QuestionData> questionDataList = new ArrayList<>(1);
+        String question = fillInTheBlankQuestion(qr);
+        String answer = fillInTheBlankAnswer(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        questionDataList.add(data);
+        return questionDataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructionsQuestion = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructionsQuestion);
+        return questionSet;
+    }
+
+    private String instructionQuestionQuestion(){
+        return "あなたは何のスポーツをしていますか。";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "I play " + QuestionResponseChecker.ANYTHING + ".";
+    }
+
+    private List<String> instructionQuestionAcceptableAnswers(){
+        // so I can cover sports like swimming..
+        //this will accept almost anything, but it's more important
+        // to have the user say something than marking correctness...
+        String acceptableAnswer = "I " + QuestionResponseChecker.ANYTHING + ".";
+        List<String> acceptableAnswers = new ArrayList<>(1);
+        acceptableAnswers.add(acceptableAnswer);
+        return acceptableAnswers;
+
+    }
+
+    private FeedbackPair instructionQuestionFeedback1(){
+        String response = "I plays " + QuestionResponseChecker.ANYTHING + ".";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        String feedback = "自分のことを言っている場合、動詞の最後のsはいりません。\nplaysではなくplayになります。";
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
+    }
+
+    private FeedbackPair instructionQuestionFeedback2(){
+        String response = "I does " + QuestionResponseChecker.ANYTHING + ".";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        String feedback = "自分のことを言っている場合、動詞の最後のsはいりません。\ndoesは特別なので、doeではなくdoになります。";
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
+        List<FeedbackPair> allFeedback = new ArrayList<>(2);
+        allFeedback.add(instructionQuestionFeedback1());
+        allFeedback.add(instructionQuestionFeedback2());
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+        data.setFeedback(allFeedback);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
     }
 }

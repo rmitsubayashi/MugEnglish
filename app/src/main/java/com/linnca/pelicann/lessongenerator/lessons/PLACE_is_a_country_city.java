@@ -6,6 +6,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
@@ -13,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_TranslateWord;
+import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -59,8 +61,9 @@ public class PLACE_is_a_country_city extends Lesson {
 
         super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
-        super.questionSetsToPopulate = 5;
+        super.questionSetsToPopulate = 4;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
 
     }
 
@@ -126,11 +129,14 @@ public class PLACE_is_a_country_city extends Lesson {
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
 
-            List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);
-            questionSet.add(fillInBlankMultipleChoiceQuestion);
+            List<QuestionData> fillInBlankMultipleChoice = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(fillInBlankMultipleChoice);
 
-            List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
-            questionSet.add(fillInBlankInputQuestion);
+            List<QuestionData> fillInBlankInput = createFillInBlankInputQuestion(qr);
+            questionSet.add(fillInBlankInput);
+
+            List<QuestionData> trueFalse = createTrueFalseQuestion(qr);
+            questionSet.add(trueFalse);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -197,12 +203,14 @@ public class PLACE_is_a_country_city extends Lesson {
     }
 
     private String fillInBlankInputQuestion(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
         String place = qr.placeEN;
         if (qr.isCountry){
             place = GrammarRules.definiteArticleBeforeCountry(place);
         }
-        String sentence = place + " is a " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
-        return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        String sentence2 = place + " is a " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        return sentence1 + "\n\n" +
+                GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
     }
 
     private String fillInBlankAnswer(QueryResult qr){
@@ -226,6 +234,62 @@ public class PLACE_is_a_country_city extends Lesson {
         data.setFeedback(null);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
+        return questionDataList;
+
+    }
+
+    private String trueFalseQuestion(QueryResult qr, boolean isTrue){
+        String countryOrCity;
+        if (isTrue){
+            countryOrCity = qr.countryCityEN;
+        } else {
+            if (qr.isCountry){
+                countryOrCity = "city";
+            }else {
+                countryOrCity = "country";
+            }
+        }
+        String place = qr.placeEN;
+        if (qr.isCountry){
+            place = GrammarRules.definiteArticleBeforeCountry(place);
+        }
+        String sentence = place + " is a " + countryOrCity + ".";
+        return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+    }
+
+    private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
+        //one true and one false question
+        List<QuestionData> questionDataList = new ArrayList<>();
+        String question = this.trueFalseQuestion(qr, true);
+        String answer = Question_TrueFalse.getTrueFalseString(true);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(super.lessonKey);
+        data.setTopic(qr.placeJP);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        data.setFeedback(null);
+        questionDataList.add(data);
+
+        question = this.trueFalseQuestion(qr, false);
+        answer = Question_TrueFalse.getTrueFalseString(false);
+        data = new QuestionData();
+        data.setId("");
+        data.setLessonId(super.lessonKey);
+        data.setTopic(qr.placeJP);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        data.setFeedback(null);
+        questionDataList.add(data);
+
         return questionDataList;
 
     }

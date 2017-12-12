@@ -5,12 +5,14 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -22,44 +24,54 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NAME_spoke_at_TED extends Lesson{
-    public static final String KEY = "NAME_spoke_at_TED";
+public class NAME_wrote_a_book_about_SUBJECT extends Lesson{
+    public static final String KEY = "NAME_wrote_a_book_about_SUBJECT";
 
     private final List<QueryResult> queryResults = new ArrayList<>();
     private class QueryResult {
         private final String personID;
         private final String personEN;
         private final String personJP;
+        private final String subjectEN;
+        private final String subjectJP;
 
         private QueryResult(
                 String personID,
                 String personEN,
-                String personJP)
+                String personJP,
+                String subjectEN,
+                String subjectJP)
         {
             this.personID = personID;
             this.personEN = personEN;
             this.personJP = personJP;
+            this.subjectEN = subjectEN;
+            this.subjectJP = subjectJP;
         }
     }
 
-    public NAME_spoke_at_TED(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
+    public NAME_wrote_a_book_about_SUBJECT(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
     protected String getSPARQLQuery(){
-        return "SELECT ?person ?personLabel ?personEN " +
+        return "SELECT DISTINCT ?person ?personLabel ?personEN " +
+                " ?subjectLabel ?subjectEN " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
-                "    ?person wdt:P2611 ?tedID . " + //has a TED ID
+                "    ?book wdt:P31 wd:Q571 ." + //is a book
+                "    ?book wdt:P50 ?person . " + //written by the person
+                "    ?book wdt:921 ?subject . " + //has a subject
                 "    ?person rdfs:label ?personEN . " +
+                "    ?subject rdfs:label ?subjectEN . " + 
                 "    FILTER (LANG(?personEN) = '" +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
+                "    FILTER (LANG(?subjectEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
@@ -81,7 +93,9 @@ public class NAME_spoke_at_TED extends Lesson{
             personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
-            QueryResult qr = new QueryResult(personID, personEN, personJP);
+            String subjectEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "subjectEN");
+            String subjectJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "subjectLabel");
+            QueryResult qr = new QueryResult(personID, personEN, personJP, subjectEN, subjectJP);
             queryResults.add(qr);
         }
     }
@@ -96,32 +110,36 @@ public class NAME_spoke_at_TED extends Lesson{
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
 
+            List<QuestionData> fillInBlankMultipleChoice = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(fillInBlankMultipleChoice);
+
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
+
+            List<QuestionData> fillInBlankMultipleChoice2 = createFillInBlankMultipleChoiceQuestion2(qr);
+            questionSet.add(fillInBlankMultipleChoice2);
 
             super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
         }
 
     }
 
-    private String NAME_is_language_EN_correct(QueryResult qr){
-        String sentence = qr.personEN + " spoke at TED.";
-        //no need since all names are capitalized?
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
+    private String NAME_is_OCCUPATION_EN_correct(QueryResult qr){
+        return qr.personEN + " wrote a book about " + qr.subjectEN + ".";
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personJP + "はTEDで話しました。";
+        return qr.personJP + "は" + qr.subjectJP + "についての本を書きました。";
     }
 
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personEN);
-        pieces.add("spoke");
-        pieces.add("at");
-        pieces.add("TED");
+        pieces.add("wrote");
+        pieces.add("a book");
+        pieces.add("about");
+        pieces.add(qr.subjectEN);
         return pieces;
     }
 
@@ -149,31 +167,72 @@ public class NAME_spoke_at_TED extends Lesson{
         return dataList;
     }
 
+    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String sentence1 = qr.personJP + "は本を書きました。";
+        String sentence2 = qr.personEN + " " +
+                Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " a book.";
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInBlankMultipleChoiceAnswer(){
+        return "wrote";
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(4);
+        choices.add("wrote");
+        choices.add("write");
+        choices.add("writed");
+        choices.add("wrute");
+        return choices;
+    }
+
+    private FeedbackPair fillInBlankMultipleChoiceFeedback(){
+        String response = "writed";
+        List<String> responses = new ArrayList<>();
+        responses.add(response);
+        String feedback = "writeの過去形はwroteになります";
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion(qr);
+        String answer = fillInBlankMultipleChoiceAnswer();
+        List<String> choices = fillInBlankMultipleChoiceChoices();
+        List<FeedbackPair> feedbackPairs = new ArrayList<>(1);
+        feedbackPairs.add(fillInBlankMultipleChoiceFeedback());
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(feedbackPairs);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
     private String fillInBlankQuestion(QueryResult qr){
         String sentence1 = formatSentenceJP(qr);
         String sentence2 = qr.personEN + " " +
-                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + " TED.";
+                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + " a book.";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence1 + "\n\n" + sentence2;
     }
 
     private String fillInBlankAnswer(){
-        return "spoke at";
-    }
-
-    private FeedbackPair fillInBlankFeedback(){
-        String response = "speaked";
-        List<String> responses = new ArrayList<>();
-        responses.add(response);
-        String feedback = "speakの過去形は特別でspokeになります";
-        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+        return "wrote";
     }
 
     private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
         String question = this.fillInBlankQuestion(qr);
         String answer = fillInBlankAnswer();
-        List<FeedbackPair> feedbackPairs = new ArrayList<>(1);
-        feedbackPairs.add(fillInBlankFeedback());
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -183,7 +242,47 @@ public class NAME_spoke_at_TED extends Lesson{
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-        data.setFeedback(feedbackPairs);
+
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " wrote a book " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " " + qr.subjectEN + ".";
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInBlankMultipleChoiceAnswer2(){
+        return "about";
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices2(){
+        List<String> choices = new ArrayList<>(4);
+        choices.add("about");
+        choices.add("for");
+        choices.add("from");
+        choices.add("to");
+        return choices;
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion2(qr);
+        String answer = fillInBlankMultipleChoiceAnswer2();
+        List<String> choices = fillInBlankMultipleChoiceChoices2();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

@@ -5,12 +5,17 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessondetails.LessonInstanceDataQuestionSet;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -62,6 +67,7 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -74,8 +80,6 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
                 " ?gender " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} . " + //or fictional human
                 "    ?person wdt:P21 ?gender . " + //has gender
                 "    ?person wdt:P108 ?employer . " + //has an employer
                 "    ?person rdfs:label ?personEN . " + //English label
@@ -134,11 +138,18 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
+
             List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);
             questionSet.add(fillInBlankMultipleChoiceQuestion);
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
-            questionSet.add(fillInBlankQuestion);
+            List<QuestionData> sentencePuzzle = createSentencePuzzleQuestion(qr);
+            questionSet.add(sentencePuzzle);
+
+            List<QuestionData> fillInBlankMultipleChoice2 = createFillInBlankMultipleChoiceQuestion2(qr);
+            questionSet.add(fillInBlankMultipleChoice2);
+
+            List<QuestionData> trueFalse = createTrueFalseQuestion(qr);
+            questionSet.add(trueFalse);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
             super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
@@ -179,6 +190,43 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         return qr.personJP + "は働いています。"+qr.genderJP+"は"+qr.employerJP+"にいます。";
     }
 
+    //puzzle pieces for sentence puzzle question
+    private List<String> puzzlePieces(QueryResult qr){
+        List<String> pieces = new ArrayList<>();
+        pieces.add(qr.personEN);
+        pieces.add("is");
+        pieces.add("at");
+        pieces.add("work");
+        pieces.add(qr.genderEN);
+        pieces.add("is");
+        pieces.add("at");
+        pieces.add(qr.employerEN);
+        return pieces;
+    }
+
+    private String puzzlePiecesAnswer(QueryResult qr){
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
+    }
+
+    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
+        String question = this.formatSentenceJP(qr);
+        List<String> choices = this.puzzlePieces(qr);
+        String answer = puzzlePiecesAnswer(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
+    }
+
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
         String sentence = NAME_is_at_work_EN(qr);
         String sentence2 = Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " is at " + qr.employerEN + ".";
@@ -190,18 +238,79 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         return GrammarRules.uppercaseFirstLetterOfSentence(qr.genderEN);
     }
 
-    private List<String> fillInBlankMultipleChoiceChoices(QueryResult qr){
+    private List<String> fillInBlankMultipleChoiceChoices(){
         List<String> choices = new ArrayList<>(2);
         choices.add("He");
         choices.add("She");
         return choices;
     }
 
+    private FeedbackPair fillInBlankFeedback(QueryResult qr){
+        String response;
+        String gender;
+        if (qr.genderEN.equals("he")){
+            response = "She";
+            gender = "男性";
+        } else {
+            response = "He";
+            gender = "女性";
+        }
+        String feedback = qr.personJP + "は" + gender + "なので" + qr.genderEN +
+                "です。";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
     private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
         String question = this.fillInBlankMultipleChoiceQuestion(qr);
         String answer = fillInBlankMultipleChoiceAnswer(qr);
         List<QuestionData> questionDataList = new ArrayList<>();
-        List<String> choices = fillInBlankMultipleChoiceChoices(qr);
+        List<String> choices = fillInBlankMultipleChoiceChoices();
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(fillInBlankFeedback(qr));
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+
+        questionDataList.add(data);
+
+        return questionDataList;
+    }
+
+    private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String sentence = qr.personEN + " is " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        String sentence2 = qr.genderEN + " is at " + qr.employerEN + ".";
+        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence + "\n" + sentence2;
+    }
+
+    private String fillInBlankMultipleChoiceAnswer2(){
+        return "at";
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices2(){
+        List<String> choices = new ArrayList<>(3);
+        choices.add("at work");
+        choices.add("from work");
+        choices.add("work");
+
+        return choices;
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion2(qr);
+        String answer = fillInBlankMultipleChoiceAnswer2();
+        List<String> choices = fillInBlankMultipleChoiceChoices2();
+        List<QuestionData> questionDataList = new ArrayList<>();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -218,39 +327,47 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
         return questionDataList;
     }
 
-    private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personEN + " is " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
-        String sentence2 = qr.genderEN + " is at " + qr.employerEN + ".";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-        return sentence + "\n" + sentence2;
+    private String trueFalseQuestion(QueryResult qr, boolean isTrue){
+        if (isTrue){
+            return formatSentenceEN(qr);
+        } else {
+            String sentence1 = qr.genderEN + " is at work.";
+            String sentence2 = qr.personEN + " is at " + qr.employerEN + ".";
+            sentence1 = GrammarRules.uppercaseFirstLetterOfSentence(sentence1);
+            return sentence1 + "\n" + sentence2;
+        }
     }
 
-    private String fillInBlankAnswer(){
-        return "at work";
-    }
-
-    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
-        String question = this.fillInBlankQuestion(qr);
-        String answer = fillInBlankAnswer();
+    //one true and one false question
+    private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
         List<QuestionData> questionDataList = new ArrayList<>();
+
+        String question = trueFalseQuestion(qr, true);
+        String answer = Question_TrueFalse.getTrueFalseString(true);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.personJP);
-        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
+        questionDataList.add(data);
 
-
+        question = trueFalseQuestion(qr, false);
+        answer = Question_TrueFalse.getTrueFalseString(false);
+        data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
         questionDataList.add(data);
 
         return questionDataList;
     }
-
-
-
-    //TODO preposition question
 }

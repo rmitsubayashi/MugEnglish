@@ -6,6 +6,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -58,8 +59,9 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
         super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
-        super.questionSetsToPopulate = 3;
+        super.questionSetsToPopulate = 4;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
 
     }
 
@@ -134,11 +136,8 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
             List<QuestionData> translateWordQuestion = createTranslateWordQuestion(qr);
             questionSet.add(translateWordQuestion);
 
-            List<QuestionData> fillInBlankInput1Question = createFillInBlankInputQuestion1(qr);
-            questionSet.add(fillInBlankInput1Question);
-
-            List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
-            questionSet.add(fillInBlankInput2Question);
+            List<QuestionData> fillInBlankInputQuestion = createFillInBlankInputQuestion(qr);
+            questionSet.add(fillInBlankInputQuestion);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -169,7 +168,60 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
         return qr.countryJP + "の面積は" + Integer.toString(qr.area) + " km²です。";
     }
 
-    private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
+    private List<QuestionData> spellingQuestionGeneric(){
+        String question = "面積";
+        String answer = "area";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(super.lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        data.setFeedback(null);
+
+        List<QuestionData> questionVariations = new ArrayList<>();
+        questionVariations.add(data);
+        return questionVariations;
+
+    }
+
+    private List<QuestionData> translateQuestionGeneric(){
+        String question = "面積";
+        String answer = "area";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(super.lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        data.setFeedback(null);
+
+        List<QuestionData> questionVariations = new ArrayList<>();
+        questionVariations.add(data);
+        return questionVariations;
+
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet =new ArrayList<>(1);
+        List<QuestionData> spellingQuestion = spellingQuestionGeneric();
+        questionSet.add(spellingQuestion);
+        List<QuestionData> translate = translateQuestionGeneric();
+        questionSet.add(translate);
+        return questionSet;
+
+    }
+
+    private FeedbackPair translateFeedback(QueryResult qr){
         String lowercaseCountry = qr.countryEN.toLowerCase();
         List<String> responses = new ArrayList<>();
         responses.add(lowercaseCountry);
@@ -180,7 +232,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
     private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
         String question = qr.countryJP;
         String answer = qr.countryEN;
-        FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
+        FeedbackPair feedbackPair = translateFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
         feedbackPairs.add(feedbackPair);
         QuestionData data = new QuestionData();
@@ -200,40 +252,7 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
         return questionDataList;
     }
 
-    private String fillInBlankInputQuestion1(QueryResult qr){
-        String sentence1 = qr.countryJP + "の面積は" + Integer.toString(qr.area) + " km²です。";
-
-        String sentence2 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
-                " is " + StringUtils.convertIntToStringWithCommas(qr.area) + " km².";
-        return sentence1 + "\n\n" + GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-    }
-
-    private String fillInBlankInputAnswer1(){
-        return "area";
-    }
-
-    private List<QuestionData> createFillInBlankInputQuestion1(QueryResult qr){
-        String question = this.fillInBlankInputQuestion1(qr);
-
-        String answer = fillInBlankInputAnswer1();
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryJP);
-        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        data.setFeedback(null);
-        List<QuestionData> questionDataList = new ArrayList<>();
-        questionDataList.add(data);
-        return questionDataList;
-
-    }
-
-    private String fillInBlankInputQuestion2(QueryResult qr){
+    private String fillInBlankInputQuestion(QueryResult qr){
         String sentence1 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s area is " +
                 StringUtils.convertIntToWord(qr.area) + " km².";
         String sentence2 = qr.countryJP + "の面積は" + Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " km²です。";
@@ -242,13 +261,13 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
 
 
-    private String fillInBlankInputAnswer2(QueryResult qr){
+    private String fillInBlankInputAnswer(QueryResult qr){
         return Integer.toString(qr.area);
     }
 
-    private List<QuestionData> createFillInBlankInputQuestion2(QueryResult qr){
-        String question = this.fillInBlankInputQuestion2(qr);
-        String answer = fillInBlankInputAnswer2(qr);
+    private List<QuestionData> createFillInBlankInputQuestion(QueryResult qr){
+        String question = this.fillInBlankInputQuestion(qr);
+        String answer = fillInBlankInputAnswer(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
@@ -264,37 +283,6 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
         return questionDataList;
-    }
-
-    private List<QuestionData> spellingQuestionGeneric(){
-        String question = "面積";
-        String answer = "area";
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(super.lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        //for suggestive, we don't need to lowercase everything
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        data.setFeedback(null);
-
-        List<QuestionData> questionVariations = new ArrayList<>();
-        questionVariations.add(data);
-        return questionVariations;
-
-    }
-
-    @Override
-    protected List<List<QuestionData>> getPreGenericQuestions(){
-        List<List<QuestionData>> questionSet =new ArrayList<>(1);
-        List<QuestionData> spellingQuestion = spellingQuestionGeneric();
-        questionSet.add(spellingQuestion);
-        return questionSet;
-
     }
 
 }

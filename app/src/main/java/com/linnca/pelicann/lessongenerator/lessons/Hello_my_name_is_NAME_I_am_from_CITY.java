@@ -5,11 +5,14 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
@@ -62,6 +65,7 @@ public class Hello_my_name_is_NAME_I_am_from_CITY extends Lesson{
         super.questionSetsToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -72,8 +76,8 @@ public class Hello_my_name_is_NAME_I_am_from_CITY extends Lesson{
                 " ?cityEN ?cityLabel ?cityAltJP " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+
+
                 "    ?person wdt:P19 ?city . " + //has a place of birth
                 "    ?city wdt:P31/wdt:P279* wd:Q515 . " + //is a city
                 "    OPTIONAL { ?city skos:altLabel ?cityAltJP . } " + //any alternative names for city
@@ -286,5 +290,64 @@ public class Hello_my_name_is_NAME_I_am_from_CITY extends Lesson{
         return dataList;
     }
 
-    
+
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructionsQuestion = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructionsQuestion);
+        return questionSet;
+    }
+
+    //lets the user freely introduce themselves
+    private String instructionQuestionQuestion(){
+        return "名前と出身を教えてください。";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "My name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+    }
+
+    private List<String> instructionQuestionAcceptableAnswers(){
+        String acceptableAnswer1 = "Hello my name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer2 = "Hi my name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer3 = "Hey my name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer4 = "What's up my name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer5 = "Hello. My name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer6 = "Hi. My name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer7 = "Hey. My name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+        String acceptableAnswer8 = "What's up. My name is " + QuestionResponseChecker.ANYTHING + ". I am from " + QuestionResponseChecker.ANYTHING + ".";
+
+        List<String> acceptableAnswers = new ArrayList<>(8);
+        acceptableAnswers.add(acceptableAnswer1);
+        acceptableAnswers.add(acceptableAnswer2);
+        acceptableAnswers.add(acceptableAnswer3);
+        acceptableAnswers.add(acceptableAnswer4);
+        acceptableAnswers.add(acceptableAnswer5);
+        acceptableAnswers.add(acceptableAnswer6);
+        acceptableAnswers.add(acceptableAnswer7);
+        acceptableAnswers.add(acceptableAnswer8);
+        return acceptableAnswers;
+
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
 }

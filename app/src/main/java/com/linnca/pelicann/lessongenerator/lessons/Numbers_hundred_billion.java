@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.questions.QuestionData;
@@ -22,6 +23,7 @@ public class Numbers_hundred_billion extends Lesson {
     public Numbers_hundred_billion(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected synchronized int getQueryResultCt(){return 0;}
@@ -48,6 +50,12 @@ public class Numbers_hundred_billion extends Lesson {
 
         return questionSet;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> spelling = preGenericQuestions.subList(0,4);
+        Collections.shuffle(spelling);
     }
 
     @Override
@@ -82,7 +90,7 @@ public class Numbers_hundred_billion extends Lesson {
         return choices;
     }
 
-    private List<List<QuestionData>> translateQuestions(){
+    private List<List<QuestionData>> spellingQuestions(){
         List<List<QuestionData>> questions = new ArrayList<>(4);
         List<String> answers = english();
         List<String> numbers = numbers();
@@ -92,7 +100,7 @@ public class Numbers_hundred_billion extends Lesson {
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+            data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);
@@ -105,7 +113,7 @@ public class Numbers_hundred_billion extends Lesson {
         return questions;
     }
 
-    private List<List<QuestionData>> spellingQuestions(){
+    private List<List<QuestionData>> translateQuestions(){
         List<List<QuestionData>> questions = new ArrayList<>(4);
         List<String> answers = english();
         List<String> numbers = numbers();
@@ -115,7 +123,7 @@ public class Numbers_hundred_billion extends Lesson {
             data.setId("");
             data.setLessonId(lessonKey);
             data.setTopic(TOPIC_GENERIC_QUESTION);
-            data.setQuestionType(Question_Spelling_Suggestive.QUESTION_TYPE);
+            data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
             data.setAcceptableAnswers(null);

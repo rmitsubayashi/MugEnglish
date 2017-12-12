@@ -5,6 +5,8 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.TermAdjuster;
@@ -12,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -20,6 +23,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class TEAM_is_a_SPORT_team extends Lesson{
@@ -53,7 +58,7 @@ public class TEAM_is_a_SPORT_team extends Lesson{
         super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_OTHER;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
     }
 
     @Override
@@ -105,8 +110,9 @@ public class TEAM_is_a_SPORT_team extends Lesson{
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
+
+            List<QuestionData> trueFalse = createTrueFalseQuestion(qr);
+            questionSet.add(trueFalse);
 
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
@@ -142,38 +148,85 @@ public class TEAM_is_a_SPORT_team extends Lesson{
         return qr.teamJP + "は" + qr.sportJP + "チームです。";
     }
 
-    //puzzle pieces for sentence puzzle question
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.teamEN);
-        pieces.add("is");
-        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.sportEN));
-        pieces.add("team");
-        return pieces;
+    //just for true/false
+    private class SimpleQueryResult {
+        final String wikiDataID;
+        final String sportEN;
+        final String sportJP;
+
+        SimpleQueryResult(String wikiDataID, String sportEN, String sportJP) {
+            this.wikiDataID = wikiDataID;
+            this.sportEN = sportEN;
+            this.sportJP = sportJP;
+        }
+    }
+    private List<SimpleQueryResult> popularTeamSports(){
+        List<SimpleQueryResult> list = new ArrayList<>(4);
+        list.add(new SimpleQueryResult("Q2736", "soccer", "サッカー"));
+        list.add(new SimpleQueryResult("Q5369", "baseball", "野球"));
+        list.add(new SimpleQueryResult("Q1734", "volleyball", "バレーボール"));
+        list.add(new SimpleQueryResult("Q5372", "basketball", "バスケットボール"));
+        return list;
     }
 
-    private String puzzlePiecesAnswer(QueryResult qr){
-        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
+    private String formatFalseAnswer(QueryResult qr, SimpleQueryResult sqr){
+        return qr.teamEN + " is " +
+                GrammarRules.indefiniteArticleBeforeNoun(sqr.sportEN) + " team.";
     }
 
-    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
-        String question = this.formatSentenceJP(qr);
-        List<String> choices = this.puzzlePieces(qr);
-        String answer = puzzlePiecesAnswer(qr);
+    private FeedbackPair trueFalseFeedback(SimpleQueryResult sqr){
+        //we are displaying sport names the user might not have encountered yet,
+        // so explain what that sport is afterwards
+        String response1 = Question_TrueFalse.getTrueFalseString(true);
+        String response2 = Question_TrueFalse.getTrueFalseString(false);
+        String feedback = sqr.sportEN + ": " + sqr.sportJP;
+        List<String> responses = new ArrayList<>(2);
+        responses.add(response1);
+        responses.add(response2);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+
+    }
+
+    private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
+        //1 true and 1 false question
+        List<QuestionData> questionDataList = new ArrayList<>(2);
+        String question = this.formatSentenceEN(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
         data.setTopic(qr.teamJP);
-        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
         data.setQuestion(question);
-        data.setChoices(choices);
-        data.setAnswer(answer);
+        data.setChoices(null);
+        data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE);
         data.setAcceptableAnswers(null);
 
+        questionDataList.add(data);
 
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-        return dataList;
+
+        List<SimpleQueryResult> falseAnswers = popularTeamSports();
+        Collections.shuffle(falseAnswers);
+        //we don't want too many false answers
+        //or the answers will most likely be false
+        SimpleQueryResult falseSport = falseAnswers.get(0);
+
+        question = this.formatFalseAnswer(qr, falseSport);
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(trueFalseFeedback(falseSport));
+        data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.teamEN);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(Question_TrueFalse.TRUE_FALSE_QUESTION_FALSE);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+
+        questionDataList.add(data);
+
+        return questionDataList;
     }
 
     private String fillInBlankQuestion(QueryResult qr){

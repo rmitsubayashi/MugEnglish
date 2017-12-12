@@ -6,6 +6,7 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.SportsHelper;
@@ -130,7 +131,7 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
         super.questionSetsToPopulate = 4;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
@@ -142,8 +143,6 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
                         " ?occupationEN ?occupationLabel " +
                         "		WHERE " +
                         "		{ " +
-                        "           {?person wdt:P31 wd:Q5} UNION " + //is human
-                        "           {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                         "			?person wdt:P641 ?sport . " + //plays sport
                         "           ?person wdt:P106 ?occupation . " + //has an occupation
                         "           ?occupation wdt:P425 ?sport . " + //of that sport
@@ -289,46 +288,6 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
         return sentence1 + "\n" + sentence2;
     }
 
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.spouseEN);
-        pieces.add("'s");
-        pieces.add(qr.personTitleEN);
-        String verb = SportsHelper.inflectVerb(qr.verb, SportsHelper.PRESENT3RD);
-        pieces.add(verb);
-        if (!qr.object.equals(""))
-            pieces.add(qr.object);
-
-        pieces.add(qr.genderPronounEN);
-        pieces.add("is");
-        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN));
-
-        return pieces;
-    }
-
-    private String puzzlePiecesAnswer(QueryResult qr){
-        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
-    }
-
-    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
-        List<QuestionData> questionDataList = new ArrayList<>(1);
-        String question = formatSentenceJP(qr);
-        List<String> choices = puzzlePieces(qr);
-        String answer = puzzlePiecesAnswer(qr);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(choices);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        questionDataList.add(data);
-        return questionDataList;
-    }
-
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
         String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
         String occupation = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
@@ -428,6 +387,46 @@ public class NAME_possessive_husband_wife_plays_SPORT_he_is_a_OCCUPATION extends
 
             questionDataList.add(data);
         }
+        return questionDataList;
+    }
+
+    private List<String> puzzlePieces(QueryResult qr){
+        List<String> pieces = new ArrayList<>();
+        pieces.add(qr.spouseEN);
+        pieces.add("'s");
+        pieces.add(qr.personTitleEN);
+        String verb = SportsHelper.inflectVerb(qr.verb, SportsHelper.PRESENT3RD);
+        pieces.add(verb);
+        if (!qr.object.equals(""))
+            pieces.add(qr.object);
+
+        pieces.add(qr.genderPronounEN);
+        pieces.add("is");
+        pieces.add(GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN));
+
+        return pieces;
+    }
+
+    private String puzzlePiecesAnswer(QueryResult qr){
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
+    }
+
+    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
+        List<QuestionData> questionDataList = new ArrayList<>(1);
+        String question = formatSentenceJP(qr);
+        List<String> choices = puzzlePieces(qr);
+        String answer = puzzlePiecesAnswer(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        questionDataList.add(data);
         return questionDataList;
     }
 

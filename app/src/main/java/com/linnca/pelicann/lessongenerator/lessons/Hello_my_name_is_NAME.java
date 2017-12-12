@@ -70,8 +70,6 @@ public class Hello_my_name_is_NAME extends Lesson {
         return "SELECT ?person ?personLabel ?personEN " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person rdfs:label ?personEN . " +
                 "    FILTER (LANG(?personEN) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
@@ -226,7 +224,6 @@ public class Hello_my_name_is_NAME extends Lesson {
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
-
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
         return dataList;
@@ -273,14 +270,6 @@ public class Hello_my_name_is_NAME extends Lesson {
 
     }
 
-    @Override
-    protected List<List<QuestionData>> getPostGenericQuestions(){
-        List<QuestionData> instructionsQuestion = createInstructionQuestion();
-        List<List<QuestionData>> questionSet = new ArrayList<>(1);
-        questionSet.add(instructionsQuestion);
-        return questionSet;
-    }
-
     private List<QuestionData> createSpellingSuggestiveQuestion(){
         String question = "こんにちは";
         String answer = "hello";
@@ -317,6 +306,14 @@ public class Hello_my_name_is_NAME extends Lesson {
         dataList.add(data);
 
         return dataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructionsQuestion = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructionsQuestion);
+        return questionSet;
     }
 
     //lets the user freely introduce themselves

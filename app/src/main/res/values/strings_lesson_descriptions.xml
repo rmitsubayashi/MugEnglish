@@ -19,27 +19,25 @@
 
 
     <string name="description_company_makes_product_word1">make</string>
-    <string name="description_company_makes_product_meaning1">つくる</string>
+    <string name="description_company_makes_product_meaning1">作る</string>
 
-    <string name="description_country_possessive_area_is_area_review">今回のレッスンも大きい数字と「\'s」の復習です。国の面積（<b>area</b>）で練習しましょう。</string>
+    <string name="description_country_possessive_area_is_area_review">各国の面積（area）を見て、大きな数字と所有格、国名を復習しましょう。</string>
 
     <string name="description_country_possessive_government_is_a_government_grammar">「AのB」とAがBを所有している関係を表したい場合、所有主であるAの単語の語尾に「\'s」を付けます。\n
-    「AのBはCです」は「A\'s B is C」となります。</string>
-    <string name="description_country_possessive_government_is_a_government_new_word">このレッスンは政治について学びます。苦手な人は<b>government</b>(政治、政治体制)だけを覚えましょう。\n
+    「AのB」は「A\'s B」となります。</string>
+    <string name="description_country_possessive_government_is_a_government_new_word">このレッスンは政治について学びます。苦手な人は<b>government</b>(政治、政治体制)の単語だけを覚えましょう。\n
     政治が好きな人はどんどん政治用語を覚えていきましょう。</string>
-
-    <string name="description_country_possessive_population_is_population_review">前回学んだ大きな数字と「\'s」を復習しましょう。\n
-    各国の人口を英単語で表します。</string>
-    <string name="description_country_possessive_population_is_population_practical">大きな数字をそのまま英単語で表示しているのは練習のためだけです。実際は省略して表現します。\n
-    例）2,234,002\nこのレッスンではtwo million two hundred thirty-four thousand two と書きますが、実際は2.2 millionと表現したり正確性を求めるなら数字そのままで表現します。</string>
+    <string name="description_country_possessive_population_is_population_review">各国の人口（population）を見て、大きな数字と所有格、国名を復習しましょう。</string>
+    <string name="description_country_possessive_population_is_population_practical">このレッスンでは大きな数字を英単語で表示しますが、これはあくまで練習のためにやっています。\n
+    例えば2,234,002のような大きな数字の場合、このレッスンではtwo million two hundred thirty-four thousand two と書きますが。しかし、実際は2.2 millionと省略したり、数字そのままで表現します。</string>
 
     <string name="description_good_bye_bye_subheader">さようなら！</string>
-    <string name="description_good_bye_bye_introduction">出会いのあいさつの後は別れの挨拶。\n日本語でお馴染みの「バイバイ」の語源となる<b>bye</b>と、それに<b>good</b>をつけた<b>goodbye</b>。</string>
-    <string name="description_good_bye_bye_practical">どちらも「さようなら」という意味ですが、<b>bye</b>は一時的な別れによく使われるのに対し、<b>goodbye</b>は永遠の別れによく使われます。\n
-    またすぐ会う相手には<b>bye</b>のほうがいいかも！</string>
+    <string name="description_good_bye_bye_introduction">別れの挨拶を覚えましょう。\n「バイバイ」の語源となる<b>bye</b>と、それに<b>good</b>をつけた<b>goodbye</b>。</string>
+    <string name="description_good_bye_bye_practical">どちらも「さようなら」という意味ですが、<b>bye</b>は一時的な別れに、<b>goodbye</b>は永遠の別れによく使われます。\n
+    またすぐ会う相手には<b>goodbye</b>より<b>bye</b>の方がいいかもしれませんね。</string>
 
     <string name="description_good_morning_afternoon_evening_subheader">おはよう！</string>
-    <string name="description_good_morning_afternoon_evening_introduction">Helloの次は時間帯ごとのあいさつを覚えましょう。</string>
+    <string name="description_good_morning_afternoon_evening_introduction">時間帯ごとのあいさつの仕方を覚えましょう。</string>
     <string name="description_good_morning_afternoon_evening_word1">morning</string>
     <string name="description_good_morning_afternoon_evening_meaning1">朝</string>
     <string name="description_good_morning_afternoon_evening_word2">afternoon</string>
@@ -47,7 +45,7 @@
     <string name="description_good_morning_afternoon_evening_word3">evening</string>
     <string name="description_good_morning_afternoon_evening_meaning3">夕方</string>
     <string name="description_good_morning_afternoon_evening_explanation">これらの時間帯の単語の前に<b>good</b>をつけてあいさつします。\n
-    <b>good</b>は「良い」という意味で、「良い朝を！」「良い昼を！」「良い夕方を！」という意味であいさつとして使われています。
+    <b>good</b>は「良い」という意味で、「良い朝を！」「良い昼を！」「良い夕方を！」という意味で使われています。
     </string>
     <string name="description_good_morning_afternoon_evening_word2_1">good morning</string>
     <string name="description_good_morning_afternoon_evening_meaning2_1">おはよう</string>
@@ -55,9 +53,8 @@
     <string name="description_good_morning_afternoon_evening_meaning2_2">こんにちは</string>
     <string name="description_good_morning_afternoon_evening_word2_3">good evening</string>
     <string name="description_good_morning_afternoon_evening_meaning2_3">こんばんは</string>
-    <string name="description_good_morning_afternoon_evening_practical">Good afternoonとgood eveningは日本の敬語のように目上の人に使ったり、スピーチなどの公の場で使うことが多いです。
-    日常会話ではhelloで済ませる場合が多いです。\nGood morningは日常会話でもよく使うので絶対覚えておきましょう！\n
-    なお、good morningやgood eveningは<b>good</b>を省略して「morning」「evening」とも使えます。
+    <string name="description_good_morning_afternoon_evening_practical">Good afternoonとgood eveningは目上の人に使ったり、スピーチなどの公の場で使うことが多いです。
+    日常会話ではあまり使いません。\n一方でgood morningは日常会話でもよく使うので絶対覚えておきましょう！\n
     </string>
 
     <string name="description_hello_my_name_is_name_subheader">まずはあいさつ！</string>
@@ -75,12 +72,15 @@
         この場合、動詞はisではなく<b>am</b>を使います！
     </string>
 
-    <string name="description_hi_hey_whats_up_practical">Helloを覚えていますか。「こんにちは」という意味でしたね。日常会話でhelloを多用しても良いですが、helloは実はよそよそしい挨拶なのです。\n
-    友人や知り合いにはhelloではなく、もっと馴れ馴れしい挨拶を使いましょう。今回学ぶのは「hi」「hey」「what\'s up」です。</string>
+    <string name="description_hi_hey_whats_up_practical">Helloを覚えていますか。「こんにちは」という意味でしたね。日常会話でhelloを使っても違和感はないですが、実は少しよそよそしい感じになります。</string>
+    <string name="description_hi_hey_whats_up_practical2">友人や知り合いにはhelloではなく、もっと親しみやすい挨拶を使いましょう。今回は「hi」「hey」「what\'s up」の3パターンを学びます。</string>
 
-    <string name="description_how_are_you_doing_introduction">あいさつの次は元気かどうか聞きましょう。</string>
+    <string name="description_how_are_you_doing_introduction">相手が元気かどうか聞いてみましょう。</string>
     <string name="description_how_are_you_doing_word1">how are you doing</string>
     <string name="description_how_are_you_doing_meaning1">元気ですか</string>
+    <string name="description_how_are_you_doing_word2">good</string>
+    <string name="description_how_are_you_doing_meaning2">元気です</string>
+    <string name="description_how_are_you_doing_explanation1">Good morningやgood afternoonで学んだ<b>good</b>は「良い」という意味でしたね。\n今回は元気は「良い」という意味で、<b>good</b>と返しましょう。</string>
 
     <string name="description_name_is_a_man_word1">is</string>
     <string name="description_name_is_a_man_word_meaning1">~は</string>
@@ -90,11 +90,11 @@
     <string name="description_name_is_a_man_word_meaning3">女性</string>
     <string name="description_name_is_a_man_grammar_structure">A is B</string>
     <string name="description_name_is_a_man_grammar_explanation">AはBです</string>
-    <string name="description_name_is_a_man_fun_fact">古英語では<b>man</b>は男性だけでなく人間一般を示していました。
-    男性はwer-<b>man</b>、女性はwif-<b>man</b>でした。しかし、だんだん男性のことをmanと呼ぶことになり、wifmanはそのままwomanへと変化していきました。</string>
+    <string name="description_name_is_a_man_fun_fact">古英語では<b>man</b>は男性ではなく人間という意味でした。
+    男性はwer-<b>man</b>、女性はwif-<b>man</b>と頭にwerとwifをつけて表していました。\nしかし、徐々に男性のことをmanと呼ぶようになり、wifmanはそのままwomanへと変化を遂げました。</string>
 
     <string name="description_name_is_a_occupation_subheader">@string/description_template_how_to_remember</string>
-    <string name="description_name_is_a_occupation_explanation_1">注目してほしいのが、多くの職業の単語の最後につく<b>-er</b></string>
+    <string name="description_name_is_a_occupation_explanation_1">注目してほしいのが、多くの職業の単語の語尾につく<b>-er</b></string>
     <string name="description_name_is_a_occupation_example_1_word">soccer play<b>er</b></string>
     <string name="description_name_is_a_occupation_example_1_explanation">サッカー（<i>soccer</i>）を遊ぶ(<i>play</i>)人(<b>-er</b>) = サッカー選手</string>
     <string name="description_name_is_a_occupation_example_2_word">programm<b>er</b></string>
@@ -103,8 +103,8 @@
     <string name="description_name_is_a_occupation_example_3_explanation">火事(<i>fire</i>)と戦う(<i>fight</i>)人(<b>-er</b>) = 消防士</string>
     <string name="description_name_is_a_occupation_explanation_2">このように、<b>-er</b>は「～をする人」という意味を持っています。\n
     <b>-er</b>の前に付く単語に注目して覚えましょう！</string>
-    <string name="description_name_is_a_occupation_subheader2">性別で変わる職業について</string>
-    <string name="description_name_is_a_occupation_explanation2_1">日本語では<b>俳優</b>と<b>女優</b>のように性別で区別する職業があると思います。アメリカにも同様に区別する職業がたくさんあります。</string>
+    <string name="description_name_is_a_occupation_subheader2">性別で名称が違う職業について</string>
+    <string name="description_name_is_a_occupation_explanation2_1">日本語の<b>俳優</b>と<b>女優</b>のように性別で区別する職業の名称が英語にもたくさんあります。</string>
     <string name="description_name_is_a_occupation_table_header_male">男性</string>
     <string name="description_name_is_a_occupation_table_header_female">女性</string>
     <string name="description_name_is_a_occupation_table_header_meaning">意味</string>
@@ -117,64 +117,74 @@
     <string name="description_name_is_a_occupation_example2_3_male">waiter</string>
     <string name="description_name_is_a_occupation_example2_3_female">waitress</string>
     <string name="description_name_is_a_occupation_example2_3_meaning">ウェイター</string>
-    <string name="description_name_is_a_occupation_explanation2_2">Pelicannではできるだけ性差別がないような名称を採用しています。\n例えば俳優（actor）は日本と同じ感覚で、actorは男女を問わず使えてactressは女性限定の名称になります。この場合actorを採用します。</string>
-    <string name="description_name_is_a_occupation_explanation2_3">性差別があり得るような職業の単語は覚えられなくなりますが、どうぞご了承ください。</string>
+    <string name="description_name_is_a_occupation_explanation2_2">Pelicannではできるだけ性差別がないような名称を採用しています。\n例えばactorは男女を問わず使えてactressは女性限定の名称になります。この場合actorを採用します。</string>
 
     <string name="description_name_is_age_years_old_subheader">何歳かな</string>
     <string name="description_name_is_age_years_old_introduction">生年月日から有名人の年齢を計算してみましょう。</string>
     <string name="description_name_is_age_years_old_word1">is</string>
     <string name="description_name_is_age_years_old_meaning1">～は</string>
-    <string name="description_name_is_age_years_old_word2">years old</string>
-    <string name="description_name_is_age_years_old_meaning2">～歳</string>
+    <string name="description_name_is_age_years_old_word2">9 years old</string>
+    <string name="description_name_is_age_years_old_meaning2">9歳</string>
 
-    <string name="description_name_is_age_years_old_name_is_a_gender_review">年齢と性別の例文を合わせてみましょう。\n「Aは~歳です。Aは男/女です。」</string>
-    <string name="description_name_is_age_years_old_name_is_a_gender_exception">前回は男と女の二択でしたが、今回は大人の男、大人の女、男の子、女の子の四択になります。\n
-    それぞれ英語で<b>man woman boy girl</b>と言います。大人であるかの判定はアメリカの成人年齢（18歳）を採用しています。</string>
+    <string name="description_name_is_age_years_old_name_is_a_gender_review">年齢と性別の例文を合わせてみましょう。\n「A is # years old.」と「A is a man/woman.」ですね。</string>
+    <string name="description_name_is_age_years_old_name_is_a_gender_exception">ただし、今回は大人の男、大人の女、男の子、女の子の四択になります。\n
+    それぞれ<b>man  woman  boy  girl</b>と言います。大人であるかの判定はアメリカの成人年齢（18歳）を基準にしています。</string>
 
-    <string name="description_name_is_at_work_he_is_at_employer_review"><b>at</b>の仕様を覚えていますか。「その点に」です。よく理解してもらうために、また練習しましょう。</string>
-    <string name="description_name_is_at_work_he_is_at_employer_new_word">workを覚えていますか？A works at B. の例文で出てきました。\n今回は<b>work</b>は動詞ではなくて名詞として出てきます。意味は同じ「仕事」です。</string>
+    <string name="description_name_is_at_work_he_is_at_employer_review"><b>at</b>の仕様を覚えていますか。「その点に、その場所に」でしたね。</string>
+    <string name="description_name_is_at_work_he_is_at_employer_review2">また、workを覚えていますか？A works at B. の例文で出てきました。\n今回は<b>work</b>は動詞ではなくて名詞として出てきます。意味は同じ「仕事」です。</string>
+    <string name="description_name_is_at_work_he_is_at_employer_review3">A is at work は「Aは仕事という特定の場所にいます」という意味になり、実質「Aは働いています」という意味になります。</string>
     <string name="description_name_is_at_work_he_is_at_employer_new_word1">he</string>
     <string name="description_name_is_at_work_he_is_at_employer_new_meaning1">彼</string>
     <string name="description_name_is_at_work_he_is_at_employer_new_word2">she</string>
     <string name="description_name_is_at_work_he_is_at_employer_new_meaning2">彼女</string>
 
-    <string name="description_name_is_demonym_subheader">国の名称</string>
-    <string name="description_name_is_demonym_introduction">国の名前を覚えたところで、今度は国民の名称を覚えましょう。日本語では国の名前の後に「人」をつけて国民の名称が出来上がります。
-    例えば日本＋人で「日本人」、アメリカ＋人で「アメリカ人」です。\n
-    しかし、英語ではややこしくて、<b>ese</b>、<b>ian</b>、<b>i</b>など様々な語尾があります。しかもルールがあやふやなので、マイナーな国になると英語が母国の方も間違えます。</string>
+    <string name="description_name_is_demonym_subheader">国民の名称</string>
+    <string name="description_name_is_demonym_introduction">国民の名称を覚えていきましょう。日本語では国名の後に「人」をつけるだけで国民の名称ができます。
+    例えば「日本」＋「人」で「日本人」、「アメリカ」＋「人」で「アメリカ人」になります。\n
+    しかし英語はややこしくて、<b>ese</b>、<b>ian</b>、<b>i</b>など様々な語尾があります。しかもルールがあやふやなので、知名度の低い国になると英語が母国語の人も間違えます。</string>
     <string name="description_name_is_demonym_how_to_remember_introduction">ルールに当てはまらない国も多数存在しますので、あくまで目安にして後は暗記することをお勧めします。
     </string>
-    <string name="description_name_is_demonym_how_to_remember_suffix1">an, ian</string>
-    <string name="description_name_is_demonym_how_to_remember_guide1">多くの国の名称はどちらかに当てはまります\n（例）アメリカ(America → Americ<b>an</b>)　カナダ(Canada → Canad<b>ian</b>)</string>
+    <string name="description_name_is_demonym_how_to_remember_suffix1">-an, -ian</string>
+    <string name="description_name_is_demonym_how_to_remember_guide1">多くの国はどちらかに当てはまります\n（例）アメリカ(America → Americ<b>an</b>)　カナダ(Canada → Canad<b>ian</b>)</string>
     <string name="description_name_is_demonym_how_to_remember_suffix2">-ese</string>
-    <string name="description_name_is_demonym_how_to_remember_guide2">ヨーロッパが冒険によって発見した国（とくに東アジア）の国民によくつけられます。\n（例）日本人(Japan<b>ese</b>)　中国人(Chin<b>ese</b>)</string>
+    <string name="description_name_is_demonym_how_to_remember_guide2">ヨーロッパ人の冒険によって発見された国（とくに東アジア）につけられます。\n（例）日本人(Japan<b>ese</b>)　中国人(Chin<b>ese</b>)</string>
     <string name="description_name_is_demonym_how_to_remember_suffix3">-i</string>
-    <string name="description_name_is_demonym_how_to_remember_guide3">中東の国の名称によく使われます\n（例）イラク人(Iraq<b>i</b>)　イスラエル人(Israel<b>i</b>)</string>
-    <string name="description_name_is_demonym_how_to_remember_suffix4">ish</string>
-    <string name="description_name_is_demonym_how_to_remember_guide4">-landで終わる国の名称にたまに使われます\n（例）ポーランド人(Poland → Pol<b>ish</b>)　フィンランド人(Finland → Finn<b>ish</b>)</string>
+    <string name="description_name_is_demonym_how_to_remember_guide3">中東の国に使われます\n（例）イラク人(Iraq<b>i</b>)　イスラエル人(Israel<b>i</b>)</string>
+    <string name="description_name_is_demonym_how_to_remember_suffix4">-ish</string>
+    <string name="description_name_is_demonym_how_to_remember_guide4">-landで終わる国に使われます\n（例）ポーランド人(Poland → Pol<b>ish</b>)　フィンランド人(Finland → Finn<b>ish</b>)</string>
 
     <string name="description_name_is_from_city_explanation">今度は国ではなくて都市に注目しましょう。位置関係は国の場合と変わらないので、同じ<b>from</b>を使います。</string>
 
-    <string name="description_name_is_from_country_explanation">出身地を勉強しましょう。「出身」という位置関係を表すには前置詞の<b>from</b>を使います。fromには「もとに位置からどこかに行く」という様子を表します。</string>
+    <string name="description_name_is_from_country_explanation">出身国を勉強しましょう。「出身」という位置関係を表すには<b>from</b>を使いましょう。fromには「もとの位置からどこかに行く」という様子を表します。</string>
 
-    <string name="description_name_plays_sports_introduction">「なになにのスポーツをする」は英語では二通りの言い方があります。\n
-    一つはA <b>plays</b> B。もう一つはA <b>does</b> B。\n\n
-    playsは球技や団体スポーツに使います。\n（例）香川真司はサッカーをします。(Shinji Kagawa <b>plays</b> soccer.)\n
-    doesは個人でやるスポーツに使います。\n（例）マイケルフェルプスは水泳をします。(Michael Phelps <b>does</b> swimming.)</string>
+    <string name="description_name_plays_sports_introduction">「（スポーツ）をする」には二通りの言い方があります。\n
+    B <b>plays</b> C と B <b>does</b> C です。\n\n
+    playsは球技に使います。\n（例）サッカー、ゴルフ、バドミントン\n
+    doesはその他のスポーツに使います。\n（例）空手、柔道、フィギュアスケート</string>
+    <string name="description_name_plays_sports_introduction2">また、例外として水泳やスキーがあげられます。
+        スポーツより遊びの感覚が強いスポーツです。これらのスポーツはそのまま動詞にしましょう。\n
+        B swims\n
+        B skis\n
+    </string>
 
     <string name="description_name_possessive_father_mother_is_name2_grammar">「AのB」とAがBを所有している関係を表したい場合、所有主であるAの単語の語尾に「\'s」を付けます。\n
-    「AのBはCです」は「A\'s B is C」となります。</string>
-    <string name="description_name_possessive_father_mother_is_name2_new_words">今回は色々な人の父母の例文で勉強しましょう。Aを子、Bを親とした場合、父は <b>A\'s father is B.</b> となり、母は <b>A\'s mother is B.</b> となります。</string>
-
-    <string name="description_name_possessive_first_last_name_is_name_review">前回のレッスンで学んだ「\'s」を復習しましょう。今回は名前（<b>name</b>）で勉強しましょう。\n
+    「AのB」は「A\'s B」となります。</string>
+    <string name="description_name_possessive_father_mother_is_name2_new_words">有名人の父母を見ていきながら所有格を勉強しましょう。</string>
+    <string name="description_name_possessive_father_mother_is_name2_word1">mother</string>
+    <string name="description_name_possessive_father_mother_is_name2_meaning1">母</string>
+    <string name="description_name_possessive_father_mother_is_name2_word2">father</string>
+    <string name="description_name_possessive_father_mother_is_name2_meaning2">父</string>
+    <string name="description_name_possessive_first_last_name_is_name_explanation">first nameとlast nameで所有格を復習しましょう。\n
     <b>first</b>は最初、<b>last</b>は最後という意味です。first nameは名前の最初の部分だから姓で、last nameは名前の最後の部分だから名。。。\n
-    と思いがちですが、英語の名前は名を先に言うのでfirst nameが名で、last nameです。</string>
+    と思いがちですが、英語の名前は名を先に言うのでfirst nameが名で、last nameが姓です。</string>
+    <string name="description_name_possessive_first_last_name_is_name_review">AのB → A\'s B</string>
     <string name="description_name_possessive_first_last_name_is_name_word1">first name</string>
     <string name="description_name_possessive_first_last_name_is_name_meaning1">名</string>
     <string name="description_name_possessive_first_last_name_is_name_word2">last name</string>
     <string name="description_name_possessive_first_last_name_is_name_meaning2">姓</string>
 
-    <string name="description_name_is_name2_possessive_husband_wife_review">今回も復習です。しっかりと勉強して身につけましょう。今回はA\'s B is Cではなく、C is A\'s Bのパターンで勉強しましょう。</string>
+    <string name="description_name_is_name2_possessive_husband_wife_review">いままではA\'s B is Cのパターンで勉強してきましたが、今回はC is A\'s Bのパターンで勉強しましょう。\n
+    「AのBはC」ではなく「CはAのB」となるわけですね。</string>
     <string name="description_name_is_name2_possessive_husband_wife_word1">husband</string>
     <string name="description_name_is_name2_possessive_husband_wife_meaning1">夫</string>
     <string name="description_name_is_name2_possessive_husband_wife_word2">wife</string>
@@ -182,9 +192,10 @@
 
     <string name="description_name_works_at_employer_new_word">work</string>
     <string name="description_name_works_at_employer_new_meaning">仕事をする</string>
-    <string name="description_name_works_at_employer_grammar">前置詞の<b>at</b>は「その場所、その点」という位置関係を表します。</string>
+    <string name="description_name_works_at_employer_grammar"><b>at</b>は「その場所、その点」という位置関係を表します。</string>
+    <string name="description_name_works_at_employer_explanation">A works at B は「Bという特定の場所（会社）でAは働いています」という意味になります。</string>
 
-    <string name="description_numbers_subheader">数字を覚えよう！</string>
+    <string name="description_numbers_subheader">数字を覚えましょう！</string>
     <string name="description_numbers_word0">zero</string>
     <string name="description_numbers_meaning0">0</string>
     <string name="description_numbers_word1">one</string>
@@ -205,6 +216,9 @@
     <string name="description_numbers_meaning8">8</string>
     <string name="description_numbers_word9">nine</string>
     <string name="description_numbers_meaning9">9</string>
+    <string name="description_numbers_7_9_joke">eight(八)はate(食べた)と同じ発音です。この知識を踏まえて、アメリカのなぞなぞを解いてみてください。\n
+        Q: なぜ6は7のことを恐れているのでしょうか。\n少し考えてみてください。。。\n\n\nA: seven ate (eight) nine! 7が9を食べてしまったので、6は怖かったのですね。
+    </string>
     <string name="description_numbers_word11">eleven</string>
     <string name="description_numbers_meaning11">11</string>
     <string name="description_numbers_word12">twelve</string>
@@ -242,10 +256,10 @@
     <string name="description_numbers_word90">ninety</string>
     <string name="description_numbers_meaning90">90</string>
 
-    <string name="description_numbers_11_19_fun_fact">なぜ11と12だけ-teenで終わらないのか。\n諸説がありますが、有力なのは、11と12が昔からよく使われていた数字だからです。\n
-        昔は11と12はain-lifとtwa-lifと言いました(ain=1 twa=2 lif=余り)。「10をとって余りが1、余りが2」という意味です。新しい-teenという数字の表し方が出てきた後も、よく使っていた11と12は昔の言葉を使用し、現在のelevenとtwelveに至りました。</string>
-    <string name="description_numbers_21_99_how_to_remember">21から99(10,20,&#8230;を除く)はすべて十の位と一の位を合わせた単語になります。\n
-    21はtwenty + one でtwenty-one、55はfifty + five でfifty-fiveになります。間の「-」は必要ではありませんが、あった方が伝わりやすいです。\n
+    <string name="description_numbers_11_19_fun_fact">なぜ11と12だけ-teenで終わらないのか。\n諸説がありますが、有力なのは、11と12が昔からよく使われていた数字だったからです。\n
+        昔は-teenではなく-lifを使用していました(ainlif=11 twalif=12)。新しい-teenという数字の表し方が導入された後も、よく使われていた11と12は昔の言葉を愛用し続け、現在のelevenとtwelveへと変化していきました。</string>
+    <string name="description_numbers_21_99_how_to_remember">21から99の数字はすべて十の位と一の位を合わせた単語になります。\n
+    21はtwenty + one でtwenty-one、55はfifty + five でfifty-fiveになります。間の「-」は必要ではありませんが、使用した方が読みやすくなります。\n
     例えばfifty fiveと書くと、50と5なのか55なのかわかりにくいですが、fifty-fiveと書くと一瞬で55だとわかります。</string>
     <string name="description_numbers_hundred_billion_introduction">一気に大きな数字を覚えましょう。まずは新しい単語。</string>
     <string name="description_numbers_hundred_billion_word1">hundred</string>
@@ -256,10 +270,9 @@
     <string name="description_numbers_hundred_billion_meaning3">100万</string>
     <string name="description_numbers_hundred_billion_word4">billion</string>
     <string name="description_numbers_hundred_billion_meaning4">10億</string>
-    <string name="description_numbers_hundred_billion_how_to_remember">英語の数字は日本とは違い、3桁ごとに位を変えます。\n
-        日本では\n一万→十万→百万→千万→一億\nと4桁ごとに位を変えるところ、英語は\n一万→十万→百万→一億\nと3桁ごとに変えます。\n
-        つまりone hundred → one thousand → ten thousand → hundred thousand → one million →→→ one billion となります。\n
-        単語を直訳して暗記するより数字の考え方を理解するほうがわかりやすいですよ。
+    <string name="description_numbers_hundred_billion_how_to_remember">日本語では\n一万→十万→百万→千万→一億\nと4桁ごとに位を変えますが、英語では\n一万→十万→百万→一億\nと3桁ごとに位を変えます。\n
+        つまりone thousand → ten thousand → hundred thousand → one million となります。\n
+        単語を直訳して暗記するより、法則を理解する方が覚えやすいかもしれません。
     </string>
     <string name="description_numbers_hundred_billion_how_to_remember2">大きな数を数字で表すとき、英語では3桁ごとに区切りをつけます。\n
     2 millionだと2,000,000、2 billionだと2,000,000,000と表します。この区切りを目安に正しい英単語を作ってください。</string>
@@ -268,13 +281,15 @@
     <string name="description_place_is_a_country_city_meaning1">都市</string>
     <string name="description_place_is_a_country_city_word2">country</string>
     <string name="description_place_is_a_country_city_meaning2">国</string>
+    <string name="description_place_is_a_country_city_explanation">土地名が国なのか都市なのか当ててみましょう。</string>
 
     <string name="description_stand_up_sit_down_explanation">このレッスンでは二つの動作を学びます。\n
-        最後の問題で指示を出しますので、指示に従ってください。今回は<b>sit down</b>（座ってください）と<b>stand up</b>（立ってください）です。\n
-        身動きがとれない場合はイメージしてください。
+        指示を出す問題がありますので、指示に従ってみてください。身動きがとれない場合はイメージするだけでも構いません。
     </string>
+    <string name="description_stand_up_sit_down_explanation2">今回は<b>sit down</b>（座って）と<b>stand up</b>（立って）です。\ndownとupはそれぞれ「下」「上」という意味で、動作の方向を表しています。\n
+    sitとstandだけでもsit downとstand upとほとんど同じ意味ですが、downとupをつけることにより動作という意味を強調します。</string>
 
-    <string name="description_walk_run_explanation">今回のレッスンも動作のレッスンです。きちんと指示に従ってくださいね。</string>
+    <string name="description_walk_run_explanation">今回のレッスンも動作のレッスンです。できる範囲で指示に従ってください。</string>
     <string name="description_walk_run_word1">run</string>
     <string name="description_walk_run_meaning1">走る</string>
     <string name="description_walk_run_word2">walk</string>
@@ -313,4 +328,168 @@
     <string name="description_the_demonym_flag_is_colors_word8">yellow</string>
     <string name="description_the_demonym_flag_is_colors_meaning8">黄色</string>
 
+    <string name="description_name_writes_books_word1">write</string>
+    <string name="description_name_writes_books_meaning1">書く</string>
+    <string name="description_name_writes_books_word2">book</string>
+    <string name="description_name_writes_books_meaning2">本</string>
+
+    <string name="description_name_writes_songs_word1">song</string>
+    <string name="description_name_writes_songs_meaning1">曲</string>
+
+    <string name="description_name_creates_art_word1">create</string>
+    <string name="description_name_creates_art_meaning1">創る</string>
+    <string name="description_name_creates_art_word2">art</string>
+    <string name="description_name_creates_art_meaning2">芸術品</string>
+    <string name="description_name_creates_art_explanation">*make = 作る、create = 創る</string>
+
+    <string name="description_name_plays_sport_it_is_a_water_sport_word1">it</string>
+    <string name="description_name_plays_sport_it_is_a_water_sport_meaning1">それ</string>
+    <string name="description_name_plays_sport_it_is_a_water_sport_word2">water</string>
+    <string name="description_name_plays_sport_it_is_a_water_sport_meaning2">水</string>
+    <string name="description_name_plays_sport_it_is_a_water_sport_word3">water sport</string>
+    <string name="description_name_plays_sport_it_is_a_water_sport_meaning3">水上スポーツ</string>
+
+    <string name="description_name_plays_sport_it_is_a_individual_sport_word1">individual</string>
+    <string name="description_name_plays_sport_it_is_a_individual_sport_meaning1">個人</string>
+    <string name="description_name_plays_sport_it_is_a_individual_sport_word2">team</string>
+    <string name="description_name_plays_sport_it_is_a_individual_sport_meaning2">チーム</string>
+    <string name="description_name_plays_sport_it_is_a_individual_sport_word3">individual sport</string>
+    <string name="description_name_plays_sport_it_is_a_individual_sport_meaning3">個人競技</string>
+    <string name="description_name_plays_sport_it_is_a_individual_sport_word4">team sport</string>
+    <string name="description_name_plays_sport_it_is_a_individual_sport_meaning4">団体競技</string>
+
+    <string name="description_name_works_for_the_government_he_is_a_politician_header">またも政治</string>
+    <string name="description_name_works_for_the_government_he_is_a_politician_explanation">大丈夫です。今回新しく覚えてもらう政治単語は一つだけです。</string>
+    <string name="description_name_works_for_the_government_he_is_a_politician_word1">politician</string>
+    <string name="description_name_works_for_the_government_he_is_a_politician_meaning1">政治家</string>
+    <string name="description_name_works_for_the_government_he_is_a_politician_word2">for</string>
+    <string name="description_name_works_for_the_government_he_is_a_politician_meaning2">～のために</string>
+
+    <string name="description_name_works_for_employer_review">atを覚えていますか。特定の場所や点に、という位置関係をあらわす単語で、\n
+        A works at Bは「AはB社で働いています」という意味でしたね。</string>
+    <string name="description_name_works_for_employer_review2">ではatをforに変えてみましょう。\n
+        A works for B\nforは「～のために」という意味ですから、「AはB社のために働いています」になります。\n
+        これとA works at B は同じ文のように聞こえますね。実際そうなのです。違うのは、atは実在している場所を会社とみなしているのに対して、forは組織を会社とみなしている点です。
+    </string>
+    
+    <string name="description_name_drives_a_car_to_city_grammar">いままで勉強してきた文法は単調なものばかりでした。\n
+    A is B\n
+    A is from C\n
+    の2パターンでした。今回はこの2パターンを合わせて\n
+    A is B from C\n
+    のようなパターンを勉強していきましょう。</string>
+    <string name="description_name_drives_a_car_to_city_word1">drive</string>
+    <string name="description_name_drives_a_car_to_city_meaning1">運転する</string>
+    <string name="description_name_drives_a_car_to_city_word2">car</string>
+    <string name="description_name_drives_a_car_to_city_meaning2">車</string>
+    <string name="description_name_drives_a_car_to_city_explanation">さらに新しい前置詞も学びましょう。\n
+    to は「～に行く」「～に向かう」という位置関係を表します。</string>
+
+    <string name="description_country_drives_on_the_left_right_explanation">Japan drives on the left.\n
+        Japanは「日本」。driveは「運転」。onは「～の上」。leftは「左」。直訳すると「日本は左の上を運転する」になりますね。\n
+        しかし、お分かりの通り、これは「日本は左側通行です」という意味です。
+    </string>
+    <string name="description_turn_left_right_go_straight_word1">left</string>
+    <string name="description_turn_left_right_go_straight_meaning1">左</string>
+    <string name="description_turn_left_right_go_straight_word2">right</string>
+    <string name="description_turn_left_right_go_straight_meaning2">右</string>
+    <string name="description_turn_left_right_go_straight_word3">turn</string>
+    <string name="description_turn_left_right_go_straight_meaning3">曲がる</string>
+    <string name="description_turn_left_right_go_straight_word4">go</string>
+    <string name="description_turn_left_right_go_straight_meaning4">行く</string>
+    <string name="description_turn_left_right_go_straight_word5">straight</string>
+    <string name="description_turn_left_right_go_straight_meaning5">まっすぐ</string>
+    <string name="description_turn_left_right_go_straight_how_to_remember">アメリカでは、左と右がわからなかったときには手のひらを下にして親指と人差し指を伸ばします。指が大文字のLみたいになる手がLeftです。</string>
+
+    <string name="description_name_speaks_language_explanation">様々な国の言語を勉強しましょう。国民の名称とほとんど同じなので楽ですね。</string>
+    <string name="description_name_speaks_language_header">主な言語</string>
+    <string name="description_name_speaks_language_word1">Japanese</string>
+    <string name="description_name_speaks_language_meaning1">日本語</string>
+    <string name="description_name_speaks_language_word2">English</string>
+    <string name="description_name_speaks_language_meaning2">英語</string>
+    <string name="description_name_speaks_language_word3">French</string>
+    <string name="description_name_speaks_language_meaning3">フランス語</string>
+    <string name="description_name_speaks_language_word4">Russian</string>
+    <string name="description_name_speaks_language_meaning4">ロシア語</string>
+    <string name="description_name_speaks_language_word5">Spanish</string>
+    <string name="description_name_speaks_language_meaning5">スペイン語</string>
+    <string name="description_name_speaks_language_word6">Portuguese</string>
+    <string name="description_name_speaks_language_meaning6">ポルトガル語</string>
+
+    <string name="description_find_stand_sit_on_a_bed_word1">bed</string>
+    <string name="description_find_stand_sit_on_a_bed_meaning1">ベッド</string>
+    <string name="description_find_stand_sit_on_a_bed_word2">find</string>
+    <string name="description_find_stand_sit_on_a_bed_meaning2">探す</string>
+    <string name="description_find_stand_sit_on_a_bed_new_word1">新しい前置詞も覚えましょう。onは「～の上に」の様子を表します。</string>
+
+    <string name="description_thanks_no_problem_youre_welcome_header">感謝の気持ちを伝えよう</string>
+    <string name="description_thanks_no_problem_youre_welcome_word1">thanks</string>
+    <string name="description_thanks_no_problem_youre_welcome_meaning1">ありがとう</string>
+    <string name="description_thanks_no_problem_youre_welcome_word2">you\'re welcome</string>
+    <string name="description_thanks_no_problem_youre_welcome_meaning2">どういたしまして</string>
+    <string name="description_thanks_no_problem_youre_welcome_word3">no problem</string>
+    <string name="description_thanks_no_problem_youre_welcome_meaning3">どういたしまして</string>
+    <string name="description_thanks_no_problem_youre_welcome_practical"><b>You\'re welcome</b>は丁寧な表現なので基本誰とでも使えます。\n
+        <b>No problem</b>はカジュアルな表現なので、友人に使いましょう。
+    </string>
+
+    <string name="description_man_reads_a_book_to_a_child_review">toは「～に行く」「～に向かう」という様子を表す前置詞でしたね。
+        今回は子供（<b>child</b>）に「向かって」本を読む、という例文で練習しましょう。</string>
+
+    <string name="description_name_spoke_at_ted_he_spoke_about_subject_explanation">TEDという講演会で話したことがある有名人について学びましょう。\n
+        「AはTEDで話しました。」だけでは内容が薄いので、何について話したかも見ていきましょう。「～について」という関係を表す前置詞は<b>about</b>です。
+    </string>
+    <string name="description_name_spoke_at_ted_he_spoke_about_subject_exception">speakを覚えていますか。「Aは（言語）を話します。」の例文で出てきましたね。\n
+        speakの過去形は何だと思いますか。\nspeak + edでspeaked。ではなく、spokeです。speakは昔からよく使われていた単語で、過去形の法則が変わった後も、そのまま使われ続けたわけです。
+    </string>
+    
+    <string name="description_name_drove_from_city_to_city2_word1">drive</string>
+    <string name="description_name_drove_from_city_to_city2_meaning1">運転</string>
+    <string name="description_name_drove_from_city_to_city2_word2">to</string>
+    <string name="description_name_drove_from_city_to_city2_meaning2">「～に行く」「～に向かう」</string>
+    <string name="description_name_drove_from_city_to_city2_word3">from</string>
+    <string name="description_name_drove_from_city_to_city2_meaning3">「もとの位置からどこかに行く」</string>
+    <string name="description_name_drove_from_city_to_city2_exception">driveの過去形はdrivedではなくdroveです。これを頭に入れながら、問題を解いてみましょう。</string>
+
+    <string name="description_name_wrote_a_book_about_subject_word1">write</string>
+    <string name="description_name_wrote_a_book_about_subject_meaning1">書く</string>
+    <string name="description_name_wrote_a_book_about_subject_word2">book</string>
+    <string name="description_name_wrote_a_book_about_subject_meaning2">本</string>
+    <string name="description_name_wrote_a_book_about_subject_word3">about</string>
+    <string name="description_name_wrote_a_book_about_subject_meaning3">「～について」</string>
+    <string name="description_name_wrote_a_book_about_subject_exception">writeの過去形はwritedではなくwroteです。不規則な過去形は覚えるしかないので、頑張りましょう。</string>
+    <string name="description_name_wrote_a_book_about_subject_exception2">不規則動詞は、昔から使われていた動詞がほどんどです。昔の法則にしたがっていたら、不規則に見える動詞は実は法則に沿っていました。\n
+        しかし、動詞の過去形の法則が変わった後も昔の法則を使い続けた結果、不規則になりました。</string>
+
+    <string name="description_walk_turn_create_past_grammar">今までは「～です」のような現在形の文章を勉強してきましたが、今回からは「～でした」のような過去形も学びましょう。</string>
+    <string name="description_walk_turn_create_past_grammar2">
+        英文を過去形にするには、動詞の語尾に-edを付けます。walkだとwalked、turnだとturnedになります。動詞の最後がeで終わる場合、-edではなく-dをつけます。createだとcreateedではなくcreatedになります。
+    </string>
+    <string name="description_walk_turn_create_past_present">現在形</string>
+    <string name="description_walk_turn_create_past_past">過去形</string>
+    <string name="description_walk_turn_create_past_word1_present">walk</string>
+    <string name="description_walk_turn_create_past_word1_past">walked</string>
+    <string name="description_walk_turn_create_past_word2_present">turn</string>
+    <string name="description_walk_turn_create_past_word2_past">turned</string>
+    <string name="description_walk_turn_create_past_word3_present">create</string>
+    <string name="description_walk_turn_create_past_word3_past">created</string>
+
+    <string name="description_name_was_a_occupation_explanation">isの過去形はwasです。新しい職業を発見しながらwasを覚えましょう。</string>
+
+    <string name="description_name_played_sport_explanation">今回は不規則と規則動詞が混ざています。playsの過去形はplayed、doesの過去形はdidになります。</string>
+    <string name="description_name_played_sport_present">現在形</string>
+    <string name="description_name_played_sport_past">過去形</string>
+    <string name="description_name_played_sport_word1_present">plays</string>
+    <string name="description_name_played_sport_word1_past">played</string>
+    <string name="description_name_played_sport_word2_present">does</string>
+    <string name="description_name_played_sport_word2_past">did</string>
+    
+    <string name="description_name_is_young_he_is_age_explanation">「若い」と「年をとっている」を覚えましょう。\n
+        「若い」は<b>young</b>、「年をとっている」は<b>old</b>です。\n
+        Oldは年齢の時に使う # years old で出てきましたね。実はこれを直訳すると「#年（year）歳をとっています（old）」となります。\n\n
+        ※若い＝40歳以下、年をとっている＝65歳以上とします
+    </string>
+    <string name="description_name_is_young_he_is_age_practical">今回の例文は歳の最後に<b>years old</b>をつけていません。年歳のことを話していると相手がわかっている場合、省いても意図が伝わるからです。\n
+        「B is young. He is #.」の場合は、最初の文で歳の話をしているので、<b>years old</b> を省いても大丈夫です。\nしかし、いきなり「B is #.」と言った場合、この数字が何を意図しているのか全く分からないので、<b>years old</b>を付けましょう。
+    </string>
 </resources>

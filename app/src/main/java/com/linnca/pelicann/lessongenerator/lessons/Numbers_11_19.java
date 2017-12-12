@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
@@ -21,6 +22,7 @@ public class Numbers_11_19 extends Lesson {
     public Numbers_11_19(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected synchronized int getQueryResultCt(){return 0;}
@@ -43,6 +45,14 @@ public class Numbers_11_19 extends Lesson {
 
         return questionSet;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> spelling = preGenericQuestions.subList(0,9);
+        Collections.shuffle(spelling);
+        List<List<QuestionData>> translate = preGenericQuestions.subList(9,18);
+        Collections.shuffle(translate);
     }
 
     @Override

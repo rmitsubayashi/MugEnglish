@@ -96,7 +96,6 @@ public class Goodbye_bye extends Lesson {
         return choices;
     }
 
-    //every choice is correct
     private List<List<QuestionData>> spellingQuestions(){
         List<List<QuestionData>> questions = new ArrayList<>(2);
         List<String> answers = choices();

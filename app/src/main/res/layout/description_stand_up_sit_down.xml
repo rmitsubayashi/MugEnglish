@@ -23,5 +23,10 @@
             android:layout_height="wrap_content"
             style="@style/description_lesson_text"
             android:text="@string/description_stand_up_sit_down_explanation"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/description_lesson_text"
+            android:text="@string/description_stand_up_sit_down_explanation2"/>
     </LinearLayout>
 </ScrollView>

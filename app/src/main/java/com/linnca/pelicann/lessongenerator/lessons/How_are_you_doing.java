@@ -8,10 +8,13 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_Chat;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
+import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -57,8 +60,8 @@ public class How_are_you_doing extends Lesson {
         return "SELECT ?person ?personLabel ?firstNameEN " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
+
+
                 "    ?person wdt:P735 ?firstName . " + //has a first name
                 "    ?firstName rdfs:label ?firstNameEN . " +
                 "    FILTER (LANG(?firstNameEN) = '" +
@@ -98,10 +101,10 @@ public class How_are_you_doing extends Lesson {
             List<List<QuestionData>> questionSet = new ArrayList<>();
             List<QuestionData> chatQuestion = createChatQuestion(qr);
             questionSet.add(chatQuestion);
-
+            List<QuestionData> chatQuestion2 = createChatQuestion2(qr);
+            questionSet.add(chatQuestion2);
             super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, null));
         }
-
     }
 
     @Override
@@ -118,7 +121,7 @@ public class How_are_you_doing extends Lesson {
         String from = qr.personJP;
         ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
         ChatQuestionItem chatItem2 = new ChatQuestionItem(true, "hello " + qr.firstNameEN);
-        ChatQuestionItem chatItem3 = new ChatQuestionItem(false, "how are you doing");
+        ChatQuestionItem chatItem3 = new ChatQuestionItem(false, "how are you doing?");
         ChatQuestionItem chatItem4 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
         List<ChatQuestionItem> chatItems = new ArrayList<>(4);
         chatItems.add(chatItem1);
@@ -146,16 +149,47 @@ public class How_are_you_doing extends Lesson {
         return dataList;
     }
 
+    private List<QuestionData> createChatQuestion2(QueryResult qr){
+        String from = qr.personJP;
+        ChatQuestionItem chatItem1 = new ChatQuestionItem(false, "hello");
+        ChatQuestionItem chatItem2 = new ChatQuestionItem(true, "hello " + qr.firstNameEN);
+        ChatQuestionItem chatItem3 = new ChatQuestionItem(true, " how are you doing?");
+        ChatQuestionItem chatItem4 = new ChatQuestionItem(false, "good. how are you doing?");
+        ChatQuestionItem chatItem5 = new ChatQuestionItem(true, ChatQuestionItem.USER_INPUT);
+        List<ChatQuestionItem> chatItems = new ArrayList<>(5);
+        chatItems.add(chatItem1);
+        chatItems.add(chatItem2);
+        chatItems.add(chatItem3);
+        chatItems.add(chatItem4);
+        chatItems.add(chatItem5);
+        String question = Question_Chat.formatQuestion(from, chatItems);
+        String answer = "good";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_Chat.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
+    }
+
     @Override
     protected List<List<QuestionData>> getPreGenericQuestions(){
         List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion();
         List<QuestionData> translateQuestion = createTranslateQuestion();
-        List<List<QuestionData>> questionSet = new ArrayList<>(2);
+        List<QuestionData> spelling = spellingQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(3);
         questionSet.add(sentencePuzzleQuestion);
         questionSet.add(translateQuestion);
+        questionSet.add(spelling);
 
         return questionSet;
-
     }
 
     //puzzle pieces for sentence puzzle question
@@ -165,6 +199,7 @@ public class How_are_you_doing extends Lesson {
         pieces.add("are");
         pieces.add("you");
         pieces.add("doing");
+        pieces.add("?");
         return pieces;
     }
 
@@ -210,6 +245,59 @@ public class How_are_you_doing extends Lesson {
         data.setChoices(null);
         data.setAnswer(genericAnswerEN());
 
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private List<QuestionData> spellingQuestion(){
+        String answer = "good";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
+        data.setQuestion("元気です");
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructionsQuestion = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructionsQuestion);
+        return questionSet;
+    }
+
+    //lets the user freely introduce themselves
+    private String instructionQuestionQuestion(){
+        return "私が元気であるか聞いてください";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "How are you doing?";
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);

@@ -162,8 +162,6 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
                 " ?gender ?birthday " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P569 ?birthday . " + //has a birthday
                 "    ?person wdt:P21 ?gender . " + //has an gender
                 "    FILTER NOT EXISTS { ?person wdt:P570 ?dateDeath } . " + //but not a death date

@@ -38,6 +38,22 @@
                     android:textSize="15sp"
                     android:text="@string/description_how_are_you_doing_meaning1"/>
             </TableRow>
+            <TableRow>
+                <TextView
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:textColor="?attr/color300"
+                    android:text="@string/description_how_are_you_doing_word2"/>
+                <TextView
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:text="@string/description_how_are_you_doing_meaning2"/>
+            </TableRow>
         </TableLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/description_lesson_text"
+            android:text="@string/description_how_are_you_doing_explanation1"/>
     </LinearLayout>
 </ScrollView>

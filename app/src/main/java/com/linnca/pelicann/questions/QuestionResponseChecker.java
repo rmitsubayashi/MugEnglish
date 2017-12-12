@@ -33,8 +33,10 @@ public class QuestionResponseChecker {
 
         //lower case
         answer = answer.toLowerCase();
-        //remove whitespace
+        //remove unnecessary whitespace
         answer = answer.trim();
+        //trim is necessary before calling this regex
+        answer = answer.replaceAll(" +", " ");
         //remove last punctuation
         // except '@' because that's used for marking tags like @anything@
         answer = answer.replaceAll("[\\p{Punct}&&[^@]]+$", "");

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class QuestionFeedbackFormatter {
+public class QuestionFeedbackFormatter {
     static String formatFeedback(boolean correct, QuestionData questionData, String response, List<String> previousResponses){
         if (correct)
             return formatCorrectFeedback(questionData, response);
@@ -85,12 +85,16 @@ class QuestionFeedbackFormatter {
         //we need to remove any tags we have
         answer = answer.replaceAll(QuestionResponseChecker.ANYTHING, "~");
         if (questionType == Question_SentencePuzzle.QUESTION_TYPE){
-            answer = answer.replace("|", " ");
+            answer = formatSentencePuzzleAnswer(answer);
         }
         return wrongFeedbackTemplate(answer);
     }
 
     private static String wrongFeedbackTemplate(String answer){
         return "正解: " + answer;
+    }
+
+    public static String formatSentencePuzzleAnswer(String answer){
+        return answer.replace("|"," ");
     }
 }

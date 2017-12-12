@@ -2,6 +2,7 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.questions.QuestionData;
@@ -21,6 +22,7 @@ public class Numbers_21_99 extends Lesson {
     public Numbers_21_99(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected synchronized int getQueryResultCt(){return 0;}
@@ -49,14 +51,16 @@ public class Numbers_21_99 extends Lesson {
         List<QuestionData> translateQuestion3 = translateQuestion3();
         questionSet.add(translateQuestion3);
 
-
         return questionSet;
-
     }
 
     private List<QuestionData> translateQuestion1(){
         List<QuestionData> questions = new ArrayList<>(27);
         for (int i=21; i<47; i++) {
+            if (i % 10 == 0){
+                //we are not covering tens in this lesson
+                continue;
+            }
             QuestionData data = new QuestionData();
             String answer = StringUtils.convertIntToWord(i);
             //also accept twenty two (not just twenty-two)
@@ -80,6 +84,10 @@ public class Numbers_21_99 extends Lesson {
     private List<QuestionData> translateQuestion2(){
         List<QuestionData> questions = new ArrayList<>(27);
         for (int i=47; i<73; i++) {
+            if (i % 10 == 0){
+                //we are not covering tens in this lesson
+                continue;
+            }
             QuestionData data = new QuestionData();
             String answer = StringUtils.convertIntToWord(i);
             //also accept twenty two (not just twenty-two)
@@ -103,6 +111,10 @@ public class Numbers_21_99 extends Lesson {
     private List<QuestionData> translateQuestion3(){
         List<QuestionData> questions = new ArrayList<>(27);
         for (int i=73; i<=99; i++) {
+            if (i % 10 == 0){
+                //we are not covering tens in this lesson
+                continue;
+            }
             QuestionData data = new QuestionData();
             String answer = StringUtils.convertIntToWord(i);
             //also accept twenty two (not just twenty-two)

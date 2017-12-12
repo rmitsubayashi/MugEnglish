@@ -126,4 +126,13 @@ public class QuestionResponseCheckerTest {
         String correctResponse = "this is the answer.";
         assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
     }
+
+    @Test
+    public void checkResponseWithSpacing_responseWithExtraSpacing_shouldReturnCorrect(){
+        String answer = "one space";
+        QuestionData questionData = new QuestionData("questionID1","lessonID1", "topic1", Question_FillInBlank_MultipleChoice.QUESTION_TYPE,
+                "question1", null, answer, null, null);
+        String correctResponse = "one  space";
+        assertTrue(QuestionResponseChecker.checkResponse(questionData, correctResponse));
+    }
 }

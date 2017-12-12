@@ -46,5 +46,10 @@
             </TableRow>
 
         </TableLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/description_lesson_text"
+            android:text="@string/description_place_is_a_country_city_explanation"/>
     </LinearLayout>
 </ScrollView>

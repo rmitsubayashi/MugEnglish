@@ -6,6 +6,7 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.SportsHelper;
@@ -28,8 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
-    public static final String KEY = "NAME_plays_SPORT_SPORT_is_a_individual_team_sport";
+public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
+    public static final String KEY = "NAME_plays_SPORT_It_is_a_individual_team_sport";
 
     private List<QueryResult> queryResults = new ArrayList<>();
 
@@ -66,11 +67,12 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
         }
     }
 
-    public NAME_plays_SPORT_SPORT_is_a_individual_team_sport(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
+    public NAME_plays_SPORT_It_is_a_individual_team_sport(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -82,8 +84,6 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
                         " ?instance " +
                         "		WHERE " +
                         "		{ " +
-                        "           {?person wdt:P31 wd:Q5} UNION " + //is human
-                        "           {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                         "			?person wdt:P641 ?sport . " + //plays sport
                         "           {?sport wdt:P279* wd:Q2755547 . " + //sport is either individual
                         "           BIND ('individual' AS ?instance) } UNION " +
@@ -208,13 +208,13 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
     private String formatSentenceEN(QueryResult qr){
         String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
         String sentence1 = qr.personEN + " " + verbObject + ".";
-        String sentence2 = qr.sportNameEN + " is " + GrammarRules.indefiniteArticleBeforeNoun(qr.sportTypeLabelEN) + ".";
+        String sentence2 = "It is " + GrammarRules.indefiniteArticleBeforeNoun(qr.sportTypeLabelEN) + ".";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence1 + "\n" + sentence2;
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.personJP + "は" + qr.sportNameJP + "をします。" + qr.sportNameJP + "は" + qr.sportTypeLabelJP + "です。";
+        return qr.personJP + "は" + qr.sportNameJP + "をします。それは" + qr.sportTypeLabelJP + "です。";
     }
 
     private List<String> puzzlePieces(QueryResult qr){
@@ -224,7 +224,7 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
         pieces.add(verb);
         if (!qr.object.equals(""))
             pieces.add(qr.object);
-        pieces.add(qr.sportNameEN);
+        pieces.add("it");
         pieces.add("is a");
         pieces.add(qr.sportTypeLabelEN);
 
@@ -288,14 +288,12 @@ public class NAME_plays_SPORT_SPORT_is_a_individual_team_sport extends Lesson{
 
     private String trueFalseQuestionQuestion(QueryResult qr, boolean isTrue){
         if (isTrue){
-            return formatSentenceEN(qr);
+            String sentence = qr.sportNameEN + " is " + GrammarRules.indefiniteArticleBeforeNoun(qr.sportTypeLabelEN) + ".";
+            return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         } else {
-            String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PRESENT3RD);
-            String sentence1 = qr.personEN + " " + verbObject + ".";
             String wrongSportLabel = qr.sportTypeLabelEN.equals("team sport") ? "an individual sport" : "a team sport";
-            String sentence2 = qr.sportNameEN + " is " + wrongSportLabel + ".";
-            sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-            return sentence1 + "\n" + sentence2;
+            String sentence = qr.sportNameEN + " is " + wrongSportLabel + ".";
+            return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         }
     }
 

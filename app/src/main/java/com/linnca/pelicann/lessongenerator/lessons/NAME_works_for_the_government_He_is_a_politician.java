@@ -5,12 +5,14 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
+import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
@@ -56,7 +58,7 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
         super.questionSetsToPopulate = 3;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
@@ -65,8 +67,6 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
                 " ?gender " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} . " + //or fictional human
                 "    ?person wdt:P21 ?gender . " + //has gender
                 "    ?person wdt:P106 wd:Q82955 . " + //is a politician
                 "    ?person rdfs:label ?personEN . " + //English label
@@ -121,7 +121,10 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
             List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);
             questionSet.add(fillInBlankMultipleChoiceQuestion);
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankMultipleChoiceQuestion2(qr);
+            List<QuestionData> fillInBlankMultipleChoiceQuestion2 = createFillInBlankMultipleChoiceQuestion2(qr);
+            questionSet.add(fillInBlankMultipleChoiceQuestion2);
+
+            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
@@ -149,6 +152,77 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
 
     private String formatSentenceJP(QueryResult qr){
         return qr.personJP + "は政府で働いています。" + qr.genderJP + "は政治家です。";
+    }
+
+    private List<QuestionData> createTranslateQuestionGeneric(){
+        String question = "政府";
+        String answer = "government";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private List<QuestionData> createSpellingQuestionGeneric(){
+        String question = "政治家";
+        String answer = "politician";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private List<QuestionData> createSpellingQuestionGeneric2(){
+        String question = "政治家";
+        String answer = "politician";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
+        List<QuestionData> spellingQuestion = createSpellingQuestionGeneric();
+        List<QuestionData> spellingQuestion2 = createSpellingQuestionGeneric2();
+        List<List<QuestionData>> questions = new ArrayList<>(3);
+        questions.add(translateQuestion);
+        questions.add(spellingQuestion);
+        questions.add(spellingQuestion2);
+
+        return questions;
+
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
@@ -242,74 +316,33 @@ public class NAME_works_for_the_government_He_is_a_politician extends Lesson {
         return questionDataList;
     }
 
-    private List<QuestionData> createTranslateQuestionGeneric(){
-        String question = "政府";
-        String answer = "government";
+    private String fillInBlankQuestion(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " works for the government.";
+        String sentence3 = Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        return sentence1 + "\n\n" + sentence2 + "\n" + sentence3;
+    }
+
+    private String fillInBlankAnswer(QueryResult qr){
+        String result =  qr.genderEN + " is a politician";
+        return GrammarRules.uppercaseFirstLetterOfSentence(result);
+    }
+
+    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
+        String question = this.fillInBlankQuestion(qr);
+        String answer = fillInBlankAnswer(qr);
+        List<QuestionData> questionDataList = new ArrayList<>();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
+        questionDataList.add(data);
 
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    private List<QuestionData> createSpellingQuestionGeneric(){
-        String question = "政治家";
-        String answer = "politician";
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    private List<QuestionData> createSpellingQuestionGeneric2(){
-        String question = "政治家";
-        String answer = "politician";
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(TOPIC_GENERIC_QUESTION);
-        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    @Override
-    protected List<List<QuestionData>> getPreGenericQuestions(){
-        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
-        List<QuestionData> spellingQuestion = createSpellingQuestionGeneric();
-        List<QuestionData> spellingQuestion2 = createSpellingQuestionGeneric2();
-        List<List<QuestionData>> questions = new ArrayList<>(3);
-        questions.add(translateQuestion);
-        questions.add(spellingQuestion);
-        questions.add(spellingQuestion2);
-
-        return questions;
-
+        return questionDataList;
     }
 }

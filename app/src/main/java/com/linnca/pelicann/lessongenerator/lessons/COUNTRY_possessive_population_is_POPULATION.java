@@ -6,6 +6,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -13,6 +14,7 @@ import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
@@ -63,6 +65,7 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -100,9 +103,6 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
         );
 
         int resultLength = allResults.getLength();
-
-        //there may be more than one emergency phone number for a country
-        //ie 110 & 119
         for (int i=0; i<resultLength; i++) {
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
@@ -132,11 +132,11 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
 
-            List<QuestionData> translateWordQuestion = createTranslateWordQuestion(qr);
-            questionSet.add(translateWordQuestion);
-
             List<QuestionData> fillInBlankInput1Question = createFillInBlankInputQuestion1(qr);
             questionSet.add(fillInBlankInput1Question);
+
+            List<QuestionData> sentencePuzzle = createSentencePuzzleQuestion(qr);
+            questionSet.add(sentencePuzzle);
 
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
@@ -177,29 +177,6 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
-    private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
-        String question = qr.countryJP;
-        String answer = qr.countryEN;
-        FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
-        List<FeedbackPair> feedbackPairs = new ArrayList<>();
-        feedbackPairs.add(feedbackPair);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryJP);
-        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        data.setFeedback(feedbackPairs);
-        List<QuestionData> questionDataList = new ArrayList<>();
-        questionDataList.add(data);
-
-        return questionDataList;
-    }
-
     private String fillInBlankInputQuestion1(QueryResult qr){
         String sentence1 = qr.countryJP + "の人口は" + Integer.toString(qr.population) + "です。";
         String sentence2 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
@@ -235,6 +212,39 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
         questionDataList.add(data);
         return questionDataList;
 
+    }
+
+    private List<String> puzzlePieces(QueryResult qr){
+        List<String> pieces = new ArrayList<>();
+        pieces.add(qr.countryEN);
+        pieces.add("'s");
+        pieces.add("population");
+        pieces.add("is");
+        pieces.add(Integer.toString(qr.population));
+        return pieces;
+    }
+
+    private String puzzlePiecesAnswer(QueryResult qr){
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
+    }
+
+    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
+        List<QuestionData> dataList = new ArrayList<>();
+        String question = this.formatSentenceJP(qr);
+        List<String> choices = this.puzzlePieces(qr);
+        String answer = puzzlePiecesAnswer(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.countryJP);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        dataList.add(data);
+        return dataList;
     }
 
     private String fillInBlankInputQuestion2(QueryResult qr){

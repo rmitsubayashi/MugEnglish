@@ -2,10 +2,12 @@ package com.linnca.pelicann.lessongenerator.lessons;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
@@ -20,6 +22,7 @@ public class Numbers_7_9 extends Lesson {
     public Numbers_7_9(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
     @Override
     protected synchronized int getQueryResultCt(){return 0;}
@@ -45,8 +48,20 @@ public class Numbers_7_9 extends Lesson {
         questionSet.add(fillInBlankQuestion2_1);
         List<QuestionData> fillInBlankQuestion2_2 = fillInBlankQuestion2_2();
         questionSet.add(fillInBlankQuestion2_2);
+        List<QuestionData> sentencePuzzle = createSentencePuzzleQuestion();
+        questionSet.add(sentencePuzzle);
         return questionSet;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> spelling = preGenericQuestions.subList(0,3);
+        Collections.shuffle(spelling);
+        List<List<QuestionData>> fillInBlank1 = preGenericQuestions.subList(3,5);
+        Collections.shuffle(fillInBlank1);
+        List<List<QuestionData>> fillInBlank2 = preGenericQuestions.subList(5,7);
+        Collections.shuffle(fillInBlank2);
     }
 
     @Override
@@ -278,5 +293,49 @@ public class Numbers_7_9 extends Lesson {
         }
 
         return questions;
+    }
+
+    //cumulative review
+    private String sentencePuzzleQuestion(){
+        return "小さい数から順に並べてください";
+    }
+
+    private List<String> puzzlePieces(){
+        List<String> pieces = new ArrayList<>();
+        pieces.add("zero");
+        pieces.add("one");
+        pieces.add("two");
+        pieces.add("three");
+        pieces.add("four");
+        pieces.add("five");
+        pieces.add("six");
+        pieces.add("seven");
+        pieces.add("eight");
+        pieces.add("nine");
+        return pieces;
+    }
+
+    private String puzzlePiecesAnswer(){
+        return Question_SentencePuzzle.formatAnswer(puzzlePieces());
+    }
+
+    private List<QuestionData> createSentencePuzzleQuestion(){
+        String question = this.sentencePuzzleQuestion();
+        List<String> choices = this.puzzlePieces();
+        String answer = puzzlePiecesAnswer();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+        return dataList;
     }
 }

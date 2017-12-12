@@ -69,8 +69,6 @@ public class NAME_is_a_GENDER extends Lesson {
                 " ?gender " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P21 ?gender . " + //has an gender
                 "    ?person rdfs:label ?personEN . " +
                 "    FILTER (LANG(?personEN) = '" +

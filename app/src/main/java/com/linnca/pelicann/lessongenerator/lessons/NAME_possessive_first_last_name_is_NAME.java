@@ -5,12 +5,16 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -59,6 +63,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         super.questionSetsToPopulate = 5;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -70,8 +75,6 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
                 " ?lastNameEN ?lastNameLabel " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P735 ?firstName . " + //has an first name
                 "    ?person wdt:P734 ?lastName . " + //has an last name
                 "    ?person rdfs:label ?personEN . " +
@@ -389,5 +392,90 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
         return questionDataList;
     }
 
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructionsQuestion = createInstructionQuestion();
+        List<QuestionData> instructionsQuestion2 = createInstructionQuestion2();
+        List<List<QuestionData>> questionSet = new ArrayList<>(2);
+        questionSet.add(instructionsQuestion);
+        questionSet.add(instructionsQuestion2);
+        return questionSet;
+    }
+
+    private String instructionQuestionQuestion(){
+        return "あなたの姓を教えてください";
+    }
+
+    private String instructionQuestionAnswer(){
+        return "My last name is " + QuestionResponseChecker.ANYTHING + ".";
+    }
+
+    private FeedbackPair instructionQuestionFeedback(){
+        String response = "I's last name is " + QuestionResponseChecker.ANYTHING + ".";
+        String feedback = "自分の場合、'sは付けずにmyを使いましょう";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(instructionQuestionFeedback());
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private String instructionQuestion2Question(){
+        return "あなたの名を教えてください";
+    }
+
+    private String instructionQuestion2Answer(){
+        return "My first name is " + QuestionResponseChecker.ANYTHING + ".";
+    }
+
+    private FeedbackPair instructionQuestion2Feedback(){
+        String response = "I's first name is " + QuestionResponseChecker.ANYTHING + ".";
+        String feedback = "自分の場合、'sは付けずにmyを使いましょう";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
+    }
+
+    private List<QuestionData> createInstructionQuestion2(){
+        String question = this.instructionQuestion2Question();
+        String answer = instructionQuestion2Answer();
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(instructionQuestion2Feedback());
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
 
 }

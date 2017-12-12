@@ -6,12 +6,15 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_TranslateWord;
+import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -20,6 +23,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -63,6 +67,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -72,8 +77,6 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
                 " ?parentEN ?parentLabel ?instance " +
                 " WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    {?person wdt:P22 ?parent . " +
                 "    BIND ('father' as ?instance) ." +
                 "    ?parent rdfs:label ?parentEN " + //this NEEDS to be in the union
@@ -140,6 +143,9 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
             List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
             questionSet.add(sentencePuzzleQuestion);
+
+            List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
+            questionSet.add(trueFalseQuestion);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -254,6 +260,63 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
         return dataList;
     }
 
+    private String trueFalseQuestion(QueryResult qr, boolean isTrue){
+        if (isTrue){
+            return formatSentenceEN(qr);
+        } else {
+            String falseParentType;
+            if (qr.parentTypeEN.equals("father"))
+                falseParentType = "mother";
+            else
+                falseParentType = "father";
+            return qr.personEN + "'s " + falseParentType + " is " + qr.parentNameEN + ".";
+        }
+    }
+
+    private FeedbackPair trueFalseFalseFeedback(QueryResult qr){
+        String response = Question_TrueFalse.getTrueFalseString(true);
+        String feedback = qr.parentTypeJP + "です";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
+    }
+
+    //one true and one false question
+    private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
+        List<QuestionData> dataList = new ArrayList<>();
+
+        String question = trueFalseQuestion(qr, true);
+        String answer = Question_TrueFalse.getTrueFalseString(true);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        dataList.add(data);
+
+        question = trueFalseQuestion(qr, false);
+        answer = Question_TrueFalse.getTrueFalseString(false);
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(trueFalseFalseFeedback(qr));
+        data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_TrueFalse.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+        data.setFeedback(allFeedback);
+        dataList.add(data);
+
+        return dataList;
+    }
+
     private List<QuestionData> createTranslateQuestionGeneric(){
         String question = "father";
         String answer = "父";
@@ -304,6 +367,12 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
 
         return questionSet;
 
+    }
+
+    @Override
+    protected void shufflePreGenericQuestions(List<List<QuestionData>> preGenericQuestions){
+        List<List<QuestionData>> translate = preGenericQuestions.subList(0,2);
+        Collections.shuffle(translate);
     }
 
 }

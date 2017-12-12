@@ -5,12 +5,18 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
+import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
+import com.linnca.pelicann.questions.Question_Instructions;
+import com.linnca.pelicann.questions.Question_MultipleChoice;
+import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -61,7 +67,7 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
     }
 
     @Override
@@ -72,8 +78,6 @@ public class NAME_works_at_EMPLOYER extends Lesson {
                 " ?employer ?employerEN ?employerLabel " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P108 ?employer . " + //has an employer
                 "    ?person rdfs:label ?personEN . " + //English label
                 "    ?employer rdfs:label ?employerEN . " + //English label
@@ -169,6 +173,113 @@ public class NAME_works_at_EMPLOYER extends Lesson {
     private String formatSentenceJP(QueryResult qr){
         return qr.personJP + "は" + qr.employerJP + "で働いています。";
     }
+
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translate = createTranslateQuestion();
+        List<QuestionData> multipleChoice = createMultipleChoiceQuestion();
+        List<QuestionData> translate2 = createTranslateQuestion2();
+
+        List<List<QuestionData>> questionSet = new ArrayList<>(3);
+        questionSet.add(translate);
+        questionSet.add(multipleChoice);
+        questionSet.add(translate2);
+        return questionSet;
+
+    }
+
+    private List<String> translateQuestionAcceptableAnswers(){
+        List<String> answers = new ArrayList<>(3);
+        answers.add("仕事");
+        answers.add("働いている");
+        answers.add("働いてる");
+        answers.add("はたらく");
+        return answers;
+    }
+
+    private List<QuestionData> createTranslateQuestion(){
+        String question = "work";
+        String answer = "働く";
+        List<String> acceptableAnswers = translateQuestionAcceptableAnswers();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private String multipleChoiceQuestion(){
+        return "～で働いています";
+    }
+
+    private String multipleChoiceAnswer(){
+        return "works at";
+    }
+
+    private List<String> multipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(3);
+        choices.add("works at");
+        choices.add("works from");
+        choices.add("works");
+        return choices;
+    }
+
+    private List<QuestionData> createMultipleChoiceQuestion(){
+        String question = multipleChoiceQuestion();
+        String answer = multipleChoiceAnswer();
+        List<QuestionData> questionDataList = new ArrayList<>();
+        List<String> choices = multipleChoiceChoices();
+        choices.add(answer);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        questionDataList.add(data);
+
+        return questionDataList;
+    }
+
+    private List<String> translateQuestionAcceptableAnswers2(){
+        List<String> answers = new ArrayList<>(1);
+        answers.add("work at");
+        return answers;
+    }
+
+    private List<QuestionData> createTranslateQuestion2(){
+        String question = "～で働いています";
+        String answer = "works at";
+        List<String> acceptableAnswers = translateQuestionAcceptableAnswers2();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
         String sentence = qr.personEN + " works at " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
@@ -272,7 +383,58 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         return questionDataList;
     }
 
+    @Override
+    protected List<List<QuestionData>> getPostGenericQuestions(){
+        List<QuestionData> instructionsQuestion = createInstructionQuestion();
+        List<List<QuestionData>> questionSet = new ArrayList<>(1);
+        questionSet.add(instructionsQuestion);
+        return questionSet;
+    }
 
+    private String instructionQuestionQuestion(){
+        return "あなたはどこで働いていますか。";
+    }
 
-    //TODO preposition question
+    private String instructionQuestionAnswer(){
+        return "I work at " + QuestionResponseChecker.ANYTHING + ".";
+    }
+
+    private List<String> instructionQuestionAcceptableAnswers(){
+        String acceptableAnswer = "I works at " + QuestionResponseChecker.ANYTHING + ".";
+        List<String> acceptableAnswers = new ArrayList<>(1);
+        acceptableAnswers.add(acceptableAnswer);
+        return acceptableAnswers;
+
+    }
+
+    private FeedbackPair instructionQuestionFeedback(){
+        String response = "I works at " + QuestionResponseChecker.ANYTHING + ".";
+        List<String> responses = new ArrayList<>(1);
+        responses.add(response);
+        String feedback = "自分のことを言っている場合、動詞の最後のsはいりません。\nworksではなくworkになります。";
+        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
+    }
+
+    private List<QuestionData> createInstructionQuestion(){
+        String question = this.instructionQuestionQuestion();
+        String answer = instructionQuestionAnswer();
+        List<String> acceptableAnswers = instructionQuestionAcceptableAnswers();
+        List<FeedbackPair> allFeedback = new ArrayList<>(1);
+        allFeedback.add(instructionQuestionFeedback());
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Instructions.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+        data.setFeedback(allFeedback);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
 }

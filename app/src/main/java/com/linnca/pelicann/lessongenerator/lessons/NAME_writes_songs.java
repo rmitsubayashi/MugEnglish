@@ -11,6 +11,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
+import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -54,8 +55,6 @@ public class NAME_writes_songs extends Lesson{
         return "SELECT DISTINCT ?person ?personLabel ?personEN " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P106/wdt:P279* wd:Q753110 . " + //is a song writer
                 "    ?person rdfs:label ?personEN . " +
                 "    FILTER (LANG(?personEN) = '" +
@@ -92,11 +91,12 @@ public class NAME_writes_songs extends Lesson{
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
 
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
+
+            List<QuestionData> fillInBlankQuestion2 = createFillInBlankQuestion2(qr);
+            questionSet.add(fillInBlankQuestion2);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -124,56 +124,52 @@ public class NAME_writes_songs extends Lesson{
         return qr.personJP + "は曲を書きます。";
     }
 
-    //puzzle pieces for sentence puzzle question
-    private List<String> puzzlePieces(QueryResult qr){
-        List<String> pieces = new ArrayList<>();
-        pieces.add(qr.personEN);
-        pieces.add("writes");
-        pieces.add("songs");
-        return pieces;
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<List<QuestionData>> questionSet =new ArrayList<>(1);
+        List<QuestionData> spellingQuestion = spellingQuestionGeneric();
+        questionSet.add(spellingQuestion);
+        return questionSet;
+
     }
 
-    private String puzzlePiecesAnswer(QueryResult qr){
-        return Question_SentencePuzzle.formatAnswer(puzzlePieces(qr));
-    }
-
-    private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
-        String question = this.formatSentenceJP(qr);
-        List<String> choices = this.puzzlePieces(qr);
-        String answer = puzzlePiecesAnswer(qr);
+    private List<QuestionData> spellingQuestionGeneric(){
+        String question = "曲";
+        String answer = "song";
         QuestionData data = new QuestionData();
         data.setId("");
-        data.setLessonId(lessonKey);
-        data.setTopic(qr.personJP);
-        data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
+        data.setLessonId(super.lessonKey);
+        data.setTopic(TOPIC_GENERIC_QUESTION);
+        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
         data.setQuestion(question);
-        data.setChoices(choices);
+        data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
 
+        data.setFeedback(null);
 
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-        return dataList;
+        List<QuestionData> questionVariations = new ArrayList<>();
+        questionVariations.add(data);
+        return questionVariations;
+
     }
 
     private String fillInBlankQuestion(QueryResult qr){
         String sentence1 = formatSentenceJP(qr);
         String sentence2 = qr.personEN + " " +
-                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + " songs.";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence1 + "\n\n" + sentence2;
     }
 
     private String fillInBlankAnswer(){
-        return "writes songs";
+        return "writes";
     }
 
     //plural/singular
     private List<String> fillInBlankAlternateAnswers(){
-        List<String> answers = new ArrayList<>(2);
-        answers.add("write songs");
-        answers.add("writes song");
+        List<String> answers = new ArrayList<>(1);
+        answers.add("write");
         return answers;
     }
 
@@ -181,6 +177,46 @@ public class NAME_writes_songs extends Lesson{
         String question = this.fillInBlankQuestion(qr);
         String answer = fillInBlankAnswer();
         List<String> acceptableAnswers = fillInBlankAlternateAnswers();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setTopic(qr.personJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private String fillInBlankQuestion2(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " writes " +
+                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
+        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private String fillInBlankAnswer2(){
+        return "songs";
+    }
+
+    //plural/singular
+    private List<String> fillInBlankAlternateAnswers2(){
+        List<String> answers = new ArrayList<>(1);
+        answers.add("song");
+        return answers;
+    }
+
+    private List<QuestionData> createFillInBlankQuestion2(QueryResult qr){
+        String question = this.fillInBlankQuestion2(qr);
+        String answer = fillInBlankAnswer2();
+        List<String> acceptableAnswers = fillInBlankAlternateAnswers2();
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);

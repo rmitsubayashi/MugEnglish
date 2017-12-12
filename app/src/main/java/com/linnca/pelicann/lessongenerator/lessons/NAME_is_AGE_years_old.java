@@ -94,8 +94,6 @@ public class NAME_is_AGE_years_old extends Lesson {
                 " ?birthday " +
                 "WHERE " +
                 "{" +
-                "    {?person wdt:P31 wd:Q5} UNION " + //is human
-                "    {?person wdt:P31 wd:Q15632617} ." + //or fictional human
                 "    ?person wdt:P569 ?birthday . " + //has a birthday
                 "    FILTER NOT EXISTS { ?person wdt:P570 ?dateDeath } . " + //but not a death date
                 "    ?person rdfs:label ?personEN . " +

@@ -6,6 +6,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -62,6 +63,7 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
         super.questionSetsToPopulate = 3;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
 
     }
 
@@ -103,8 +105,6 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
         int resultLength = allResults.getLength();
 
-        //there may be more than one emergency phone number for a country
-        //ie 110 & 119
         for (int i=0; i<resultLength; i++) {
             Node head = allResults.item(i);
             String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
@@ -141,11 +141,11 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
             List<QuestionData> translateWordQuestion = createTranslateWordQuestion(qr);
             questionSet.add(translateWordQuestion);
 
-            List<QuestionData> fillInBlankInput1Question = createFillInBlankInputQuestion1(qr);
-            questionSet.add(fillInBlankInput1Question);
-
             List<QuestionData> fillInBlankInput2Question = createFillInBlankInputQuestion2(qr);
             questionSet.add(fillInBlankInput2Question);
+
+            List<QuestionData> fillInBlankInput1Question = createFillInBlankInputQuestion1(qr);
+            questionSet.add(fillInBlankInput1Question);
 
             List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
 
@@ -183,7 +183,6 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
     private List<QuestionData> spellingQuestion(QueryResult qr){
         String question = qr.countryJP;
-
         String answer = qr.countryEN;
         QuestionData data = new QuestionData();
         data.setId("");
@@ -235,39 +234,6 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         return questionDataList;
     }
 
-    private String fillInBlankInputQuestion1(QueryResult qr){
-        String sentence1 = qr.countryJP + "の政治体制は" + qr.governmentJP + "です。";
-        String government = GrammarRules.indefiniteArticleBeforeNoun(qr.governmentEN);
-        String sentence2 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
-                " is " + government + ".";
-        return sentence1 + "\n\n" + GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-    }
-
-    private String fillInBlankInputAnswer1(){
-        return "government";
-    }
-
-    private List<QuestionData> createFillInBlankInputQuestion1(QueryResult qr){
-        String question = this.fillInBlankInputQuestion1(qr);
-
-        String answer = fillInBlankInputAnswer1();
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(super.lessonKey);
-        data.setTopic(qr.countryJP);
-        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        data.setFeedback(null);
-        List<QuestionData> questionDataList = new ArrayList<>();
-        questionDataList.add(data);
-        return questionDataList;
-
-    }
-
     private String fillInBlankInputQuestion2(QueryResult qr){
         String sentence1 = qr.countryJP + "の政治体制は" + qr.governmentJP + "です。";
         String government = GrammarRules.indefiniteArticleBeforeNoun(qr.governmentEN);
@@ -313,9 +279,48 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
         return questionDataList;
     }
 
+    private String fillInBlankInputQuestion1(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String government = GrammarRules.indefiniteArticleBeforeNoun(qr.governmentEN);
+        String sentence2 = Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+                " is " + government + ".";
+        return sentence1 + "\n\n" + GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+    }
+
+    private String fillInBlankInputAnswer1(QueryResult qr){
+        return GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s government";
+    }
+
+    private List<String> fillInBlankInputAcceptableAnswers(QueryResult qr){
+        List<String> answers = new ArrayList<>(1);
+        answers.add(qr.countryEN + "'s government");
+        return answers;
+    }
+
+    private List<QuestionData> createFillInBlankInputQuestion1(QueryResult qr){
+        String question = this.fillInBlankInputQuestion1(qr);
+
+        String answer = fillInBlankInputAnswer1(qr);
+        List<String> acceptableAnswers = fillInBlankInputAcceptableAnswers(qr);
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(super.lessonKey);
+        data.setTopic(qr.countryJP);
+        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(acceptableAnswers);
+
+        data.setFeedback(null);
+        List<QuestionData> questionDataList = new ArrayList<>();
+        questionDataList.add(data);
+        return questionDataList;
+
+    }
+
     private List<QuestionData> spellingSuggestiveQuestionGeneric(){
         String question = "政治体制";
-
         String answer = "government";
         QuestionData data = new QuestionData();
         data.setId("");

@@ -23,6 +23,11 @@
             android:layout_height="wrap_content"
             style="@style/description_lesson_text"
             android:text="@string/description_name_is_name2_possessive_husband_wife_review"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/description_lesson_subheader"
+            android:text="@string/description_template_new_word"/>
         <TableLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
