@@ -29,35 +29,26 @@
             android:shrinkColumns="1">
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_good_morning_afternoon_evening_word1"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_good_morning_afternoon_evening_meaning1"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_good_morning_afternoon_evening_word2"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_good_morning_afternoon_evening_meaning2"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_good_morning_afternoon_evening_word3"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_good_morning_afternoon_evening_meaning3"/>
             </TableRow>
         </TableLayout>
@@ -74,35 +65,26 @@
             android:shrinkColumns="1">
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_good_morning_afternoon_evening_word2_1"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_good_morning_afternoon_evening_meaning2_1"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_good_morning_afternoon_evening_word2_2"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_good_morning_afternoon_evening_meaning2_2"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_good_morning_afternoon_evening_word2_3"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_good_morning_afternoon_evening_meaning2_3"/>
             </TableRow>
         </TableLayout>

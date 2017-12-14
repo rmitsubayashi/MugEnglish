@@ -34,79 +34,58 @@
             android:shrinkColumns="1">
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_the_demonym_flag_is_colors_word1"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_the_demonym_flag_is_colors_meaning1"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_the_demonym_flag_is_colors_word2"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_the_demonym_flag_is_colors_meaning2"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_the_demonym_flag_is_colors_word3"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_the_demonym_flag_is_colors_meaning3"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_the_demonym_flag_is_colors_word4"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_the_demonym_flag_is_colors_meaning4"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_the_demonym_flag_is_colors_word5"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_the_demonym_flag_is_colors_meaning5"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_the_demonym_flag_is_colors_word6"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_the_demonym_flag_is_colors_meaning6"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_the_demonym_flag_is_colors_word7"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_the_demonym_flag_is_colors_meaning7"/>
             </TableRow>
 

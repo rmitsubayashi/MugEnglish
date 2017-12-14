@@ -24,101 +24,74 @@
             android:shrinkColumns="1">
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word10"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning10"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word20"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning20"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word30"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning30"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word40"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning40"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word50"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning50"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word60"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning60"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word70"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning70"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word80"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning80"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_numbers_word90"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_numbers_meaning90"/>
             </TableRow>
         </TableLayout>

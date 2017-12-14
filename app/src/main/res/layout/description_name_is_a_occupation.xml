@@ -32,35 +32,26 @@
             android:shrinkColumns="1">
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_name_is_a_occupation_example_1_word"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example_1_explanation"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_name_is_a_occupation_example_2_word"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example_2_explanation"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_name_is_a_occupation_example_3_word"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example_3_explanation"/>
             </TableRow>
         </TableLayout>
@@ -87,61 +78,46 @@
             >
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_name_is_a_occupation_table_header_meaning"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_name_is_a_occupation_table_header_male"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
-                    android:textColor="?attr/color300"
+                    style="@style/description_table_highlighted_item"
                     android:text="@string/description_name_is_a_occupation_table_header_female"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_1_meaning"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_1_male"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_1_female"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_2_meaning"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_2_male"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_2_female"/>
             </TableRow>
             <TableRow>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_3_meaning"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_3_male"/>
                 <TextView
-                    android:padding="12dp"
-                    android:textSize="15sp"
+                    style="@style/description_table_plain_item"
                     android:text="@string/description_name_is_a_occupation_example2_3_female"/>
             </TableRow>
         </TableLayout>

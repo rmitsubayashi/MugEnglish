@@ -64,14 +64,6 @@
     <string name="description_hello_my_name_is_name_word2">my name is</string>
     <string name="description_hello_my_name_is_name_word_meaning2">私の名前は</string>
 
-    <string name="description_hello_my_name_is_name_i_am_a_occupation_introduction">
-        自己紹介＋職業説明をつなげてみましょう。
-    </string>
-    <string name="description_hello_my_name_is_name_i_am_a_occupation_grammar_exception">
-        前回の職業説明は3人称。つまり、話し手と聞き手以外の人物が出てきました。今回は1人称です。つまり人物自身が話し手です。
-        この場合、動詞はisではなく<b>am</b>を使います！
-    </string>
-
     <string name="description_hi_hey_whats_up_practical">Helloを覚えていますか。「こんにちは」という意味でしたね。日常会話でhelloを使っても違和感はないですが、実は少しよそよそしい感じになります。</string>
     <string name="description_hi_hey_whats_up_practical2">友人や知り合いにはhelloではなく、もっと親しみやすい挨拶を使いましょう。今回は「hi」「hey」「what\'s up」の3パターンを学びます。</string>
 
