@@ -1,6 +1,9 @@
 package com.linnca.pelicann.questions;
 
 
+import android.content.Context;
+import android.util.Log;
+
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
@@ -33,8 +36,9 @@ public class QuestionManager{
 	//store in a set to prevent duplicates (we are adding every time we get a question attempt)
 	private Set<QuestionData> missedQuestionsForReview = new HashSet<>();
 
-	public interface QuestionManagerListener{
+	public interface QuestionManagerListener {
 		void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion);
+
 		//arrayList so we can easily save it in a bundle
 		void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs,
 								 List<QuestionData> missedQuestions);
@@ -45,14 +49,14 @@ public class QuestionManager{
 		this.questionManagerListener = listener;
 	}
 
-	public void startQuestions(LessonInstanceData data, String lessonKey){
+	public void startQuestions(Context context, LessonInstanceData data, String lessonKey, OnDBResultListener noConnectionListener){
 		if(!questionsStarted) {
 			questionsStarted = true;
 			this.lessonInstanceData = data;
 			totalQuestions = lessonInstanceData.questionCount();
 			this.lessonKey = lessonKey;
 			startNewInstanceRecord();
-			nextQuestion(true);
+			nextQuestion(context, true, noConnectionListener);
 		}
 	}
 
@@ -61,8 +65,10 @@ public class QuestionManager{
     }
 
     //we need to know whether this is the first question
-	//so we can put the previous fragment on the back stack
-	public void nextQuestion(final boolean isFirstQuestion){
+	//so we can put the previous fragment on the back stack.
+	//the connection listener is to update the UI (whether it's the main activity
+	// or a question fragment) when the connection fails
+	public void nextQuestion(Context context, final boolean isFirstQuestion, final OnDBResultListener noConnectionListener){
 		//don't do anything if we haven't started anything
 		if (!questionsStarted){
 			return;
@@ -89,8 +95,18 @@ public class QuestionManager{
 				questionManagerListener.onNextQuestion(currentQuestionData, questionMkr+1, totalQuestions, isFirstQuestion);
 				questionMkr++;
 			}
+
+			@Override
+			public void onSlowConnection(){
+				noConnectionListener.onSlowConnection();
+			}
+
+			@Override
+			public void onNoConnection(){
+				noConnectionListener.onNoConnection();
+			}
 		};
-		db.getQuestion(questionID, onDBResultListener);
+		db.getQuestion(context, questionID, onDBResultListener);
 	}
 
 	public void saveResponse(String response, Boolean correct){

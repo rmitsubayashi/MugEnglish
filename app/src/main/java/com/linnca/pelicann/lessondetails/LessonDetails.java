@@ -20,6 +20,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -168,23 +169,35 @@ public class LessonDetails extends Fragment {
     }
 
     private void populateData(){
-        if (adapter == null) {
-            adapter = new LessonDetailsAdapter(
-                    getLessonDetailsAdapterListener(), lessonDetailsListener, lessonData.getKey()
-            );
-
-            list.setAdapter(adapter);
-        }
-
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
+                if (adapter == null) {
+                    adapter = new LessonDetailsAdapter(
+                            getLessonDetailsAdapterListener(), lessonDetailsListener, lessonData.getKey()
+                    );
+                    list.setAdapter(adapter);
+                }
+
                 loading.setVisibility(View.GONE);
                 adapter.setLessonInstances(lessonInstances);
             }
+
+            @Override
+            public void onNoConnection(){
+                if (adapter == null) {
+                    adapter = new LessonDetailsAdapter(
+                            getLessonDetailsAdapterListener(), lessonDetailsListener, lessonData.getKey()
+                    );
+                    list.setAdapter(adapter);
+                    adapter.setOffline();
+
+                }
+                loading.setVisibility(View.GONE);
+            }
         };
 
-        db.getLessonInstances(lessonData.getKey(), true, onDBResultListener);
+        db.getLessonInstances(getContext(), lessonData.getKey(), true, onDBResultListener);
     }
 
 
@@ -203,6 +216,8 @@ public class LessonDetails extends Fragment {
 
             @Override
             public void onNoItems() {
+                //we don't show this as a part of the list because we want
+                // the 'add lessons here' text to line up above the FAB
                 noItemAddTextView.setVisibility(View.VISIBLE);
                 noItemsDescriptionTextView.setVisibility(View.VISIBLE);
             }
@@ -229,11 +244,20 @@ public class LessonDetails extends Fragment {
                 public void onLessonCreated() {
                     enableCreateButtonAfterLoading();
                 }
+                @Override
+                public void onNoConnection(){
+                    //just sets it back to default state
+                    enableCreateButtonAfterLoading();
+                    //also let the user know we couldn't create a lesson because
+                    // there was no connection
+                    Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         );
 
         if (lesson != null) {
-            lesson.createInstance();
+            lesson.createInstance(getContext());
         }
     }
 

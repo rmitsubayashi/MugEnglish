@@ -23,6 +23,7 @@ import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.UserLessonListViewer;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
@@ -81,7 +82,7 @@ public class Results extends Fragment {
             }
         });
 
-        resultsManager.saveInstanceRecord();
+        resultsManager.saveInstanceRecord(getContext());
     }
 
     @Override
@@ -135,7 +136,7 @@ public class Results extends Fragment {
         populateCorrectCount();
         //this will update the UI if this is the user's first time clearing
         // the lesson
-        resultsManager.clearLesson();
+        resultsManager.clearLesson(getContext());
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonVocabularyQueried(List<ResultsVocabularyWord> words) {
@@ -154,13 +155,29 @@ public class Results extends Fragment {
                     });
                     return;
                 }
+                //in case there was no connection before
+                vocabularyList.removeAllViews();
                 for (ResultsVocabularyWord word : words) {
                     View view = createVocabularyItem(word);
                     vocabularyList.addView(view);
                 }
             }
+
+            @Override
+            public void onNoConnection(){
+                vocabularyLoading.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        vocabularyLoading.setVisibility(View.GONE);
+                    }
+                });
+                TextView noVocabularyTextView = new TextView(getContext());
+                noVocabularyTextView.setText(R.string.results_vocabulary_no_connection);
+                noVocabularyTextView.setTextSize(GUIUtils.getDp(17, getContext()));
+                vocabularyList.addView(noVocabularyTextView);
+            }
         };
-        db.getLessonVocabulary(instanceRecord.getInstanceId(), onDBResultListener);
+        db.getLessonVocabulary(getContext(), instanceRecord.getInstanceId(), onDBResultListener);
 
         boolean needToReview = false;
         //user needs to review if the user gets a question wrong

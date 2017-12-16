@@ -37,8 +37,7 @@
             android:layout_toRightOf="@+id/calendar_prev_button"
             android:layout_toLeftOf="@+id/calendar_next_button"
             android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="#222222"/>
+            android:textSize="18sp"/>
 
         <!-- next button -->
         <Button
@@ -74,7 +73,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:textColor="#222222"
             android:text="@string/calendar_monday"/>
 
         <TextView
@@ -82,7 +80,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:textColor="#222222"
             android:text="@string/calendar_tuesday"/>
 
         <TextView
@@ -90,7 +87,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:textColor="#222222"
             android:text="@string/calendar_wednesday"/>
 
         <TextView
@@ -98,7 +94,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:textColor="#222222"
             android:text="@string/calendar_thursday"/>
 
         <TextView
@@ -106,7 +101,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_horizontal"
-            android:textColor="#222222"
             android:text="@string/calendar_friday"/>
 
         <TextView

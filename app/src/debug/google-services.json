@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:728003294055:android:01c9f1608b7cd72b",
+        "mobilesdk_app_id": "1:728003294055:android:77b90dc330ae506f",
         "android_client_info": {
-          "package_name": "com.mugenglish.debug"
+          "package_name": "com.linnca.pelicann.debug"
         }
       },
       "oauth_client": [

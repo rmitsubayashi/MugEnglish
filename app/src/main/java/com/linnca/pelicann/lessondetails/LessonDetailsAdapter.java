@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Set;
 
 class LessonDetailsAdapter
-        extends RecyclerView.Adapter<LessonDetailsViewHolder> {
+        extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<LessonInstanceData> allInstances = new ArrayList<>();
     //context menu doesn't work for recyclerviews
     private LessonInstanceData longClickData;
@@ -29,6 +29,10 @@ class LessonDetailsAdapter
     private final String lessonKey;
     //helps change the UI when items are loaded
     private LessonDetailsAdapterListener uiListener;
+
+    private final String OFFLINE_KEY = "offline";
+    private final int offlineViewType = 1;
+    private final int lessonInstanceViewType = 2;
 
     interface LessonDetailsAdapterListener {
         //we are showing/hiding UI components on the main layout
@@ -56,7 +60,24 @@ class LessonDetailsAdapter
         return allInstances.size();
     }
 
+    @Override
+    public int getItemViewType(int position){
+        switch (allInstances.get(position).getId()){
+            case OFFLINE_KEY :
+                return offlineViewType;
+            default :
+                return lessonInstanceViewType;
+        }
+    }
+
     void setLessonInstances(List<LessonInstanceData> updatedInstances){
+        //if we were offline, remove that view first
+        if (allInstances.size() == 1 &&
+                allInstances.get(0).getId().equals(OFFLINE_KEY)){
+            allInstances.remove(0);
+            notifyItemRemoved(0);
+        }
+
         List<LessonInstanceData> oldInstances = new ArrayList<>(allInstances);
         allInstances.clear();
         allInstances.addAll(updatedInstances);
@@ -82,52 +103,69 @@ class LessonDetailsAdapter
         }
     }
 
-    @Override
-    public LessonDetailsViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.inflatable_lesson_details_instance_list_item, parent, false);
-        final LessonDetailsViewHolder holder = new LessonDetailsViewHolder(view);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                lessonDetailsListener.lessonDetailsToQuestions(
-                        allInstances.get(holder.getAdapterPosition()),
-                        lessonKey
-                );
-            }
-        });
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                longClickData = allInstances.get(holder.getAdapterPosition());
-                //returning false so we can catch the onlongclicklistener of the parent
-                return false;
-            }
-        });
-        return holder;
+    void setOffline(){
+        allInstances.clear();
+        LessonInstanceData offline = new LessonInstanceData();
+        offline.setId(OFFLINE_KEY);
+        allInstances.add(offline);
+        notifyDataSetChanged();
     }
 
     @Override
-    public void onBindViewHolder(final LessonDetailsViewHolder holder, int position) {
-        LessonInstanceData data = allInstances.get(position);
-        StringBuilder allInterestsLabelBuilder = new StringBuilder();
-        for (String interestLabel : data.uniqueInterestLabels()) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+        if (viewType == lessonInstanceViewType) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_lesson_details_instance_list_item, parent, false);
+            final LessonDetailsViewHolder holder = new LessonDetailsViewHolder(view);
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    lessonDetailsListener.lessonDetailsToQuestions(
+                            allInstances.get(holder.getAdapterPosition()),
+                            lessonKey
+                    );
+                }
+            });
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    longClickData = allInstances.get(holder.getAdapterPosition());
+                    //returning false so we can catch the onlongclicklistener of the parent
+                    return false;
+                }
+            });
+            return holder;
+        } else if (viewType == offlineViewType){
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_lesson_details_offline, parent, false);
+            return new RecyclerView.ViewHolder(view) {};
+        }
+        return null;
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof LessonDetailsViewHolder) {
+            LessonInstanceData data = allInstances.get(position);
+            StringBuilder allInterestsLabelBuilder = new StringBuilder();
+            for (String interestLabel : data.uniqueInterestLabels()) {
                 allInterestsLabelBuilder.append(interestLabel);
                 allInterestsLabelBuilder.append(" + ");
-        }
-        String allInterestsLabel = allInterestsLabelBuilder.toString();
-        if (allInterestsLabel.equals("")){
-            allInterestsLabel = Integer.toString(position + 1);
-        } else {
-            allInterestsLabel = allInterestsLabel.substring(0, allInterestsLabel.length() - 3);
-        }
-        holder.setInterestsLabel(allInterestsLabel);
+            }
+            String allInterestsLabel = allInterestsLabelBuilder.toString();
+            if (allInterestsLabel.equals("")) {
+                allInterestsLabel = Integer.toString(position + 1);
+            } else {
+                allInterestsLabel = allInterestsLabel.substring(0, allInterestsLabel.length() - 3);
+            }
+            ((LessonDetailsViewHolder)holder).setInterestsLabel(allInterestsLabel);
 
-        DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, Locale.JAPAN);
-        String dateString = dateFormat.format(new Date(data.getCreatedTimeStamp()));
-        String createdLabel = holder.itemView.getContext().
-                getResources().getString(R.string.lesson_details_created);
-        holder.setCreated(createdLabel + ": " + dateString);
+            DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, Locale.JAPAN);
+            String dateString = dateFormat.format(new Date(data.getCreatedTimeStamp()));
+            String createdLabel = holder.itemView.getContext().
+                    getResources().getString(R.string.lesson_details_created);
+            ((LessonDetailsViewHolder)holder).setCreated(createdLabel + ": " + dateString);
+        }
     }
 
 

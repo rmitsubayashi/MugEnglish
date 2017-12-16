@@ -1,5 +1,7 @@
 package com.linnca.pelicann.searchinterests;
 
+import android.content.Context;
+
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class RecommendationGetter {
+    //to get connection status
+    private Context context;
     private Database db;
     private int toDisplayRecommendationCt = 0;
     private int defaultRecommendationCt;
@@ -24,9 +28,11 @@ class RecommendationGetter {
     //the results here should only contain enough items to display (not the entire list)
     interface RecommendationGetterListener {
         void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton);
+        void onNoConnection();
     }
 
-    RecommendationGetter(int defaultRecommendationCt, Database db, int loadMoreRecommendationCt){
+    RecommendationGetter(int defaultRecommendationCt, Context context, Database db, int loadMoreRecommendationCt){
+        this.context = context;
         this.db = db;
         this.defaultRecommendationCt = defaultRecommendationCt;
         this.loadMoreRecommendationCt = loadMoreRecommendationCt;
@@ -81,6 +87,11 @@ class RecommendationGetter {
                 }
                 recommendationGetterListener.onGetRecommendations(rankings, showLoadMoreButton);
             }
+
+            @Override
+            public void onNoConnection(){
+                recommendationGetterListener.onNoConnection();
+            }
         };
 
         //we get the to display recommendation count + 1 so we know
@@ -89,7 +100,7 @@ class RecommendationGetter {
         // so we guarantee that the returned list will contain new items
         int toGetUserInterestCt = userInterests.size() +
                 toDisplayRecommendationCt + 1;
-        db.getPopularUserInterests(toGetUserInterestCt, onDBResultListener);
+        db.getPopularUserInterests(context, toGetUserInterestCt, onDBResultListener);
     }
 
 }

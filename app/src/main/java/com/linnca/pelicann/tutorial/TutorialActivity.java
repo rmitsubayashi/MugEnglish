@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.mainactivity.MainActivity;
@@ -158,7 +159,7 @@ public class TutorialActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNextQuestion(boolean correct){
+    public void onNextQuestion(boolean correct, OnDBResultListener noConnectionListener){
         if (questionMkr == 0){
             lessonDetailsToQuestion1();
         } else if (questionMkr == 1){

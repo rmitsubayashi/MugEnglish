@@ -9,6 +9,7 @@ public interface EndpointConnectorReturnsXML {
         boolean shouldStop();
         void onStop();
         void onFetchDOM(Document result);
+        void onError();
     }
     void fetchDOMFromGetRequest(OnFetchDOMListener listener, List<String> query);
 }

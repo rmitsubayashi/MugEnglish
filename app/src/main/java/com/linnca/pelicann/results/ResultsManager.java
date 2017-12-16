@@ -1,5 +1,7 @@
 package com.linnca.pelicann.results;
 
+import android.content.Context;
+
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
@@ -31,7 +33,7 @@ class ResultsManager {
         this.db = db;
     }
 
-    void saveInstanceRecord(){
+    void saveInstanceRecord(Context context){
         //save the whole instance record
         final OnDBResultListener instanceRecordOnDBResultListener = new OnDBResultListener() {
             @Override
@@ -46,13 +48,13 @@ class ResultsManager {
         String lessonKey = instanceRecord.getLessonId();
         int level = lessonListViewer.getLessonLevel(lessonKey);
         final int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
-        OnDBResultListener reportCartOnDBResultListener = new OnDBResultListener() {
+        OnDBResultListener reportCardOnDBResultListener = new OnDBResultListener() {
             @Override
             public void onReportCardAdded() {
                 super.onReportCardAdded();
             }
         };
-        db.addReportCard(level, lessonKey, correctCt[0], correctCt[1], reportCartOnDBResultListener);
+        db.addReportCard(level, lessonKey, correctCt[0], correctCt[1], reportCardOnDBResultListener);
 
         //save the questions for review if the questions are in the newest section of questions.
         //we also add the cleared lesson separately, but that should never affect
@@ -78,7 +80,7 @@ class ResultsManager {
             }
         };
         //we grabbed level when adding the report card
-        db.getClearedLessons(level, false, clearedLessonOnDBResultListener);
+        db.getClearedLessons(context, level, false, clearedLessonOnDBResultListener);
     }
 
     static int[] calculateCorrectCount(List<QuestionAttempt> attempts){
@@ -100,7 +102,7 @@ class ResultsManager {
         return new int[]{correctCt, totalCt};
     }
 
-    void clearLesson(){
+    void clearLesson(Context context){
         //we create an instance of UserLessonListViewer when we
         // save review questions.
         //if that has run already, just use that.
@@ -120,7 +122,7 @@ class ResultsManager {
             LessonListViewer lessonListViewer = new LessonListViewerImplementation();
             String lessonKey = instanceRecord.getLessonId();
             int level = lessonListViewer.getLessonLevel(lessonKey);
-            db.getClearedLessons(level, false, onDBResultListener);
+            db.getClearedLessons(context, level, false, onDBResultListener);
         }
 
     }

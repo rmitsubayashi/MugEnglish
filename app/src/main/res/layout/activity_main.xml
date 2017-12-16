@@ -38,8 +38,6 @@
             android:descendantFocusability="beforeDescendants"
             android:focusableInTouchMode="true"
             />
-
-
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView

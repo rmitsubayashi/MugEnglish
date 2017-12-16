@@ -7,6 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.linnca.pelicann.lessonlist.LessonListAdapter.STATUS_ACTIVE;
+import static com.linnca.pelicann.lessonlist.LessonListAdapter.STATUS_CLEARED;
+import static com.linnca.pelicann.lessonlist.LessonListAdapter.STATUS_LOCKED;
+import static com.linnca.pelicann.lessonlist.LessonListAdapter.STATUS_NEXT_ACTIVE;
+
 // uses the user's cleared lessons to create a better picture
 // of the lesson list state
 public class UserLessonListViewer {
@@ -20,7 +25,10 @@ public class UserLessonListViewer {
     public UserLessonListViewer(LessonListViewer lessonListViewer, Set<String> clearedLessonKeys){
         this.lessonListViewer = lessonListViewer;
         //the cleared lessons are all the cleared lessons for a level
-        this.clearedLessonKeys = new HashSet<>(clearedLessonKeys);
+        if (clearedLessonKeys != null)
+            this.clearedLessonKeys = new HashSet<>(clearedLessonKeys);
+        else
+            this.clearedLessonKeys = null;
         parseData();
     }
 
@@ -43,11 +51,15 @@ public class UserLessonListViewer {
     }
 
     public void addClearedLesson(String clearedLessonKey){
-        clearedLessonKeys.add(clearedLessonKey);
-        parseData();
+        if (clearedLessonKeys != null) {
+            clearedLessonKeys.add(clearedLessonKey);
+            parseData();
+        }
     }
 
-    public boolean isCleared(String lessonKey){
+    boolean isCleared(String lessonKey){
+        if (clearedLessonKeys == null)
+            return false;
         return clearedLessonKeys.contains(lessonKey);
     }
 
@@ -66,6 +78,9 @@ public class UserLessonListViewer {
 
     public List<LessonData> getLessonsUnlockedByClearing(String lessonKey){
         List<LessonData> unlockedLessons = new ArrayList<>(5);
+        if (clearedLessonKeys == null){
+            return unlockedLessons;
+        }
         //if the lesson is already cleared,
         //clearing that lesson shouldn't unlock anything
         if (clearedLessonKeys.contains(lessonKey)){
@@ -107,6 +122,8 @@ public class UserLessonListViewer {
     }
 
     private void parseData(){
+        if (clearedLessonKeys == null)
+            return;
         int maxClearedLevel = -1;
         int maxClearedReviewNumber = -1;
         for (String key : clearedLessonKeys){
@@ -151,5 +168,47 @@ public class UserLessonListViewer {
                 lessonListViewer.getLessonRowIndex(nextClearedReviewKey) : LEVEL_CLEARED ;
     }
 
+    int getItemStatus(LessonData data){
+        if (clearedLessonKeys == null){
+            return STATUS_LOCKED;
+        }
+        if (data == null){
+            return LessonListAdapter.STATUS_NONE;
+        }
+
+        if (isCleared(data.getKey())){
+            return STATUS_CLEARED;
+        }
+        boolean active = true;
+        List<String> prerequisites = data.getPrerequisiteKeys();
+        if (prerequisites == null){
+            return STATUS_ACTIVE;
+        }
+        //check if we've cleared all prerequisites for this lesson
+        for (String prerequisiteKey : prerequisites){
+            if (!isCleared(prerequisiteKey)){
+                active = false;
+                break;
+            }
+        }
+        if (active){
+            return STATUS_ACTIVE;
+        }
+
+        for (String prerequisiteKey : prerequisites){
+            LessonData prerequisite = getLesson(prerequisiteKey);
+            List<String> prerequisitesOfPrerequisites = prerequisite.getPrerequisiteKeys();
+            if (prerequisitesOfPrerequisites == null){
+                return STATUS_NEXT_ACTIVE;
+            }
+            for (String key : prerequisitesOfPrerequisites){
+                if (isCleared(key)){
+                    return STATUS_NEXT_ACTIVE;
+                }
+            }
+        }
+
+        return STATUS_LOCKED;
+    }
 
 }

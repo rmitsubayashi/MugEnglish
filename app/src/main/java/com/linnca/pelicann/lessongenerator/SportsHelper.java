@@ -182,11 +182,19 @@ public class SportsHelper {
 
 							db.addSport(id, verb, name);
 						}
+
+						@Override
+						public void onError(){}
 					};
 					List<String> urlList = new ArrayList<>(1);
 					urlList.add(url);
 					wikipediaConn.fetchDOMFromGetRequest(onFetchDOMListener2, urlList);
 				}
+			}
+
+			@Override
+			public void onError(){
+
 			}
 		};
 		String sportsQuery = getSportsQuery();

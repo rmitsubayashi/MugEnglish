@@ -13,10 +13,14 @@ import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 public abstract class OnDBResultListener {
+    public void onNoConnection(){}
+    public void onSlowConnection(){}
+
     public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntity> userInterestsSearched){}
     //for each question set that we add
     public void onQuestionSetAdded(QuestionSet questionSet){}

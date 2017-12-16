@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
@@ -53,6 +54,11 @@ public class UserProfile_HoursStudied extends Fragment {
                 DateTime now = DateTime.now();
                 calendarView.setMax(now);
             }
+            @Override
+            public void onNoConnection(){
+                //notifying the user that there is no connection
+                // is handled when we get the actual data
+            }
         };
         db.getFirstAppUsageDate(onDBResultListener);
     }
@@ -78,8 +84,20 @@ public class UserProfile_HoursStudied extends Fragment {
             public void onAppUsageForMonthsQueried(List<AppUsageLog> logs) {
                 calendarView.setUsageData(logs, initial);
             }
+            @Override
+            public void onNoConnection(){
+                //the empty calendar is enough to indicate no data.
+                //just let the user know that this is because of no connection.
+                //we do this ONCE here since
+                // -this is the first-most fragment in the view pager
+                // -neighboring fragments in the view pager are also trying to connect
+                //  and will also have to handle no connection state, but we shouldn't
+                //  display multiple toasts with the the same message
+                Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
+                        .show();
+            }
         };
-        db.getAppUsageForMonths(prevKey, nextKey, onDBResultListener);
+        db.getAppUsageForMonths(getContext(), prevKey, nextKey, onDBResultListener);
     }
 
     private void setCalendarListeners(){

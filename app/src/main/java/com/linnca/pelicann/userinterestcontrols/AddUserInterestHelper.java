@@ -117,6 +117,11 @@ public class AddUserInterestHelper {
                     }
                 }
             }
+
+            @Override
+            public void onError(){
+
+            }
         };
         wikiBaseEndpointConnector.fetchDOMFromGetRequest(onFetchDOMListener, queryList);
 
@@ -161,6 +166,9 @@ public class AddUserInterestHelper {
 
                 }
             }
+
+            @Override
+            public void onError(){}
         };
 
         List<String> parameters = new ArrayList<>(1);

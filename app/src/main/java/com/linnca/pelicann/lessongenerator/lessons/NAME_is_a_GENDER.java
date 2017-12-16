@@ -201,11 +201,10 @@ public class NAME_is_a_GENDER extends Lesson {
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-
-        String sentence = qr.personEN + " is a " +
+        String sentence = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " is a " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
+        return sentence + "\n\n" + sentence2;
     }
 
     private List<String> fillInBlankAlternateAnswers(QueryResult qr){

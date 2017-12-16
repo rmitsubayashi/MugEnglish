@@ -85,7 +85,7 @@ class LessonListAdapter
             if (position <= nextToClearReviewPosition) {
                 for (int i = 0; i < 3; i++) {
                     LessonData data = lessonRow.getLessons()[i];
-                    int status = getItemStatus(data);
+                    int status = userLessonListViewer.getItemStatus(data);
                     rowStatus[i] = status;
                 }
             } else {
@@ -128,7 +128,7 @@ class LessonListAdapter
             ((LessonListRowViewHolder)holder).connectRows(lessonRow, rowBefore, rowAfter);
         } else if (holder instanceof LessonListReviewRowViewHolder){
             LessonData reviewData = lessonRow.getLessons()[1];
-            int status = getItemStatus(reviewData);
+            int status = userLessonListViewer.getItemStatus(reviewData);
             ((LessonListReviewRowViewHolder)holder).populateRow(reviewData, listener, status, lessonLevel);
         }
     }
@@ -148,45 +148,5 @@ class LessonListAdapter
         userLessonListViewer = new UserLessonListViewer(new LessonListViewerImplementation(),
                 clearedLessonKeys);
         notifyDataSetChanged();
-    }
-
-    private int getItemStatus(LessonData data){
-        if (data == null){
-            return STATUS_NONE;
-        }
-
-        if (userLessonListViewer.isCleared(data.getKey())){
-            return STATUS_CLEARED;
-        }
-        boolean active = true;
-        List<String> prerequisites = data.getPrerequisiteKeys();
-        if (prerequisites == null){
-            return STATUS_ACTIVE;
-        }
-        //check if we've cleared all prerequisites for this lesson
-        for (String prerequisiteKey : prerequisites){
-            if (!userLessonListViewer.isCleared(prerequisiteKey)){
-                active = false;
-                break;
-            }
-        }
-        if (active){
-            return STATUS_ACTIVE;
-        }
-
-        for (String prerequisiteKey : prerequisites){
-            LessonData prerequisite = userLessonListViewer.getLesson(prerequisiteKey);
-            List<String> prerequisitesOfPrerequisites = prerequisite.getPrerequisiteKeys();
-            if (prerequisitesOfPrerequisites == null){
-                return STATUS_NEXT_ACTIVE;
-            }
-            for (String key : prerequisitesOfPrerequisites){
-                if (userLessonListViewer.isCleared(key)){
-                    return STATUS_NEXT_ACTIVE;
-                }
-            }
-        }
-
-        return STATUS_LOCKED;
     }
 }

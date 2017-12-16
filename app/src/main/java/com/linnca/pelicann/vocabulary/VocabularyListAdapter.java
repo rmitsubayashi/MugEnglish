@@ -28,8 +28,10 @@ class VocabularyListAdapter
     private HashSet<Integer> selectedDataPositions = new HashSet<>();
 
     private final String EMPTY_STATE_ITEM = "empty state";
-    private final int headerViewType = 1;
+    private final String NO_NETWORK_ITEM = "no network";
+    private final int emptyStateViewType = 1;
     private final int listItemViewType = 2;
+    private final int noNetworkViewType = 3;
 
     VocabularyListAdapter(VocabularyListAdapterListener listener){
         super();
@@ -53,22 +55,30 @@ class VocabularyListAdapter
     @Override
     public int getItemViewType(int position){
         VocabularyListWord word = getItemAt(position);
-        if (word.getKey().equals(EMPTY_STATE_ITEM)){
-            return headerViewType;
-        } else {
-            return listItemViewType;
+        switch (word.getKey()){
+            case EMPTY_STATE_ITEM :
+                return emptyStateViewType;
+            case NO_NETWORK_ITEM :
+                return noNetworkViewType;
+            default:
+                return listItemViewType;
         }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
-        if (viewType == headerViewType){
+        if (viewType == emptyStateViewType){
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.inflatable_vocabulary_list_empty_state, parent, false);
             VocabularyListEmptyStateViewHolder holder = new VocabularyListEmptyStateViewHolder(itemView);
             holder.setListener(listener);
             return holder;
-        } else if (viewType == listItemViewType){
+        } else if (viewType == noNetworkViewType){
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_vocabulary_list_offline, parent, false);
+            return new RecyclerView.ViewHolder(itemView) {};
+        }
+        else if (viewType == listItemViewType){
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.inflatable_vocabulary_list_item, parent, false);
             final VocabularyListViewHolder holder = new VocabularyListViewHolder(itemView);
@@ -161,9 +171,11 @@ class VocabularyListAdapter
             notifyDataSetChanged();
             return;
         }
-        //check if we came from an empty state
+        //check if we came from an empty state or no network state
         if (oldList.size() == 1 &&
-                oldList.get(0).getKey().equals(EMPTY_STATE_ITEM)){
+                (oldList.get(0).getKey().equals(EMPTY_STATE_ITEM) ||
+                 oldList.get(0).getKey().equals(NO_NETWORK_ITEM))
+                ){
             oldList.remove(0);
             notifyItemRemoved(0);
         }
@@ -180,5 +192,13 @@ class VocabularyListAdapter
                 notifyItemInserted(index);
             }
         } //list size shouldn't be equal since we can only add or remove items
+    }
+
+    void setOffline(){
+        VocabularyListWord noNetwork = new VocabularyListWord();
+        noNetwork.setKey(NO_NETWORK_ITEM);
+        words = new ArrayList<>(1);
+        words.add(noNetwork);
+        notifyDataSetChanged();
     }
 }

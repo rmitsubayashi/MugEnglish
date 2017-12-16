@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
@@ -77,7 +78,7 @@ public class SearchInterests extends Fragment {
                 new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE)
         );
         recommendationGetter = new RecommendationGetter(
-                5, db, 3
+                5, getContext(), db, 3
         );
     }
 
@@ -180,15 +181,14 @@ public class SearchInterests extends Fragment {
                     }
                 });
 
-                //we don't want to keep listening because
-                // we want to show the recommendations after a
-                // user has added an interest,
-                // but if we kept on listening, it would
-                // attach a new adapter instead
-                db.cleanup();
             }
         };
-        db.getUserInterests(onDBResultListener);
+        //we don't want to keep listening because
+        // we want to show the recommendations after a
+        // user has added an interest,
+        // but if we kept on listening, it would
+        // attach a new adapter instead
+        db.getUserInterests(getContext(), false, onDBResultListener);
     }
 
 
@@ -222,12 +222,21 @@ public class SearchInterests extends Fragment {
                         recommendationGetter.getNewRecommendations(userInterests,
                                 getRecommendationGetterListener());
                     }
+
+                    @Override
+                    public void onNoConnection(){
+                        //clear the search text
+                        searchView.setQuery("", false);
+                        searchView.clearFocus();
+
+                        adapter.setOfflineAfterAdding(data);
+                    }
                 };
 
                 //we are only adding one, but the method can handle more than one
                 List<WikiDataEntity> dataList = new ArrayList<>(1);
                 dataList.add(data);
-                db.addUserInterests(dataList, onDBResultListener);
+                db.addUserInterests(getContext(), dataList, onDBResultListener);
             }
 
             @Override
@@ -243,9 +252,12 @@ public class SearchInterests extends Fragment {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 adapter.showRecommendations(results, showLoadMoreButton);
-                /*if (!showLoadMoreButton){
-                    adapter.removeFooter();
-                }*/
+            }
+
+            @Override
+            public void onNoConnection(){
+                Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
+                        .show();
             }
         };
     }
@@ -257,45 +269,60 @@ public class SearchInterests extends Fragment {
         return new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message inputMessage){
-                List<WikiDataEntity> result;
-                try {
-                    //I catch the class cast exception but Android Studio
-                    // still shows the unchecked cast warning??
-                    result = (List<WikiDataEntity>) inputMessage.obj;
-                } catch (ClassCastException e){
-                    e.printStackTrace();
-                    return;
-                }
-                //if the user exited the screen and we can't update the list
-                if (!SearchInterests.this.isVisible()){
-                    return;
-                }
-                //don't do anything if the list is null
-                //(different from an empty list)
-                if (result == null){
-                    return;
-                }
-
-                //the adapter might not be loaded yet
-                if (adapter != null){
-                    lock.lock();
-                    try {
-                        //filter out all of the user's interests
-                        result.removeAll(userInterests);
-                        //remove entities we will never need
-                        removeDisambiguationPages(result);
-                        removeWikiNewsArticlePages(result);
-                        //display empty state if the results are empty
-                        if (result.size() == 0) {
-                            WikiDataEntity emptyState = new WikiDataEntity();
-                            emptyState.setWikiDataID(adapter.VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID);
-                            emptyState.setLabel(query);
-                            result.add(emptyState);
+                switch (inputMessage.what){
+                    case SearchHelper.SUCCESS :
+                        List<WikiDataEntity> result;
+                        try {
+                            //I catch the class cast exception but Android Studio
+                            // still shows the unchecked cast warning??
+                            result = (List<WikiDataEntity>) inputMessage.obj;
+                        } catch (ClassCastException e){
+                            e.printStackTrace();
+                            return;
                         }
-                        adapter.updateEntries(result);
-                    } finally {
-                        lock.unlock();
-                    }
+                        //if the user exited the screen and we can't update the list
+                        if (!SearchInterests.this.isVisible()){
+                            return;
+                        }
+                        //don't do anything if the list is null
+                        //(different from an empty list)
+                        if (result == null){
+                            return;
+                        }
+
+                        //the adapter might not be loaded yet
+                        if (adapter != null) {
+                            lock.lock();
+                            try {
+                                //filter out all of the user's interests
+                                result.removeAll(userInterests);
+                                //remove entities we will never need
+                                removeDisambiguationPages(result);
+                                removeWikiNewsArticlePages(result);
+                                //display empty state if the results are empty
+                                if (result.size() == 0) {
+                                    WikiDataEntity emptyState = new WikiDataEntity();
+                                    emptyState.setWikiDataID(adapter.VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID);
+                                    emptyState.setLabel(query);
+                                    result.add(emptyState);
+                                }
+                                adapter.updateEntries(result);
+                            } finally {
+                                lock.unlock();
+                            }
+
+                        }
+                        break;
+                    case SearchHelper.FAILURE:
+                        Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
+                                .show();
+                        if (adapter != null) {
+                            //does not display offline if there are already
+                            // results populated
+                            adapter.setOffline();
+                        }
+                        break;
+
                 }
             }
         };

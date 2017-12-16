@@ -18,9 +18,6 @@ public class Splash extends AppCompatActivity{
         //we initialize the sdk so if the user signs in with fb
         //the token will automatically be saved
         //FacebookSdk.sdkInitialize(this.getApplicationContext());
-        if (FirebaseAuth.getInstance().getCurrentUser() == null){
-            FirebaseAuth.getInstance().signInAnonymously();
-        }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         //if this is the user's first time opening the application, send him through a tutorial

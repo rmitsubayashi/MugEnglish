@@ -18,13 +18,17 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     final String VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID = "emptyState";
     final String VIEW_TYPE_LOADING_WIKIDATA_ID = "loading";
     private final String VIEW_TYPE_INITIAL_WIKIDATA_ID = "initial";
+    private final String VIEW_TYPE_OFFLINE_WIKIDATA_ID = "offline";
+    private final String VIEW_TYPE_OFFLINE_AFTER_ADDING_WIKIDATA_ID = "offline after adding";
 
     private final int VIEW_TYPE_RECOMMENDATION_HEADER = 1;
     private final int VIEW_TYPE_RECOMMENDATION_FOOTER = 2;
     private final int VIEW_TYPE_NORMAL = 3;
     private final int VIEW_TYPE_EMPTY = 4;
     private final int VIEW_TYPE_LOADING = 5;
-    private final int VIEW_TYPE_INITIAL = 6;
+    private final int VIEW_TYPE_OFFLINE = 6;
+    private final int VIEW_TYPE_OFFLINE_AFTER_ADDING = 7;
+    private final int VIEW_TYPE_INITIAL = 8;
 
     private List<WikiDataEntity> results = new ArrayList<>();
     private final SearchResultsAdapterListener searchResultsAdapterListener;
@@ -63,22 +67,24 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemViewType(int position){
         WikiDataEntity data = results.get(position);
-        if (data.getWikiDataID().equals(VIEW_TYPE_RECOMMENDATION_HEADER_WIKIDATA_ID)){
-            return VIEW_TYPE_RECOMMENDATION_HEADER;
+        switch (data.getWikiDataID()){
+            case VIEW_TYPE_RECOMMENDATION_HEADER_WIKIDATA_ID:
+                return VIEW_TYPE_RECOMMENDATION_HEADER;
+            case VIEW_TYPE_RECOMMENDATION_FOOTER_WIKIDATA_ID:
+                return VIEW_TYPE_RECOMMENDATION_FOOTER;
+            case VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID:
+                return VIEW_TYPE_EMPTY;
+            case VIEW_TYPE_LOADING_WIKIDATA_ID:
+                return VIEW_TYPE_LOADING;
+            case VIEW_TYPE_INITIAL_WIKIDATA_ID:
+                return VIEW_TYPE_INITIAL;
+            case VIEW_TYPE_OFFLINE_WIKIDATA_ID:
+                return VIEW_TYPE_OFFLINE;
+            case VIEW_TYPE_OFFLINE_AFTER_ADDING_WIKIDATA_ID:
+                return VIEW_TYPE_OFFLINE_AFTER_ADDING;
+            default:
+                return VIEW_TYPE_NORMAL;
         }
-        if (data.getWikiDataID().equals(VIEW_TYPE_RECOMMENDATION_FOOTER_WIKIDATA_ID)){
-            return VIEW_TYPE_RECOMMENDATION_FOOTER;
-        }
-        if (data.getWikiDataID().equals(VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID)){
-            return VIEW_TYPE_EMPTY;
-        }
-        if (data.getWikiDataID().equals(VIEW_TYPE_LOADING_WIKIDATA_ID)){
-            return VIEW_TYPE_LOADING;
-        }
-        if (data.getWikiDataID().equals(VIEW_TYPE_INITIAL_WIKIDATA_ID)){
-            return VIEW_TYPE_INITIAL;
-        }
-        return VIEW_TYPE_NORMAL;
     }
 
     @Override
@@ -89,25 +95,32 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             itemView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_header, parent, false);
             return new SearchResultsRecommendationHeaderViewHolder(itemView);
         }
-        if (viewType == VIEW_TYPE_RECOMMENDATION_FOOTER){
+        else if (viewType == VIEW_TYPE_RECOMMENDATION_FOOTER){
             itemView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_footer, parent, false);
             return new SearchResultsRecommendationFooterViewHolder(itemView);
         }
-        if (viewType == VIEW_TYPE_EMPTY){
+        else if (viewType == VIEW_TYPE_EMPTY){
             itemView = inflater.inflate(R.layout.inflatable_search_interests_empty_state, parent, false);
             return new SearchResultsEmptyStateViewHolder(itemView);
         }
-        if (viewType == VIEW_TYPE_LOADING){
+        else if (viewType == VIEW_TYPE_LOADING){
             itemView = inflater.inflate(R.layout.inflatable_search_interest_loading, parent, false);
             return new RecyclerView.ViewHolder(itemView) {};
         }
-        if (viewType == VIEW_TYPE_INITIAL){
+        else if (viewType == VIEW_TYPE_INITIAL){
             itemView = inflater.inflate(R.layout.inflatable_search_interest_initial_state, parent, false);
             return new RecyclerView.ViewHolder(itemView) {};
+        } else if (viewType == VIEW_TYPE_OFFLINE){
+            itemView = inflater.inflate(R.layout.inflatable_search_interests_offline, parent, false);
+            return new RecyclerView.ViewHolder(itemView){};
+        } else if (viewType == VIEW_TYPE_OFFLINE_AFTER_ADDING){
+            itemView = inflater.inflate(R.layout.inflatable_search_interests_offline_after_adding, parent, false);
+            return new SearchResultsOfflineAfterAddingViewHolder(itemView);
+        }else {
+            //everything else is a item
+            itemView = inflater.inflate(R.layout.inflatable_search_interests_result_item, parent, false);
+            return new SearchResultsViewHolder(itemView);
         }
-        //everything else is a item
-        itemView = inflater.inflate(R.layout.inflatable_search_interests_result_item, parent, false);
-        return new SearchResultsViewHolder(itemView);
     }
 
     @Override
@@ -144,6 +157,9 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (viewHolder instanceof SearchResultsEmptyStateViewHolder){
             WikiDataEntity data = results.get(position);
             ((SearchResultsEmptyStateViewHolder) viewHolder).setQuery(data.getLabel());
+        } else if (viewHolder instanceof SearchResultsOfflineAfterAddingViewHolder){
+            WikiDataEntity data = results.get(position);
+            ((SearchResultsOfflineAfterAddingViewHolder) viewHolder).setTitle(data.getLabel());
         }
     }
 
@@ -157,7 +173,8 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     !wikiDataID.equals(VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID) &&
                     !wikiDataID.equals(VIEW_TYPE_RECOMMENDATION_FOOTER_WIKIDATA_ID) &&
                     !wikiDataID.equals(VIEW_TYPE_RECOMMENDATION_HEADER_WIKIDATA_ID) &&
-                    !wikiDataID.equals(VIEW_TYPE_INITIAL_WIKIDATA_ID)){
+                    !wikiDataID.equals(VIEW_TYPE_INITIAL_WIKIDATA_ID) &&
+                    !wikiDataID.equals(VIEW_TYPE_OFFLINE_WIKIDATA_ID)){
                 resultCt++;
             }
         }
@@ -173,6 +190,31 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         }
         return isLoading;
+    }
+
+    void setOffline(){
+        //if there are search results, don't show.
+        //we do show a toast, so the user will be notified either way
+        if (getSearchResultSize() != 0){
+            return;
+        }
+        List<WikiDataEntity> offlineList = new ArrayList<>(1);
+        WikiDataEntity offline = new WikiDataEntity();
+        offline.setWikiDataID(VIEW_TYPE_OFFLINE_WIKIDATA_ID);
+        offlineList.add(offline);
+
+        updateEntries(offlineList);
+    }
+
+    void setOfflineAfterAdding(WikiDataEntity addedItem){
+        List<WikiDataEntity> offlineList = new ArrayList<>(1);
+        WikiDataEntity offline = new WikiDataEntity();
+        offline.setWikiDataID(VIEW_TYPE_OFFLINE_AFTER_ADDING_WIKIDATA_ID);
+        //we need the label to display to the user
+        offline.setLabel(addedItem.getLabel());
+        offlineList.add(offline);
+
+        updateEntries(offlineList);
     }
 
     //a whole new set of data.

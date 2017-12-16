@@ -1,5 +1,6 @@
 package com.linnca.pelicann.lessongenerator;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
@@ -65,9 +66,12 @@ public abstract class Lesson {
 	private final LessonListener lessonListener;
 
 	private EndpointConnectorReturnsXML connector = null;
+	//to detect network interruptions
+	private Context context;
 
 	public interface LessonListener {
 		void onLessonCreated();
+		void onNoConnection();
 	}
 	
 	
@@ -80,7 +84,8 @@ public abstract class Lesson {
 	// 1. check if a question already exists in the database
 	// 2. create and fill the rest of the questions by querying WikiData
 	// 3. save the new questions in the DB
-	public void createInstance() {
+	public void createInstance(Context context) {
+		this.context = context;
 		startFlow();
 	}
 
@@ -118,8 +123,13 @@ public abstract class Lesson {
 				}
 				populateUserQuestionHistory();
 			}
+
+			@Override
+			public void onNoConnection(){
+				lessonListener.onNoConnection();
+			}
 		};
-		db.getUserInterests(onDBResultListener);
+		db.getUserInterests(context, false, onDBResultListener);
 	}
 
 	//we need to skip over questions the user has already solved
@@ -133,8 +143,12 @@ public abstract class Lesson {
 
 				fillQuestionsFromDatabase();
 			}
+			@Override
+			public void onNoConnection(){
+				lessonListener.onNoConnection();
+			}
 		};
-		db.getLessonInstances(lessonKey, false, onDBResultListener);
+		db.getLessonInstances(context, lessonKey, false, onDBResultListener);
 	}
 
 
@@ -184,8 +198,13 @@ public abstract class Lesson {
 					searchWikiData(copy);
 				}
 			}
+
+			@Override
+			public void onNoConnection(){
+				lessonListener.onNoConnection();
+			}
 		};
-		db.searchQuestions(lessonKey, userInterestList, questionSetsLeftToPopulate,
+		db.searchQuestions(context, lessonKey, userInterestList, questionSetsLeftToPopulate,
 				questionSetIDsToAvoid, onDBResultListener);
 	}
 	
@@ -207,6 +226,7 @@ public abstract class Lesson {
 		EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
 			AtomicInteger DOMsFetched = new AtomicInteger(0);
 			AtomicBoolean onStoppedCalled = new AtomicBoolean(false);
+			AtomicBoolean error = new AtomicBoolean(false);
 			@Override
 			public boolean shouldStop() {
 				//should stop either if we've got enough questions or
@@ -219,7 +239,11 @@ public abstract class Lesson {
 			public void onStop(){
 				//only call once
 				if (!onStoppedCalled.getAndSet(true)) {
-					accessDBWhenCreatingQuestions();
+					if (!error.get()) {
+						accessDBWhenCreatingQuestions();
+					} else {
+						lessonListener.onNoConnection();
+					}
 				}
 			}
 
@@ -229,6 +253,11 @@ public abstract class Lesson {
 				if (!onStoppedCalled.get()) {
 					processResultsIntoClassWrappers(result);
 				}
+			}
+
+			@Override
+			public void onError(){
+				error.set(true);
 			}
 		};
 		try {
@@ -296,6 +325,12 @@ public abstract class Lesson {
 					fillRemainingQuestions();
 				}
 			}
+
+			//saving new questions in offline state already handled by FireBase
+			// (FireBase just queues all write operations for the next time
+			// the user is connected).
+			//no need to notify if the user is not connected because
+			// we can handle it in the next methods
 		};
 
     	db.addQuestions(lessonKey, newQuestions, onDBResultListener);
@@ -323,8 +358,11 @@ public abstract class Lesson {
 				//now we are done with setting up all question set IDs fo this instance.
 				//now grab all the data required for creating the instance
 				getQuestionDataFromQuestionSetIDs();
+			}
 
-
+			@Override
+			public void onNoConnection(){
+				lessonListener.onNoConnection();
 			}
 		};
 		List<String> questionSetIDsToAvoid = new ArrayList<>(
@@ -335,7 +373,7 @@ public abstract class Lesson {
 		//add these so we can avoid them
 		questionSetIDsToAvoid.addAll(lessonInstanceData.questionSetIds());
 		questionSetIDsToAvoid.addAll(userQuestionHistory);
-		db.getPopularQuestionSets(lessonKey, questionSetIDsToAvoid,
+		db.getPopularQuestionSets(context, lessonKey, questionSetIDsToAvoid,
 				questionSetsLeftToPopulate, onDBResultListener);
 	}
 
@@ -384,9 +422,14 @@ public abstract class Lesson {
 
 				saveInstance();
 			}
+
+			@Override
+			public void onNoConnection(){
+				lessonListener.onNoConnection();
+			}
 		};
 
-		db.getQuestionSets(lessonKey, questionSetIDs, onDBResultListener);
+		db.getQuestionSets(context, lessonKey, questionSetIDs, onDBResultListener);
 	}
 
 	private void saveInstance(){
@@ -405,8 +448,17 @@ public abstract class Lesson {
 			public void onLessonInstanceAdded() {
 				lessonListener.onLessonCreated();
 			}
+
+			@Override
+			public void onNoConnection(){
+				//this will still queue the lesson instance to be updated (FireBase).
+				//so when the user regains connection,
+				// the new lesson instance show up
+				lessonListener.onNoConnection();
+			}
 		};
-		db.addLessonInstance(lessonInstanceData, lessonInstanceVocabularyWordIDs,
+		db.addLessonInstance(context, lessonInstanceData,
+				lessonInstanceVocabularyWordIDs,
 				onLessonInstanceAddedResultListener);
 
 		//this can be asynchronous

@@ -1,5 +1,5 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">MugEnglish</string>
+    <string name="app_name">Pelicann</string>
 
     <!--firebase UI-->
     <string name="facebook_application_id" translatable="false">159539307868031</string>
@@ -78,6 +78,9 @@
     <!--app bar icon titles-->
     <string name="toolbar_search_title">検索</string>
     <string name="toolbar_description_title">説明</string>
+
+    <!--general-->
+    <string name="no_connection">ネットに接続してください</string>
 
     <!--preferences-->
     <string name="preferences_main_key">Main Preferences</string>
@@ -164,7 +167,7 @@
 
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_skip">スキップ</string>
-    <string name="onboarding_finish">終了</string>
+    <string name="onboarding_finish">始める</string>
     <string name="onboarding1_explanation">「お気に入り」に好きな人や場所を追加すると・・・</string>
     <string name="onboarding2_explanation">例文に出てきます！</string>
     <string name="onboarding3_explanation">お気に入りを追加します。\nおすすめセットを選択してください</string>
@@ -204,6 +207,7 @@
     <string name="results_unlocked_lesson_title">解放されたレッスン</string>
     <string name="results_no_unlocked_lessons_title">解放されたレッスンはありません</string>
     <string name="results_unlocked_lesson_item_go_to_lesson">レッスンに行く</string>
+    <string name="results_vocabulary_no_connection">新しい単語を追加するにはネットに接続してください</string>
     <!--results after review-->
     <string name="review_results_title">復習お疲れ様です</string>
     <string name="review_results_correct_ct">正解数</string>
@@ -219,6 +223,8 @@
     <string name="search_interests_empty_state_title_backup">見つかりませんでした</string>
     <string name="search_interests_empty_state_advice">検索エンジンはWikipedia（ウィキペディア）を参照しています。\nWikipediaの記事に載っている題名を検索してみてください！</string>
     <string name="search_interests_initial_state_title">日本語か英語で検索してください</string>
+    <string name="search_interests_offline_after_adding_message">「%1$s」はネットに接続した時に自動的に追加されます</string>
+
 
     <!--Facebook interests-->
     <string name="facebook_interests_app_bar_title">Facebookで検索</string>
@@ -305,6 +311,7 @@
     <string name="vocabulary_details_meaning">意味</string>
     <string name="vocabulary_details_example_sentence">例文</string>
     <string name="vocabulary_details_go_to_lesson">レッスンにいく</string>
+    <string name="vocabulary_details_offline_notification">詳細を見るにはネットに接続してください</string>
 
     <!--for the calendar view-->
     <string name="calendar_sunday">日</string>

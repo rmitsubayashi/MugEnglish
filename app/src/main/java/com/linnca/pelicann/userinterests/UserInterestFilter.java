@@ -28,7 +28,7 @@ public class UserInterestFilter {
         setFilter(currentFilter);
     }
 
-    public List<WikiDataEntity> getFilteredList(){return filteredList;}
+    List<WikiDataEntity> getFilteredList(){return filteredList;}
 
     public int size(){
         return filteredList.size();
@@ -74,8 +74,9 @@ public class UserInterestFilter {
         for (Iterator<WikiDataEntity> iterator = filteredList.iterator(); iterator.hasNext();){
             WikiDataEntity data = iterator.next();
             //no matter the filter,
-            //we should show the empty state
-            if (data.getWikiDataID().equals(UserInterestAdapter.EMPTY_STATE_TAG)){
+            //we should show the empty state and no network state
+            if (data.getWikiDataID().equals(UserInterestAdapter.EMPTY_STATE_TAG) ||
+                    data.getWikiDataID().equals(UserInterestAdapter.NO_NETWORK_TAG)){
                 continue;
             }
             if (!toMatchFilter.contains(data.getClassification())){

@@ -3,7 +3,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId "com.mugenglish"
+        applicationId "com.linnca.pelicann"
         minSdkVersion 20
         targetSdkVersion 26
         versionCode 1
@@ -16,7 +16,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
-        //so we can have a separate debug database
+       //so we can have a separate debug database
         debug {
             applicationIdSuffix ".debug"
         }

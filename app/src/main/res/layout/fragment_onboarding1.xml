@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:padding="12dp"
     >
     <!--so we can have a big image on all screen sizes-->
     <LinearLayout

@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
@@ -19,6 +20,7 @@ import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -118,8 +120,21 @@ public class LessonList extends Fragment {
                     }
                 }
             }
+
+            @Override
+            public void onNoConnection(){
+                if (adapter == null) {
+                    //show empty lesson viewer
+                    LessonListViewer lessonListViewer = new LessonListViewerImplementation();
+                    List<LessonListRow> lessonRows = lessonListViewer.getLessonsAtLevel(lessonLevel);
+                    adapter = new LessonListAdapter(lessonLevel, lessonRows, listener, null);
+                    listView.setAdapter(adapter);
+                    Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
+                            .show();
+                }
+            }
         };
-        db.getClearedLessons(lessonLevel, true, onDBResultListener);
+        db.getClearedLessons(getContext(), lessonLevel, true, onDBResultListener);
     }
 
     @Override

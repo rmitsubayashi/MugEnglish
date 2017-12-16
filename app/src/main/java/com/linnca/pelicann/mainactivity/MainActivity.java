@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
@@ -52,6 +53,7 @@ import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.userprofile.UserProfile;
 import com.linnca.pelicann.vocabulary.VocabularyDetails;
 import com.linnca.pelicann.vocabulary.VocabularyList;
+import com.linnca.pelicann.vocabulary.VocabularyListWord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -345,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements
         // (unlike the question and instance review manager),
         // instantiate it locally
         lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
-        lessonsReviewManager.startReview(lessonLevel, reviewKey);
+        lessonsReviewManager.startReview(this, lessonLevel, reviewKey);
         switchActionBarUpButton();
     }
 
@@ -378,8 +380,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void vocabularyListToVocabularyDetails(String key){
-        fragmentManager.vocabularyListToVocabularyDetails(db, key);
+    public void vocabularyListToVocabularyDetails(VocabularyListWord word){
+        fragmentManager.vocabularyListToVocabularyDetails(db, word);
         switchActionBarUpButton();
     }
 
@@ -508,7 +510,24 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData, String lessonKey){
-        questionManager.startQuestions(lessonInstanceData, lessonKey);
+        OnDBResultListener noConnectionListener = new OnDBResultListener() {
+            @Override
+            public void onNoConnection() {
+                MainActivity.this.onNoConnection();
+                //question manager starts questions -> can't get question ->
+                // stops listening.
+                //next time user tries to start questions -> questions already started! ->
+                // user can't start questions.
+                //so, reset manager
+                questionManager.resetManager();
+            }
+
+            @Override
+            public void onSlowConnection() {
+                MainActivity.this.onSlowConnection();
+            }
+        };
+        questionManager.startQuestions(this, lessonInstanceData, lessonKey, noConnectionListener);
     }
 
     @Override
@@ -524,9 +543,9 @@ public class MainActivity extends AppCompatActivity implements
     // the question manager tells the main activity what to do next ->
     // the main activity creates the next question fragment
     @Override
-    public void onNextQuestion(boolean correct){
+    public void onNextQuestion(boolean correct, OnDBResultListener noConnectionListener){
         if (questionManager.questionsStarted()) {
-            questionManager.nextQuestion(false);
+            questionManager.nextQuestion(this, false, noConnectionListener);
         }
         if (instanceReviewManager.reviewStarted()) {
             instanceReviewManager.nextQuestion(false);
@@ -534,10 +553,10 @@ public class MainActivity extends AppCompatActivity implements
         //we might not have instantiated this yet
         if (lessonsReviewManager != null){
             if (correct){
-                lessonsReviewManager.nextQuestion(false);
+                lessonsReviewManager.nextQuestion(this, false);
             } else {
                 lessonsReviewManager.returnQuestionToStack();
-                lessonsReviewManager.nextQuestion(false);
+                lessonsReviewManager.nextQuestion(this, false);
             }
         }
     }
@@ -803,6 +822,13 @@ public class MainActivity extends AppCompatActivity implements
 
         return textToSpeech;
     }
+
+    private void onNoConnection(){
+        Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    private void onSlowConnection(){}
 
     @Override
     protected void onStop(){

@@ -1,5 +1,7 @@
 package com.linnca.pelicann.questions;
 
+import android.content.Context;
+
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
 
@@ -29,7 +31,7 @@ public class LessonsReviewManager {
         this.lessonReviewManagerListener = listener;
     }
 
-    public void startReview(int lessonLevel, String reviewID){
+    public void startReview(final Context context, int lessonLevel, String reviewID){
         if (reviewStarted)
             return;
 
@@ -41,7 +43,7 @@ public class LessonsReviewManager {
                 questionIDs = selectQuestions(questionKeys);
                 totalQuestions = questionIDs.size();
                 reviewStarted = true;
-                nextQuestion(true);
+                nextQuestion(context, true);
             }
         };
         db.getReviewQuestions(onDBResultListener);
@@ -51,7 +53,7 @@ public class LessonsReviewManager {
         return reviewStarted;
     }
 
-    public void nextQuestion(final boolean isFirstQuestion){
+    public void nextQuestion(Context context, final boolean isFirstQuestion){
         if (!reviewStarted)
             return;
 
@@ -68,7 +70,7 @@ public class LessonsReviewManager {
                 questionMkr++;
             }
         };
-        db.getQuestion(questionIDs.get(questionMkr), onDBResultListener);
+        db.getQuestion(context, questionIDs.get(questionMkr), onDBResultListener);
     }
 
     //for the lesson review, don't let the user finish until the user has correctly answered

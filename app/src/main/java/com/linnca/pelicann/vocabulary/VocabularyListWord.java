@@ -2,10 +2,11 @@ package com.linnca.pelicann.vocabulary;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VocabularyListWord implements Comparable<VocabularyListWord>{
+public class VocabularyListWord implements Comparable<VocabularyListWord>, Serializable {
     //make sure 'word' matches in FireBaseDBHeaders
     private String word;
     private List<String> meanings;

@@ -27,6 +27,7 @@ import com.linnca.pelicann.userinterests.UserInterests;
 import com.linnca.pelicann.userprofile.UserProfile;
 import com.linnca.pelicann.vocabulary.VocabularyDetails;
 import com.linnca.pelicann.vocabulary.VocabularyList;
+import com.linnca.pelicann.vocabulary.VocabularyListWord;
 
 import java.util.ArrayList;
 
@@ -130,11 +131,11 @@ class MainActivityFragmentManager {
         fragmentTransaction.commit();
     }
 
-    void vocabularyListToVocabularyDetails(Database db, String vocabularyID){
+    void vocabularyListToVocabularyDetails(Database db, VocabularyListWord word){
         Fragment fragment = new VocabularyDetails();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        bundle.putString(VocabularyDetails.BUNDLE_VOCABULARY_ID, vocabularyID);
+        bundle.putSerializable(VocabularyDetails.BUNDLE_VOCABULARY_WORD, word);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, VocabularyDetails.TAG);

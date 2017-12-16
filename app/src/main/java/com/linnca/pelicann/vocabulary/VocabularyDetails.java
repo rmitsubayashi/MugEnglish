@@ -15,18 +15,20 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VocabularyDetails extends Fragment{
     public static final String TAG = "VocabularyDetails";
-    public static final String BUNDLE_VOCABULARY_ID = "vocabularyID";
+    public static final String BUNDLE_VOCABULARY_WORD = "vocabularyWord";
 
-    private String key;
+    private VocabularyListWord word;
     private TextView wordTextView;
-    private LinearLayout mainLayout;
+    private LinearLayout meaningsList;
     VocabularyDetailsListener listener;
 
     private Database db;
@@ -52,9 +54,14 @@ public class VocabularyDetails extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.fragment_vocabulary_details, container, false);
-        mainLayout = view.findViewById(R.id.vocabulary_details_main_layout);
+        meaningsList = view.findViewById(R.id.vocabulary_details_meanings_list);
         wordTextView = view.findViewById(R.id.vocabulary_details_word);
-        key = getArguments().getString(BUNDLE_VOCABULARY_ID);
+        try {
+            word = (VocabularyListWord) getArguments().getSerializable(BUNDLE_VOCABULARY_WORD);
+        } catch (ClassCastException e){
+            e.printStackTrace();
+            word = new VocabularyListWord("", new ArrayList<String>(1), "");
+        }
         return view;
     }
 
@@ -91,13 +98,23 @@ public class VocabularyDetails extends Fragment{
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onVocabularyWordQueried(List<VocabularyWord> wordCluster) {
+                //we might have the backup offline item, so clear that view
+                meaningsList.removeAllViews();
                 for (VocabularyWord word : wordCluster) {
                     setTitle(word);
                     setDetailItem(word);
                 }
             }
+
+            @Override
+            public void onNoConnection(){
+                //nothing has been loaded yet
+                if (meaningsList.getChildCount() == 0){
+                    setOfflineItems(word);
+                }
+            }
         };
-        db.getVocabularyDetails(key, onDBResultListener);
+        db.getVocabularyDetails(getContext(), word.getKey(), onDBResultListener);
     }
 
     private void setTitle(VocabularyWord word){
@@ -112,14 +129,14 @@ public class VocabularyDetails extends Fragment{
         if (word == null)
             return;
 
-        View wordView = getLayoutInflater().inflate(R.layout.inflatable_vocabulary_details_item, mainLayout, false);
-        TextView meaningView = wordView.findViewById(R.id.vocabulary_details_item_meaning);
-        meaningView.setText(word.getMeaning());
-        TextView exampleSentenceView = wordView.findViewById(R.id.vocabulary_details_item_example_sentence);
+        View meaningView = getLayoutInflater().inflate(R.layout.inflatable_vocabulary_details_item, meaningsList, false);
+        TextView meaningTextView = meaningView.findViewById(R.id.vocabulary_details_item_meaning);
+        meaningTextView.setText(word.getMeaning());
+        TextView exampleSentenceView = meaningView.findViewById(R.id.vocabulary_details_item_example_sentence);
         exampleSentenceView.setText(word.getExampleSentence());
-        TextView exampleSentenceTranslationView = wordView.findViewById(R.id.vocabulary_details_item_example_sentence_translation);
+        TextView exampleSentenceTranslationView = meaningView.findViewById(R.id.vocabulary_details_item_example_sentence_translation);
         exampleSentenceTranslationView.setText(word.getExampleSentenceTranslation());
-        Button goToLessonButton = wordView.findViewById(R.id.vocabulary_details_item_go_to_lesson_button);
+        Button goToLessonButton = meaningView.findViewById(R.id.vocabulary_details_item_go_to_lesson_button);
         final String lessonKey = word.getLessonID();
         goToLessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +145,23 @@ public class VocabularyDetails extends Fragment{
             }
         });
 
-        mainLayout.addView(wordView);
+        meaningsList.addView(meaningView);
+    }
+    
+    private void setOfflineItems(VocabularyListWord word){
+        wordTextView.setText(word.getWord());
+        for (String meaning : word.getMeanings()) {
+            View meaningView = getLayoutInflater().inflate(R.layout.inflatable_vocabulary_details_offline_item, meaningsList, false);
+            TextView meaningTextView = meaningView.findViewById(R.id.vocabulary_details_offline_item_meaning);
+            meaningTextView.setText(meaning);
+
+            meaningsList.addView(meaningView);
+        }
+        //add a textView at the end to notify the user that he's offline
+        TextView offlineTextView = new TextView(getContext());
+        offlineTextView.setText(R.string.vocabulary_details_offline_notification);
+        offlineTextView.setTextSize(GUIUtils.getDp(16, getContext()));
+        meaningsList.addView(offlineTextView);
     }
 
     @Override

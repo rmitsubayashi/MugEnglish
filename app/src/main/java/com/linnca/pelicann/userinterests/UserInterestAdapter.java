@@ -23,8 +23,10 @@ class UserInterestAdapter
     private HashSet<Integer> selectedDataPositions = new HashSet<>();
 
     static final String EMPTY_STATE_TAG = "empty state";
+    static final String NO_NETWORK_TAG = "no network";
     private final int emptyStateViewType = 1;
     private final int userInterestItemViewType = 2;
+    private final int noNetworkViewType = 3;
 
     interface UserInterestAdapterListener {
         //should allow undo-ing
@@ -51,10 +53,13 @@ class UserInterestAdapter
     @Override
     public int getItemViewType(int position){
         WikiDataEntity item = userInterestFilter.get(position);
-        if (item.getWikiDataID().equals(EMPTY_STATE_TAG)){
-            return emptyStateViewType;
-        } else {
-            return userInterestItemViewType;
+        switch (item.getWikiDataID()){
+            case EMPTY_STATE_TAG :
+                return emptyStateViewType;
+            case NO_NETWORK_TAG :
+                return noNetworkViewType;
+            default:
+                return userInterestItemViewType;
         }
     }
 
@@ -63,6 +68,10 @@ class UserInterestAdapter
         if (viewType == emptyStateViewType){
             View itemView = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.inflatable_user_interest_empty_state, parent, false);
+            return new RecyclerView.ViewHolder(itemView){};
+        } else if (viewType == noNetworkViewType){
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.inflatable_user_interests_offline, parent, false);
             return new RecyclerView.ViewHolder(itemView){};
         } else if (viewType == userInterestItemViewType) {
             View itemView = LayoutInflater.from(parent.getContext())
@@ -234,6 +243,14 @@ class UserInterestAdapter
 
     }
 
+    void setOffline(){
+        List<WikiDataEntity> noNetworkList = new ArrayList<>(1);
+        WikiDataEntity noNetwork = new WikiDataEntity();
+        noNetwork.setWikiDataID(NO_NETWORK_TAG);
+        noNetworkList.add(noNetwork);
+        setInterests(noNetworkList);
+    }
+
     private void removeItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){
         List<Integer> toRemove = GUIUtils.getItemIndexesToRemove(oldList, newList);
         for (Integer index : toRemove){
@@ -244,7 +261,9 @@ class UserInterestAdapter
     private void addItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){
         //remove the empty state if it's there first
         if (oldList.size() == 1 &&
-                oldList.get(0).getWikiDataID().equals(EMPTY_STATE_TAG)){
+                (oldList.get(0).getWikiDataID().equals(EMPTY_STATE_TAG) ||
+                        oldList.get(0).getWikiDataID().equals(NO_NETWORK_TAG))
+                ){
             oldList.remove(0);
             notifyItemRemoved(0);
         }

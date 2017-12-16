@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -11,14 +12,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.userinterestcontrols.StarterPacks;
@@ -127,7 +133,7 @@ public class Onboarding extends AppCompatActivity {
 
     private void addStarterPack(int starterPackSelection){
         List<WikiDataEntity> list = StarterPacks.getStarterPack(starterPackSelection);
-        db.addUserInterests(list, new OnDBResultListener() {
+        db.addUserInterests(this, list, new OnDBResultListener() {
             @Override
             public void onUserInterestsAdded() {
                 super.onUserInterestsAdded();
@@ -148,6 +154,19 @@ public class Onboarding extends AppCompatActivity {
         viewPager.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
         finishButton.setTextColor(ContextCompat.getColor(this, R.color.gray500));
+        finishButton.setOnClickListener(null);
+    }
+
+    private void hideLoading(){
+        viewPager.setVisibility(View.VISIBLE);
+        loading.setVisibility(View.GONE);
+        finishButton.setTextColor(ThemeColorChanger.getColorFromAttribute(R.attr.color500,this));
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toApp();
+            }
+        });
     }
 
     private void toApp(){
@@ -156,19 +175,25 @@ public class Onboarding extends AppCompatActivity {
             return;
         }
 
-        markOnboardingCompleted();
-
         showLoading();
 
         FirebaseAuth.getInstance().signInAnonymously().addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-                String newUserID = authResult.getUser().getUid();
+                markOnboardingCompleted();
+                //String newUserID = authResult.getUser().getUid();
                 addStarterPack(adapter.getStarterPackSelection());
                 Intent intent = new Intent(Onboarding.this, MainActivity.class);
                 intent.putExtra(MainActivity.BUNDLE_DATABASE, new FirebaseDB());
                 startActivity(intent);
                 Onboarding.this.finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                hideLoading();
+                Toast.makeText(Onboarding.this, R.string.no_connection, Toast.LENGTH_SHORT)
+                        .show();
             }
         });
 

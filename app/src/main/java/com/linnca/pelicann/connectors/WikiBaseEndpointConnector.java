@@ -83,7 +83,7 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 							listener.onStop();
 						}
 					} catch (Exception e){
-						e.printStackTrace();
+						listener.onError();
 					}
 				}
 			};

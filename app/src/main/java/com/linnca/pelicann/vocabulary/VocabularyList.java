@@ -40,7 +40,7 @@ public class VocabularyList extends Fragment {
     private ActionMode.Callback actionModeCallback;
 
     public interface VocabularyListListener {
-        void vocabularyListToVocabularyDetails(String key);
+        void vocabularyListToVocabularyDetails(VocabularyListWord word);
         void vocabularyListToLessonList();
         void setToolbarState(ToolbarState state);
     }
@@ -110,9 +110,24 @@ public class VocabularyList extends Fragment {
 
                 adapter.setVocabularyWords(vocabularyList);
 
+                //if we had items selected, de-select them
+                if (actionMode != null){
+                    actionMode.finish();
+                }
+
+            }
+
+            @Override
+            public void onNoConnection(){
+                if (adapter == null){
+                    adapter = new VocabularyListAdapter(getVocabularyListAdapterListener());
+                    listView.setAdapter(adapter);
+                    adapter.setOffline();
+                }
+                //don't change anything if there is already an adapter (something shown)
             }
         };
-        db.getVocabularyList(onDBResultListener);
+        db.getVocabularyList(getContext(), onDBResultListener);
     }
 
     private VocabularyListAdapter.VocabularyListAdapterListener getVocabularyListAdapterListener(){
@@ -128,7 +143,7 @@ public class VocabularyList extends Fragment {
                     toggleSelection(position);
                 } else {
                     VocabularyListWord word = adapter.getItemAt(position);
-                    listener.vocabularyListToVocabularyDetails(word.getKey());
+                    listener.vocabularyListToVocabularyDetails(word);
                 }
             }
 

@@ -19,8 +19,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.ToolbarState;
@@ -50,13 +52,19 @@ public abstract class QuestionFragmentInterface extends Fragment {
     protected ViewGroup siblingViewGroupForFeedback;
     protected View keyboardFocusView;
 
+    //we reset the feedback next button's properties when we click it,
+    // but we might need to show it again in case we can't establish a
+    // connection. so, save whether the feedback is for a correct or incorrect
+    // response
+    private Boolean responseCorrect = null;
+
     private QuestionListener questionListener;
 
     protected TextToSpeech textToSpeech;
 
     public interface QuestionListener {
         //this is for every time the user moves on to the next question
-        void onNextQuestion(boolean correct);
+        void onNextQuestion(boolean correct, OnDBResultListener noConnectionListener);
         //this is for every response, whether the user moves on to
         // the next question or not
         void onRecordResponse(String response, boolean correct);
@@ -208,27 +216,11 @@ public abstract class QuestionFragmentInterface extends Fragment {
         //overridden if we need to do something
         doSomethingOnFeedbackOpened(correct, response);
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //prevent multiple clicks
-                nextButton.setOnClickListener(null);
-                nextButton.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-                        return true;
-                    }
-                });
-                //make sure the user knows that he clicked it (in case it lags)
-                nextButton.setBackgroundResource(R.drawable.transparent_button);
-                nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
-                nextButton.setAlpha(0.3f);
-                questionListener.onNextQuestion(correct);
-            }
-        });
+        //save in case we need to format the feedback again
+        responseCorrect = correct;
+        formatFeedbackNextButton(correct);
         if (correct){
             feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_green500));
-            nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.light_green500));
         } //else condition is default now
         TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
         final String description = QuestionFeedbackFormatter.formatFeedback(correct,
@@ -258,6 +250,26 @@ public abstract class QuestionFragmentInterface extends Fragment {
         //but we want them to be able to see it
         disableBackground(siblingViewGroupForFeedback);
         siblingViewGroupForFeedback.setAlpha(0.5f);
+    }
+
+    //what happens when we can't get a connection when going to the next
+    // question
+    private OnDBResultListener getNoConnectionListener(){
+        return new OnDBResultListener() {
+            @Override
+            public void onNoConnection() {
+                //enable the button
+                enableFeedbackNextButton();
+                //let the user know he doesn't have a connection
+                Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            @Override
+            public void onSlowConnection() {
+                super.onSlowConnection();
+            }
+        };
     }
 
     private void openFeedbackHelper(String description){
@@ -301,6 +313,49 @@ public abstract class QuestionFragmentInterface extends Fragment {
                 disableBackground(child);
             }
         }
+    }
+
+    private void formatFeedbackNextButton(final boolean correct){
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                disableFeedbackNextButton();
+                questionListener.onNextQuestion(correct, getNoConnectionListener());
+            }
+        });
+        if (correct){
+            nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.light_green500));
+        } else {
+            nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.orange500));
+        }
+    }
+
+    private void disableFeedbackNextButton(){
+        //prevent multiple clicks
+        nextButton.setOnClickListener(null);
+        nextButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+        //make sure the user knows that he clicked it (in case it lags)
+        nextButton.setBackgroundResource(R.drawable.transparent_button);
+        nextButton.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+        nextButton.setAlpha(0.3f);
+    }
+
+    private void enableFeedbackNextButton(){
+        nextButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return false;
+            }
+        });
+        nextButton.setBackgroundResource(R.drawable.white_button);
+        nextButton.setAlpha(1f);
+        formatFeedbackNextButton(responseCorrect);
+
     }
 
 }

@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -121,14 +122,16 @@ public class UserInterests extends Fragment {
     }
 
     private void setAdapter(){
-        userInterestListAdapter = new UserInterestAdapter(
-                getUserInterestAdapterListener()
-        );
-        listView.setAdapter(userInterestListAdapter);
-
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onUserInterestsQueried(List<WikiDataEntity> userInterests) {
+                if (userInterestListAdapter == null) {
+                    userInterestListAdapter = new UserInterestAdapter(
+                            getUserInterestAdapterListener()
+                    );
+                    listView.setAdapter(userInterestListAdapter);
+                }
+
                 //if the user has something selected while updating interests
                 //(which shouldn't happen unless working from two devices)
                 //we should de-select everything first
@@ -136,9 +139,23 @@ public class UserInterests extends Fragment {
                     actionMode.finish();
                 userInterestListAdapter.setInterests(userInterests);
             }
+
+            @Override
+            public void onNoConnection(){
+                if (userInterestListAdapter == null) {
+                    userInterestListAdapter = new UserInterestAdapter(
+                            getUserInterestAdapterListener()
+                    );
+                    listView.setAdapter(userInterestListAdapter);
+                    userInterestListAdapter.setOffline();
+                } else {
+                    Log.d(TAG, "user interest adapter is not null");
+                }
+                //don't do anything if we have a list already populated
+            }
         };
 
-        db.getUserInterests(onDBResultListener);
+        db.getUserInterests(getContext(), true, onDBResultListener);
     }
 
 
@@ -224,14 +241,17 @@ public class UserInterests extends Fragment {
                         //undo
                         OnDBResultListener onDBResultListener = new OnDBResultListener() {
                             @Override
-                            public void onUserInterestsRemoved() {
+                            public void onUserInterestsAdded() {
                                 if (undoOnTouchListener != null) {
                                     listView.removeOnItemTouchListener(undoOnTouchListener);
                                     undoOnTouchListener = null;
                                 }
                             }
+
+                            @Override
+                            public void onNoConnection(){}
                         };
-                        db.addUserInterests(dataToRecover, onDBResultListener);
+                        db.addUserInterests(getContext(), dataToRecover, onDBResultListener);
                     }
                 }
         );
@@ -310,5 +330,6 @@ public class UserInterests extends Fragment {
     public void onStop(){
         super.onStop();
         db.cleanup();
+        userInterestListAdapter = null;
     }
 }

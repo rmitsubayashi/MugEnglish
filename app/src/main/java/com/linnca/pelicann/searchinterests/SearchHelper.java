@@ -25,6 +25,9 @@ class SearchHelper {
     private ScheduledThreadPoolExecutor executor;
     private List<ScheduledFuture> queuedTasks = new ArrayList<>();
 
+    static final int SUCCESS = 1;
+    static final int FAILURE = 2;
+
     SearchHelper(EndpointConnectorReturnsXML connector){
         this.connector = connector;
         this.executor = new ScheduledThreadPoolExecutor(
@@ -107,7 +110,14 @@ class SearchHelper {
                     return;
                 }
 
-                Message message = handler.obtainMessage(0, searchResults);
+                Message message = handler.obtainMessage(SUCCESS, searchResults);
+                message.sendToTarget();
+            }
+
+            @Override
+            public void onError(){
+
+                Message message = handler.obtainMessage(FAILURE);
                 message.sendToTarget();
             }
         };
