@@ -1,7 +1,5 @@
 package com.linnca.pelicann.userinterestcontrols;
 
-import android.util.Log;
-
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsJSON;
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.PronunciationAPIConnector;

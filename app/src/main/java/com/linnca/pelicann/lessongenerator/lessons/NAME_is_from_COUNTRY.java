@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 public class NAME_is_from_COUNTRY extends Lesson {
     public static final String KEY = "NAME_is_from_COUNTRY";

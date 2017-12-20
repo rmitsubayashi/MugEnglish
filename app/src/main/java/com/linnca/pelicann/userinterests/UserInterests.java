@@ -26,8 +26,8 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;

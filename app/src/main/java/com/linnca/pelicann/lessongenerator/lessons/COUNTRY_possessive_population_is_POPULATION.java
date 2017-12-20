@@ -7,7 +7,6 @@ import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
-import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.StringUtils;
@@ -16,7 +15,6 @@ import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
-import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 

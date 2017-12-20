@@ -5,11 +5,6 @@ import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionResponseChecker;
-import com.linnca.pelicann.questions.Question_Actions;
-import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
-import com.linnca.pelicann.questions.Question_Instructions;
-import com.linnca.pelicann.questions.Question_MultipleChoice;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 

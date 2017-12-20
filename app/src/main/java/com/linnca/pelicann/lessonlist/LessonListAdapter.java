@@ -10,7 +10,6 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
 import java.util.Set;

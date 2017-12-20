@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.onboarding.Onboarding;

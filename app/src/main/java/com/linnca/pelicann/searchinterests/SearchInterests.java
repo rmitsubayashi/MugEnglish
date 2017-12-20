@@ -16,13 +16,10 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;

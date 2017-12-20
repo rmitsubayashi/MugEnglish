@@ -12,7 +12,6 @@ import com.linnca.pelicann.questions.Question_TranslateWord;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 

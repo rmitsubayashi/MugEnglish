@@ -13,7 +13,6 @@ import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.joda.time.DateTime;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 

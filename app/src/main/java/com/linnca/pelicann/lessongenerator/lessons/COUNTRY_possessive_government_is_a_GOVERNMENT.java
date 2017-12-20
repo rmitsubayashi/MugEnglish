@@ -14,7 +14,6 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
-import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;

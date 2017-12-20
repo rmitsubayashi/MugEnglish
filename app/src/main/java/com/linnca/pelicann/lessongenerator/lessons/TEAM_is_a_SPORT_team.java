@@ -13,7 +13,6 @@ import com.linnca.pelicann.lessongenerator.TermAdjuster;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
-import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -24,7 +23,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class TEAM_is_a_SPORT_team extends Lesson{

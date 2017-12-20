@@ -13,7 +13,6 @@ import com.linnca.pelicann.mainactivity.ToolbarSpinnerAdapter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 class UserInterestAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>

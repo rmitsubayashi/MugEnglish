@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 
-import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class NetworkConnectionChecker {

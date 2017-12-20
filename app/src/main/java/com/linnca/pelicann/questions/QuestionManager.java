@@ -2,7 +2,6 @@ package com.linnca.pelicann.questions;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;

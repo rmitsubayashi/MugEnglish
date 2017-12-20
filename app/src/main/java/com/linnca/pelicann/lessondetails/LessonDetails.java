@@ -22,26 +22,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.db.FirebaseAnalyticsHeaders;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.LessonFactory;
-import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.MainActivity;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
-
-import org.joda.time.DateTime;
-import org.joda.time.Period;
-import org.joda.time.PeriodType;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -23,8 +23,8 @@ import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.GUIUtils;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.ArrayList;

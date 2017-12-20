@@ -13,7 +13,6 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
-import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;

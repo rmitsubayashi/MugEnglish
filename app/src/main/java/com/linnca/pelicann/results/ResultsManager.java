@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 import com.linnca.pelicann.lessonlist.UserLessonListViewer;

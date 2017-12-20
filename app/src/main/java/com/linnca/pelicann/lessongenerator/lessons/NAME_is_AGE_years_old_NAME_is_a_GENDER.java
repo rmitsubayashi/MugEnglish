@@ -12,15 +12,12 @@ import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
-import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_MultipleChoice;
-import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;

@@ -1,9 +1,7 @@
 package com.linnca.pelicann.db;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,8 +22,8 @@ import com.linnca.pelicann.lessondetails.LessonInstanceDataQuestionSet;
 import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.QuestionSet;
+import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.results.ResultsVocabularyWord;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.userprofile.AppUsageLog;

@@ -9,6 +9,7 @@ import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.ChatQuestionItem;
 import com.linnca.pelicann.questions.QuestionData;
+import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_Chat;
 import com.linnca.pelicann.questions.Question_Chat_MultipleChoice;
@@ -17,7 +18,6 @@ import com.linnca.pelicann.questions.Question_Instructions;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
-import com.linnca.pelicann.questions.QuestionResponseChecker;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
 
@@ -26,7 +26,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /*

@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.GUIUtils;
+import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 public class UserProfile extends Fragment{

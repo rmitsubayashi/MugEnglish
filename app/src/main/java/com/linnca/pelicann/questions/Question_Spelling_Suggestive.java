@@ -18,8 +18,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.GUIUtils;
+import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -20,7 +20,6 @@ import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 

@@ -1,7 +1,5 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
-import android.util.Log;
-
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
@@ -14,9 +12,7 @@ import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.lessongenerator.SportsHelper;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
-import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
-import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
@@ -27,10 +23,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

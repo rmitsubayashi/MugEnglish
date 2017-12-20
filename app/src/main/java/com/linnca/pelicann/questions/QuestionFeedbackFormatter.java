@@ -3,7 +3,6 @@ package com.linnca.pelicann.questions;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class QuestionFeedbackFormatter {
