@@ -46,7 +46,7 @@ public class TestMockFirebaseDB {
             }
         };
         //OnDBResultListener onDBResultListener = mock(OnDBResultListener.class);
-        db.searchQuestions("", new ArrayList<WikiDataEntity>(),
+        db.searchQuestions(null, "", new ArrayList<WikiDataEntity>(),
                 0, new ArrayList<String>(), onDBResultListener);
         assertTrue(called[0]);
         //verify(onDBResultListener, times(2)).onQuestionsQueried(new ArrayList<String>(), new ArrayList<WikiDataEntity>());
@@ -84,7 +84,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.getQuestionSets("",new ArrayList<String>(), onDBResultListener);
+        db.getQuestionSets(null, "",new ArrayList<String>(), onDBResultListener);
         assertTrue(called[0]);
     }
 
@@ -97,7 +97,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.getQuestion("", onDBResultListener);
+        db.getQuestion(null, "", onDBResultListener);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.addLessonInstance(new LessonInstanceData(), new ArrayList<String>(),
+        db.addLessonInstance(null, new LessonInstanceData(), new ArrayList<String>(),
                 onDBResultListener);
     }
 
@@ -122,7 +122,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.getLessonInstances("", false, onDBResultListener);
+        db.getLessonInstances(null, "", false, onDBResultListener);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.getUserInterests(onDBResultListener);
+        db.getUserInterests(null, false, onDBResultListener);
     }
 
     @Test
@@ -170,7 +170,7 @@ public class TestMockFirebaseDB {
                 called[0] = true;
             }
         };
-        db.addUserInterests(new ArrayList<WikiDataEntity>(), onDBResultListener);
+        db.addUserInterests(null, new ArrayList<WikiDataEntity>(), onDBResultListener);
     }
 
     @Test
@@ -192,7 +192,7 @@ public class TestMockFirebaseDB {
                 assertTrue(matched);
             }
         };
-        db.addUserInterests(newInterests, onDBResultListener);
+        db.addUserInterests(null, newInterests, onDBResultListener);
     }
 
     @Test
@@ -207,7 +207,7 @@ public class TestMockFirebaseDB {
                 assertEquals(newInterests.size(), updatedList.size());
             }
         };
-        db.addUserInterests(newInterests, onDBResultListener);
+        db.addUserInterests(null, newInterests, onDBResultListener);
     }
 
     @Test
@@ -269,7 +269,7 @@ public class TestMockFirebaseDB {
                 assertTrue(matched);
             }
         };
-        db.addUserInterests(newInterests, onDBResultListener);
+        db.addUserInterests(null, newInterests, onDBResultListener);
     }
 
     @Test
@@ -449,7 +449,7 @@ public class TestMockFirebaseDB {
         List<WikiDataEntity> userInterests = new ArrayList<>(1);
         userInterests.add(new WikiDataEntity("label1","desc1", wikidataID,
                 "label1", WikiDataEntity.CLASSIFICATION_OTHER));
-        db.searchQuestions("", userInterests, 1,
+        db.searchQuestions(null, "", userInterests, 1,
                 new ArrayList<String>(), onDBResultListener);
     }
 
@@ -473,7 +473,7 @@ public class TestMockFirebaseDB {
                 assertTrue(userInterestsSearched.contains(userInterest1));
             }
         };
-        db.searchQuestions("", userInterests, 1,
+        db.searchQuestions(null, "", userInterests, 1,
                 new ArrayList<String>(), onDBResultListener);
     }
 
@@ -506,7 +506,7 @@ public class TestMockFirebaseDB {
                 assertEquals(1, questionSets.size());
             }
         };
-        db.searchQuestions("", userInterests, 1,
+        db.searchQuestions(null, "", userInterests, 1,
                 new ArrayList<String>(), onDBResultListener);
         //to make sure toPopulateCt is what's affecting it
         OnDBResultListener onDBResultListener2 = new OnDBResultListener() {
@@ -515,7 +515,7 @@ public class TestMockFirebaseDB {
                 assertEquals(2, questionSets.size());
             }
         };
-        db.searchQuestions("", userInterests, 2,
+        db.searchQuestions(null, "", userInterests, 2,
                 new ArrayList<String>(), onDBResultListener2);
     }
 
@@ -533,7 +533,7 @@ public class TestMockFirebaseDB {
                 assertEquals(0, questionSets.size());
             }
         };
-        db.searchQuestions("", userInterests, 1,
+        db.searchQuestions(null, "", userInterests, 1,
                 new ArrayList<String>(), onDBResultListener);
     }
 
@@ -545,7 +545,7 @@ public class TestMockFirebaseDB {
                 assertEquals(0, questionSets.size());
             }
         };
-        db.searchQuestions("", new ArrayList<WikiDataEntity>(), 1,
+        db.searchQuestions(null, "", new ArrayList<WikiDataEntity>(), 1,
                 new ArrayList<String>(), onDBResultListener);
     }
 
@@ -561,7 +561,7 @@ public class TestMockFirebaseDB {
                 assertEquals(questionData.getId(), questionID);
             }
         };
-        db.getQuestion(questionID, onDBResultListener);
+        db.getQuestion(null, questionID, onDBResultListener);
     }
 
     @Test
@@ -585,7 +585,7 @@ public class TestMockFirebaseDB {
         };
         List<String> toGetSetIDs = new ArrayList<>(1);
         toGetSetIDs.add(questionSetID);
-        db.getQuestionSets("",toGetSetIDs, onDBResultListener);
+        db.getQuestionSets(null, "",toGetSetIDs, onDBResultListener);
     }
 
     @Test
@@ -603,7 +603,7 @@ public class TestMockFirebaseDB {
         };
         List<String> toGetSetIDs = new ArrayList<>(1);
         toGetSetIDs.add(questionSetID);
-        db.getQuestionSets("",toGetSetIDs, onDBResultListener);
+        db.getQuestionSets(null, "",toGetSetIDs, onDBResultListener);
     }
 
     @Test
@@ -624,7 +624,7 @@ public class TestMockFirebaseDB {
                 assertEquals(1, lessonInstances.size());
             }
         };
-        db.addLessonInstance(lessonInstanceData,
+        db.addLessonInstance(null, lessonInstanceData,
                 new ArrayList<String>(), onDBResultListener);
     }
 
@@ -656,7 +656,7 @@ public class TestMockFirebaseDB {
         };
         db.lessonInstances.put(lessonInstanceData.getId(), lessonInstanceData);
 
-        db.getLessonInstances("lessonID1", false, onDBResultListener);
+        db.getLessonInstances(null, "lessonID1", false, onDBResultListener);
     }
 
     @Test
@@ -685,7 +685,7 @@ public class TestMockFirebaseDB {
                 assertTrue(lessonIDSet);
             }
         };
-        db.addLessonInstance(lessonInstanceData,
+        db.addLessonInstance(null, lessonInstanceData,
                 new ArrayList<String>(), onDBResultListener);
     }
 

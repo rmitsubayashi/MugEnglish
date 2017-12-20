@@ -1,5 +1,7 @@
 package com.linnca.pelicann.db;
 
+import android.content.Context;
+
 import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.questions.InstanceRecord;
@@ -45,8 +47,10 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void cleanup() {
-    }
+    public void cleanup() {}
+
+    @Override
+    public void cleanupDB(){}
 
     @Override
     public void addGenericQuestions(List<QuestionData> questionsToAdd, List<VocabularyWord> vocabulary) {
@@ -59,7 +63,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void searchQuestions(String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
+    public void searchQuestions(Context context, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
                                 List<String> questionSetIDsToAvoid, OnDBResultListener onDBResultListener) {
         List<QuestionSet> questionSetsToReturn = new ArrayList<>(toPopulate);
         List<WikiDataEntity> userInterestsChecked = new ArrayList<>(userInterests.size());
@@ -130,7 +134,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getQuestionSets(String lessonKey, List<String> questionSetIDs, OnDBResultListener onDBResultListener) {
+    public void getQuestionSets(Context context, String lessonKey, List<String> questionSetIDs, OnDBResultListener onDBResultListener) {
         //don't care about lesson key
         List<QuestionSet> questionSets = new ArrayList<>(questionSetIDs.size());
         for (String id : questionSetIDs){
@@ -148,7 +152,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getPopularQuestionSets(String lessonKey, final List<String> questionSetsToAvoid,
+    public void getPopularQuestionSets(Context context, String lessonKey, final List<String> questionSetsToAvoid,
                                        final int questionSetsToPopulate,
                                        final OnDBResultListener onDBResultListener){
         //don't care about popularity (just get enough questions0
@@ -166,14 +170,14 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getQuestion(String questionID, OnDBResultListener onDBResultListener) {
+    public void getQuestion(Context context, String questionID, OnDBResultListener onDBResultListener) {
         QuestionData questionData = questions.get(questionID);
         onDBResultListener.onQuestionQueried(questionData);
     }
 
     private int incrementLessonInstance = 1;
     @Override
-    public void addLessonInstance(LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs, OnDBResultListener onDBResultListener) {
+    public void addLessonInstance(Context context, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs, OnDBResultListener onDBResultListener) {
         String id = "testID" + incrementLessonInstance++;
         lessonInstanceData.setId(id);
         lessonInstances.put(lessonInstanceData.getLessonKey(), lessonInstanceData);
@@ -181,7 +185,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getLessonInstances(String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener) {
+    public void getLessonInstances(Context context, String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener) {
         // we are assuming a single lesson so we don't need to filter by lesson key
         List<LessonInstanceData> instancesList = new ArrayList<>();
 
@@ -202,12 +206,12 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getVocabularyDetails(String vocabularyItemID, OnDBResultListener onDBResultListener) {
+    public void getVocabularyDetails(Context context, String vocabularyItemID, OnDBResultListener onDBResultListener) {
 
     }
 
     @Override
-    public void getVocabularyList(OnDBResultListener onDBResultListener) {
+    public void getVocabularyList(Context context, OnDBResultListener onDBResultListener) {
 
     }
 
@@ -227,12 +231,12 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getLessonVocabulary(String lessonInstanceKey, OnDBResultListener onDBResultListener) {
+    public void getLessonVocabulary(Context context, String lessonInstanceKey, OnDBResultListener onDBResultListener) {
 
     }
 
     @Override
-    public void getUserInterests(OnDBResultListener onDBResultListener) {
+    public void getUserInterests(Context context, boolean persistentConnection, OnDBResultListener onDBResultListener) {
         onDBResultListener.onUserInterestsQueried(userInterests);
     }
 
@@ -243,7 +247,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void addUserInterests(List<WikiDataEntity> userInterest, OnDBResultListener onDBResultListener) {
+    public void addUserInterests(Context context, List<WikiDataEntity> userInterest, OnDBResultListener onDBResultListener) {
         this.userInterests.addAll(userInterest);
         onDBResultListener.onUserInterestsAdded();
     }
@@ -252,7 +256,7 @@ public class MockFirebaseDB extends Database {
     public void changeUserInterestRanking(WikiDataEntity data, int count){}
 
     @Override
-    public void getPopularUserInterests(int count, OnDBResultListener onDBResultListener){
+    public void getPopularUserInterests(Context context, int count, OnDBResultListener onDBResultListener){
         if (count > recommendations.size()){
             count = recommendations.size();
         }
@@ -279,7 +283,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getClearedLessons(int lessonLevel, boolean persistentConnection, OnDBResultListener onDBResultListener) {
+    public void getClearedLessons(Context context, int lessonLevel, boolean persistentConnection, OnDBResultListener onDBResultListener) {
 
     }
 
@@ -329,7 +333,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getAppUsageForMonths(String startMonthKey, String endMonthKey, OnDBResultListener onDBResultListener) {
+    public void getAppUsageForMonths(Context context, String startMonthKey, String endMonthKey, OnDBResultListener onDBResultListener) {
 
     }
 

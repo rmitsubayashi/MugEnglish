@@ -73,7 +73,7 @@ public class UserLessonListViewerTest {
                 col2Prerequisites = new ArrayList<>(2);
                 col2Prerequisites.add("key4");
                 col2Prerequisites.add("key5");
-                col2Data = new LessonData(getReviewID(1,1), review, null, col2Prerequisites, 100, 0, 0);
+                col2Data = new LessonData(LessonData.formatReviewID(1,1), review, null, col2Prerequisites, 100, 0, 0);
                 row.setCol2(col2Data);
                 lessonRows.add(row);
 
@@ -98,7 +98,7 @@ public class UserLessonListViewerTest {
                 col2Prerequisites = new ArrayList<>(2);
                 col2Prerequisites.add("key7");
                 col2Prerequisites.add("key8");
-                col2Data = new LessonData(getReviewID(1,2), review, null, col2Prerequisites, 100, 0, 0);
+                col2Data = new LessonData(LessonData.formatReviewID(1,2), review, null, col2Prerequisites, 100, 0, 0);
                 row.setCol2(col2Data);
                 lessonRows.add(row);
 
@@ -128,7 +128,7 @@ public class UserLessonListViewerTest {
     @Test
     public void getNextReviewPosition_firstReviewCleared_shouldReturnSecondReviewPosition(){
         Set<String> clearedLessonKeys = new HashSet<>();
-        clearedLessonKeys.add(lessonListViewer.getReviewID(1,1));
+        clearedLessonKeys.add(LessonData.formatReviewID(1,1));
         UserLessonListViewer userLessonListViewer = new UserLessonListViewer(lessonListViewer,
                 clearedLessonKeys);
         assertEquals(5, userLessonListViewer.getNextToClearReviewPosition());
@@ -137,8 +137,8 @@ public class UserLessonListViewerTest {
     @Test
     public void getNextReviewPosition_lastReviewCleared_shouldReturnLessonCleared(){
         Set<String> clearedLessonKeys = new HashSet<>();
-        clearedLessonKeys.add(lessonListViewer.getReviewID(1,1));
-        clearedLessonKeys.add(lessonListViewer.getReviewID(1,2));
+        clearedLessonKeys.add(LessonData.formatReviewID(1,1));
+        clearedLessonKeys.add(LessonData.formatReviewID(1,2));
         UserLessonListViewer userLessonListViewer = new UserLessonListViewer(lessonListViewer,
                 clearedLessonKeys);
         //only eight rows total (level1 + level2) so if greater than 8,
@@ -149,7 +149,7 @@ public class UserLessonListViewerTest {
     @Test
     public void shouldSaveForReview_clearedFirstReviewAndLessonInBetweenFirstAndSecondReviews_shouldReturnTrue(){
         Set<String> clearedLessonKeys = new HashSet<>();
-        clearedLessonKeys.add(lessonListViewer.getReviewID(1,1));
+        clearedLessonKeys.add(LessonData.formatReviewID(1,1));
         UserLessonListViewer userLessonListViewer = new UserLessonListViewer(lessonListViewer,
                 clearedLessonKeys);
         assertTrue(userLessonListViewer.shouldSaveForReview("key6"));
@@ -158,7 +158,7 @@ public class UserLessonListViewerTest {
     @Test
     public void shouldSaveForReview_clearedFirstReviewAndLessonBeforeFirstReview_shouldReturnFalse(){
         Set<String> clearedLessonKeys = new HashSet<>();
-        clearedLessonKeys.add(lessonListViewer.getReviewID(1,1));
+        clearedLessonKeys.add(LessonData.formatReviewID(1,1));
         UserLessonListViewer userLessonListViewer = new UserLessonListViewer(lessonListViewer,
                 clearedLessonKeys);
         assertFalse(userLessonListViewer.shouldSaveForReview("key1"));
@@ -180,7 +180,7 @@ public class UserLessonListViewerTest {
         clearedLessons.add("key3");
         clearedLessons.add("key4");
         clearedLessons.add("key5");
-        clearedLessons.add(lessonListViewer.getReviewID(1,1));
+        clearedLessons.add(LessonData.formatReviewID(1,1));
         UserLessonListViewer userLessonListViewer = new UserLessonListViewer(lessonListViewer,
                 clearedLessons);
         List<LessonData> lessonsUnlocked = userLessonListViewer.getLessonsUnlockedByClearing("key6");

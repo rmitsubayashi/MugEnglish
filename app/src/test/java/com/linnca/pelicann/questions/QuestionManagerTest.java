@@ -51,7 +51,7 @@ public class QuestionManagerTest {
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
                 0L, new ArrayList<String>(), new ArrayList<String>(),
                 questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
-        questionManager.startQuestions(lessonInstanceData, "lessonKey1");
+        questionManager.startQuestions(null, lessonInstanceData, "lessonKey1", null);
         assertTrue(called[0]);
     }
 
@@ -83,7 +83,7 @@ public class QuestionManagerTest {
         QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question1", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID1", firstQuestion);
-        questionManager.startQuestions(lessonInstanceData, "lessonID1");
+        questionManager.startQuestions(null, lessonInstanceData, "lessonID1", null);
 
     }
 
@@ -112,7 +112,7 @@ public class QuestionManagerTest {
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
                 0L, new ArrayList<String>(), new ArrayList<String>(),
                 questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
-        questionManager.startQuestions(lessonInstanceData, "lessonID1");
+        questionManager.startQuestions(null, lessonInstanceData, "lessonID1", null);
 
     }
 
@@ -141,7 +141,7 @@ public class QuestionManagerTest {
         LessonInstanceData lessonInstanceData = new LessonInstanceData("id", "lessonKey",
                 0L, new ArrayList<String>(), new ArrayList<String>(),
                 questionSets, LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET);
-        questionManager.startQuestions(lessonInstanceData, "lessonID1");
+        questionManager.startQuestions(null, lessonInstanceData, "lessonID1", null);
 
     }
 
@@ -185,8 +185,8 @@ public class QuestionManagerTest {
         QuestionData secondQuestion = new QuestionData("questionID2","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", secondQuestion);
-        questionManager.startQuestions(lessonInstanceData, "lessonID1");
-        questionManager.nextQuestion(false);
+        questionManager.startQuestions(null, lessonInstanceData, "lessonID1", null);
+        questionManager.nextQuestion(null, false, null);
     }
 
     @Test
@@ -229,8 +229,8 @@ public class QuestionManagerTest {
         QuestionData secondQuestion = new QuestionData("questionID2","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", secondQuestion);
-        questionManager.startQuestions(lessonInstanceData, "lessonID1");
-        questionManager.nextQuestion(false);
+        questionManager.startQuestions(null, lessonInstanceData, "lessonID1", null);
+        questionManager.nextQuestion(null, false, null);
         assertTrue(twoCalled[0]);
     }
 
@@ -267,10 +267,10 @@ public class QuestionManagerTest {
         QuestionData secondQuestion = new QuestionData("questionID2","lessonID1",  Question_TrueFalse.QUESTION_TYPE,
                 "question2", null, Question_TrueFalse.TRUE_FALSE_QUESTION_TRUE, null, null);
         db.questions.put("questionID2", secondQuestion);
-        questionManager.startQuestions(lessonInstanceData, "lessonID1");
-        questionManager.nextQuestion(false);
+        questionManager.startQuestions(null, lessonInstanceData, "lessonID1", null);
+        questionManager.nextQuestion(null, false, null);
         //questions should be finished here
-        questionManager.nextQuestion(false);
+        questionManager.nextQuestion(null, false, null);
         assertTrue(called[0]);
     }
 

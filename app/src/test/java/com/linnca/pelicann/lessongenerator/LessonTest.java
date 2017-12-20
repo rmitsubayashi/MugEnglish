@@ -77,11 +77,13 @@ public class LessonTest {
                         assertFalse(noMatch);
                     }
                 };
-                db.getLessonInstances(Goodbye_bye.KEY, false, onDBResultListener);
+                db.getLessonInstances(null, Goodbye_bye.KEY, false, onDBResultListener);
             }
+            @Override
+            public void onNoConnection(){}
         };
         Lesson lessonWithOnlyGenericQuestions = LessonFactory.parseLesson(Goodbye_bye.KEY, null, db, lessonListener);
-        lessonWithOnlyGenericQuestions.createInstance();
+        lessonWithOnlyGenericQuestions.createInstance(null);
     }
 
     @Test
@@ -131,11 +133,13 @@ public class LessonTest {
             public void onLessonCreated() {
                 assertTrue(db.questionSets.size() > 0);
             }
+            @Override
+            public void onNoConnection(){}
         };
         Lesson lesson = LessonFactory.parseLesson(Hello_my_name_is_NAME.KEY, mockConnector, db, lessonListener);
         assertEquals("the question count for this question is not two. Need to change the test to fit the new version of the lesson",
                 lesson.questionSetsToPopulate, 2);
-        lesson.createInstance();
+        lesson.createInstance(null);
     }
 
     @Test
@@ -186,9 +190,11 @@ public class LessonTest {
                 Map<String, LessonInstanceData> instanceDataMap = db.lessonInstances;
                 assertEquals(1, instanceDataMap.size());
             }
+            @Override
+            public void onNoConnection(){}
         };
         Lesson lesson = LessonFactory.parseLesson(Hello_my_name_is_NAME.KEY, mockConnector, db, lessonListener);
-        lesson.createInstance();
+        lesson.createInstance(null);
     }
 
     @Test
@@ -251,9 +257,11 @@ public class LessonTest {
                             instanceQuestionSize > genericQuestionCt);
                 }
             }
+            @Override
+            public void onNoConnection(){}
         };
         Lesson lesson = LessonFactory.parseLesson(Hello_my_name_is_NAME.KEY, mockConnector, db, lessonListener);
-        lesson.createInstance();
+        lesson.createInstance(null);
     }
 
     @Test
@@ -319,9 +327,12 @@ public class LessonTest {
                     assertTrue(questionSetIds.size() > 1);
                 }
             }
+
+            @Override
+            public void onNoConnection(){}
         };
         Lesson lesson = LessonFactory.parseLesson(Hello_my_name_is_NAME.KEY, mockConnector, db, lessonListener);
-        lesson.createInstance();
+        lesson.createInstance(null);
     }
 
     @Test
@@ -358,8 +369,10 @@ public class LessonTest {
                     assertTrue(questionSetIds.contains("questionSetID2"));
                 }
             }
+            @Override
+            public void onNoConnection(){}
         };
         Lesson lesson = LessonFactory.parseLesson(Hello_my_name_is_NAME.KEY, mockConnector, db, lessonListener);
-        lesson.createInstance();
+        lesson.createInstance(null);
     }
 }

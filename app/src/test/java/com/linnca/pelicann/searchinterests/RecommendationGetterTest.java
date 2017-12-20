@@ -21,13 +21,15 @@ public class RecommendationGetterTest {
     @Test
     public void recommendations_getNewRecommendations_shouldCallListener(){
         final boolean[] called = new boolean[]{false};
-        RecommendationGetter recommendationGetter = new RecommendationGetter(1,
+        RecommendationGetter recommendationGetter = new RecommendationGetter(1, null,
                 db, 0);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 called[0] = true;
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener);
@@ -41,12 +43,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label2", "desc2", "wikidataID2", "label2", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(2,
-                db, 0);
+                null, db, 0);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertEquals(2, results.size());
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener);
@@ -59,12 +63,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label2", "desc2", "wikidataID2", "label2", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(2,
-                db, 0);
+                null, db, 0);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
 
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener);
@@ -74,6 +80,8 @@ public class RecommendationGetterTest {
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertEquals(2, results.size());
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener2);
@@ -87,12 +95,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label2", "desc2", "wikidataID2", "label2", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(1,
-                db, 1);
+                null, db, 1);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertEquals(1, results.size());
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener);
@@ -101,6 +111,8 @@ public class RecommendationGetterTest {
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertEquals(2, results.size());
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.loadMoreRecommendations(new ArrayList<WikiDataEntity>(),
                 listener2);
@@ -114,12 +126,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label2", "desc2", "wikidataID2", "label2", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(3,
-                db, 0);
+                null, db, 0);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertFalse(showLoadMoreButton);
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener);
@@ -132,12 +146,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label2", "desc2", "wikidataID2", "label2", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(2,
-                db, 1);
+                null, db, 1);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
 
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener);
@@ -146,6 +162,8 @@ public class RecommendationGetterTest {
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertFalse(showLoadMoreButton);
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.loadMoreRecommendations(new ArrayList<WikiDataEntity>(),
                 listener2);
@@ -158,12 +176,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label2", "desc2", "wikidataID2", "label2", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(2,
-                db, 0);
+                null, db, 0);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertFalse(showLoadMoreButton);
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.getNewRecommendations(new ArrayList<WikiDataEntity>(),
                 listener);
@@ -177,12 +197,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label3", "desc3", "wikidataID3", "label3", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(1,
-                db, 1);
+                null, db, 1);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
 
             }
+            @Override
+            public void onNoConnection(){}
         };
         //we retrieve userInterestCt + recommendationCt so
         //we should retrieve 2 + 1 = 3 recommendations in total
@@ -198,6 +220,9 @@ public class RecommendationGetterTest {
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertEquals(2, results.size());
             }
+            @Override
+            public void onNoConnection(){}
+
         };
         recommendationGetter.loadMoreRecommendations(userInterests,
                 listener2);
@@ -210,12 +235,14 @@ public class RecommendationGetterTest {
         recommendations.add(new WikiDataEntity("label2", "desc2", "wikidataID2", "label2", WikiDataEntity.CLASSIFICATION_OTHER));
         db.recommendations = recommendations;
         RecommendationGetter recommendationGetter = new RecommendationGetter(1,
-                db, 1);
+                null, db, 1);
         RecommendationGetter.RecommendationGetterListener listener = new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
 
             }
+            @Override
+            public void onNoConnection(){}
         };
         //we retrieve userInterestCt + recommendationCt so
         //we should retrieve 1 + 1 = 2 recommendations in total
@@ -230,6 +257,8 @@ public class RecommendationGetterTest {
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 assertEquals(0, results.size());
             }
+            @Override
+            public void onNoConnection(){}
         };
         recommendationGetter.loadMoreRecommendations(userInterests,
                 listener2);

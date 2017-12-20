@@ -1,7 +1,6 @@
 package com.linnca.pelicann.lessongenerator;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.db.Database;
@@ -212,7 +211,6 @@ public abstract class Lesson {
 	protected abstract String getSPARQLQuery();
 	//一つ一つのクエリーを送って、まとめる
 	private void searchWikiData(Set<WikiDataEntity> interests){
-		Log.d(TAG, "searching wikiData...");
 		//shuffle so we don't get the same interests over and over
 		ArrayList<WikiDataEntity> interestList = new ArrayList<>(interests);
 		Collections.shuffle(interestList);
@@ -240,7 +238,6 @@ public abstract class Lesson {
 				//only call once
 				if (!onStoppedCalled.getAndSet(true)) {
 					if (!error.get()) {
-						Log.d(TAG, "onStopped called");
 						accessDBWhenCreatingQuestions();
 					} else {
 						lessonListener.onNoConnection();
@@ -334,7 +331,6 @@ public abstract class Lesson {
 			// we can handle it in the next methods
 		};
 
-    	Log.d(TAG, "adding new questions");
     	db.addQuestions(lessonKey, newQuestions, onDBResultListener);
 
 	}
@@ -343,11 +339,9 @@ public abstract class Lesson {
 	//first, we check any questions in the db non-related to the user.
 	//if that doesn't work, then repeat the user's existing questions
 	private void fillRemainingQuestions(){
-		Log.d(TAG, "Filling remaining questions");
 		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
 			public void onPopularQuestionSetsQueried(List<QuestionSet> questionSetsQueried) {
-				Log.d(TAG, "Popular question sets queried");
 				for (QuestionSet questionSet : questionSetsQueried){
 					lessonInstanceData.addQuestionSet(questionSet, false);
 					if (questionSet.getVocabularyIDs() != null)
@@ -384,7 +378,6 @@ public abstract class Lesson {
 	}
 
 	private void addQuestionsFromUserQuestionHistory(){
-		Log.d(TAG, "getting questions from question history...");
 		//last resort, populate with already created questions.
 		//this happens when the user has every question
 		// stocked in the database.
@@ -427,7 +420,6 @@ public abstract class Lesson {
 						lessonInstanceVocabularyWordIDs.addAll(questionSet.getVocabularyIDs());
 				}
 
-				Log.d(TAG, "fetched question sets from question set IDs");
 				saveInstance();
 			}
 
