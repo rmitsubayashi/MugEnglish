@@ -70,7 +70,7 @@ public class Stand_up_sit_down extends Lesson {
     }
 
     private String multipleChoiceQuestionQuestion1(){
-        return "sit " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE;
+        return "座りなさい\nsit " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE;
     }
 
     private List<String> multipleChoiceQuestionChoices(){
@@ -102,7 +102,7 @@ public class Stand_up_sit_down extends Lesson {
     }
 
     private String multipleChoiceQuestionQuestion2(){
-        return "stand " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE;
+        return "立ちなさい\nstand " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE;
     }
 
     private List<QuestionData> multipleChoiceQuestion2(){

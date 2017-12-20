@@ -298,7 +298,7 @@ public class NAME_drove_from_CITY_to_CITY2 extends Lesson{
     }
 
     private String fillInBlankAnswer2(){
-        return "drove tp";
+        return "drove to";
     }
 
     private FeedbackPair fillInBlankFeedback2(){

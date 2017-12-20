@@ -73,8 +73,7 @@ public abstract class Lesson {
 		void onLessonCreated();
 		void onNoConnection();
 	}
-	
-	
+
 	protected Lesson(EndpointConnectorReturnsXML connector, Database db, LessonListener lessonListener){
 		this.connector = connector;
 		this.lessonListener = lessonListener;
@@ -88,7 +87,6 @@ public abstract class Lesson {
 		this.context = context;
 		startFlow();
 	}
-
 
 	//the next method is inside the previous method so we can make these
 	//asynchronous methods act synchronously
@@ -151,7 +149,6 @@ public abstract class Lesson {
 		db.getLessonInstances(context, lessonKey, false, onDBResultListener);
 	}
 
-
 	//we should try fetching already created questions from the database
 	// by matching the user's interests. if the user has not had that question yet,
 	// add it to the list of questions.
@@ -177,6 +174,8 @@ public abstract class Lesson {
 				for (QuestionSet set : questionSetsFound) {
 					lessonInstanceData.addQuestionSet(set, true);
 					questionSetIDsToIncrementCount.add(set.getKey());
+					if (set.getVocabularyIDs() != null)
+						lessonInstanceVocabularyWordIDs.addAll(set.getVocabularyIDs());
 					questionSetsLeftToPopulate --;
 					if (questionSetsLeftToPopulate == 0){
 						break;
@@ -213,6 +212,7 @@ public abstract class Lesson {
 	protected abstract String getSPARQLQuery();
 	//一つ一つのクエリーを送って、まとめる
 	private void searchWikiData(Set<WikiDataEntity> interests){
+		Log.d(TAG, "searching wikiData...");
 		//shuffle so we don't get the same interests over and over
 		ArrayList<WikiDataEntity> interestList = new ArrayList<>(interests);
 		Collections.shuffle(interestList);
@@ -232,7 +232,7 @@ public abstract class Lesson {
 				//should stop either if we've got enough questions or
 				// we finished checking
 				return getQueryResultCt() >= questionSetsLeftToPopulate ||
-						DOMsFetched.get() == queryCt;
+						DOMsFetched.get() >= queryCt;
 			}
 
 			@Override
@@ -240,6 +240,7 @@ public abstract class Lesson {
 				//only call once
 				if (!onStoppedCalled.getAndSet(true)) {
 					if (!error.get()) {
+						Log.d(TAG, "onStopped called");
 						accessDBWhenCreatingQuestions();
 					} else {
 						lessonListener.onNoConnection();
@@ -333,6 +334,7 @@ public abstract class Lesson {
 			// we can handle it in the next methods
 		};
 
+    	Log.d(TAG, "adding new questions");
     	db.addQuestions(lessonKey, newQuestions, onDBResultListener);
 
 	}
@@ -341,11 +343,15 @@ public abstract class Lesson {
 	//first, we check any questions in the db non-related to the user.
 	//if that doesn't work, then repeat the user's existing questions
 	private void fillRemainingQuestions(){
+		Log.d(TAG, "Filling remaining questions");
 		OnDBResultListener onDBResultListener = new OnDBResultListener() {
 			@Override
 			public void onPopularQuestionSetsQueried(List<QuestionSet> questionSetsQueried) {
+				Log.d(TAG, "Popular question sets queried");
 				for (QuestionSet questionSet : questionSetsQueried){
 					lessonInstanceData.addQuestionSet(questionSet, false);
+					if (questionSet.getVocabularyIDs() != null)
+						lessonInstanceVocabularyWordIDs.addAll(questionSet.getVocabularyIDs());
 					questionSetsLeftToPopulate--;
 					if (questionSetsLeftToPopulate == 0){
 						break;
@@ -378,6 +384,7 @@ public abstract class Lesson {
 	}
 
 	private void addQuestionsFromUserQuestionHistory(){
+		Log.d(TAG, "getting questions from question history...");
 		//last resort, populate with already created questions.
 		//this happens when the user has every question
 		// stocked in the database.
@@ -413,13 +420,14 @@ public abstract class Lesson {
 			public void onQuestionSetsQueried(List<QuestionSet> questionSets) {
 				for (QuestionSet questionSet : questionSets){
 					//for now, the only questions that need to be fetched are
-					// questions fro mthe user's question history, so we can assume
+					// questions from the user's question history, so we can assume
 					// partOfPopularityRating = false
 					lessonInstanceData.addQuestionSet(questionSet, false);
 					if (questionSet.getVocabularyIDs() != null)
 						lessonInstanceVocabularyWordIDs.addAll(questionSet.getVocabularyIDs());
 				}
 
+				Log.d(TAG, "fetched question sets from question set IDs");
 				saveInstance();
 			}
 
@@ -433,15 +441,15 @@ public abstract class Lesson {
 	}
 
 	private void saveInstance(){
+		lessonInstanceData.setCreatedTimeStamp(System.currentTimeMillis());
+		lessonInstanceData.setQuestionOrder(questionOrder);
+		lessonInstanceData.setLessonKey(lessonKey);
+
 		//shouldn't happen
 		if (lessonInstanceData.questionCount() == 0){
 			lessonListener.onLessonCreated();
 			return;
 		}
-
-		lessonInstanceData.setCreatedTimeStamp(System.currentTimeMillis());
-		lessonInstanceData.setQuestionOrder(questionOrder);
-		lessonInstanceData.setLessonKey(lessonKey);
 
 		OnDBResultListener onLessonInstanceAddedResultListener = new OnDBResultListener() {
 			@Override

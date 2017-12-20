@@ -216,7 +216,7 @@ public class NAME_is_AGE_years_old extends Lesson {
         String sentence = qr.personEN + " is " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " " + yearString + " old.";
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        String sentence2 = "ヒント：" + qr.personJP + "の誕生日:" + qr.birthday + "\n";
+        String sentence2 = "ヒント：" + qr.personJP + "の誕生日は" + qr.birthday + "です";
         DateTimeFormatter birthdayFormat = DateTimeFormat.forPattern("yyyy年M月d日");
         String today = birthdayFormat.print(DateTime.now());
         String sentence3 = "(" + today + "現在)";

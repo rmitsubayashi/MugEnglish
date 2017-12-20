@@ -216,13 +216,13 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
         String sentence2 = qr.personEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
             " for the government.";
         String sentence3 = qr.genderEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " a politician.";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+        sentence3 = GrammarRules.uppercaseFirstLetterOfSentence(sentence3);
         return sentence1 + "\n\n" + sentence2 + "\n" + sentence3;
     }
 
 
     private String fillInBlankMultipleChoiceAnswer(){
-        return "was";
+        return "worked : was";
     }
 
     private List<String> fillInBlankMultipleChoiceChoices(){
@@ -310,7 +310,7 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
 
     private String fillInBlankQuestion(QueryResult qr){
         String sentence1 = qr.personJP + "は政府で働いていました。";
-        String sentence2 = qr.personEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " for the government.";
         return sentence1 + "\n\n" + sentence2;
     }
@@ -340,7 +340,7 @@ public class NAME_worked_for_the_government_He_was_a_politician extends Lesson {
 
     private String fillInBlankQuestion2(QueryResult qr){
         String sentence1 = qr.personJP + "は政治家でした。";
-        String sentence2 = qr.personEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 " a politician.";
         return sentence1 + "\n\n" + sentence2;
     }

@@ -79,13 +79,8 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //JP label if possible
                 "    '" + WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-
                 "    BIND (wd:%s as ?country) . " + //binding the ID of entity as ?country
-
                 "} ";
-
-
-
     }
 
 
@@ -223,28 +218,36 @@ public class COUNTRY_possessive_area_is_AREA extends Lesson {
 
     private FeedbackPair translateFeedback(QueryResult qr){
         String lowercaseCountry = qr.countryEN.toLowerCase();
-        List<String> responses = new ArrayList<>();
+        String definiteArticleLowercaseCountry =
+                GrammarRules.definiteArticleBeforeCountry(qr.countryEN)
+                .toLowerCase();
+        List<String> responses = new ArrayList<>(2);
         responses.add(lowercaseCountry);
-        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryEN;
+        if (!lowercaseCountry.equals(definiteArticleLowercaseCountry))
+            responses.add(definiteArticleLowercaseCountry);
+        String feedback = "国の名前は大文字で始まります。\n" + definiteArticleLowercaseCountry + " → " +
+                GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
     private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
         String question = qr.countryJP;
-        String answer = qr.countryEN;
+        String answer = GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
+        List<String> acceptableAnswers = new ArrayList<>(1);
+        if (!answer.equals(qr.countryEN)){
+            acceptableAnswers.add(qr.countryEN);
+        }
         FeedbackPair feedbackPair = translateFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
         feedbackPairs.add(feedbackPair);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
+        data.setAcceptableAnswers(acceptableAnswers);
         data.setFeedback(feedbackPairs);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);

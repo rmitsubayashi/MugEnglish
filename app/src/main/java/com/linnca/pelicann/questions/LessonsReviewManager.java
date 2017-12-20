@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessondetails.LessonData;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +32,11 @@ public class LessonsReviewManager {
         this.lessonReviewManagerListener = listener;
     }
 
-    public void startReview(final Context context, int lessonLevel, String reviewID){
+    public void startReview(final Context context, String reviewID){
         if (reviewStarted)
             return;
 
-        this.lessonLevel = lessonLevel;
+        this.lessonLevel = LessonData.extractReviewLevel(reviewID);
         this.reviewID = reviewID;
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override

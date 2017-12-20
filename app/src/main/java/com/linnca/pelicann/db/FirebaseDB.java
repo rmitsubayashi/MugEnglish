@@ -271,15 +271,16 @@ public class FirebaseDB extends Database {
                 }
 
                 questionIDs.add(questionIDsForEachVariation);
+            }
 
-                List<VocabularyWord> questionSetVocabulary = questionSetData.getVocabulary();
-                if (questionSetVocabulary != null) {
-                    for (VocabularyWord word : questionSetVocabulary) {
-                        String vocabularyKey = vocabularyRef.push().getKey();
-                        word.setId(vocabularyKey);
-                        vocabularyRef.child(vocabularyKey).setValue(word);
-                        vocabularyIDs.add(vocabularyKey);
-                    }
+            //save the vocabulary for the question set
+            List<VocabularyWord> questionSetVocabulary = questionSetData.getVocabulary();
+            if (questionSetVocabulary != null) {
+                for (VocabularyWord word : questionSetVocabulary) {
+                    String vocabularyKey = vocabularyRef.push().getKey();
+                    word.setId(vocabularyKey);
+                    vocabularyRef.child(vocabularyKey).setValue(word);
+                    vocabularyIDs.add(vocabularyKey);
                 }
             }
 
@@ -1717,6 +1718,13 @@ public class FirebaseDB extends Database {
 
     @Override
     public void getSports(Collection<String> sportsWikiDataIDs, final OnDBResultListener onDBResultListener){
+        //if we don't have any sports to query,
+        //onSportsQueried will never be called
+        if (sportsWikiDataIDs.size() == 0){
+            onDBResultListener.onSportsQueried();
+            return;
+        }
+
         DatabaseReference mappingsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.UTILS + "/" +
                     FirebaseDBHeaders.UTILS_SPORTS_VERB_MAPPINGS

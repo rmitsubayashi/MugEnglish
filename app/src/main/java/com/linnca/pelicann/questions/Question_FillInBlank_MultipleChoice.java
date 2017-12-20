@@ -66,25 +66,50 @@ public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterfa
         String question = questionData.getQuestion();
         String answer = questionData.getAnswer();
         String blank = Question_FillInBlank_Input.createBlank(answer);
-        question = question.replace(FILL_IN_BLANK_MULTIPLE_CHOICE, blank);
+        //in case there are more than one fill in the blanks
+        question = question.replaceAll(FILL_IN_BLANK_MULTIPLE_CHOICE, blank);
         //color underline.
         //same code in fill in blank input
-        final SpannableStringBuilder stringBuilder = new SpannableStringBuilder(question);
-        int startIndex = question.indexOf('_');//Emoji haha
-        int endIndex = question.lastIndexOf('_') + 1;
-        ForegroundColorSpan colorSpan = new ForegroundColorSpan(
-                ThemeColorChanger.getColorFromAttribute(
-                        R.attr.color700, getContext())
-        );
-        stringBuilder.setSpan(colorSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        int stringLength = question.length();
+        boolean blankStarted = false;
+        int blankStartIndex = -1;
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(question);
+        for (int i=0; i<stringLength; i++) {
+            char c = question.charAt(i);
+            if (c == '_'){
+                if (!blankStarted){
+                    blankStarted = true;
+                    blankStartIndex = i;
+                }
+            } else {
+                if (blankStarted){
+                    setBlank(blankStartIndex, i, stringBuilder);
+                    blankStarted = false;
+                }
+            }
 
-        StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
-        stringBuilder.setSpan(boldSpan,startIndex,endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-
+        }
+        //if the question ends with a blank
+        if (blankStarted){
+            setBlank(blankStartIndex, stringLength, stringBuilder);
+        }
         questionTextView.setText(
                 TextToSpeechHelper.clickToSpeechTextViewSpannable(
                         questionTextView, question, stringBuilder, textToSpeech)
         );
+    }
+
+    private void setBlank(int startIndex, int endIndex, SpannableStringBuilder stringBuilder){
+        //end of blank
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(
+                ThemeColorChanger.getColorFromAttribute(
+                        R.attr.color700, getContext())
+        );
+        stringBuilder.setSpan(colorSpan, startIndex, endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+        StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
+        stringBuilder.setSpan(boldSpan, startIndex, endIndex, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
     }
 
     private void populateButtons(LayoutInflater inflater){

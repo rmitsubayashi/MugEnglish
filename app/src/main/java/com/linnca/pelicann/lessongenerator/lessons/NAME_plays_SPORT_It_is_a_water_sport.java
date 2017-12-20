@@ -260,13 +260,11 @@ public class NAME_plays_SPORT_It_is_a_water_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-
         questionDataList.add(data);
         return questionDataList;
     }

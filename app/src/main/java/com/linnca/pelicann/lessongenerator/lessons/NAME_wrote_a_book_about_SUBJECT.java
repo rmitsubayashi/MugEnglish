@@ -66,7 +66,7 @@ public class NAME_wrote_a_book_about_SUBJECT extends Lesson{
                 "{" +
                 "    ?book wdt:P31 wd:Q571 ." + //is a book
                 "    ?book wdt:P50 ?person . " + //written by the person
-                "    ?book wdt:921 ?subject . " + //has a subject
+                "    ?book wdt:P921 ?subject . " + //has a subject
                 "    ?person rdfs:label ?personEN . " +
                 "    ?subject rdfs:label ?subjectEN . " + 
                 "    FILTER (LANG(?personEN) = '" +
@@ -119,12 +119,21 @@ public class NAME_wrote_a_book_about_SUBJECT extends Lesson{
             List<QuestionData> fillInBlankMultipleChoice2 = createFillInBlankMultipleChoiceQuestion2(qr);
             questionSet.add(fillInBlankMultipleChoice2);
 
-            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
-    private String NAME_is_OCCUPATION_EN_correct(QueryResult qr){
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord subject = new VocabularyWord("",qr.subjectEN, qr.subjectJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(subject);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
         return qr.personEN + " wrote a book about " + qr.subjectEN + ".";
     }
 
@@ -221,7 +230,8 @@ public class NAME_wrote_a_book_about_SUBJECT extends Lesson{
     private String fillInBlankQuestion(QueryResult qr){
         String sentence1 = formatSentenceJP(qr);
         String sentence2 = qr.personEN + " " +
-                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + " a book.";
+                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + " a book about " +
+                qr.subjectEN + ".";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence1 + "\n\n" + sentence2;
     }

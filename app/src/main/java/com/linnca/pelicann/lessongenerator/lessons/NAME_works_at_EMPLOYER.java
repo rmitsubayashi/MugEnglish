@@ -164,9 +164,10 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         //for better accuracy.
         //still there are a lot of employers that will need 'the'
         String sentence = qr.personEN + " works at " +
-                GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN) + ".";
-        //no need since all names are capitalized?
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
+                GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN);
+        if (!qr.employerEN.endsWith(".")){
+            sentence += ".";
+        }
         return sentence;
     }
 
@@ -238,7 +239,6 @@ public class NAME_works_at_EMPLOYER extends Lesson {
         String answer = multipleChoiceAnswer();
         List<QuestionData> questionDataList = new ArrayList<>();
         List<String> choices = multipleChoiceChoices();
-        choices.add(answer);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -347,8 +347,10 @@ public class NAME_works_at_EMPLOYER extends Lesson {
     private String fillInBlankQuestion(QueryResult qr){
         String sentence = formatSentenceJP(qr);
         String sentence2 = qr.personEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
-                " " + qr.employerEN + ".";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+                " " + GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN);
+        if (!qr.employerEN.endsWith(".")) {
+            sentence += ".";
+        }
         return sentence + "\n\n" + sentence2;
     }
 

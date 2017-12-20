@@ -68,7 +68,7 @@ public class NAME_spoke_at_TED_he_spoke_about_SUBJECT extends Lesson{
     @Override
     protected String getSPARQLQuery(){
         return "SELECT ?person ?personLabel ?personEN " +
-                " ?subjectLabel ?subject ?gender " +
+                " ?subjectLabel ?subjectEN ?gender " +
                 "WHERE " +
                 "{" +
                 "    ?person wdt:P21 ?gender . " + //has an gender
@@ -103,7 +103,7 @@ public class NAME_spoke_at_TED_he_spoke_about_SUBJECT extends Lesson{
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personEN");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             String subjectEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "subjectEN");
-            String subjectJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "subjectJP");
+            String subjectJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "subjectLabel");
             String genderID = SPARQLDocumentParserHelper.findValueByNodeName(head, "gender");
             genderID = WikiDataEntity.getWikiDataIDFromReturnedResult(genderID);
             boolean isMale;
@@ -166,8 +166,9 @@ public class NAME_spoke_at_TED_he_spoke_about_SUBJECT extends Lesson{
         String sentence1 = formatSentenceJP(qr);
         String sentence2 = qr.personEN + " " +
                 Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + " at TED.";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-        return sentence1 + "\n\n" + sentence2;
+        String sentence3 = qr.genderEN + " spoke about " + qr.subjectEN + ".";
+        sentence3 = GrammarRules.uppercaseFirstLetterOfSentence(sentence3);
+        return sentence1 + "\n\n" + sentence2 + "\n" + sentence3;
     }
 
     private String fillInBlankMultipleChoiceAnswer(){
@@ -249,8 +250,8 @@ public class NAME_spoke_at_TED_he_spoke_about_SUBJECT extends Lesson{
         List<String> responses = new ArrayList<>();
         responses.add(response);
         responses.add(response2);
-        String feedback = "onだとテレビ番組としてのTEDで話した、\n" +
-                "atだと場所としてのTEDで話した、\nというニュアンスになります。どちらも正解です。";
+        String feedback = "on TED だとテレビ番組としてのTEDで話した、\n" +
+                "at TED だと場所としてのTEDで話した、\nというニュアンスになります。どちらも正解です。";
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
@@ -283,7 +284,9 @@ public class NAME_spoke_at_TED_he_spoke_about_SUBJECT extends Lesson{
         String sentence2 = qr.personEN + " " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + " TED.";
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-        return sentence1 + "\n\n" + sentence2;
+        String sentence3 = qr.genderEN + " spoke about " + qr.subjectEN + ".";
+        sentence3 = GrammarRules.uppercaseFirstLetterOfSentence(sentence3);
+        return sentence1 + "\n\n" + sentence2 + "\n" + sentence3;
     }
 
     private String fillInBlankAnswer(){

@@ -53,11 +53,18 @@ public class Results extends Fragment {
     private ProgressBar vocabularyLoading;
     private TextView noVocabularyTextView;
 
+    private boolean instanceUpdated = false;
+    private String SAVED_STATE_INSTANCE_UPDATED = "savedStateInstanceUpdated";
+
     private ResultsListener resultsListener;
 
     public interface ResultsListener {
         void resultsToLessonList();
         void resultsToLessonDetails(LessonData lessonData);
+        //if the user unlocked a review lesson,
+        //we should direct him directly to the review
+        void resultsToReviewLesson(LessonData lessonData);
+        //this is for reviewing the lesson he just did
         void resultsToReview();
         void setToolbarState(ToolbarState state);
     }
@@ -67,7 +74,7 @@ public class Results extends Fragment {
         super.onCreate(savedInstanceState);
         try {
             db = (Database) getArguments().getSerializable(MainActivity.BUNDLE_DATABASE);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             //hard code a new database instance
             db = new FirebaseDB();
@@ -76,13 +83,19 @@ public class Results extends Fragment {
         List<String> questionKeys = getArguments().getStringArrayList(BUNDLE_QUESTION_IDS);
         resultsManager = new ResultsManager(instanceRecord, questionKeys, db,
                 new ResultsManager.ResultsManagerListener() {
-            @Override
-            public void onLessonFirstCleared(UserLessonListViewer previousList){
-                populateFirstCleared(previousList);
-            }
-        });
+                    @Override
+                    public void onLessonFirstCleared(UserLessonListViewer previousList) {
+                        populateFirstCleared(previousList);
+                    }
 
-        resultsManager.saveInstanceRecord(getContext());
+                    @Override
+                    public void onLessonNotCleared(int toClearScore){
+                        notifyNotCleared(toClearScore);
+                    }
+                });
+        if (savedInstanceState != null) {
+            instanceUpdated = savedInstanceState.getBoolean(SAVED_STATE_INSTANCE_UPDATED, false);
+        }
     }
 
     @Override
@@ -108,6 +121,10 @@ public class Results extends Fragment {
                 new ToolbarState(getString(R.string.results_app_bar_title), false, false, instanceRecord.getLessonId())
         );
 
+        if (!instanceUpdated) {
+            resultsManager.saveInstanceRecord(getContext());
+            instanceUpdated = true;
+        }
         setLayout();
     }
 
@@ -130,6 +147,12 @@ public class Results extends Fragment {
         } catch (ClassCastException e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        outState.putBoolean(SAVED_STATE_INSTANCE_UPDATED, instanceUpdated);
+        super.onSaveInstanceState(outState);
     }
 
     private void setLayout(){
@@ -248,6 +271,20 @@ public class Results extends Fragment {
         });
     }
 
+    private void notifyNotCleared(final int toClearScore){
+        //use the first cleared textView.
+        //will never use both at the same time
+        // (if the user didn't clear the lesson,
+        // the user can never clear it for the first time)
+        firstClearTextView.post(new Runnable() {
+            @Override
+            public void run() {
+                firstClearTextView.setText(getString(R.string.results_not_cleared, toClearScore));
+                firstClearTextView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+
     private void addUnlockedLessonItem(final LessonData lessonData){
         //make sure the view is loaded
         unlockedLessonList.post(new Runnable() {
@@ -258,12 +295,23 @@ public class Results extends Fragment {
                 TextView titleTextView = view.findViewById(R.id.results_unlocked_lesson_item_lesson_title);
                 titleTextView.setText(lessonData.getTitle());
                 Button goToLessonButton = view.findViewById(R.id.results_unlocked_lesson_item_go_to_lesson);
-                goToLessonButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        resultsListener.resultsToLessonDetails(lessonData);
-                    }
-                });
+                //if the unlocked item is a review, we want to redirect him to the review,
+                // not the lesson details screen
+                if (LessonData.isReview(lessonData.getKey())){
+                    goToLessonButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            resultsListener.resultsToReviewLesson(lessonData);
+                        }
+                    });
+                } else {
+                    goToLessonButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            resultsListener.resultsToLessonDetails(lessonData);
+                        }
+                    });
+                }
                 unlockedLessonList.addView(view);
             }
         });

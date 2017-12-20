@@ -127,7 +127,7 @@ public class UserLessonListViewer {
         int maxClearedLevel = -1;
         int maxClearedReviewNumber = -1;
         for (String key : clearedLessonKeys){
-            if (!lessonListViewer.isReview(key)) {
+            if (!LessonData.isReview(key)) {
                 //we don't need to worry about non-review lessons
                 continue;
             }
@@ -144,7 +144,7 @@ public class UserLessonListViewer {
                 continue;
             } //do nothing if lesson level is equal
             //next get the review number
-            int reviewNumber = lessonListViewer.getReviewNumber(key);
+            int reviewNumber = LessonData.extractReviewNumber(key);
             if (reviewNumber > maxClearedReviewNumber){
                 maxClearedReviewNumber = reviewNumber;
             }
@@ -153,7 +153,7 @@ public class UserLessonListViewer {
             //we haven't cleared a review yet
             lastClearedReviewPosition = -1;
         } else {
-            String lastClearedReviewKey = lessonListViewer.getReviewID(maxClearedLevel, maxClearedReviewNumber);
+            String lastClearedReviewKey = LessonData.formatReviewID(maxClearedLevel, maxClearedReviewNumber);
             lastClearedReviewPosition = lessonListViewer.getLessonRowIndex(lastClearedReviewKey);
         }
         //if the user hasn't cleared a review yet, the first review should be the next to clear
@@ -162,7 +162,7 @@ public class UserLessonListViewer {
             maxClearedLevel = 1;
             maxClearedReviewNumber = 0;
         }
-        String nextClearedReviewKey = lessonListViewer.getReviewID(maxClearedLevel, maxClearedReviewNumber+1);
+        String nextClearedReviewKey = LessonData.formatReviewID(maxClearedLevel, maxClearedReviewNumber+1);
         //handles the case where the user has completed every review for the level.
         nextToClearReviewPosition = lessonListViewer.getLessonRowIndex(nextClearedReviewKey) != -1 ?
                 lessonListViewer.getLessonRowIndex(nextClearedReviewKey) : LEVEL_CLEARED ;

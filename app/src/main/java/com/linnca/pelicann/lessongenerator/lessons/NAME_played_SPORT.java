@@ -1,5 +1,7 @@
 package com.linnca.pelicann.lessongenerator.lessons;
 
+import android.util.Log;
+
 import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
 import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
@@ -18,6 +20,7 @@ import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_TranslateWord;
 import com.linnca.pelicann.questions.Question_TrueFalse;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -44,7 +47,8 @@ public class NAME_played_SPORT extends Lesson{
         private String personEN;
         private String personJP;
         private String sportID;
-        private String sportNameForeign;
+        private String sportNameEN;
+        private String sportNameJP;
         //we need these for creating questions.
         //we will get them from fireBase
         private String verb = "";
@@ -52,12 +56,13 @@ public class NAME_played_SPORT extends Lesson{
 
         private QueryResult( String personID,
                              String personEN, String personJP,
-                             String sportID, String sportNameEN, String sportNameForeign){
+                             String sportID, String sportNameEN, String sportNameJP){
             this.personID = personID;
             this.personEN = personEN;
             this.personJP = personJP;
             this.sportID = sportID;
-            this.sportNameForeign = sportNameForeign;
+            this.sportNameEN = sportNameEN;
+            this.sportNameJP = sportNameJP;
             //temporary. will update by connecting to db
             this.verb = "play";
             //also temporary
@@ -114,12 +119,12 @@ public class NAME_played_SPORT extends Lesson{
             String sportID = SPARQLDocumentParserHelper.findValueByNodeName(head, "sport");
             // ~entity/id になってるから削る
             sportID = WikiDataEntity.getWikiDataIDFromReturnedResult(sportID);
-            String sportNameForeign = SPARQLDocumentParserHelper.findValueByNodeName(head, "sportLabel");
+            String sportNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "sportLabel");
             String sportNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "sportEN");
 
             QueryResult qr = new QueryResult(personID,
                     personEN, personJP,
-                    sportID, sportNameEN, sportNameForeign);
+                    sportID, sportNameEN, sportNameJP);
 
             queryResults.add(qr);
 
@@ -144,15 +149,35 @@ public class NAME_played_SPORT extends Lesson{
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
 
+            List<QuestionData> sentencePuzzle = createSentencePuzzleQuestion(qr);
+            questionSet.add(sentencePuzzle);
+
             List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
             questionSet.add(trueFalseQuestion);
 
             List<QuestionData> translateQuestion = createTranslationQuestion(qr);
             questionSet.add(translateQuestion);
 
-            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
 
         }
+    }
+
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+
+        String exampleSentenceEN = "";
+        String exampleSentenceJP = "";
+        if (!qr.object.equals("")){
+            exampleSentenceEN = formatSentenceEN(qr);
+            exampleSentenceJP = formatSentenceJP(qr);
+        }
+        VocabularyWord sport = new VocabularyWord("", qr.sportNameEN, qr.sportNameJP,
+                exampleSentenceEN, exampleSentenceJP, KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(sport);
+        return words;
     }
 
     //we want to read from the database and then create the questions
@@ -183,13 +208,13 @@ public class NAME_played_SPORT extends Lesson{
         db.getSports(sportIDs, onDBResultListener);
     }
 
-    private String NAME_played_SPORT_EN_correct(QueryResult qr){
+    private String formatSentenceEN(QueryResult qr){
         String verbObject = SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PAST);
         return qr.personEN + " " + verbObject + ".";
     }
 
-    private String formatSentenceForeign(QueryResult qr){
-        return qr.personJP + "は" + qr.sportNameForeign + "をしました。";
+    private String formatSentenceJP(QueryResult qr){
+        return qr.personJP + "は" + qr.sportNameJP + "をしました。";
     }
 
     private List<String> puzzlePieces(QueryResult qr){
@@ -209,7 +234,7 @@ public class NAME_played_SPORT extends Lesson{
 
     private List<QuestionData> createSentencePuzzleQuestion(QueryResult qr){
         List<QuestionData> questionDataList = new ArrayList<>(1);
-        String question = formatSentenceForeign(qr);
+        String question = formatSentenceJP(qr);
         List<String> choices = puzzlePieces(qr);
         String answer = puzzlePiecesAnswer(qr);
         QuestionData data = new QuestionData();
@@ -241,7 +266,7 @@ public class NAME_played_SPORT extends Lesson{
 
     private List<QuestionData> createTrueFalseQuestion(QueryResult qr){
         List<QuestionData> questionDataList = new ArrayList<>(2);
-        String question = this.NAME_played_SPORT_EN_correct(qr);
+        String question = this.formatSentenceEN(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -271,11 +296,18 @@ public class NAME_played_SPORT extends Lesson{
     }
 
     private String translateQuestion(QueryResult qr){
-        return qr.sportNameForeign + "をしました";
+        return qr.sportNameJP + "をしました";
     }
 
     private String translateAnswer(QueryResult qr){
         return SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PAST);
+    }
+
+    private List<String> translateAcceptableAnswers(QueryResult qr){
+        List<String> answers = new ArrayList<>(1);
+        String answer = "I " + SportsHelper.getVerbObject(qr.verb, qr.object, SportsHelper.PAST);
+        answers.add(answer);
+        return answers;
     }
 
     private List<QuestionData> createTranslationQuestion(QueryResult qr){
@@ -287,8 +319,7 @@ public class NAME_played_SPORT extends Lesson{
         data.setQuestion(translateQuestion(qr));
         data.setChoices(null);
         data.setAnswer(translateAnswer(qr));
-        data.setAcceptableAnswers(null);
-
+        data.setAcceptableAnswers(translateAcceptableAnswers(qr));
         questionDataList.add(data);
         return questionDataList;
     }

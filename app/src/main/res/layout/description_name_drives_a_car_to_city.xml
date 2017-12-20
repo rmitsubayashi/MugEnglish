@@ -54,5 +54,10 @@
             android:layout_height="wrap_content"
             style="@style/description_lesson_text"
             android:text="@string/description_name_drives_a_car_to_city_explanation"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/preposition_to"/>
     </LinearLayout>
 </ScrollView>

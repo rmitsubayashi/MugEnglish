@@ -51,7 +51,6 @@ public class NAME_creates_art extends Lesson{
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
         super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
-
     }
 
     @Override

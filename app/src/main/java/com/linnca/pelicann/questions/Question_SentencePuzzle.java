@@ -1,6 +1,7 @@
 package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,8 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
             //if there's a large piece, more likely to create unneeded rows
             if (maxChoiceLength > 15){
                 buttonLayout = R.layout.inflatable_question_sentence_puzzle_puzzle_piece_small;
+            } else {
+                buttonLayout = R.layout.inflatable_question_sentence_puzzle_puzzle_piece;
             }
         } else {
             buttonLayout = R.layout.inflatable_question_sentence_puzzle_puzzle_piece;
@@ -108,9 +111,7 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
             answer.append("|");
         }
 
-        String answerString = answer.substring(0, answer.length()-1);
-
-        return answerString;
+        return answer.substring(0, answer.length()-1);
     }
 
     //no need to enable text to speech because this will always be Japanese??
@@ -122,7 +123,6 @@ public class Question_SentencePuzzle extends QuestionFragmentInterface {
     private void createChoiceButtons(final LayoutInflater inflater){
         List<String> choices = questionData.getChoices();
         Collections.shuffle(choices);
-
 
         //creating a new button every time is expensive?
         for (final String choice : choices){

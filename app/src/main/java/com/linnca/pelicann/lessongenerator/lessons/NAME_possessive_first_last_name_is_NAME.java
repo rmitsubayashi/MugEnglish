@@ -278,7 +278,7 @@ public class NAME_possessive_first_last_name_is_NAME extends Lesson{
     }
 
     private String fillInBlankMultipleChoiceQuestionLastName(QueryResult qr){
-        String sentence = formatFirstNameSentenceJP(qr);
+        String sentence = formatLastNameSentenceJP(qr);
         String sentence2 = qr.personEN + "'s " +
                 Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
                 " is " + qr.lastNameEN + ".";

@@ -61,7 +61,7 @@ public class COMPANY_makes_PRODUCT extends Lesson{
 
     @Override
     protected String getSPARQLQuery(){
-        //find company name and blood type
+        //find company name and product
         return "SELECT ?company ?companyLabel ?companyEN " +
                 " ?productEN ?productLabel " +
                 "WHERE " +

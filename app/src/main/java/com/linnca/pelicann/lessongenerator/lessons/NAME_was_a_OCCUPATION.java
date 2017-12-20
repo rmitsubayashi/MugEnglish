@@ -13,6 +13,7 @@ import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
+import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.questions.Question_SentencePuzzle;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 import com.linnca.pelicann.vocabulary.VocabularyWord;
@@ -108,21 +109,35 @@ public class NAME_was_a_OCCUPATION extends Lesson{
     protected synchronized void createQuestionsFromResults(){
         for (QueryResult qr : queryResults){
             List<List<QuestionData>> questionSet = new ArrayList<>();
-            List<QuestionData> sentencePuzzleQuestion = createSentencePuzzleQuestion(qr);
-            questionSet.add(sentencePuzzleQuestion);
+            List<QuestionData> sentencePuzzle = createSentencePuzzleQuestion(qr);
+            questionSet.add(sentencePuzzle);
 
-            List<QuestionData> chooseCorrectSpellingQuestion = createChooseCorrectSpellingQuestion(qr);
-            questionSet.add(chooseCorrectSpellingQuestion);
+            List<QuestionData> chooseCorrectSpelling = createChooseCorrectSpellingQuestion(qr);
+            questionSet.add(chooseCorrectSpelling);
 
-            List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
-            questionSet.add(fillInBlankQuestion);
+            List<QuestionData> fillInBlank = createFillInBlankQuestion(qr);
+            questionSet.add(fillInBlank);
 
-            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, new ArrayList<VocabularyWord>()));
+            List<QuestionData> fillInBlankMultipleChoice = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(fillInBlankMultipleChoice);
+
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
 
     }
 
-    private String NAME_was_a_OCCUPATION_EN_correct(QueryResult qr){
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord occupation = new VocabularyWord("",qr.occupationEN, qr.occupationJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(occupation);
+        return words;
+    }
+
+    private String formatSentenceEN(QueryResult qr){
         String indefiniteArticle = GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN);
         String sentence = qr.personEN + " was " + indefiniteArticle + ".";
         //no need since all names are capitalized?
@@ -233,6 +248,44 @@ public class NAME_was_a_OCCUPATION extends Lesson{
         data.setAcceptableAnswers(acceptableAnswers);
 
 
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
+                " " + GrammarRules.indefiniteArticleBeforeNoun(qr.occupationEN) + ".";
+        return sentence1 + "\n\n" + sentence2;
+    }
+
+    private List<String> fillInBlankMultipleChoiceChoices(){
+        List<String> choices = new ArrayList<>(3);
+        choices.add("is");
+        choices.add("was");
+        choices.add("ised");
+        choices.add("issed");
+        return choices;
+    }
+
+    private String fillInBlankMultipleChoiceAnswer(){
+        return "was";
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String question = this.fillInBlankMultipleChoiceQuestion(qr);
+        String answer = fillInBlankMultipleChoiceAnswer();
+        List<String> choices = fillInBlankMultipleChoiceChoices();
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(choices);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
 

@@ -5,6 +5,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.FeedbackPair;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
@@ -153,6 +154,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
@@ -225,114 +227,13 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
 
     private String formatSentenceEN(QueryResult qr){
         String yearString = qr.singular ? "year" : "years";
-        return qr.personEN + " is " + Integer.toString(qr.age) + yearString + " old.\n" +
+        return qr.personEN + " is " + Integer.toString(qr.age) + " " + yearString + " old.\n" +
                 qr.personEN + " is a " + qr.genderEN + ".";
     }
 
     private String formatSentenceJP(QueryResult qr){
         return qr.personJP + "は" + Integer.toString(qr.age) + "歳です。\n" +
                 qr.personJP + "は" + qr.genderJP + "です。";
-    }
-
-    private String fillInBlankQuestion(QueryResult qr){
-        //one year old vs two years old
-        String yearString = qr.singular ? "year" : "years";
-        String sentence = qr.personEN + " is " +
-                Question_FillInBlank_Input.FILL_IN_BLANK_NUMBER + " " + yearString + " old.";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        String sentence2 = "ヒント：" + qr.personJP + "の誕生日は" + qr.birthday + "です";
-        DateTimeFormatter birthdayFormat = DateTimeFormat.forPattern("yyyy年M月d日");
-        String today = birthdayFormat.print(DateTime.now());
-        String sentence3 = "(" + today + "現在)";
-
-        return sentence + "\n\n" + sentence2 + "\n" + sentence3;
-    }
-
-    private String fillInBlankAnswer(QueryResult qr){
-        return Integer.toString(qr.age);
-    }
-
-    //allow a leeway
-    private List<String> fillInBlankAlternateAnswer(QueryResult qr){
-        List<String> leeway = new ArrayList<>(2);
-        leeway.add(Integer.toString(qr.age + 1));
-        if (qr.age != 0)
-            leeway.add(Integer.toString(qr.age-1));
-        return leeway;
-    }
-
-    private FeedbackPair fillInBlankFeedback(QueryResult qr){
-        List<String> responses = fillInBlankAlternateAnswer(qr);
-        String feedback = "正確には" + Integer.toString(qr.age) + "歳";
-        return new FeedbackPair(responses, feedback, FeedbackPair.IMPLICIT);
-    }
-
-    private List<QuestionData> createFillInBlankQuestion(QueryResult qr){
-        String question = this.fillInBlankQuestion(qr);
-        String answer = fillInBlankAnswer(qr);
-        List<String> acceptableAnswers = fillInBlankAlternateAnswer(qr);
-        FeedbackPair feedbackPair = fillInBlankFeedback(qr);
-        List<FeedbackPair> feedbackPairs = new ArrayList<>();
-        feedbackPairs.add(feedbackPair);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-
-        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(acceptableAnswers);
-
-        data.setFeedback(feedbackPairs);
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    private String fillInBlankQuestion2(QueryResult qr){
-        String sentence = qr.personJP + "は" + Integer.toString(qr.age) + "歳です。";
-        String sentence2 = qr.personEN + " is " + Integer.toString(qr.age) + " " +
-                Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
-        return sentence + "\n\n" + sentence2;
-    }
-
-    private String fillInBlankAnswer2(QueryResult qr){
-        String yearString = qr.singular ? "year" : "years";
-        return yearString + " old";
-    }
-
-    //allow either plural/singular
-    private List<String> fillInBlankAlternateAnswer2(QueryResult qr){
-        List<String> alternateAnswers = new ArrayList<>(1);
-        String yearString = qr.singular ? "years" : "year";
-        String answer = yearString + " old";
-        alternateAnswers.add(answer);
-        return alternateAnswers;
-    }
-
-    private List<QuestionData> createFillInBlankQuestion2(QueryResult qr){
-        String question = this.fillInBlankQuestion2(qr);
-        String answer = fillInBlankAnswer2(qr);
-        List<String> alternateAnswers = fillInBlankAlternateAnswer2(qr);
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-
-        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(alternateAnswers);
-
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
@@ -376,7 +277,7 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         List<String> choices = fillInBlankMultipleChoiceChoices(qr);
         String question = fillInBlankMultipleChoiceQuestion(qr);
         String answer = fillInBlankMultipleChoiceAnswer(qr);
-        FeedbackPair wrongFeedback = fillInBlankFeedback(qr);
+        FeedbackPair wrongFeedback = fillInBlankMultipleChoiceFeedback(qr);
         List<FeedbackPair> feedback = new ArrayList<>(1);
         feedback.add(wrongFeedback);
         QuestionData data = new QuestionData();

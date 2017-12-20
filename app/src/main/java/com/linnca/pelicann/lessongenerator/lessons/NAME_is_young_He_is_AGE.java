@@ -91,7 +91,7 @@ public class NAME_is_young_He_is_AGE extends Lesson {
     protected String getSPARQLQuery(){
         //find person with birthday and is alive
         return "SELECT ?person ?personLabel ?personEN " +
-                " ?birthday " +
+                " ?birthday ?gender " +
                 "WHERE " +
                 "{" +
                 "    ?person wdt:P21 ?gender . " + //has gender
@@ -165,13 +165,16 @@ public class NAME_is_young_He_is_AGE extends Lesson {
     }
 
     private List<VocabularyWord> getVocabularyWords(QueryResult qr){
-        VocabularyWord old = new VocabularyWord("","old", "歳をとっている",
-                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
-        VocabularyWord young = new VocabularyWord("","young", "若い",
-                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
-        List<VocabularyWord> words = new ArrayList<>(2);
-        words.add(old);
-        words.add(young);
+        VocabularyWord word;
+        if (qr.youngOldEN.equals("old")) {
+            word = new VocabularyWord("", "old", "歳をとっている",
+                    formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        } else {
+            word = new VocabularyWord("", "young", "若い",
+                    formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        }
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(word);
 
         return words;
     }
@@ -315,7 +318,7 @@ public class NAME_is_young_He_is_AGE extends Lesson {
     }
 
     private String fillInBlankMultipleChoiceAnswer2(QueryResult qr){
-        return qr.youngOldEN;
+        return qr.genderEN;
     }
 
     private List<String> fillInBlankMultipleChoiceChoices2(){

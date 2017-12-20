@@ -44,5 +44,10 @@
             android:layout_height="wrap_content"
             style="@style/description_lesson_text"
             android:text="@string/description_find_stand_sit_on_a_bed_new_word1"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/preposition_on"/>
     </LinearLayout>
 </ScrollView>

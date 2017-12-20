@@ -12,6 +12,7 @@ import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionSetData;
+import com.linnca.pelicann.questions.Question_ChooseCorrectSpelling;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_Spelling;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
@@ -84,12 +85,8 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //JP label if possible
                 "    '" + WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-
                 "    BIND (wd:%s as ?country) . " + //binding the ID of entity as ?country
-
                 "} ";
-
-
 
     }
 
@@ -183,12 +180,12 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
     private List<QuestionData> spellingQuestion(QueryResult qr){
         String question = qr.countryJP;
-        String answer = qr.countryEN;
+        String answer = GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
 
-        data.setQuestionType(Question_Spelling.QUESTION_TYPE);
+        data.setQuestionType(Question_ChooseCorrectSpelling.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         //for suggestive, we don't need to lowercase everything
@@ -204,29 +201,36 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
     }
 
     private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
-        String lowercaseCountry = qr.countryEN.toLowerCase();
-        List<String> responses = new ArrayList<>();
+        String lowercaseCountry = GrammarRules.definiteArticleBeforeCountry(qr.countryEN)
+                .toLowerCase();
+
+        String lowercaseCountryWithoutThe = qr.countryEN.toLowerCase();
+        List<String> responses = new ArrayList<>(2);
         responses.add(lowercaseCountry);
-        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryEN;
+        if (!lowercaseCountry.equals(lowercaseCountryWithoutThe))
+            responses.add(lowercaseCountryWithoutThe);
+        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountryWithoutThe + " → " +
+                        GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
     private List<QuestionData> createTranslateWordQuestion(QueryResult qr){
         String question = qr.countryJP;
-        String answer = qr.countryEN;
+        String answer = GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
+        List<String> acceptableAnswers = new ArrayList<>(1);
+        if (!answer.equals(qr.countryEN))
+            acceptableAnswers.add(qr.countryEN);
         FeedbackPair feedbackPair = fillInBlankInputFeedback(qr);
         List<FeedbackPair> feedbackPairs = new ArrayList<>();
         feedbackPairs.add(feedbackPair);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-
         data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
+        data.setAcceptableAnswers(acceptableAnswers);
         data.setFeedback(feedbackPairs);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);
@@ -245,14 +249,14 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
 
     private String fillInBlankInputAnswer2(QueryResult qr){
-        return qr.countryEN + "'s";
+        return GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + "'s";
     }
 
     private List<String> fillInBlankInputAlternateAnswer2(QueryResult qr){
         List<String> alternateAnswers = new ArrayList<>(1);
         String definiteArticleString = GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
         if (!definiteArticleString.equals(qr.countryEN)){
-            alternateAnswers.add(definiteArticleString);
+            alternateAnswers.add(qr.countryEN);
         }
 
         return alternateAnswers;
@@ -293,25 +297,24 @@ public class COUNTRY_possessive_government_is_a_GOVERNMENT extends Lesson {
 
     private List<String> fillInBlankInputAcceptableAnswers(QueryResult qr){
         List<String> answers = new ArrayList<>(1);
-        answers.add(qr.countryEN + "'s government");
+        if (!GrammarRules.definiteArticleBeforeCountry(qr.countryEN)
+                .equals(qr.countryEN))
+            answers.add(qr.countryEN + "'s government");
         return answers;
     }
 
     private List<QuestionData> createFillInBlankInputQuestion1(QueryResult qr){
         String question = this.fillInBlankInputQuestion1(qr);
-
         String answer = fillInBlankInputAnswer1(qr);
         List<String> acceptableAnswers = fillInBlankInputAcceptableAnswers(qr);
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(super.lessonKey);
-
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-
         data.setFeedback(null);
         List<QuestionData> questionDataList = new ArrayList<>();
         questionDataList.add(data);

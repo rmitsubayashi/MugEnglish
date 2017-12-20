@@ -215,9 +215,8 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
     private FeedbackPair sentencePuzzleFeedback(QueryResult qr){
         List<String> responsePieces = acceptablePuzzlePieces(qr);
         String responseAnswer = Question_SentencePuzzle.formatAnswer(responsePieces);
-        String response = QuestionFeedbackFormatter.formatSentencePuzzleAnswer(responseAnswer);
         List<String> responses = new ArrayList<>(1);
-        responses.add(response);
+        responses.add(responseAnswer);
         List<String> correctPieces = puzzlePieces(qr);
         String correctAnswer =Question_SentencePuzzle.formatAnswer(correctPieces);
         String correctFeedback = QuestionFeedbackFormatter.formatSentencePuzzleAnswer(correctAnswer);
@@ -252,12 +251,10 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
-        String sentence = formatSentenceJP(qr);
-        String sentence2 = qr.personEN + " is " +
+        return qr.personEN + " is " +
                 qr.spouseEN + "'s " +
                 Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
                 ".";
-        return sentence + "\n" + sentence2;
     }
 
 
@@ -294,12 +291,10 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
     }
 
     private String fillInBlankQuestion(QueryResult qr){
-        String sentence = qr.personEN + " is " +
+        return qr.personEN + " is " +
                 qr.spouseEN + "'s " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
                 ".";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
     }
 
     private String fillInBlankAnswer(QueryResult qr){
@@ -313,14 +308,11 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-
-
         questionDataList.add(data);
 
         return questionDataList;
@@ -356,7 +348,7 @@ public class NAME_is_NAME2_possessive_husband_wife extends Lesson{
         data.setId("");
         data.setLessonId(lessonKey);
 
-        data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
+        data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);

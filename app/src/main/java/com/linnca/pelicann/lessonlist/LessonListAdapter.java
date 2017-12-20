@@ -79,6 +79,24 @@ class LessonListAdapter
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final LessonListRow lessonRow = data.get(position);
+
+        /*LessonList.LessonListListener debugListener = new LessonList.LessonListListener() {
+            @Override
+            public void lessonListToLessonDetails(LessonData lessonData) {
+                addClearedLessonKey(lessonData.getKey());
+            }
+
+            @Override
+            public void lessonListToReviewLesson(String key) {
+                addClearedLessonKey(key);
+            }
+
+            @Override
+            public void setToolbarState(ToolbarState state) {
+
+            }
+        };*/
+
         if (holder instanceof LessonListRowViewHolder) {
             int[] rowStatus = new int[3];
             int nextToClearReviewPosition = userLessonListViewer.getNextToClearReviewPosition();
@@ -100,22 +118,6 @@ class LessonListAdapter
                 }
             }
 
-            LessonList.LessonListListener debugListener = new LessonList.LessonListListener() {
-                @Override
-                public void lessonListToLessonDetails(LessonData lessonData) {
-                    addClearedLessonKey(lessonData.getKey());
-                }
-
-                @Override
-                public void lessonListToReview(int lessonLevel, String key) {
-
-                }
-
-                @Override
-                public void setToolbarState(ToolbarState state) {
-
-                }
-            };
             ((LessonListRowViewHolder)holder).populateRow(lessonRow, listener, rowStatus);
 
             LessonListRow rowBefore = position == 0 ? null : data.get(position - 1);
@@ -129,7 +131,7 @@ class LessonListAdapter
         } else if (holder instanceof LessonListReviewRowViewHolder){
             LessonData reviewData = lessonRow.getLessons()[1];
             int status = userLessonListViewer.getItemStatus(reviewData);
-            ((LessonListReviewRowViewHolder)holder).populateRow(reviewData, listener, status, lessonLevel);
+            ((LessonListReviewRowViewHolder)holder).populateRow(reviewData, listener, status);
         }
     }
 

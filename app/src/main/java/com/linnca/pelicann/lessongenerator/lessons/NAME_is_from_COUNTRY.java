@@ -209,7 +209,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
         private String nameEN;
         private String nameJP;
 
-        public CountryHelper(String wikiDataID, String nameEN, String nameJP) {
+        CountryHelper(String wikiDataID, String nameEN, String nameJP) {
             this.wikiDataID = wikiDataID;
             this.nameEN = nameEN;
             this.nameJP = nameJP;
@@ -259,8 +259,8 @@ public class NAME_is_from_COUNTRY extends Lesson {
         while (options.size() > 2) {
             List<String> choices = new ArrayList<>();
             choices.add(options.get(0).nameJP);
-            choices.add(options.get(0).nameJP);
             options.remove(0);
+            choices.add(options.get(0).nameJP);
             options.remove(0);
             choices.add(answer);
             QuestionData data = new QuestionData();
@@ -350,15 +350,37 @@ public class NAME_is_from_COUNTRY extends Lesson {
     }
 
     private String fillInBlankAnswer3(QueryResult qr){
-        return " is from " + qr.countryEN;
+        return "is from " + GrammarRules.definiteArticleBeforeCountry(qr.countryEN);
+    }
+
+    private List<String> fillInBlankAcceptableAnswers3(QueryResult qr){
+        List<String> answers = new ArrayList<>(1);
+        //only add if we did add a 'the'
+        if (!qr.countryEN.equals(GrammarRules.definiteArticleBeforeCountry(qr.countryEN))){
+            answers.add("is from " + qr.countryEN);
+        }
+        //also accept the country name without 'the' if it was already there
+        if (qr.countryEN.startsWith("the ")){
+            answers.add(qr.countryEN.replace("the ", ""));
+        } else if (qr.countryEN.startsWith("The ")){
+            answers.add(qr.countryEN.replace("The ", ""));
+        }
+        return answers;
+
     }
 
     private FeedbackPair fillInBlankFeedback3(QueryResult qr){
-        List<String> responses = new ArrayList<>(2);
+        List<String> responses = new ArrayList<>(4);
         String response = " is from " + qr.countryEN.toLowerCase();
         String response2 = " is from " + qr.countryEN.toLowerCase() + ".";
+        String response3 = " is from " +
+                GrammarRules.definiteArticleBeforeCountry(qr.countryEN).toLowerCase();
+        String response4 = " is from " +
+                GrammarRules.definiteArticleBeforeCountry(qr.countryEN.toLowerCase()) + ".";
         responses.add(response);
         responses.add(response2);
+        responses.add(response3);
+        responses.add(response4);
         String feedback = "国の名前は大文字で始まります";
         return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
@@ -366,9 +388,9 @@ public class NAME_is_from_COUNTRY extends Lesson {
     private List<QuestionData> createFillInBlankQuestion3(QueryResult qr){
         String question = this.fillInBlankQuestion3(qr);
         String answer = fillInBlankAnswer3(qr);
+        List<String> acceptableAnswers = fillInBlankAcceptableAnswers3(qr);
         List<FeedbackPair> allFeedback = new ArrayList<>(1);
         allFeedback.add(fillInBlankFeedback3(qr));
-
         List<QuestionData> questionDataList = new ArrayList<>();
 
         QuestionData data = new QuestionData();
@@ -379,7 +401,7 @@ public class NAME_is_from_COUNTRY extends Lesson {
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
+        data.setAcceptableAnswers(acceptableAnswers);
         data.setFeedback(allFeedback);
 
         questionDataList.add(data);

@@ -131,7 +131,18 @@ public class LessonInstanceData implements Serializable{
 
     //don't add 'get' because that tells FireBase that it's a variable
     public int questionCount(){
-        return allQuestionIds().size();
+        int questionCt = 0;
+        if (preGenericQuestionIds != null)
+            questionCt += preGenericQuestionIds.size();
+
+        for (LessonInstanceDataQuestionSet set : questionSets) {
+            questionCt += set.getQuestionIDs().size();
+        }
+
+        if (postGenericQuestionIds != null)
+            questionCt += postGenericQuestionIds.size();
+
+        return questionCt;
     }
 
     public String questionIdAt(int index){

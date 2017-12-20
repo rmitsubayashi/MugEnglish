@@ -97,4 +97,45 @@ public class LessonData implements Serializable{
     public void setIconID(int iconID) {
         this.iconID = iconID;
     }
+
+    public static String formatReviewID(int level, int number){
+        return "review" +
+                Integer.toString(level) + "_" +
+                Integer.toString(number);
+    }
+
+    public static boolean isReview(String key){
+        return key.matches("^review[0-9]{1,}_[0-9]{1,}$");
+    }
+
+    public static int extractReviewLevel(String reviewKey){
+        if (!isReview(reviewKey)) {
+            return -1;
+        }
+        int underscoreIndex = reviewKey.indexOf('_');
+        String numberString = reviewKey.substring(0, underscoreIndex);
+        numberString = numberString.replace("review","");
+        int number;
+        try {
+            number = Integer.parseInt(numberString);
+        } catch (NumberFormatException e){
+            number = -1;
+        }
+        return number;
+    }
+
+    public static int extractReviewNumber(String reviewKey){
+        if (!isReview(reviewKey)) {
+            return -1;
+        }
+        int underscoreIndex = reviewKey.indexOf('_');
+        String numberString = reviewKey.substring(underscoreIndex+1, reviewKey.length());
+        int number;
+        try {
+            number = Integer.parseInt(numberString);
+        } catch (NumberFormatException e){
+            number = -1;
+        }
+        return number;
+    }
 }

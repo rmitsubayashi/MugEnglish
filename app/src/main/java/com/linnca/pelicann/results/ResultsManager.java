@@ -1,9 +1,11 @@
 package com.linnca.pelicann.results;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 import com.linnca.pelicann.lessonlist.UserLessonListViewer;
@@ -24,6 +26,7 @@ class ResultsManager {
 
     interface ResultsManagerListener {
         void onLessonFirstCleared(UserLessonListViewer previousState);
+        void onLessonNotCleared(int toClearLessonScore);
     }
 
     ResultsManager(InstanceRecord instanceRecord, List<String> questionIDs, Database db, ResultsManagerListener listener){
@@ -64,6 +67,7 @@ class ResultsManager {
         OnDBResultListener clearedLessonOnDBResultListener = new OnDBResultListener() {
             @Override
             public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
+                Log.d("results", "oncleared called");
                 OnDBResultListener reviewQuestionOnDBResultListener =
                         new OnDBResultListener() {
                             @Override
@@ -74,11 +78,16 @@ class ResultsManager {
                 //save it in a class variable so other methods may use it
                 userLessonListViewer = new UserLessonListViewer(new LessonListViewerImplementation(),
                         clearedLessonKeys);
+                Log.d("results", "oncleared2 called");
                 if (userLessonListViewer.shouldSaveForReview(instanceRecord.getLessonId())){
                     db.addReviewQuestion(questionIDs, reviewQuestionOnDBResultListener);
+                    Log.d("resultsmanager", "should save for review");
+                } else {
+                    Log.d("resultsmanager", "should not save for review");
                 }
             }
         };
+        Log.d("results", "calling db");
         //we grabbed level when adding the report card
         db.getClearedLessons(context, level, false, clearedLessonOnDBResultListener);
     }
@@ -103,6 +112,18 @@ class ResultsManager {
     }
 
     void clearLesson(Context context){
+        //first check if the user's score is over the to-clear line
+        int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
+        double correctPercentage = 100 * correctCt[0] / correctCt[1];
+        LessonListViewer lessonListViewer = new LessonListViewerImplementation();
+        String lessonKey = instanceRecord.getLessonId();
+        int lessonClearScore = lessonListViewer.getLessonData(lessonKey)
+                .getToClearScore();
+        if (correctPercentage < lessonClearScore){
+            resultsManagerListener.onLessonNotCleared(lessonClearScore);
+            return;
+        }
+
         //we create an instance of UserLessonListViewer when we
         // save review questions.
         //if that has run already, just use that.
@@ -113,14 +134,12 @@ class ResultsManager {
             OnDBResultListener onDBResultListener = new OnDBResultListener() {
                 @Override
                 public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
-
                     UserLessonListViewer newUserLessonListViewer = new UserLessonListViewer(
                             new LessonListViewerImplementation(), clearedLessonKeys);
                     clearLessonHelperMethod(newUserLessonListViewer);
                 }
             };
-            LessonListViewer lessonListViewer = new LessonListViewerImplementation();
-            String lessonKey = instanceRecord.getLessonId();
+
             int level = lessonListViewer.getLessonLevel(lessonKey);
             db.getClearedLessons(context, level, false, onDBResultListener);
         }

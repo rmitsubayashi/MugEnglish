@@ -82,7 +82,7 @@
     <string name="description_name_is_a_man_word_meaning3">女性</string>
     <string name="description_name_is_a_man_grammar_structure">A is B</string>
     <string name="description_name_is_a_man_grammar_explanation">AはBです</string>
-    <string name="description_name_is_a_man_fun_fact">古英語では<b>man</b>は男性ではなく人間という意味でした。
+    <string name="description_name_is_a_man_fun_fact">古英語では<b>man</b>は男性ではなく、人間という意味でした。
     男性はwer-<b>man</b>、女性はwif-<b>man</b>と頭にwerとwifをつけて表していました。\nしかし、徐々に男性のことをmanと呼ぶようになり、wifmanはそのままwomanへと変化を遂げました。</string>
 
     <string name="description_name_is_a_occupation_subheader">@string/description_template_how_to_remember</string>
@@ -120,7 +120,8 @@
 
     <string name="description_name_is_age_years_old_name_is_a_gender_review">年齢と性別の例文を合わせてみましょう。\n「A is # years old.」と「A is a man/woman.」ですね。</string>
     <string name="description_name_is_age_years_old_name_is_a_gender_exception">ただし、今回は大人の男、大人の女、男の子、女の子の四択になります。\n
-    それぞれ<b>man  woman  boy  girl</b>と言います。大人であるかの判定はアメリカの成人年齢（18歳）を基準にしています。</string>
+    それぞれ<b>man  woman  boy  girl</b>と言います。\n
+        大人であるかの判定はアメリカの成人年齢（18歳）を基準にしています。</string>
 
     <string name="description_name_is_at_work_he_is_at_employer_review"><b>at</b>の仕様を覚えていますか。「その点に、その場所に」でしたね。</string>
     <string name="description_name_is_at_work_he_is_at_employer_review2">また、workを覚えていますか？A works at B. の例文で出てきました。\n今回は<b>work</b>は動詞ではなくて名詞として出てきます。意味は同じ「仕事」です。</string>
@@ -276,10 +277,10 @@
     <string name="description_place_is_a_country_city_explanation">土地名が国なのか都市なのか当ててみましょう。</string>
 
     <string name="description_stand_up_sit_down_explanation">このレッスンでは二つの動作を学びます。\n
-        指示を出す問題がありますので、指示に従ってみてください。身動きがとれない場合はイメージするだけでも構いません。
+        今回は<b>sit down</b>（座って）と<b>stand up</b>（立って）です。\ndownとupはそれぞれ「下」「上」という意味で、動作の方向を表しています。\n
+    sitとstandだけでもsit downとstand upとほとんど同じ意味ですが、downとupをつけることにより動作という意味を強調します。
     </string>
-    <string name="description_stand_up_sit_down_explanation2">今回は<b>sit down</b>（座って）と<b>stand up</b>（立って）です。\ndownとupはそれぞれ「下」「上」という意味で、動作の方向を表しています。\n
-    sitとstandだけでもsit downとstand upとほとんど同じ意味ですが、downとupをつけることにより動作という意味を強調します。</string>
+    <string name="description_stand_up_sit_down_explanation2">※指示を出す問題がありますので、従ってみてください。身動きがとれない場合はイメージするだけでも構いません。</string>
 
     <string name="description_walk_run_explanation">今回のレッスンも動作のレッスンです。できる範囲で指示に従ってください。</string>
     <string name="description_walk_run_word1">run</string>
@@ -365,8 +366,8 @@
     </string>
     
     <string name="description_name_drives_a_car_to_city_grammar">いままで勉強してきた文法は単調なものばかりでした。\n
-    A is B\n
-    A is from C\n
+    A  |  is  |  B\n
+    A  |  is  |  from C\n
     の2パターンでした。今回はこの2パターンを合わせて\n
     A is B from C\n
     のようなパターンを勉強していきましょう。</string>

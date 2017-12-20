@@ -38,7 +38,7 @@ public class LessonList extends Fragment {
 
     public interface LessonListListener {
         void lessonListToLessonDetails(LessonData lessonData);
-        void lessonListToReview(int lessonLevel, String key);
+        void lessonListToReviewLesson(String key);
         void setToolbarState(ToolbarState state);
     }
 

@@ -85,13 +85,8 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', " + //JP label if possible
                 "    '" + WikiBaseEndpointConnector.ENGLISH + "'} . " + //fallback language is English
-
                 "    BIND (wd:%s as ?country) . " + //binding the ID of entity as ?country
-
                 "} ";
-
-
-
     }
 
 
@@ -167,14 +162,6 @@ public class COUNTRY_possessive_population_is_POPULATION extends Lesson {
 
     private String formatSentenceJP(QueryResult qr){
         return qr.countryJP + "の人口は" + Integer.toString(qr.population) + "です。";
-    }
-
-    private FeedbackPair fillInBlankInputFeedback(QueryResult qr){
-        String lowercaseCountry = qr.countryEN.toLowerCase();
-        List<String> responses = new ArrayList<>();
-        responses.add(lowercaseCountry);
-        String feedback = "国の名前は大文字で始まります。\n" + lowercaseCountry + " → " + qr.countryEN;
-        return new FeedbackPair(responses, feedback, FeedbackPair.EXPLICIT);
     }
 
     private String fillInBlankInputQuestion1(QueryResult qr){

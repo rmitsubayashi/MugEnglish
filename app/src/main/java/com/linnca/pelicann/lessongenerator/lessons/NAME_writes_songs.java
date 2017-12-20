@@ -5,6 +5,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
@@ -47,7 +48,7 @@ public class NAME_writes_songs extends Lesson{
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override

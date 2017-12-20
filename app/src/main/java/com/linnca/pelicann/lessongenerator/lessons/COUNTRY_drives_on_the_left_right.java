@@ -131,13 +131,15 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
     }
 
     private String formatSentenceEN(QueryResult qr){
-        String sentence = qr.countryEN + " drives on the " + qr.sideEN + ".";
+        String sentence = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) + " drives on the " + qr.sideEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
 
     private List<QuestionData> createTranslateQuestionGeneric(){
         String question = "drive";
-        String answer = "運転";
+        String answer = "運転する";
+        List<String> acceptableAnswers = new ArrayList<>(1);
+        acceptableAnswers.add("運転");
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
@@ -146,7 +148,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
+        data.setAcceptableAnswers(acceptableAnswers);
 
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
@@ -216,7 +218,7 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
     //puzzle pieces for sentence puzzle question
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
-        pieces.add(qr.countryEN);
+        pieces.add(GrammarRules.definiteArticleBeforeCountry(qr.countryEN));
         pieces.add("drives");
         pieces.add("on");
         pieces.add("the " + qr.sideEN);
@@ -251,7 +253,8 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
             return formatSentenceEN(qr);
         } else {
             String opposite = qr.sideEN.equals("left") ? "right" : "left";
-            String wrongSentence = qr.countryEN + " drives on the " + opposite + ".";
+            String wrongSentence = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) +
+                    " drives on the " + opposite + ".";
             wrongSentence = GrammarRules.uppercaseFirstLetterOfSentence(wrongSentence);
             return wrongSentence;
         }
@@ -290,7 +293,8 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
     }
 
     private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
-        String sentence = qr.countryEN + " drives " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
+        String sentence = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) +
+                " drives " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +
                 " the " + qr.sideEN + ".";
         return GrammarRules.uppercaseFirstLetterOfSentence(sentence);
     }
@@ -337,20 +341,28 @@ public class COUNTRY_drives_on_the_left_right extends Lesson{
         return formatSentenceEN(qr);
     }
 
-    //accept 'make' instead of 'makes'
     private List<String> translateAcceptableAnswers2(QueryResult qr){
         String acceptableAnswer1 = qr.countryEN + " drive on the " + qr.sideEN + ".";
-        acceptableAnswer1 = GrammarRules.uppercaseFirstLetterOfSentence(acceptableAnswer1);
         String acceptableAnswer2 = qr.countryEN + " drives on " + qr.sideEN + ".";
-        acceptableAnswer2 = GrammarRules.uppercaseFirstLetterOfSentence(acceptableAnswer2);
         String acceptableAnswer3 = qr.countryEN + " drive on " + qr.sideEN + ".";
-        acceptableAnswer3 = GrammarRules.uppercaseFirstLetterOfSentence(acceptableAnswer3);
 
-
-        List<String> acceptableAnswers = new ArrayList<>(3);
+        List<String> acceptableAnswers = new ArrayList<>(6);
         acceptableAnswers.add(acceptableAnswer1);
         acceptableAnswers.add(acceptableAnswer2);
         acceptableAnswers.add(acceptableAnswer3);
+
+        if (!qr.countryEN.equals(GrammarRules.definiteArticleBeforeCountry(qr.countryEN))) {
+            String acceptableAnswer4 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) +
+                    " drive on the " + qr.sideEN + ".";
+            String acceptableAnswer5 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) +
+                    " drives on " + qr.sideEN + ".";
+            String acceptableAnswer6 = GrammarRules.definiteArticleBeforeCountry(qr.countryEN) +
+                    " drive on " + qr.sideEN + ".";
+            acceptableAnswers.add(acceptableAnswer4);
+            acceptableAnswers.add(acceptableAnswer5);
+            acceptableAnswers.add(acceptableAnswer6);
+        }
+
         return acceptableAnswers;
     }
 

@@ -64,20 +64,20 @@ public class Turn_left_right_go_straight extends Lesson {
     protected List<VocabularyWord> getGenericQuestionVocabulary(){
         List<VocabularyWord> words = new ArrayList<>(5);
         words.add(new VocabularyWord("", "turn","曲がる",
-                "Turn left.","左折してください。", KEY));
+                "Turn left.","左折しなさい。", KEY));
         words.add(new VocabularyWord("", "left","左",
-                "Turn left.","左折してください。", KEY));
+                "Turn left.","左折しなさい。", KEY));
         words.add(new VocabularyWord("", "right","右",
-                "Turn right.","右折してください。", KEY));
+                "Turn right.","右折しなさい。", KEY));
         words.add(new VocabularyWord("", "straight","まっすぐ",
-                "Go straight.","まっすぐに行ってください。", KEY));
+                "Go straight.","まっすぐに行きなさい。", KEY));
         words.add(new VocabularyWord("", "go","行く",
-                "Go straight.","まっすぐに行ってください。", KEY));
+                "Go straight.","まっすぐに行きなさい。", KEY));
         return words;
     }
 
     private String multipleChoiceQuestionQuestion1(){
-        String sentence1 = "左折してください";
+        String sentence1 = "左折しなさい";
         String sentence2 = "turn " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE;
         return sentence1 + "\n\n" + sentence2;
     }
@@ -112,7 +112,7 @@ public class Turn_left_right_go_straight extends Lesson {
     }
 
     private String multipleChoiceQuestionQuestion2(){
-        String sentence1 = "右折してください";
+        String sentence1 = "右折しなさい";
         String sentence2 = "turn " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE;
         return sentence1 + "\n\n" + sentence2;    }
 
@@ -139,7 +139,7 @@ public class Turn_left_right_go_straight extends Lesson {
     }
 
     private List<QuestionData> spellingQuestion(){
-        String question = "まっすぐに行ってください";
+        String question = "まっすぐに行きなさい";
         String answer = "go straight";
         QuestionData data = new QuestionData();
         data.setId("");
@@ -214,9 +214,9 @@ public class Turn_left_right_go_straight extends Lesson {
     }
 
     private String sentencePuzzleQuestion(){
-        String sentence1 = "道案内をしてください。";
-        String sentence2 = "ここをまっすぐに行って、右に曲がって、まっすぐに行ってください。";
-        return sentence1 + "\n" + sentence2;
+        String sentence1 = "道案内をしなさい。";
+        String sentence2 = "ここをまっすぐに行って、右に曲がって、まっすぐに行きなさい。";
+        return sentence1 + "\n\n" + sentence2;
     }
 
     private String sentencePuzzleAnswer(){
@@ -228,9 +228,9 @@ public class Turn_left_right_go_straight extends Lesson {
     }
 
     private String sentencePuzzleQuestion2(){
-        String sentence1 = "道案内をしてください。";
-        String sentence2 = "ここを左に曲がって、まっすぐに行って、左に曲がってください。";
-        return sentence1 + "\n" + sentence2;
+        String sentence1 = "道案内をしなさい。";
+        String sentence2 = "ここを左に曲がって、まっすぐに行って、左に曲がりなさい。";
+        return sentence1 + "\n\n" + sentence2;
     }
 
     private String sentencePuzzleAnswer2(){

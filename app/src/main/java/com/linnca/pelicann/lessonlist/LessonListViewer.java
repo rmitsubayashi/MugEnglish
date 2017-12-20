@@ -16,7 +16,7 @@ public abstract class LessonListViewer {
     Map<String, Integer> titleCount;
     protected final String review = "ふくしゅう";
     //so we can set the review IDs in order
-    private int reviewIDCt = 1;
+    private int reviewIDNumber = 1;
     private int reviewIDLevel = 1;
 
     public LessonListViewer(){
@@ -31,54 +31,13 @@ public abstract class LessonListViewer {
     }
 
     String getNextReviewID(){
-        String id = getReviewID(reviewIDLevel, reviewIDCt);
-        reviewIDCt++;
+        String id = LessonData.formatReviewID(reviewIDLevel, reviewIDNumber);
+        reviewIDNumber++;
         return id;
     }
 
-    String getReviewID(int level, int number){
-        return "review" +
-                Integer.toString(level) + "_" +
-                Integer.toString(number);
-    }
-
-    boolean isReview(String key){
-        return key.matches("^review[0-9]{1,}_[0-9]{1,}$");
-    }
-
-    int getReviewLevel(String reviewKey){
-        if (!isReview(reviewKey)) {
-            return -1;
-        }
-        String removeReview = reviewKey.replace("review","");
-        int underscoreIndex = removeReview.indexOf('_');
-        String levelString = removeReview.substring(0, underscoreIndex);
-        int level;
-        try {
-            level = Integer.parseInt(levelString);
-        } catch (NumberFormatException e){
-            level = -1;
-        }
-        return level;
-    }
-
-    int getReviewNumber(String reviewKey){
-        if (!isReview(reviewKey)) {
-            return -1;
-        }
-        int underscoreIndex = reviewKey.indexOf('_');
-        String numberString = reviewKey.substring(underscoreIndex+1, reviewKey.length());
-        int number;
-        try {
-            number = Integer.parseInt(numberString);
-        } catch (NumberFormatException e){
-            number = -1;
-        }
-        return number;
-    }
-
     void nextLevelResetReviewIDCt(){
-        reviewIDCt = 0;
+        reviewIDNumber = 0;
         reviewIDLevel++;
     }
 

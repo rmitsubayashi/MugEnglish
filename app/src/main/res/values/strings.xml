@@ -189,6 +189,7 @@
     <string name="navigation_drawer_close">閉じる</string>
     <string name="lessons_level1">レベル1</string>
     <string name="lessons_level2">レベル2</string>
+    <string name="navigation_level2_not_ready">レベル2は作成中です</string>
 
     <!--Lesson list page -->
 
@@ -197,6 +198,7 @@
     <string name="results_app_bar_title">結果</string>
     <string name="results_correct_ct">正解数</string>
     <string name="results_first_clear">初クリア!</string>
+    <string name="results_not_cleared">不合格です。合格ラインは%1$dです。</string>
     <string name="results_review">復習する</string>
     <string name="results_finish_review">このまま終了する</string>
     <string name="results_finish_no_review">終了する</string>

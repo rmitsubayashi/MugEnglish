@@ -169,8 +169,10 @@ public class MainActivity extends AppCompatActivity implements
                             setLastSelectedLessonLevel(1);
                             break;
                         case R.id.main_navigation_drawer_lesson_level2 :
-                            fragmentManager.rootToLessonList(db, 2);
-                            setLastSelectedLessonLevel(2);
+                            //fragmentManager.rootToLessonList(db, 2);
+                            //setLastSelectedLessonLevel(2);
+                            Toast.makeText(MainActivity.this, R.string.navigation_level2_not_ready, Toast.LENGTH_SHORT)
+                                    .show();
                             break;
                         default:
                             return;
@@ -342,12 +344,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void lessonListToReview(int lessonLevel, String reviewKey){
+    public void lessonListToReviewLesson(String reviewKey){
         //since this will not be called a lot
         // (unlike the question and instance review manager),
         // instantiate it locally
         lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
-        lessonsReviewManager.startReview(this, lessonLevel, reviewKey);
+        lessonsReviewManager.startReview(this, reviewKey);
         switchActionBarUpButton();
     }
 
@@ -582,6 +584,16 @@ public class MainActivity extends AppCompatActivity implements
         // not accessible anymore.
         instanceReviewManager.resetManager();
         fragmentManager.resultsToLessonDetails(db, lessonData);
+    }
+
+    @Override
+    public void resultsToReviewLesson(LessonData lessonData){
+        //we can remove all the data because the result fragment is
+        // not accessible anymore.
+        instanceReviewManager.resetManager();
+        fragmentManager.rootToLessonList(db, LessonData.extractReviewLevel(lessonData.getKey()));
+        lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
+        lessonsReviewManager.startReview(this, lessonData.getKey());
     }
 
     @Override

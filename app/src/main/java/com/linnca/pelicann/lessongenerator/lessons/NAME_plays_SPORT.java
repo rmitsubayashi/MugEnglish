@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,6 +152,9 @@ public class NAME_plays_SPORT extends Lesson{
 
             List<QuestionData> trueFalseQuestion = createTrueFalseQuestion(qr);
             questionSet.add(trueFalseQuestion);
+
+            List<QuestionData> fillInBlankMultipleChoice = createFillInBlankMultipleChoiceQuestion(qr);
+            questionSet.add(fillInBlankMultipleChoice);
 
             List<QuestionData> spellingQuestion = createSpellingQuestion(qr);
             questionSet.add(spellingQuestion);
@@ -310,7 +314,7 @@ public class NAME_plays_SPORT extends Lesson{
         }
     }
     private List<SimpleQueryResult> popularSports(){
-        List<SimpleQueryResult> list = new ArrayList<>(5);
+        List<SimpleQueryResult> list = new LinkedList<>();
         list.add(new SimpleQueryResult("Q2736", "soccer", "サッカー", "play"));
         list.add(new SimpleQueryResult("Q5369", "baseball", "野球", "play"));
         list.add(new SimpleQueryResult("Q847", "tennis", "テニス", "play"));
@@ -384,6 +388,84 @@ public class NAME_plays_SPORT extends Lesson{
         data.setFeedback(allFeedback);
 
         questionDataList.add(data);
+
+        return questionDataList;
+    }
+
+    private String fillInBlankMultipleChoiceAnswer(QueryResult qr){
+        String verbObject = SportsHelper.getVerbObject(qr.verb, qr.sportNameEN, SportsHelper.PRESENT3RD);
+        if (verbObject.contains("plays ") || verbObject.contains("does ")){
+            return qr.sportNameEN;
+        } else {
+            return verbObject;
+        }
+    }
+
+    private String fillInBlankMultipleChoiceQuestion(QueryResult qr){
+        String verbObject = SportsHelper.getVerbObject(qr.verb, qr.sportNameEN, SportsHelper.PRESENT3RD);
+        String sentence = qr.personEN + " ";
+        if (verbObject.contains("plays ")){
+            sentence += "plays";
+        } else if (verbObject.contains("does ")){
+            sentence += "does";
+        }
+        sentence += Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
+        return sentence;
+    }
+
+    private FeedbackPair fillInBlankMultipleChoiceFeedback(List<SimpleQueryResult> sqrList, String answer){
+        //we are displaying sport names the user might not have encountered yet,
+        // so explain what that sport is afterwards
+        StringBuilder feedback = new StringBuilder("");
+        List<String> responses = new ArrayList<>(sqrList.size());
+        responses.add(answer);
+        for (SimpleQueryResult sqr : sqrList){
+            responses.add(sqr.sportEN);
+            String sqrFeedback = sqr.sportEN + ":" + sqr.sportJP + "\n";
+            feedback.append(sqrFeedback);
+        }
+        return new FeedbackPair(responses, feedback.toString(), FeedbackPair.EXPLICIT);
+
+    }
+
+    private List<QuestionData> createFillInBlankMultipleChoiceQuestion(QueryResult qr){
+        //remove all sports the person plays
+        List<SimpleQueryResult> falseAnswers = popularSports();
+        List<QueryResult> allSports = queryResultMap.get(qr.personID);
+        for (QueryResult singleSport : allSports) {
+            for (Iterator<SimpleQueryResult> iterator = falseAnswers.iterator(); iterator.hasNext();) {
+                SimpleQueryResult sport = iterator.next();
+                if (sport.wikiDataID.equals(singleSport.sportID))
+                    iterator.remove();
+            }
+        }
+        Collections.shuffle(falseAnswers);
+
+        List<QuestionData> questionDataList = new ArrayList<>(2);
+        String answer = fillInBlankMultipleChoiceAnswer(qr);
+        while (falseAnswers.size() >= 2) {
+            List<SimpleQueryResult> falseChoices = new ArrayList<>(2);
+            falseChoices.add(falseAnswers.get(0));
+            falseChoices.add(falseAnswers.get(1));
+            falseAnswers.remove(0);
+            falseAnswers.remove(0);
+            List<FeedbackPair> allFeedback = new ArrayList<>(1);
+            List<String> choices = new ArrayList<>(3);
+            choices.add(answer);
+            choices.add(falseChoices.get(0).sportEN);
+            choices.add(falseChoices.get(1).sportEN);
+            allFeedback.add(fillInBlankMultipleChoiceFeedback(falseChoices, answer));
+            QuestionData data = new QuestionData();
+            data.setId("");
+            data.setLessonId(lessonKey);
+            data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
+            data.setQuestion(fillInBlankMultipleChoiceQuestion(qr));
+            data.setChoices(choices);
+            data.setAnswer(answer);
+            data.setAcceptableAnswers(null);
+            data.setFeedback(allFeedback);
+            questionDataList.add(data);
+        }
 
         return questionDataList;
     }

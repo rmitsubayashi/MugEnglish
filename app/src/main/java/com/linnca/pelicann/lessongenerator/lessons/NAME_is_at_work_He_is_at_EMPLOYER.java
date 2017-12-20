@@ -287,14 +287,17 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
 
     private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
         String sentence = qr.personEN + " is " + Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE + ".";
-        String sentence2 = qr.genderEN + " is at " + qr.employerEN + ".";
+        String sentence2 = qr.genderEN + " is at " + GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN);
+        if (!qr.employerEN.endsWith(".")){
+            sentence += ".";
+        }
         sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
         sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence + "\n" + sentence2;
     }
 
     private String fillInBlankMultipleChoiceAnswer2(){
-        return "at";
+        return "at work";
     }
 
     private List<String> fillInBlankMultipleChoiceChoices2(){
@@ -332,7 +335,10 @@ public class NAME_is_at_work_He_is_at_EMPLOYER extends Lesson {
             return formatSentenceEN(qr);
         } else {
             String sentence1 = qr.genderEN + " is at work.";
-            String sentence2 = qr.personEN + " is at " + qr.employerEN + ".";
+            String sentence2 = qr.personEN + " is at " + GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN);
+            if (!qr.employerEN.endsWith(".")){
+                sentence2 += ".";
+            }
             sentence1 = GrammarRules.uppercaseFirstLetterOfSentence(sentence1);
             return sentence1 + "\n" + sentence2;
         }

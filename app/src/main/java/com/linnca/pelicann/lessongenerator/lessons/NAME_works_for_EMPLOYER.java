@@ -14,6 +14,7 @@ import com.linnca.pelicann.questions.QuestionSetData;
 import com.linnca.pelicann.questions.Question_FillInBlank_Input;
 import com.linnca.pelicann.questions.Question_FillInBlank_MultipleChoice;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
+import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -130,19 +131,30 @@ public class NAME_works_for_EMPLOYER extends Lesson {
             List<QuestionData> fillInBlankMultipleChoiceQuestion = createFillInBlankMultipleChoiceQuestion(qr);
             questionSet.add(fillInBlankMultipleChoiceQuestion);
 
+            List<QuestionData> fillInBlankMultipleChoiceQuestion2 = createFillInBlankMultipleChoiceQuestion2(qr);
+            questionSet.add(fillInBlankMultipleChoiceQuestion2);
+
             List<QuestionData> fillInBlankQuestion = createFillInBlankQuestion(qr);
             questionSet.add(fillInBlankQuestion);
 
-            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, null));
+            List<VocabularyWord> vocabularyWords = getVocabularyWords(qr);
+            super.newQuestions.add(new QuestionSetData(questionSet, qr.personID, qr.personJP, vocabularyWords));
         }
+    }
 
+    private List<VocabularyWord> getVocabularyWords(QueryResult qr){
+        VocabularyWord employer = new VocabularyWord("",qr.employerEN, qr.employerJP,
+                formatSentenceEN(qr), formatSentenceJP(qr), KEY);
+        List<VocabularyWord> words = new ArrayList<>(1);
+        words.add(employer);
+        return words;
     }
 
     /* Note that some of these employers may need the article 'the' before it.
      * We can't guarantee that all of them will be accurate...
      * Just make sure to let the user be aware that there may be some mistakes
      * */
-    private String NAME_works_for_EMPLOYER_EN_correct(QueryResult qr){
+    private String formatSentenceEN(QueryResult qr){
         //use the definite article before school name ( ~ of ~)
         //for better accuracy.
         //still there are a lot of employers that will need 'the'
@@ -219,8 +231,13 @@ public class NAME_works_for_EMPLOYER extends Lesson {
     }
 
     private String fillInBlankMultipleChoiceQuestion2(QueryResult qr){
-        return  qr.personEN + " works " +
-                Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +  " " + qr.employerEN + ".";
+        String sentence = qr.personEN + " works " +
+                Question_FillInBlank_MultipleChoice.FILL_IN_BLANK_MULTIPLE_CHOICE +  " " +
+                GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN);
+        if (!qr.employerEN.endsWith(".")){
+            sentence += ".";
+        }
+        return sentence;
     }
 
     private String fillInBlankMultipleChoiceAnswer2(){
@@ -260,16 +277,15 @@ public class NAME_works_for_EMPLOYER extends Lesson {
     private List<QuestionData> createFillInBlankMultipleChoiceQuestion2(QueryResult qr){
         String question = this.fillInBlankMultipleChoiceQuestion2(qr);
         String answer = fillInBlankMultipleChoiceAnswer2();
+        List<String> acceptableAnswers = fillInBlankMultipleChoiceAcceptableAnswers2();
         List<QuestionData> questionDataList = new ArrayList<>();
         List<String> choices = fillInBlankMultipleChoiceChoices2();
-        List<String> acceptableAnswers = fillInBlankAcceptableAnswers();
         List<FeedbackPair> allFeedback = new ArrayList<>(2);
         allFeedback.add(fillInBlankMultipleChoice2Feedback1());
         allFeedback.add(fillInBlankMultipleChoice2Feedback2());
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-
         data.setQuestionType(Question_FillInBlank_MultipleChoice.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
@@ -285,8 +301,10 @@ public class NAME_works_for_EMPLOYER extends Lesson {
     private String fillInBlankQuestion(QueryResult qr){
         String sentence = formatSentenceJP(qr);
         String sentence2 = qr.personEN + " " + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT +
-                " " + qr.employerEN + ".";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
+                " " + GrammarRules.definiteArticleBeforeSchoolName(qr.employerEN);
+        if (!qr.employerEN.endsWith(".")){
+            sentence2 += ".";
+        }
         return sentence + "\n\n" + sentence2;
     }
 

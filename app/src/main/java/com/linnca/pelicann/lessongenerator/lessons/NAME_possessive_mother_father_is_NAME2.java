@@ -168,7 +168,7 @@ public class NAME_possessive_mother_father_is_NAME2 extends Lesson {
     }
 
     private String formatSentenceJP(QueryResult qr){
-        return qr.parentNameJP + "の" + qr.parentTypeJP + "は" +
+        return qr.personJP + "の" + qr.parentTypeJP + "は" +
                 qr.parentNameJP + "です。";
     }
 

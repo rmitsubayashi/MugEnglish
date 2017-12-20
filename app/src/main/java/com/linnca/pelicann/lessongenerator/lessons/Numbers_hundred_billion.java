@@ -113,20 +113,33 @@ public class Numbers_hundred_billion extends Lesson {
         return questions;
     }
 
+    private List<String> translateAcceptableAnswers(){
+        List<String> answers = new ArrayList<>(4);
+        answers.add("one hundred");
+        answers.add("one thousand");
+        answers.add("one million");
+        answers.add("one billion");
+        return answers;
+    }
+
     private List<List<QuestionData>> translateQuestions(){
         List<List<QuestionData>> questions = new ArrayList<>(4);
         List<String> answers = english();
         List<String> numbers = numbers();
+        List<String> allAcceptableAnswers = translateAcceptableAnswers();
         for (int i=0; i<4; i++) {
             QuestionData data = new QuestionData();
             String answer = answers.get(i);
+            String acceptableAnswer = allAcceptableAnswers.get(i);
+            List<String> acceptableAnswers = new ArrayList<>(1);
+            acceptableAnswers.add(acceptableAnswer);
             data.setId("");
             data.setLessonId(lessonKey);
 
             data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
             data.setQuestion(numbers.get(i));
             data.setAnswer(answer);
-            data.setAcceptableAnswers(null);
+            data.setAcceptableAnswers(acceptableAnswers);
 
             List<QuestionData> dataList = new ArrayList<>();
             dataList.add(data);
@@ -168,7 +181,7 @@ public class Numbers_hundred_billion extends Lesson {
         numberStrings.add("739");
         numberStrings.add("220,090");
         numberStrings.add("30,000");
-        numberStrings.add("1,000,000");
+        numberStrings.add("2,000,000");
         numberStrings.add("44,444");
         numberStrings.add("2,100,000,000");
         numberStrings.add("8,008");
@@ -180,7 +193,7 @@ public class Numbers_hundred_billion extends Lesson {
         numberStrings.add("70,095");
         numberStrings.add("400,600");
         numberStrings.add("300,000,000");
-        numberStrings.add("1,000,000,000");
+        numberStrings.add("1,000,000,001");
         numberStrings.add("23,000");
         numberStrings.add("1,111");
         numberStrings.add("100,034");

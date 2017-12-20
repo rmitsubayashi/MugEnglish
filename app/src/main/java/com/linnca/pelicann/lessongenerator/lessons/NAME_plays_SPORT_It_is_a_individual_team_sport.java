@@ -217,6 +217,56 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         return qr.personJP + "は" + qr.sportNameJP + "をします。それは" + qr.sportTypeLabelJP + "です。";
     }
 
+    private List<QuestionData> createTranslateQuestionGeneric(){
+        String question = "団体競技";
+        String answer = "team sport";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    private List<QuestionData> createTranslateQuestionGeneric2(){
+        String question = "individual sport";
+        String answer = "個人競技";
+        QuestionData data = new QuestionData();
+        data.setId("");
+        data.setLessonId(lessonKey);
+
+        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
+        data.setQuestion(question);
+        data.setChoices(null);
+        data.setAnswer(answer);
+        data.setAcceptableAnswers(null);
+
+        List<QuestionData> dataList = new ArrayList<>();
+        dataList.add(data);
+
+        return dataList;
+    }
+
+    @Override
+    protected List<List<QuestionData>> getPreGenericQuestions(){
+        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
+        List<QuestionData> translateQuestion2 = createTranslateQuestionGeneric2();
+        List<List<QuestionData>> questionsSet = new ArrayList<>(2);
+        questionsSet.add(translateQuestion);
+        questionsSet.add(translateQuestion2);
+
+        return questionsSet;
+
+    }
+
     private List<String> puzzlePieces(QueryResult qr){
         List<String> pieces = new ArrayList<>();
         pieces.add(qr.personEN);
@@ -243,13 +293,11 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-
         data.setQuestionType(Question_SentencePuzzle.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(choices);
         data.setAnswer(answer);
         data.setAcceptableAnswers(null);
-
         questionDataList.add(data);
         return questionDataList;
     }
@@ -325,54 +373,4 @@ public class NAME_plays_SPORT_It_is_a_individual_team_sport extends Lesson{
         return questionDataList;
     }
 
-
-    private List<QuestionData> createTranslateQuestionGeneric(){
-        String question = "団体競技";
-        String answer = "team sport";
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-
-        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    private List<QuestionData> createTranslateQuestionGeneric2(){
-        String question = "individual sport";
-        String answer = "個人競技";
-        QuestionData data = new QuestionData();
-        data.setId("");
-        data.setLessonId(lessonKey);
-
-        data.setQuestionType(Question_TranslateWord.QUESTION_TYPE);
-        data.setQuestion(question);
-        data.setChoices(null);
-        data.setAnswer(answer);
-        data.setAcceptableAnswers(null);
-
-        List<QuestionData> dataList = new ArrayList<>();
-        dataList.add(data);
-
-        return dataList;
-    }
-
-    @Override
-    protected List<List<QuestionData>> getPreGenericQuestions(){
-        List<QuestionData> translateQuestion = createTranslateQuestionGeneric();
-        List<QuestionData> translateQuestion2 = createTranslateQuestionGeneric2();
-        List<List<QuestionData>> questionsSet = new ArrayList<>(2);
-        questionsSet.add(translateQuestion);
-        questionsSet.add(translateQuestion2);
-
-        return questionsSet;
-
-    }
 }

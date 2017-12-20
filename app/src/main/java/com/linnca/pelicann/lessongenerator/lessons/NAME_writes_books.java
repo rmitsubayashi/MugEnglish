@@ -5,6 +5,7 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.lessondetails.LessonInstanceData;
 import com.linnca.pelicann.lessongenerator.GrammarRules;
 import com.linnca.pelicann.lessongenerator.Lesson;
 import com.linnca.pelicann.questions.QuestionData;
@@ -48,7 +49,7 @@ public class NAME_writes_books extends Lesson{
         super.questionSetsToPopulate = 2;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
-
+        super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_SET;
     }
 
     @Override
@@ -183,7 +184,6 @@ public class NAME_writes_books extends Lesson{
         String sentence1 = formatSentenceJP(qr);
         String sentence2 = qr.personEN + " " +
                 Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + ".";
-        sentence2 = GrammarRules.uppercaseFirstLetterOfSentence(sentence2);
         return sentence1 + "\n\n" + sentence2;
     }
 
@@ -207,14 +207,11 @@ public class NAME_writes_books extends Lesson{
         QuestionData data = new QuestionData();
         data.setId("");
         data.setLessonId(lessonKey);
-
         data.setQuestionType(Question_FillInBlank_Input.QUESTION_TYPE);
         data.setQuestion(question);
         data.setChoices(null);
         data.setAnswer(answer);
         data.setAcceptableAnswers(acceptableAnswers);
-
-
         List<QuestionData> dataList = new ArrayList<>();
         dataList.add(data);
 
