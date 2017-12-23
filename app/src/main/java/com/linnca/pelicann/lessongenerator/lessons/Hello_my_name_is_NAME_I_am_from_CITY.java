@@ -76,11 +76,9 @@ public class Hello_my_name_is_NAME_I_am_from_CITY extends Lesson{
                 " ?cityEN ?cityLabel ?cityAltJP " +
                 "WHERE " +
                 "{" +
-
-
                 "    ?person wdt:P19 ?city . " + //has a place of birth
                 "    ?city wdt:P31/wdt:P279* wd:Q515 . " + //is a city
-                "    OPTIONAL { ?city skos:altLabel ?cityAltJP . } " + //any alternative names for city
+                "    OPTIONAL { ?city skos:altLabel ?cityAltJP } . " + //any alternative names for city
                 "    ?person rdfs:label ?personEN . " +
                 "    ?city rdfs:label ?cityEN . " +
                 "    FILTER (LANG(?cityAltJP) = '" +

@@ -96,7 +96,7 @@ public class LessonListViewerImplementation extends LessonListViewer{
         titleCount = new HashMap<>();
 
         row = new LessonListRow();
-        col1Data = new LessonData(Hello_my_name_is_NAME.KEY, greetings, R.layout.description_hello_my_name_is_name, null, 70, R.attr.color300, greetingsIconID);
+        col1Data = new LessonData(PLACE_is_a_country_city.KEY, places, R.layout.description_place_is_a_country_city, null, 90, R.attr.color700, placesIconID);
         col2Data = new LessonData(NAME_is_a_GENDER.KEY, people, R.layout.description_name_is_a_gender, null, 80, R.attr.color700, peopleIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(NAME_is_a_GENDER.KEY);
@@ -108,9 +108,9 @@ public class LessonListViewerImplementation extends LessonListViewer{
 
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
-        col1Prerequisites.add(Hello_my_name_is_NAME.KEY);
-        col1Data = new LessonData(Good_morning_afternoon_evening.KEY, greetings, R.layout.description_good_morning_afternoon_evening, col1Prerequisites, 90, R.attr.color300, greetingsIconID);
-        col2Data = new LessonData(Numbers_0_3.KEY, numbers, R.layout.description_numbers_0_3, null, 50, R.attr.color500, numbersIconID);
+        col1Prerequisites.add(PLACE_is_a_country_city.KEY);
+        col1Data = new LessonData(NAME_is_from_COUNTRY.KEY, places, R.layout.description_name_is_from_country, col1Prerequisites, 60, R.attr.color700, placesIconID);
+        col2Data = new LessonData(NAME_is_a_OCCUPATION.KEY, occupations, R.layout.description_name_is_a_occupation, null, 70, R.attr.color500, peopleIconID);
         col3Prerequisites = new ArrayList<>(1);
         col3Prerequisites.add(NAME_is_AGE_years_old.KEY);
         col3Data = new LessonData(NAME_is_AGE_years_old_NAME_is_a_GENDER.KEY, people, R.layout.description_name_is_age_years_old_name_is_a_gender, col3Prerequisites, 70, R.attr.color700, peopleIconID);
@@ -121,39 +121,27 @@ public class LessonListViewerImplementation extends LessonListViewer{
 
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
-        col1Prerequisites.add(Good_morning_afternoon_evening.KEY);
-        col1Data = new LessonData(Goodbye_bye.KEY, greetings, R.layout.description_good_bye_bye, col1Prerequisites, 90, R.attr.color300, greetingsIconID);
-        col2Prerequisites = new ArrayList<>(1);
-        col2Prerequisites.add(Numbers_0_3.KEY);
-        col2Data = new LessonData(Numbers_4_6.KEY, numbers, R.layout.description_numbers_4_6, col2Prerequisites, 70, R.attr.color500, numbersIconID);
+        col1Prerequisites.add(NAME_is_from_COUNTRY.KEY);
+        col1Data = new LessonData(NAME_is_DEMONYM.KEY, people, R.layout.description_name_is_demonym, col1Prerequisites, 70, R.attr.color700, peopleIconID);
         row.setCol1(col1Data);
-        row.setCol2(col2Data);
-        row.setCol3(null);
-        lessonRows.add(row);
-
-        row = new LessonListRow();
-        col2Prerequisites = new ArrayList<>(1);
-        col2Prerequisites.add(Numbers_4_6.KEY);
-        col2Data = new LessonData(Numbers_7_9.KEY, numbers, R.layout.description_numbers_7_9, col2Prerequisites, 90, R.attr.color500, numbersIconID);
-        row.setCol1(null);
-        row.setCol2(col2Data);
-        row.setCol3(null);
         lessonRows.add(row);
 
         row = new LessonListRow();
         row.setReview(true);
         col2Prerequisites = new ArrayList<>(3);
-        col2Prerequisites.add(Numbers_7_9.KEY);
-        col2Prerequisites.add(Goodbye_bye.KEY);
+        col2Prerequisites.add(NAME_is_a_OCCUPATION.KEY);
+        col2Prerequisites.add(NAME_is_DEMONYM.KEY);
         col2Prerequisites.add(NAME_is_AGE_years_old_NAME_is_a_GENDER.KEY);
         col2Data = new LessonData(getNextReviewID(), review, null, col2Prerequisites, 70, 0, 0);
         row.setCol2(col2Data);
         lessonRows.add(row);
 
         row = new LessonListRow();
-        col1Data = new LessonData(How_are_you_doing.KEY, greetings, R.layout.description_how_are_you_doing, null, 70, R.attr.color300, greetingsIconID);
-        col2Data = new LessonData(PLACE_is_a_country_city.KEY, places, R.layout.description_place_is_a_country_city, null, 90, R.attr.color700, placesIconID);
-        col3Data = new LessonData(NAME_is_a_OCCUPATION.KEY, occupations, R.layout.description_name_is_a_occupation, null, 70, R.attr.color500, peopleIconID);
+        col1Prerequisites = new ArrayList<>(1);
+        col1Prerequisites.add(Hello_my_name_is_NAME.KEY);
+        col1Data = new LessonData(Good_morning_afternoon_evening.KEY, greetings, R.layout.description_good_morning_afternoon_evening, col1Prerequisites, 90, R.attr.color300, greetingsIconID);
+        col2Data = new LessonData(Hello_my_name_is_NAME.KEY, greetings, R.layout.description_hello_my_name_is_name, null, 70, R.attr.color300, greetingsIconID);
+        col3Data = new LessonData(Numbers_0_3.KEY, numbers, R.layout.description_numbers_0_3, null, 50, R.attr.color500, numbersIconID);
         row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
@@ -161,33 +149,43 @@ public class LessonListViewerImplementation extends LessonListViewer{
 
         row = new LessonListRow();
         col1Prerequisites = new ArrayList<>(1);
-        col1Prerequisites.add(How_are_you_doing.KEY);
-        col1Data = new LessonData(Hi_hey_whats_up.KEY, greetings, R.layout.description_hi_hey_whats_up, col1Prerequisites, 85, R.attr.color300, greetingsIconID);
+        col1Prerequisites.add(Good_morning_afternoon_evening.KEY);
+        col1Data = new LessonData(Goodbye_bye.KEY, greetings, R.layout.description_good_bye_bye, col1Prerequisites, 90, R.attr.color300, greetingsIconID);
         col2Prerequisites = new ArrayList<>(1);
-        col2Prerequisites.add(PLACE_is_a_country_city.KEY);
-        col2Data = new LessonData(NAME_is_from_COUNTRY.KEY, places, R.layout.description_name_is_from_country, col2Prerequisites, 60, R.attr.color700, placesIconID);
-        row.setCol1(col1Data);
-        row.setCol2(col2Data);
-        lessonRows.add(row);
-
-        row = new LessonListRow();
-        col2Prerequisites = new ArrayList<>(1);
-        col2Prerequisites.add(NAME_is_from_COUNTRY.KEY);
+        col2Prerequisites.add(Hello_my_name_is_NAME.KEY);
         col2Data = new LessonData(Hello_my_name_is_NAME_I_am_from_CITY.KEY, places, R.layout.description_name_is_from_city, col2Prerequisites, 65, R.attr.color700, placesIconID);
         col3Prerequisites = new ArrayList<>(1);
-        col3Prerequisites.add(NAME_is_from_COUNTRY.KEY);
-        col3Data = new LessonData(NAME_is_DEMONYM.KEY, people, R.layout.description_name_is_demonym, col3Prerequisites, 70, R.attr.color700, peopleIconID);
+        col3Prerequisites.add(Numbers_0_3.KEY);
+        col3Data = new LessonData(Numbers_4_6.KEY, numbers, R.layout.description_numbers_4_6, col3Prerequisites, 70, R.attr.color500, numbersIconID);
+        row.setCol1(col1Data);
         row.setCol2(col2Data);
         row.setCol3(col3Data);
         lessonRows.add(row);
 
         row = new LessonListRow();
+        col1Prerequisites = new ArrayList<>(1);
+        col1Prerequisites.add(Goodbye_bye.KEY);
+        col1Data = new LessonData(How_are_you_doing.KEY, greetings, R.layout.description_how_are_you_doing, col1Prerequisites, 70, R.attr.color300, greetingsIconID);
+        col3Prerequisites = new ArrayList<>(1);
+        col3Prerequisites.add(Numbers_4_6.KEY);
+        col3Data = new LessonData(Numbers_7_9.KEY, numbers, R.layout.description_numbers_7_9, col3Prerequisites, 90, R.attr.color500, numbersIconID);
+        row.setCol1(col1Data);
+        row.setCol3(col3Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
+        col1Prerequisites = new ArrayList<>(1);
+        col1Prerequisites.add(How_are_you_doing.KEY);
+        col1Data = new LessonData(Hi_hey_whats_up.KEY, greetings, R.layout.description_hi_hey_whats_up, col1Prerequisites, 85, R.attr.color300, greetingsIconID);
+        row.setCol1(col1Data);
+        lessonRows.add(row);
+
+        row = new LessonListRow();
         row.setReview(true);
-        col2Prerequisites = new ArrayList<>(4);
+        col2Prerequisites = new ArrayList<>(3);
         col2Prerequisites.add(Hi_hey_whats_up.KEY);
-        col2Prerequisites.add(NAME_is_a_OCCUPATION.KEY);
         col2Prerequisites.add(Hello_my_name_is_NAME_I_am_from_CITY.KEY);
-        col2Prerequisites.add(NAME_is_DEMONYM.KEY);
+        col2Prerequisites.add(Numbers_7_9.KEY);
         col2Data = new LessonData(getNextReviewID(), review, null, col2Prerequisites, 70, 0, 0);
         row.setCol2(col2Data);
         lessonRows.add(row);

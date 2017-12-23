@@ -455,7 +455,15 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         String acceptableAnswer5 = "I am " + QuestionResponseChecker.ANYTHING + ". I am a woman.";
         String acceptableAnswer6 = "I am " + QuestionResponseChecker.ANYTHING + ". I am a boy.";
         String acceptableAnswer7 = "I am " + QuestionResponseChecker.ANYTHING + ". I am a girl.";
-        List<String> acceptableAnswers = new ArrayList<>(7);
+        String acceptableAnswer8 = "I am " + QuestionResponseChecker.ANYTHING + " years old. I am man.";
+        String acceptableAnswer9 = "I am " + QuestionResponseChecker.ANYTHING + " years old. I am woman.";
+        String acceptableAnswer10 = "I am " + QuestionResponseChecker.ANYTHING + " years old. I am boy.";
+        String acceptableAnswer11 = "I am " + QuestionResponseChecker.ANYTHING + " years old. I am girl.";
+        String acceptableAnswer12 = "I am " + QuestionResponseChecker.ANYTHING + ". I am man.";
+        String acceptableAnswer13 = "I am " + QuestionResponseChecker.ANYTHING + ". I am woman.";
+        String acceptableAnswer14 = "I am " + QuestionResponseChecker.ANYTHING + ". I am boy.";
+        String acceptableAnswer15 = "I am " + QuestionResponseChecker.ANYTHING + ". I am girl.";
+        List<String> acceptableAnswers = new ArrayList<>(15);
         acceptableAnswers.add(acceptableAnswer1);
         acceptableAnswers.add(acceptableAnswer2);
         acceptableAnswers.add(acceptableAnswer3);
@@ -463,6 +471,14 @@ public class NAME_is_AGE_years_old_NAME_is_a_GENDER extends Lesson {
         acceptableAnswers.add(acceptableAnswer5);
         acceptableAnswers.add(acceptableAnswer6);
         acceptableAnswers.add(acceptableAnswer7);
+        acceptableAnswers.add(acceptableAnswer8);
+        acceptableAnswers.add(acceptableAnswer9);
+        acceptableAnswers.add(acceptableAnswer10);
+        acceptableAnswers.add(acceptableAnswer11);
+        acceptableAnswers.add(acceptableAnswer12);
+        acceptableAnswers.add(acceptableAnswer13);
+        acceptableAnswers.add(acceptableAnswer14);
+        acceptableAnswers.add(acceptableAnswer15);
         return acceptableAnswers;
 
     }

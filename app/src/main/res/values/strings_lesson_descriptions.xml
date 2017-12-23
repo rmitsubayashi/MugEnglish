@@ -85,6 +85,8 @@
     <string name="description_name_is_a_man_fun_fact">古英語では<b>man</b>は男性ではなく、人間という意味でした。
     男性はwer-<b>man</b>、女性はwif-<b>man</b>と頭にwerとwifをつけて表していました。\nしかし、徐々に男性のことをmanと呼ぶようになり、wifmanはそのままwomanへと変化を遂げました。</string>
 
+    <string name="description_name_is_a_occupation_grammar_structure">A is B</string>
+    <string name="description_name_is_a_occupation_grammar_explanation">AはBです</string>
     <string name="description_name_is_a_occupation_subheader">@string/description_template_how_to_remember</string>
     <string name="description_name_is_a_occupation_explanation_1">注目してほしいのが、多くの職業の単語の語尾につく<b>-er</b></string>
     <string name="description_name_is_a_occupation_example_1_word">soccer play<b>er</b></string>
@@ -146,7 +148,7 @@
     <string name="description_name_is_demonym_how_to_remember_suffix4">-ish</string>
     <string name="description_name_is_demonym_how_to_remember_guide4">-landで終わる国に使われます\n（例）ポーランド人(Poland → Pol<b>ish</b>)　フィンランド人(Finland → Finn<b>ish</b>)</string>
 
-    <string name="description_name_is_from_city_explanation">今度は国ではなくて都市に注目しましょう。位置関係は国の場合と変わらないので、同じ<b>from</b>を使います。</string>
+    <string name="description_name_is_from_city_explanation">出身国は勉強しましたね。今回は国ではなく都市で「Aは(都市)の出身です。」という文を練習します。国と同じパターンなので、<b>from</b>を使って位置関係を表します。</string>
 
     <string name="description_name_is_from_country_explanation">出身国を勉強しましょう。「出身」という位置関係を表すには<b>from</b>を使いましょう。fromには「もとの位置からどこかに行く」という様子を表します。</string>
 
@@ -275,6 +277,8 @@
     <string name="description_place_is_a_country_city_word2">country</string>
     <string name="description_place_is_a_country_city_meaning2">国</string>
     <string name="description_place_is_a_country_city_explanation">土地名が国なのか都市なのか当ててみましょう。</string>
+    <string name="description_place_is_a_country_city_grammar_structure">A is B</string>
+    <string name="description_place_is_a_country_city_grammar_explanation">AはBです</string>
 
     <string name="description_stand_up_sit_down_explanation">このレッスンでは二つの動作を学びます。\n
         今回は<b>sit down</b>（座って）と<b>stand up</b>（立って）です。\ndownとupはそれぞれ「下」「上」という意味で、動作の方向を表しています。\n
