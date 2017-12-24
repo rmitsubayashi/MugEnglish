@@ -163,11 +163,7 @@ public class SearchInterests extends Fragment {
                             lock.lock();
                             try {
                                 if (adapter.getSearchResultSize() == 0 && !adapter.isLoading()) {
-                                    WikiDataEntity loadingData = new WikiDataEntity();
-                                    loadingData.setWikiDataID(adapter.VIEW_TYPE_LOADING_WIKIDATA_ID);
-                                    List<WikiDataEntity> dataList = new ArrayList<>(1);
-                                    dataList.add(loadingData);
-                                    adapter.updateEntries(dataList);
+                                    adapter.showLoading();
                                 }
                             } finally {
                                 lock.unlock();
@@ -187,8 +183,6 @@ public class SearchInterests extends Fragment {
         // attach a new adapter instead
         db.getUserInterests(getContext(), false, onDBResultListener);
     }
-
-
 
     private SearchResultsAdapter.SearchResultsAdapterListener getSearchResultsAdapterListener(){
         return new SearchResultsAdapter.SearchResultsAdapterListener() {
@@ -213,8 +207,8 @@ public class SearchInterests extends Fragment {
                         searchView.clearFocus();
 
                         //give the data to the adapter
-                        // so it can give feedback to teh user
-                        adapter.setRecommendationWikiDataEntity(data);
+                        // so it can give feedback to the user
+                        adapter.setAddedWikiDataEntity(data);
                         //get recommendations for the user
                         recommendationGetter.getNewRecommendations(userInterests,
                                 getRecommendationGetterListener());
@@ -294,8 +288,8 @@ public class SearchInterests extends Fragment {
                                 //filter out all of the user's interests
                                 result.removeAll(userInterests);
                                 //remove entities we will never need
-                                removeDisambiguationPages(result);
-                                removeWikiNewsArticlePages(result);
+                                searchHelper.removeDisambiguationPages(result);
+                                searchHelper.removeWikiNewsArticlePages(result);
                                 //display empty state if the results are empty
                                 if (result.size() == 0) {
                                     WikiDataEntity emptyState = new WikiDataEntity();
@@ -323,35 +317,5 @@ public class SearchInterests extends Fragment {
                 }
             }
         };
-    }
-
-    private void removeWikiNewsArticlePages(List<WikiDataEntity> result){
-        for (Iterator<WikiDataEntity> iterator = result.iterator(); iterator.hasNext();){
-            WikiDataEntity data = iterator.next();
-            String description = data.getDescription();
-            //not sure if these cover every case
-            if (description != null &&
-                    (description.equals("ウィキニュースの記事") ||
-                            description.equals("Wikinews article"))
-                    ){
-                iterator.remove();
-            }
-        }
-    }
-
-    private void removeDisambiguationPages(List<WikiDataEntity> result){
-        for (Iterator<WikiDataEntity> iterator = result.iterator(); iterator.hasNext();){
-            WikiDataEntity data = iterator.next();
-            String description = data.getDescription();
-            //not sure if these cover every case
-            if (description != null &&
-                    (description.equals("ウィキペディアの曖昧さ回避ページ") ||
-                    description.equals("ウィキメディアの曖昧さ回避ページ") ||
-                    description.equals("Wikipedia disambiguation page") ||
-                    description.equals("Wikimedia disambiguation page"))
-                ){
-                iterator.remove();
-            }
-        }
     }
 }

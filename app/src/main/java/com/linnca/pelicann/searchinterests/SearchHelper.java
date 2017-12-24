@@ -13,29 +13,30 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class SearchHelper {
+public class SearchHelper {
     private EndpointConnectorReturnsXML connector;
     private AtomicInteger searchRequestCt = new AtomicInteger(0);
     private ScheduledThreadPoolExecutor executor;
     private List<ScheduledFuture> queuedTasks = new ArrayList<>();
 
-    static final int SUCCESS = 1;
-    static final int FAILURE = 2;
+    public static final int SUCCESS = 1;
+    public static final int FAILURE = 2;
 
-    SearchHelper(EndpointConnectorReturnsXML connector){
+    public SearchHelper(EndpointConnectorReturnsXML connector){
         this.connector = connector;
         this.executor = new ScheduledThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors()
         );
     }
 
-    void search(final Handler handler, final String query){
+    public void search(final Handler handler, final String query){
         //update the latest request number
         final int currentSearchRequestCt = searchRequestCt.incrementAndGet();
         //every thread in the thread pool should be removed since this is
@@ -124,5 +125,35 @@ class SearchHelper {
         List<String> queryList = new ArrayList<>(1);
         queryList.add(query);
         connector.fetchDOMFromGetRequest(onFetchDOMListener, queryList);
+    }
+
+    public void removeWikiNewsArticlePages(List<WikiDataEntity> result){
+        for (Iterator<WikiDataEntity> iterator = result.iterator(); iterator.hasNext();){
+            WikiDataEntity data = iterator.next();
+            String description = data.getDescription();
+            //not sure if these cover every case
+            if (description != null &&
+                    (description.equals("ウィキニュースの記事") ||
+                            description.equals("Wikinews article"))
+                    ){
+                iterator.remove();
+            }
+        }
+    }
+
+    public void removeDisambiguationPages(List<WikiDataEntity> result){
+        for (Iterator<WikiDataEntity> iterator = result.iterator(); iterator.hasNext();){
+            WikiDataEntity data = iterator.next();
+            String description = data.getDescription();
+            //not sure if these cover every case
+            if (description != null &&
+                    (description.equals("ウィキペディアの曖昧さ回避ページ") ||
+                            description.equals("ウィキメディアの曖昧さ回避ページ") ||
+                            description.equals("Wikipedia disambiguation page") ||
+                            description.equals("Wikimedia disambiguation page"))
+                    ){
+                iterator.remove();
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
@@ -38,14 +39,14 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingStart="@dimen/activity_horizontal_margin">
-        <Button
+        <!--<Button
             android:id="@+id/intro_btn_skip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:background="@drawable/transparent_button"
             android:textColor="@color/gray500"
-            android:text="@string/onboarding_skip" />
+            android:text="@string/onboarding_skip" />-->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,7 +82,8 @@
             android:layout_alignParentEnd="true"
             android:background="@drawable/transparent_button"
             android:text="@string/onboarding_finish"
-            android:textColor="?attr/color500"
+            android:textColor="@color/gray500"
+            android:enabled="false"
             android:visibility="gone"/>
 
         <Button

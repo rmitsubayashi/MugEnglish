@@ -1,12 +1,16 @@
 package com.linnca.pelicann.onboarding;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.linnca.pelicann.userinterests.WikiDataEntity;
+
+import java.util.List;
+
 class OnboardingPagerAdapter extends FragmentPagerAdapter {
     private int maxPageCt;
-    private Onboarding3 onboarding3;
 
     OnboardingPagerAdapter(FragmentManager fm, int maxPageCt) {
         super(fm);
@@ -22,8 +26,9 @@ class OnboardingPagerAdapter extends FragmentPagerAdapter {
                 return new Onboarding2();
             case 2 :
                 //save so we can access the user selection
-                onboarding3 = new Onboarding3();
-                return onboarding3;
+                //onboarding3 = new Onboarding3();
+                //return onboarding3;
+                return new Onboarding3v2();
             default :
                 return null;
         }
@@ -34,10 +39,11 @@ class OnboardingPagerAdapter extends FragmentPagerAdapter {
         return maxPageCt;
     }
 
-    public int getStarterPackSelection(){
-        if (onboarding3 == null)
-            return -1;
-        return onboarding3.getCurrentSelection();
+    int getStarterPackSelection(){
+        //if (onboarding3 == null)
+        //    return -1;
+        //return onboarding3.getCurrentSelection();
+        return 1;
     }
 
 }

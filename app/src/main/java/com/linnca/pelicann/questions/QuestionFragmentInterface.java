@@ -42,7 +42,7 @@ public abstract class QuestionFragmentInterface extends Fragment {
     private int questionNumber;
     private int totalQuestions;
     private final List<String> allWrongResponses = new ArrayList<>();
-    //keep track of teh number of attempts for this question
+    //keep track of the number of attempts for this question
     private int attemptCt = 0;
 
     private BottomSheetBehavior behavior;

@@ -2,6 +2,7 @@ package com.linnca.pelicann.searchinterests;
 
 import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,11 @@ import com.linnca.pelicann.userinterests.WikiDataEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final String VIEW_TYPE_RECOMMENDATION_HEADER_WIKIDATA_ID = "recommendation header";
     private final String VIEW_TYPE_RECOMMENDATION_FOOTER_WIKIDATA_ID = "recommendation footer";
-    final String VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID = "emptyState";
-    final String VIEW_TYPE_LOADING_WIKIDATA_ID = "loading";
+    public final String VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID = "emptyState";
+    private final String VIEW_TYPE_LOADING_WIKIDATA_ID = "loading";
     private final String VIEW_TYPE_INITIAL_WIKIDATA_ID = "initial";
     private final String VIEW_TYPE_OFFLINE_WIKIDATA_ID = "offline";
     private final String VIEW_TYPE_OFFLINE_AFTER_ADDING_WIKIDATA_ID = "offline after adding";
@@ -43,12 +44,12 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     //prevent fast double clicks on any of the buttons
     private long lastClickTime = 0;
 
-    interface SearchResultsAdapterListener {
+    public interface SearchResultsAdapterListener {
         void onAddInterest(WikiDataEntity data);
         void onLoadMoreRecommendations();
     }
 
-    SearchResultsAdapter(SearchResultsAdapterListener listener){
+    public SearchResultsAdapter(SearchResultsAdapterListener listener){
         searchResultsAdapterListener = listener;
         //initial state
         WikiDataEntity initialData = new WikiDataEntity();
@@ -146,6 +147,9 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (viewHolder instanceof SearchResultsRecommendationHeaderViewHolder){
             ((SearchResultsRecommendationHeaderViewHolder) viewHolder)
                     .setTitle(headerLabel);
+            //if there are no items, we should not show a rankings header
+            ((SearchResultsRecommendationHeaderViewHolder) viewHolder)
+                    .setRankingsHeaderVisibility(getSearchResultSize() != 0);
         } else if (viewHolder instanceof SearchResultsRecommendationFooterViewHolder){
             ((SearchResultsRecommendationFooterViewHolder) viewHolder)
                     .setButtonListener(new View.OnClickListener() {
@@ -165,7 +169,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     //the overridden getItemCount() includes extra items like
     // headers and footers
-    int getSearchResultSize(){
+    public int getSearchResultSize(){
         int resultCt = 0;
         for (WikiDataEntity data : results){
             String wikiDataID = data.getWikiDataID();
@@ -181,7 +185,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return resultCt;
     }
 
-    boolean isLoading(){
+    public boolean isLoading(){
         boolean isLoading = false;
         for (WikiDataEntity data : results){
             if (data.getWikiDataID().equals(VIEW_TYPE_LOADING_WIKIDATA_ID)){
@@ -192,7 +196,15 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return isLoading;
     }
 
-    void setOffline(){
+    public void showLoading(){
+        WikiDataEntity loadingData = new WikiDataEntity();
+        loadingData.setWikiDataID(VIEW_TYPE_LOADING_WIKIDATA_ID);
+        List<WikiDataEntity> dataList = new ArrayList<>(1);
+        dataList.add(loadingData);
+        updateEntries(dataList);
+    }
+
+    public void setOffline(){
         //if there are search results, don't show.
         //we do show a toast, so the user will be notified either way
         if (getSearchResultSize() != 0){
@@ -206,7 +218,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         updateEntries(offlineList);
     }
 
-    void setOfflineAfterAdding(WikiDataEntity addedItem){
+    public void setOfflineAfterAdding(WikiDataEntity addedItem){
         List<WikiDataEntity> offlineList = new ArrayList<>(1);
         WikiDataEntity offline = new WikiDataEntity();
         offline.setWikiDataID(VIEW_TYPE_OFFLINE_AFTER_ADDING_WIKIDATA_ID);
@@ -218,7 +230,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     //a whole new set of data.
-    void updateEntries(List<WikiDataEntity> newList){
+    public void updateEntries(List<WikiDataEntity> newList){
         //animate footer/header removal
         if (recommendationHeaderShown){
             notifyItemRemoved(0);
@@ -233,7 +245,8 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    void showRecommendations(List<WikiDataEntity> newList, boolean showFooter){
+    public void showRecommendations(List<WikiDataEntity> newList, boolean showFooter){
+        Log.d("SEARCH RESULTS ADAPTER", "showing recommencations");
         //if the header and footer is shown, that means we are already showing the user
         // recommendations. so, instead of refreshing a new set of recommendation,
         //insert the data so we can animate it better.
@@ -279,7 +292,7 @@ class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyItemRangeInserted(prevListCt+1, recommendationsAdded);
     }
 
-    void setRecommendationWikiDataEntity(WikiDataEntity data){
+    public void setAddedWikiDataEntity(WikiDataEntity data){
         this.recommendationWikiDataEntity = data;
         headerLabel = data.getLabel();
         //to help with distinguishing between headers/footers shown

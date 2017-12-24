@@ -24,13 +24,16 @@ import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
+import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
 import com.linnca.pelicann.userinterestcontrols.StarterPacks;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Onboarding extends AppCompatActivity {
+public class Onboarding extends AppCompatActivity
+implements Onboarding3v2.Onboarding3v2Listener
+{
     private int pageIndex = 0;
     private final int maxPageIndex = 2;
     private Button nextButton;
@@ -38,6 +41,7 @@ public class Onboarding extends AppCompatActivity {
     private final List<ImageView> indicators = new ArrayList<>(3);
     private ProgressBar loading;
     private Database db = new FirebaseDB();
+    private List<WikiDataEntity> entitiesToAdd = null;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -119,13 +123,6 @@ public class Onboarding extends AppCompatActivity {
             }
         });
 
-        finishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toApp();
-            }
-        });
-
     }
 
     private void addStarterPack(int starterPackSelection){
@@ -166,11 +163,42 @@ public class Onboarding extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onAllEntitiesAdded(List<WikiDataEntity> entities){
+        this.entitiesToAdd = new ArrayList<>(entities);
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toApp();
+            }
+        });
+        finishButton.setEnabled(true);
+        finishButton.setTextColor(ThemeColorChanger.getColorFromAttribute(R.attr.color500, this));
+    }
+
+    private void addInterests(){
+        if (entitiesToAdd == null)
+            return;
+
+        Database db = new FirebaseDB();
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+            @Override
+            public void onUserInterestsAdded() {
+                AddUserInterestHelper helper = new AddUserInterestHelper();
+                //don't need to get classification
+                for (WikiDataEntity entity : entitiesToAdd){
+                    helper.addPronunciation(entity);
+                }
+            }
+        };
+        db.addUserInterests(this, entitiesToAdd, onDBResultListener);
+    }
+
     private void toApp(){
-        int startingPackSelection = adapter.getStarterPackSelection();
+        /*int startingPackSelection = adapter.getStarterPackSelection();
         if (startingPackSelection == -1){
             return;
-        }
+        }*/
 
         showLoading();
 
@@ -179,7 +207,8 @@ public class Onboarding extends AppCompatActivity {
             public void onSuccess(AuthResult authResult) {
                 markOnboardingCompleted();
                 //String newUserID = authResult.getUser().getUid();
-                addStarterPack(adapter.getStarterPackSelection());
+                //addStarterPack(adapter.getStarterPackSelection());
+                addInterests();
                 Intent intent = new Intent(Onboarding.this, MainActivity.class);
                 intent.putExtra(MainActivity.BUNDLE_DATABASE, new FirebaseDB());
                 startActivity(intent);

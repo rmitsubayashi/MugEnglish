@@ -30,6 +30,7 @@
             android:orientation="horizontal"
             android:background="@drawable/transparent_button_borderless"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:weightSum="1"
             android:layout_alignEnd="@id/onboarding3_marker"

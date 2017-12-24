@@ -101,9 +101,8 @@ public class AddUserInterestHelper {
                     } else {
                         db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_PLACE);
                     }
-                    matched.getAndSet(true);
+                    matched.set(true);
                 }
-                calledCt.incrementAndGet();
                 //2 = number of queries
                 if (calledCt.incrementAndGet() == 2){
                     //since checking for called count and checking matched are done separately,

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 class LessonDetailsAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -145,18 +146,8 @@ class LessonDetailsAdapter
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof LessonDetailsViewHolder) {
             LessonInstanceData data = allInstances.get(position);
-            StringBuilder allInterestsLabelBuilder = new StringBuilder();
-            for (String interestLabel : data.uniqueInterestLabels()) {
-                allInterestsLabelBuilder.append(interestLabel);
-                allInterestsLabelBuilder.append(" + ");
-            }
-            String allInterestsLabel = allInterestsLabelBuilder.toString();
-            if (allInterestsLabel.equals("")) {
-                allInterestsLabel = Integer.toString(position + 1);
-            } else {
-                allInterestsLabel = allInterestsLabel.substring(0, allInterestsLabel.length() - 3);
-            }
-            ((LessonDetailsViewHolder)holder).setInterestsLabel(allInterestsLabel);
+            Set<String> uniqueInterestLabels = data.uniqueInterestLabels();
+            ((LessonDetailsViewHolder)holder).setInterestsLabel(uniqueInterestLabels, position);
 
             DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, Locale.JAPAN);
             String dateString = dateFormat.format(new Date(data.getCreatedTimeStamp()));

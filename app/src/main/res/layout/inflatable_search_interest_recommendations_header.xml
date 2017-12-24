@@ -14,6 +14,7 @@
         android:textColor="?attr/color500"
         android:text="@string/search_interests_recommendations_success"/>
     <TextView
+        android:id="@+id/search_interests_recommendations_ranking_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
