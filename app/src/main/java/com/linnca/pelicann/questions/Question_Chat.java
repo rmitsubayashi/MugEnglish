@@ -2,6 +2,7 @@ package com.linnca.pelicann.questions;
 
 import android.os.Bundle;
 import android.text.SpannableString;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,6 +145,24 @@ public class Question_Chat extends QuestionFragmentInterface {
 
     private void setActionListeners(){
         submitButton.setOnClickListener(getResponseListener());
+        chatBoxEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            submitButton.performClick();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     private void setChatLayout(LayoutInflater inflater){

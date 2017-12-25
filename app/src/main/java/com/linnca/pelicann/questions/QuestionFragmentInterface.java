@@ -218,7 +218,6 @@ public abstract class QuestionFragmentInterface extends Fragment {
 
         //save in case we need to format the feedback again
         responseCorrect = correct;
-        formatFeedbackNextButton(correct);
         if (correct){
             feedback.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.light_green500));
         } //else condition is default now
@@ -235,6 +234,8 @@ public abstract class QuestionFragmentInterface extends Fragment {
             openFeedbackHelper(description);
         } else {
             if (GUIUtils.hideKeyboard(keyboardFocusView)) {
+                //we want to wait until the keyboard close,
+                // then show the feedback
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -274,21 +275,39 @@ public abstract class QuestionFragmentInterface extends Fragment {
 
     private void openFeedbackHelper(String description){
         //when we first display the question the bottom sheet is hidden & can be hidden.
-        //whether the answer was correct or not,
-        //we don't want the user to be able to hide the view because the net button is there
+        //we don't want the user to be able to hide the view because the next button is there
         //so make it non-hide-able
         behavior.setHideable(false);
         final TextView feedbackDescription =
                 feedback.findViewById(R.id.question_feedback_description);
         if (description != null && description.length() > 0) {
+            //if we have feedback, whether the answer is correct or incorrect,
+            // we need to show the next button
+            formatFeedbackNextButton(responseCorrect);
             feedbackDescription.setText(description);
             behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         } else {
-            //we might not have feedback
+            //no feedback, so
+            // 1. if the answer is incorrect, we want to let the user check the question
+            // again (some incorrect answers will have no feedback (i.e. t/f questions)
+            // 2. if the answer is correct, we don't care if the user checks the question
+            // again, so set a timer and automatically go to the next question
             behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             //make sure to call this after showing the bottom sheet
             //or the bottom sheet won't animate properly
             feedbackDescription.setVisibility(View.GONE);
+
+            if (responseCorrect){
+                nextButton.setVisibility(View.GONE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        questionListener.onNextQuestion(responseCorrect, getNoConnectionListener());
+                    }
+                }, 1000);
+            } else {
+                formatFeedbackNextButton(responseCorrect);
+            }
 
         }
     }

@@ -26,6 +26,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
+            android:inputType="text"
             android:hint="@string/question_instructions_hint"/>
         <Button
             android:id="@+id/question_instructions_submit"

@@ -82,8 +82,7 @@
             android:layout_alignParentEnd="true"
             android:background="@drawable/transparent_button"
             android:text="@string/onboarding_finish"
-            android:textColor="@color/gray500"
-            android:enabled="false"
+            android:textColor="?attr/color500"
             android:visibility="gone"/>
 
         <Button
