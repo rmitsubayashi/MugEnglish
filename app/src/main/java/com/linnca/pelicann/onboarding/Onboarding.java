@@ -123,12 +123,12 @@ implements Onboarding3v2.Onboarding3v2Listener
             }
         });
 
-        finishButton.setOnClickListener(new View.OnClickListener() {
+        /*finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toApp();
             }
-        });
+        });*/
 
     }
 
@@ -162,12 +162,12 @@ implements Onboarding3v2.Onboarding3v2Listener
         viewPager.setVisibility(View.VISIBLE);
         loading.setVisibility(View.GONE);
         finishButton.setTextColor(ThemeColorChanger.getColorFromAttribute(R.attr.color500,this));
-        finishButton.setOnClickListener(new View.OnClickListener() {
+        /*finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toApp();
             }
-        });
+        });*/
     }
 
     @Override
@@ -202,10 +202,10 @@ implements Onboarding3v2.Onboarding3v2Listener
     }
 
     private void toApp(){
-        int startingPackSelection = adapter.getStarterPackSelection();
+        /*int startingPackSelection = adapter.getStarterPackSelection();
         if (startingPackSelection == -1){
             return;
-        }
+        }*/
 
         showLoading();
 
@@ -214,8 +214,8 @@ implements Onboarding3v2.Onboarding3v2Listener
             public void onSuccess(AuthResult authResult) {
                 markOnboardingCompleted();
                 //String newUserID = authResult.getUser().getUid();
-                addStarterPack(adapter.getStarterPackSelection());
-                //addInterests();
+                //addStarterPack(adapter.getStarterPackSelection());
+                addInterests();
                 Intent intent = new Intent(Onboarding.this, MainActivity.class);
                 intent.putExtra(MainActivity.BUNDLE_DATABASE, new FirebaseDB());
                 startActivity(intent);

@@ -10,7 +10,7 @@ import com.linnca.pelicann.userinterests.WikiDataEntity;
 import java.util.List;
 
 class OnboardingPagerAdapter extends FragmentPagerAdapter {
-    private Onboarding3 onboarding3;
+    //private Onboarding3 onboarding3;
     private int maxPageCt;
 
     OnboardingPagerAdapter(FragmentManager fm, int maxPageCt) {
@@ -27,9 +27,9 @@ class OnboardingPagerAdapter extends FragmentPagerAdapter {
                 return new Onboarding2();
             case 2 :
                 //save so we can access the user selection
-                onboarding3 = new Onboarding3();
-                return onboarding3;
-                //return new Onboarding3v2();
+                //onboarding3 = new Onboarding3();
+                //return onboarding3;
+                return new Onboarding3v2();
             default :
                 return null;
         }
@@ -41,10 +41,10 @@ class OnboardingPagerAdapter extends FragmentPagerAdapter {
     }
 
     int getStarterPackSelection(){
-        if (onboarding3 == null)
+        /*if (onboarding3 == null)
             return -1;
         return onboarding3.getCurrentSelection();
-        //return 1;
+        */return 1;
     }
 
 }

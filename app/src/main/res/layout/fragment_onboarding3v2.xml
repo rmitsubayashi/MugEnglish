@@ -40,7 +40,8 @@
     <SearchView
         android:id="@+id/onboarding3v2_searchview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:iconifiedByDefault="false"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/onboarding3v2_list"
         android:layout_width="match_parent"

@@ -37,6 +37,7 @@ public class Preferences extends PreferenceFragmentCompat {
         //do these in onStart so we can handle when we change the value
         //in a secondary fragment (while this is not destroyed)
         setNumberOfAttemptsPerQuestionPreference();
+        setLessonsPerDayPreference();
         setDescriptionBeforeLessonWithExceptionRulePreference();
         setThemePreference();
     }
@@ -81,6 +82,24 @@ public class Preferences extends PreferenceFragmentCompat {
             }
         });
 
+        EditTextPreference lessonsPerDayPreference =
+                (EditTextPreference)findPreference(getString(R.string.preferences_general_lessons_per_day_key));
+
+        lessonsPerDayPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                //since this is an editText the value should always be a string
+                if (newValue instanceof String){
+                    setLessonsPerDaySummary((String)newValue);
+                } else {
+                    Log.d(TAG, newValue.getClass().toString());
+                }
+
+
+                return true;
+            }
+        });
+
         ListPreference listPreference =
                 (ListPreference)findPreference(getString(R.string.preferences_general_themeColor_key));
         listPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -113,6 +132,36 @@ public class Preferences extends PreferenceFragmentCompat {
             numberOfAttempts = removedNonNumbers.length() != 0 ? Integer.parseInt(removedNonNumbers) : 0;
         }
         String title = getString(R.string.preferences_questions_numberOfAttemptsPerQuestion_label, numberOfAttempts);
+        preference.setTitle(title);
+    }
+
+    private void setLessonsPerDayPreference(){
+        EditTextPreference lessonsPerDayPreference =
+                (EditTextPreference)findPreference(getString(R.string.preferences_general_lessons_per_day_key));
+        setLessonsPerDaySummary(lessonsPerDayPreference.getText());
+
+    }
+
+    private void setLessonsPerDaySummary(String newValue){
+        EditTextPreference preference =
+                (EditTextPreference)findPreference(getString(R.string.preferences_general_lessons_per_day_key));
+
+        int lessonsPerDay;
+        if (newValue == null){
+            lessonsPerDay = 0;
+        } else {
+            try {
+                lessonsPerDay = Integer.parseInt(newValue);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                String removedNonNumbers = newValue.replaceAll("[^0-9]", "");
+                //just in case we don't have a string with a letter
+                lessonsPerDay = removedNonNumbers.length() != 0 ? Integer.parseInt(removedNonNumbers) : 0;
+            }
+        }
+        String title = lessonsPerDay > 0 ?
+                getString(R.string.preferences_general_lessons_per_day_label, lessonsPerDay) :
+                getString(R.string.preferences_general_lessons_per_day_label_empty);
         preference.setTitle(title);
     }
 

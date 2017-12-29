@@ -11,6 +11,8 @@ import com.linnca.pelicann.lessonlist.UserLessonListViewer;
 import com.linnca.pelicann.questions.InstanceRecord;
 import com.linnca.pelicann.questions.QuestionAttempt;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +27,8 @@ class ResultsManager {
 
     interface ResultsManagerListener {
         void onLessonFirstCleared(UserLessonListViewer previousState);
-        void onLessonNotCleared(int toClearLessonScore);
+        void onLessonCleared(boolean cleared);
+        void onAddDailyLessonCt(int oldCt, int newCt);
     }
 
     ResultsManager(InstanceRecord instanceRecord, List<String> questionIDs, Database db, ResultsManagerListener listener){
@@ -66,7 +69,6 @@ class ResultsManager {
         OnDBResultListener clearedLessonOnDBResultListener = new OnDBResultListener() {
             @Override
             public void onClearedLessonsQueried(Set<String> clearedLessonKeys) {
-                Log.d("results", "oncleared called");
                 OnDBResultListener reviewQuestionOnDBResultListener =
                         new OnDBResultListener() {
                             @Override
@@ -77,16 +79,12 @@ class ResultsManager {
                 //save it in a class variable so other methods may use it
                 userLessonListViewer = new UserLessonListViewer(new LessonListViewerImplementation(),
                         clearedLessonKeys);
-                Log.d("results", "oncleared2 called");
+
                 if (userLessonListViewer.shouldSaveForReview(instanceRecord.getLessonId())){
                     db.addReviewQuestion(questionIDs, reviewQuestionOnDBResultListener);
-                    Log.d("resultsmanager", "should save for review");
-                } else {
-                    Log.d("resultsmanager", "should not save for review");
                 }
             }
         };
-        Log.d("results", "calling db");
         //we grabbed level when adding the report card
         db.getClearedLessons(context, level, false, clearedLessonOnDBResultListener);
     }
@@ -118,8 +116,10 @@ class ResultsManager {
         String lessonKey = instanceRecord.getLessonId();
         int lessonClearScore = lessonListViewer.getLessonData(lessonKey)
                 .getToClearScore();
+        resultsManagerListener.onLessonCleared(correctPercentage >= lessonClearScore);
+        //don't need to save the cleared lesson
+        // if the user didn't clear the lesson
         if (correctPercentage < lessonClearScore){
-            resultsManagerListener.onLessonNotCleared(lessonClearScore);
             return;
         }
 
@@ -158,5 +158,22 @@ class ResultsManager {
             }
         };
         db.addClearedLesson(level, lessonKey, onDBResultListener);
+    }
+
+    void addDailyLessonCt(){
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+            @Override
+            public void onDailyLessonAdded(int newCt) {
+                int oldCt = newCt - 1;
+                resultsManagerListener.onAddDailyLessonCt(oldCt, newCt);
+            }
+        };
+        db.addDailyLesson(formatDailyLessonCtDate(), onDBResultListener);
+    }
+
+    private String formatDailyLessonCtDate(){
+        int month = DateTime.now().monthOfYear().get();
+        int day = DateTime.now().dayOfMonth().get();
+        return Integer.toString(month) + "-" + Integer.toString(day);
     }
 }

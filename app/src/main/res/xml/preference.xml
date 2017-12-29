@@ -3,6 +3,23 @@
                   android:key="@string/preferences_main_key"
     >
     <PreferenceCategory
+        android:key="@string/preferences_category_general_key"
+        android:title="@string/preferences_category_general_label"
+        >
+        <EditTextPreference
+            android:key="@string/preferences_general_lessons_per_day_key"
+            android:title="@string/preferences_general_lessons_per_day_label"
+            android:summary="@string/preferences_general_lessons_per_day_description"
+            android:dialogTitle="@string/preferences_general_lessons_per_day_dialog_label"
+            android:inputType="number"
+            />
+        <ListPreference
+            android:key="@string/preferences_general_themeColor_key"
+            android:title="@string/preferences_general_themeColor_label"
+            android:dialogTitle="@string/preferences_general_themeColor_dialog_label"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="@string/preferences_category_questions_key"
         android:title="@string/preferences_category_questions_label"
         >
@@ -22,16 +39,6 @@
             android:defaultValue="1"
             android:inputType="number"
             />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="@string/preferences_category_general_key"
-        android:title="@string/preferences_category_general_label"
-        >
-        <ListPreference
-            android:key="@string/preferences_general_themeColor_key"
-            android:title="@string/preferences_general_themeColor_label"
-            android:dialogTitle="@string/preferences_general_themeColor_dialog_label"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

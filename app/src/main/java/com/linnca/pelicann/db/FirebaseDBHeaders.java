@@ -33,6 +33,7 @@ class FirebaseDBHeaders {
     static final String REPORT_CARD = "reportCard";
     static final String REPORT_CARD_CORRECT = "correct";
     static final String REPORT_CARD_TOTAL = "total";
+    static final String DAILY_LESSON_CT = "dailyLessonCount";
 
     private FirebaseDBHeaders(){}
 }

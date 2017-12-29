@@ -131,6 +131,21 @@
     <string name="preferences_category_general_key">
         preferences:general
     </string>
+    <string name="preferences_general_lessons_per_day_key">
+        preferences:lessons per day
+    </string>
+    <string name="preferences_general_lessons_per_day_label">
+        1日の目標レッスン数：%1$d
+    </string>
+    <string name="preferences_general_lessons_per_day_label_empty">
+        1日の目標レッスン数
+    </string>
+    <string name="preferences_general_lessons_per_day_dialog_label">
+        新しい目標
+    </string>
+    <string name="preferences_general_lessons_per_day_description">
+        目標を設定して、毎日コツコツ勉強しましょう。
+    </string>
     <string name="preferences_general_themeColor_key">
         preferences:theme color
     </string>
@@ -175,7 +190,7 @@
     <string name="onboarding3_starter_pack_girl">こども(女性)</string>
     <string name="onboarding3_starter_pack_man">大人（男性）</string>
     <string name="onboarding3_starter_pack_woman">大人（女性）</string>
-    <string name="onboarding3v2_instructions">では最初のレッスンに出てくる人と場所を追加しましょう。\n
+    <string name="onboarding3v2_instructions">最初のレッスンに出てくる人と場所を追加しましょう。\n\n
     人を3人、国を2国、都市を２つ検索して、追加してください。</string>
     <string name="onboarding3v2_items_left"><b>人</b>：あと<b>%1$d</b>人\n<b>国</b>：あと<b>%2$d</b>国\n<b>都市</b>：あと<b>%3$d</b>つ</string>
     <string name="onboarding3v2_no_match_category">人、国、都市を検索してください</string>
@@ -202,9 +217,10 @@
 
     <!--results-->
     <string name="results_app_bar_title">結果</string>
-    <string name="results_correct_ct">正解数</string>
+    <string name="results_correct_ct_unit">点</string>
     <string name="results_first_clear">初クリア!</string>
-    <string name="results_not_cleared">不合格です。合格ラインは%1$dです。</string>
+    <string name="results_passed">合格！</string>
+    <string name="results_not_passed">不合格</string>
     <string name="results_review">復習する</string>
     <string name="results_finish_review">このまま終了する</string>
     <string name="results_finish_no_review">終了する</string>
@@ -216,6 +232,8 @@
     <string name="results_no_unlocked_lessons_title">解放されたレッスンはありません</string>
     <string name="results_unlocked_lesson_item_go_to_lesson">レッスンに行く</string>
     <string name="results_vocabulary_no_connection">新しい単語を追加するにはネットに接続してください</string>
+    <string name="results_daily_lesson_ct_title">今日のレッスン数</string>
+    <string name="results_daily_lesson_ct_set">設定する</string>
     <!--results after review-->
     <string name="review_results_title">復習お疲れ様です</string>
     <string name="review_results_correct_ct">正解数</string>

@@ -11,21 +11,102 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="16dp"
-        android:paddingBottom="48dp"
-        android:animateLayoutChanges="true">
-        <TextView
+        android:paddingBottom="48dp">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/results_correct_ct"
-            android:textSize="15sp"
-            android:layout_marginBottom="16dp"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="16dp"
-            android:textSize="21sp"
-            android:id="@+id/results_questions_correct"/>
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:baselineAligned="false"
+            android:layout_marginBottom="24dp">
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4"
+                >
+                <TextView
+                    android:id="@+id/results_questions_correct_accuracy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="42sp"/>
+                <TextView
+                    android:id="@+id/results_questions_correct_accuracy_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/results_questions_correct_accuracy"
+                    android:layout_alignBottom="@id/results_questions_correct_accuracy"
+                    android:layout_marginStart="8dp"
+                    android:textSize="15sp"
+                    android:text="@string/results_correct_ct_unit"/>
+                <TextView
+                    android:id="@+id/results_passed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/results_questions_correct_accuracy"
+                    android:textSize="21sp"
+                    android:layout_marginTop="16dp"/>
+
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.6"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/results_daily_lesson_ct_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="@string/results_daily_lesson_ct_title"
+                    android:textSize="21sp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center">
+                    <ProgressBar
+                        android:id="@+id/results_daily_lesson_ct_progress_bar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:indeterminate="false"
+                        android:progressDrawable="@drawable/progress_bar_circle"
+                        />
+                    <ImageView
+                        android:id="@+id/results_daily_lesson_ct_completed"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"
+                        android:alpha="0"
+                        android:tint="?attr/colorAccent300"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/ic_check_circle"/>
+                    <Button
+                        android:id="@+id/results_daily_lesson_ct_set"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"
+                        android:text="@string/results_daily_lesson_ct_set"
+                        android:background="@drawable/transparent_button"
+                        android:textColor="?attr/colorAccent500"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/results_daily_lesson_ct_progress_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="?attr/colorAccent"/>
+            </LinearLayout>
+
+        </LinearLayout>
         <!--only show if the user needs to review-->
         <Button
             android:id="@+id/results_review"
@@ -68,6 +149,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginBottom="32dp"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

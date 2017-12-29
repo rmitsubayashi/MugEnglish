@@ -64,6 +64,8 @@ public abstract class OnDBResultListener {
     public void onFirstAppUsageDateQueried(DateTime date){}
     public void onAppUsageForMonthsQueried(List<AppUsageLog> logs){}
 
+    public void onDailyLessonAdded(int newCt){}
+
     public void onSportQueried(String wikiDataID, String verb, String object){}
     public void onSportsQueried(){}
 }

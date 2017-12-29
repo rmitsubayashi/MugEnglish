@@ -1701,6 +1701,61 @@ public class FirebaseDB extends Database {
         networkConnections.add(networkConnectionChecker);
     }
 
+    @Override
+    public void addDailyLesson(String date, final OnDBResultListener onDBResultListener){
+        final DatabaseReference dailyLessonCtRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.DAILY_LESSON_CT + "/" +
+                        getUserID() + "/" +
+                        date
+        );
+
+        ValueEventListener dailyLessonCtListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Integer dailyLessonCt = dataSnapshot.getValue(Integer.class);
+                //if empty, clear the lesson count from the previously recorded day
+                if (dailyLessonCt == null || dailyLessonCt == 0){
+                    FirebaseDatabase.getInstance().getReference(
+                        FirebaseDBHeaders.DAILY_LESSON_CT + "/" +
+                                getUserID()
+                    ).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            dailyLessonCtRef.setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    onDBResultListener.onDailyLessonAdded(1);
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    final int newCt = dailyLessonCt + 1;
+                    dailyLessonCtRef.setValue(newCt).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            onDBResultListener.onDailyLessonAdded(newCt);
+                        }
+                    });
+                }
+
+                //don't need to keep listening
+                dailyLessonCtRef.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        dailyLessonCtRef.addValueEventListener(dailyLessonCtListener);
+        //don't schedule this to be cleared by cleanUp(),
+        // because that would stop the update.
+        //instead, make sure to handle the case in the UI where the user is not
+        // on the same fragment anymore
+    }
+
     //for admin use
     @Override
     public void addSport(String sportWikiDataID, String verb, String object){

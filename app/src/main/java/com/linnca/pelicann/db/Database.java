@@ -99,6 +99,8 @@ public abstract class Database implements Serializable{
     public abstract void getFirstAppUsageDate(OnDBResultListener onDBResultListener);
     public abstract void getAppUsageForMonths(Context context, String startMonthKey, String endMonthKey, OnDBResultListener onDBResultListener);
 
+    public abstract void addDailyLesson(String date, OnDBResultListener onDBResultListener);
+
     //for admin use only
     public abstract void addSport(String sportWikiDataID, String verb, String object);
     public abstract void getSports(Collection<String> sportWikiDataIDs, OnDBResultListener onDBResultListener);
