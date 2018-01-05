@@ -1,52 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          android:paddingLeft="16dp"
-          android:paddingRight="16dp"
-          android:minHeight="72dp"
-          android:gravity="center_vertical"
-          android:weightSum="1.0"
-              android:baselineAligned="false">
-    <LinearLayout
-        android:layout_width="0dp"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:minHeight="72dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp"
+    android:background="?attr/selectableItemBackground"
+    >
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="0.8"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:paddingBottom="5dp"
-            android:id="@+id/search_interests_result_label"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:textColor="@color/subtextFontColor"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"
-            android:id="@+id/search_interests_result_description"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
+        android:textSize="17sp"
+        android:paddingBottom="8dp"
+        android:id="@+id/search_interests_result_label"/>
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="0.2">
-        <!--temporarily setting the visibility to none until we get further notice about
-        whether to enable or disable the button-->
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="?attr/color500"
-            android:text="@string/search_interests_add"
-            android:id="@+id/search_interests_result_add_button"/>
-    </LinearLayout>
-
-
-
+        android:textSize="15sp"
+        android:textColor="@color/subtextFontColor"
+        android:layout_marginStart="12dp"
+        android:id="@+id/search_interests_result_description"/>
 </LinearLayout>

@@ -78,6 +78,9 @@ public abstract class Database implements Serializable{
     public abstract void setPronunciation(String userInterestID, String pronunciation);
     public abstract void setClassification(String userInterestID, int classification);
 
+    public abstract void addSimilarInterest(String fromID, WikiDataEntity toEntity);
+    public abstract void getSimilarInterest(String id, OnDBResultListener onDBResultListener);
+
     public abstract void changeUserInterestRanking(WikiDataEntity data, int count);
     public abstract void getPopularUserInterests(Context context, int count, OnDBResultListener onDBResultListener);
 

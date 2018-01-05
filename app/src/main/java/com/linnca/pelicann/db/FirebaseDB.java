@@ -1178,6 +1178,48 @@ public class FirebaseDB extends Database {
     }
 
     @Override
+    public void addSimilarInterest(String fromID, WikiDataEntity toEntity){
+        DatabaseReference similarInterestRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.SIMILAR_USER_INTERESTS + "/" +
+                        fromID + "/" +
+                        toEntity.getWikiDataID()
+        );
+        similarInterestRef.setValue(toEntity);
+    }
+
+    @Override
+    public void getSimilarInterest(String id, final OnDBResultListener onDBResultListener){
+        final DatabaseReference similarInterestRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.SIMILAR_USER_INTERESTS + "/" +
+                        id
+        );
+
+        ValueEventListener similarInterestListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<WikiDataEntity> similarInterests = new ArrayList<>((int)dataSnapshot.getChildrenCount());
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()){
+                    WikiDataEntity toAdd = childSnapshot.getValue(WikiDataEntity.class);
+                    similarInterests.add(toAdd);
+                }
+                onDBResultListener.onSimilarUserInterestsQueried(similarInterests);
+
+                similarInterestRef.removeEventListener(this);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        refListenerPairs.add(new RefListenerPair(similarInterestRef, similarInterestListener));
+        similarInterestRef.addValueEventListener(similarInterestListener);
+
+        //TODO no network
+    }
+
+    @Override
     public void removeUserInterests(final List<WikiDataEntity> userInterestsToRemove, final OnDBResultListener onDBResultListener){
         //remove all the interests first so the UI updates as soon as the items are deleted
         Map<String, Object> toRemove = new HashMap<>(userInterestsToRemove.size());

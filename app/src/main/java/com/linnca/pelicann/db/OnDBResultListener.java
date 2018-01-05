@@ -47,6 +47,8 @@ public abstract class OnDBResultListener {
     public void onUserInterestsAdded(){}
     public void onUserInterestsRemoved(){}
 
+    public void onSimilarUserInterestsQueried(List<WikiDataEntity> userInterests){}
+
     public void onUserInterestRankingsQueried(List<WikiDataEntity> userInterests){}
 
     public void onClearedLessonsQueried(Set<String> clearedLessonKeys){}

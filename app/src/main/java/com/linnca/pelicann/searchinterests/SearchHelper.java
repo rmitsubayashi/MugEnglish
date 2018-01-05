@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SearchHelper {
+    //helps search multiple times
     private EndpointConnectorReturnsXML connector;
     private AtomicInteger searchRequestCt = new AtomicInteger(0);
     private ScheduledThreadPoolExecutor executor;

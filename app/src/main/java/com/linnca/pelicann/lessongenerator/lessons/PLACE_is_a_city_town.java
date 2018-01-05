@@ -57,7 +57,7 @@ public class PLACE_is_a_city_town extends Lesson {
 
         super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
-        super.questionSetsToPopulate = 3;
+        super.questionSetsToPopulate = 2;
         super.lessonKey = KEY;
 
     }

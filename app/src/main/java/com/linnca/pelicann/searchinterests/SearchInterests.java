@@ -72,7 +72,7 @@ public class SearchInterests extends Fragment {
             db = new FirebaseDB();
         }
         searchHelper = new SearchHelper(
-                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE)
+                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7)
         );
         recommendationGetter = new RecommendationGetter(
                 5, getContext(), db, 3
@@ -206,11 +206,15 @@ public class SearchInterests extends Fragment {
                         searchView.setQuery("", false);
                         searchView.clearFocus();
 
+                        //this just says that the user added the item
+                        adapter.showRecommendations(new ArrayList<WikiDataEntity>(1), false);
+
                         //give the data to the adapter
                         // so it can give feedback to the user
                         adapter.setAddedWikiDataEntity(data);
                         //get recommendations for the user
-                        recommendationGetter.getNewRecommendations(userInterests,
+                        recommendationGetter.getNewRecommendations(data,
+                                userInterests,
                                 getRecommendationGetterListener());
                     }
 
@@ -242,7 +246,7 @@ public class SearchInterests extends Fragment {
         return new RecommendationGetter.RecommendationGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
-                adapter.showRecommendations(results, showLoadMoreButton);
+                //adapter.showRecommendations(results, showLoadMoreButton);
             }
 
             @Override

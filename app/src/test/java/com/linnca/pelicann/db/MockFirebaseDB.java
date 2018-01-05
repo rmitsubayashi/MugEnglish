@@ -338,6 +338,9 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
+    public void addDailyLesson(String date, OnDBResultListener onDBResultListener){}
+
+    @Override
     public void addSport(String sportWikiDataID, String verb, String object) {
 
     }

@@ -125,12 +125,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position){
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position){
         if (viewHolder instanceof SearchResultsViewHolder){
             WikiDataEntity data = results.get(position);
             ((SearchResultsViewHolder) viewHolder).setLabel(data.getLabel());
             ((SearchResultsViewHolder) viewHolder).setDescription(data.getDescription());
             final WikiDataEntity fData = data;
+            //reset
+            viewHolder.itemView.setBackgroundResource(R.drawable.transparent_button);
             ((SearchResultsViewHolder)viewHolder).setButtonListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -140,6 +142,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                     //update the last clicked time
                     lastClickTime = SystemClock.elapsedRealtime();
+                    //notify the user that the item has been clicked
+                    viewHolder.itemView.setBackgroundResource(R.drawable.gray_button);
                     //add the interest
                     searchResultsAdapterListener.onAddInterest(fData);
                 }

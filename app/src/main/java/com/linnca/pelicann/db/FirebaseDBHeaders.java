@@ -9,6 +9,7 @@ class FirebaseDBHeaders {
     static final String USER_INTEREST_RANKINGS = "userInterestRankings";
     static final String USER_INTEREST_RANKINGS_COUNT = "count";
     static final String USER_INTEREST_RANKINGS_DATA = "data";
+    static final String SIMILAR_USER_INTERESTS = "similarUserInterests";
     static final String CLEARED_LESSONS = "clearedLessons";
     static final String REVIEW_QUESTIONS = "reviewQuestions";
     static final String LESSON_INSTANCES = "lessonInstances";

@@ -132,7 +132,7 @@ public class Tutorial_ChoosePerson extends Fragment {
         @Override
         protected List<OnboardingPersonBundle> doInBackground(String... params){
             String searchName = params[0];
-            WikiDataAPISearchConnector searchConnector = new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE);
+            WikiDataAPISearchConnector searchConnector = new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE, 7);
             List<OnboardingPersonBundle> result = new ArrayList<>();
             List<WikiDataEntity> searchResult = null;
             /*try {

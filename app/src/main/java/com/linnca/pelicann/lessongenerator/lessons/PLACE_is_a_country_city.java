@@ -61,7 +61,7 @@ public class PLACE_is_a_country_city extends Lesson {
 
         super(connector, db, listener);
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PLACE;
-        super.questionSetsToPopulate = 4;
+        super.questionSetsToPopulate = 2;
         super.lessonKey = KEY;
         super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
 

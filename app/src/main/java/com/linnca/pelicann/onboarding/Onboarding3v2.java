@@ -26,7 +26,9 @@ import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
 import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
 import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
+import com.linnca.pelicann.searchinterests.RecommendationGetter;
 import com.linnca.pelicann.searchinterests.SearchHelper;
 import com.linnca.pelicann.searchinterests.SearchResultsAdapter;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
@@ -49,9 +51,9 @@ public class Onboarding3v2 extends Fragment {
     //to communicate with UI thread
     private final int CHECK_CATEGORY_SUCCESS = 1;
     private final int CHECK_CATEGORY_FAILURE = 2;
-    private final int peopleToChoose = 3;
-    private final int citiesToChoose = 2;
-    private final int countriesToChoose = 2;
+    private final int peopleToChoose = 2;
+    private final int citiesToChoose = 1;
+    private final int countriesToChoose = 1;
     //what the user has chosen
     private List<WikiDataEntity> people = new ArrayList<>(peopleToChoose);
     private List<WikiDataEntity> countries = new ArrayList<>(countriesToChoose);
@@ -63,6 +65,7 @@ public class Onboarding3v2 extends Fragment {
     private TextView itemsToAddTextview;
     private TextView finishedTextview;
     private SearchResultsAdapter adapter;
+    private RecommendationGetter recommendationGetter;
     //to see if this is the first time the user typed
     private boolean typed = false;
     //to communicate with the activity once we are done adding all entities
@@ -76,9 +79,9 @@ public class Onboarding3v2 extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         searchHelper = new SearchHelper(
-                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE)
+                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7)
         );
-
+        recommendationGetter = new RecommendationGetter(3, getContext(), new FirebaseDB(), 3);
     }
 
     @Override
@@ -285,7 +288,7 @@ public class Onboarding3v2 extends Fragment {
                             //there is a chance something will be called in between...
                             Message message;
                             if (matched.get()){
-                                message = checkCategoryHandler.obtainMessage(CHECK_CATEGORY_SUCCESS);
+                                message = checkCategoryHandler.obtainMessage(CHECK_CATEGORY_SUCCESS, data);
                             } else {
                                 message = checkCategoryHandler.obtainMessage(CHECK_CATEGORY_FAILURE);
                             }
@@ -319,6 +322,18 @@ public class Onboarding3v2 extends Fragment {
                         //this will just say ("hey, you added the item")
                         adapter.showRecommendations(new ArrayList<WikiDataEntity>(1), false);
                         refreshItemsLeftViews();
+                        recommendationGetter.getNewRecommendations((WikiDataEntity) inputMessage.obj, new ArrayList<WikiDataEntity>(1),
+                                new RecommendationGetter.RecommendationGetterListener() {
+                                    @Override
+                                    public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
+
+                                    }
+
+                                    @Override
+                                    public void onNoConnection() {
+
+                                    }
+                                });
                         return;
                     case CHECK_CATEGORY_FAILURE:
 

@@ -10,13 +10,11 @@ import com.linnca.pelicann.R;
 class SearchResultsViewHolder extends RecyclerView.ViewHolder {
     private final TextView name;
     private final TextView description;
-    private final Button addButton;
 
     public SearchResultsViewHolder(View itemView){
         super(itemView);
         name = itemView.findViewById(R.id.search_interests_result_label);
         description = itemView.findViewById(R.id.search_interests_result_description);
-        addButton = itemView.findViewById(R.id.search_interests_result_add_button);
     }
 
     public void setLabel(String label){ this.name.setText(label);}
@@ -24,6 +22,6 @@ class SearchResultsViewHolder extends RecyclerView.ViewHolder {
     public void setDescription(String description){this.description.setText(description);}
 
     public void setButtonListener(View.OnClickListener listener){
-        this.addButton.setOnClickListener(listener);
+        this.itemView.setOnClickListener(listener);
     }
 }

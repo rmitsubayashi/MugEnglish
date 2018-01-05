@@ -191,7 +191,7 @@
     <string name="onboarding3_starter_pack_man">大人（男性）</string>
     <string name="onboarding3_starter_pack_woman">大人（女性）</string>
     <string name="onboarding3v2_instructions">最初のレッスンに出てくる人と場所を追加しましょう。\n\n
-    人を3人、国を2国、都市を２つ検索して、追加してください。</string>
+    人を2人、国を1国、都市を1つ検索して、追加してください。</string>
     <string name="onboarding3v2_items_left"><b>人</b>：あと<b>%1$d</b>人\n<b>国</b>：あと<b>%2$d</b>国\n<b>都市</b>：あと<b>%3$d</b>つ</string>
     <string name="onboarding3v2_no_match_category">人、国、都市を検索してください</string>
     <string name="onboarding3v2_finished">お疲れ様です。\nこれでレッスンにあなたが追加した人と場所が登場します。\n「始める」で勉強画面に移りましょう。</string>

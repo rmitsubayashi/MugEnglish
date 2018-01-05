@@ -198,10 +198,10 @@ public class NAME_is_a_OCCUPATION extends Lesson{
         else
             article = "an";
 
-        String sentence = qr.personEN + " is " + article + " " +
+        String sentence1 = formatSentenceJP(qr);
+        String sentence2 = qr.personEN + " is " + article + " " +
                 precedingHint + Question_FillInBlank_Input.FILL_IN_BLANK_TEXT + followingHint + ".";
-        sentence = GrammarRules.uppercaseFirstLetterOfSentence(sentence);
-        return sentence;
+        return sentence1 + "\n\n" + sentence2;
     }
 
     private String fillInBlankAnswer(QueryResult qr){

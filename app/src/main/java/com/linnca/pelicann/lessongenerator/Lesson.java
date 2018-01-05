@@ -97,7 +97,8 @@ public abstract class Lesson {
 			//we have a lesson without any dynamic questions
 			saveInstance();
 		} else {
-			questionSetsLeftToPopulate = questionSetsToPopulate;
+			//TODO adjust questions left to lower (too many is boring)
+			questionSetsLeftToPopulate = 2;
 			//populate dynamic questions
 			populateUserInterests();
 		}
@@ -118,7 +119,8 @@ public abstract class Lesson {
 						userInterests.add(interest);
 					}
 				}
-				populateUserQuestionHistory();
+
+				populateSimilarUserInterests();
 			}
 
 			@Override
@@ -127,6 +129,25 @@ public abstract class Lesson {
 			}
 		};
 		db.getUserInterests(context, false, onDBResultListener);
+	}
+
+	private void populateSimilarUserInterests(){
+		final AtomicInteger userInterestsQueried = new AtomicInteger(0);
+		final int userInterestSize = userInterests.size();
+		OnDBResultListener onDBResultListener = new OnDBResultListener() {
+			@Override
+			public void onSimilarUserInterestsQueried(List<WikiDataEntity> userInterests) {
+				Lesson.this.userInterests.addAll(userInterests);
+
+				if (userInterestsQueried.incrementAndGet() == userInterestSize){
+					populateUserQuestionHistory();
+				}
+			}
+		};
+		for (WikiDataEntity interest  : userInterests){
+			String interestID = interest.getWikiDataID();
+			db.getSimilarInterest(interestID, onDBResultListener);
+		}
 	}
 
 	//we need to skip over questions the user has already solved

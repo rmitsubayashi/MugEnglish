@@ -1,18 +1,32 @@
 package com.linnca.pelicann.searchinterests;
 
 import android.content.Context;
+import android.util.Log;
 
+import com.linnca.pelicann.connectors.BingAlsoSearchedConnector;
+import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
+import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
+import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
 import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.OnDBResultListener;
+import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.userinterests.WikiDataEntity;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class RecommendationGetter {
+public class RecommendationGetter {
     //to get connection status
     private Context context;
+    //to get popular user interests
     private Database db;
+    //to get recommendations from Bing
+    private BingAlsoSearchedConnector bingConnector = new BingAlsoSearchedConnector();
     private int toDisplayRecommendationCt = 0;
     private int defaultRecommendationCt;
     //how many recommendations to add when the user loads
@@ -23,15 +37,16 @@ class RecommendationGetter {
     //so save the leftovers and when the user loads more,
     // we can check this first
     private List<WikiDataEntity> savedRecommendations = new ArrayList<>();
+    private WikiDataEntity addedInterest = null;
 
     //the interface is to determine what will happen to the UI.
     //the results here should only contain enough items to display (not the entire list)
-    interface RecommendationGetterListener {
+    public interface RecommendationGetterListener {
         void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton);
         void onNoConnection();
     }
 
-    RecommendationGetter(int defaultRecommendationCt, Context context, Database db, int loadMoreRecommendationCt){
+    public RecommendationGetter(int defaultRecommendationCt, Context context, Database db, int loadMoreRecommendationCt){
         this.context = context;
         this.db = db;
         this.defaultRecommendationCt = defaultRecommendationCt;
@@ -42,14 +57,22 @@ class RecommendationGetter {
         return toDisplayRecommendationCt;
     }
 
-    void getNewRecommendations(List<WikiDataEntity> userInterests,
-                            RecommendationGetterListener recommendationGetterListener){
+    public void getNewRecommendations(final WikiDataEntity addedInterest, List<WikiDataEntity> userInterests,
+                            final RecommendationGetterListener recommendationGetterListener){
+        this.addedInterest = addedInterest;
         //reset the recommendation count to the default
         toDisplayRecommendationCt = defaultRecommendationCt;
-        getRecommendations(userInterests, recommendationGetterListener);
+        //getPopularWikidataEntities(userInterests, recommendationGetterListener);
+        new Thread(){
+            @Override
+            public void run(){
+                getPeopleAlsoSearchedFor(addedInterest.getLabel(), recommendationGetterListener);
+            }
+        }.start();
+
     }
 
-    void loadMoreRecommendations(List<WikiDataEntity> userInterests,
+    public void loadMoreRecommendations(List<WikiDataEntity> userInterests,
                                  RecommendationGetterListener recommendationGetterListener){
         toDisplayRecommendationCt += loadMoreRecommendationCt;
         //check first if we can still populate the recommendations with
@@ -62,11 +85,11 @@ class RecommendationGetter {
             recommendationGetterListener.onGetRecommendations(toDisplay, true);
         } else {
             //grab more from the database
-            getRecommendations(userInterests, recommendationGetterListener);
+            getPopularWikidataEntities(userInterests, recommendationGetterListener);
         }
     }
 
-    private void getRecommendations(final List<WikiDataEntity> userInterests,
+    private void getPopularWikidataEntities(final List<WikiDataEntity> userInterests,
                                     final RecommendationGetterListener recommendationGetterListener){
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
@@ -101,6 +124,137 @@ class RecommendationGetter {
         int toGetUserInterestCt = userInterests.size() +
                 toDisplayRecommendationCt + 1;
         db.getPopularUserInterests(context, toGetUserInterestCt, onDBResultListener);
+    }
+
+    private void getPeopleAlsoSearchedFor(final String addedInterestLabel, final RecommendationGetterListener recommendationGetterListener){
+        EndpointConnectorReturnsXML.OnFetchDOMListener listener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
+            @Override
+            public boolean shouldStop() {
+                return true;
+            }
+
+            @Override
+            public void onStop() {
+
+            }
+
+            @Override
+            public void onFetchDOM(Document result) {
+                List<String> alsoSearchedForLabels = new ArrayList<>(5);
+                findAlsoSearchedForLabels(result.getDocumentElement(), "a", "title", alsoSearchedForLabels);
+                //since these are only labels,
+                // we need to search -> add
+                for (String label : alsoSearchedForLabels){
+                    search(label);
+                }
+
+            }
+
+            @Override
+            public void onError() {
+                recommendationGetterListener.onNoConnection();
+            }
+        };
+
+        List<String> query = new ArrayList<>(1);
+        query.add(addedInterestLabel);
+        bingConnector.fetchDOMFromGetRequest(listener, query);
+
+    }
+
+    private void search(String label){
+        EndpointConnectorReturnsXML.OnFetchDOMListener listener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
+            @Override
+            public boolean shouldStop() {
+                return false;
+            }
+
+            @Override
+            public void onStop() {
+
+            }
+
+            @Override
+            public void onFetchDOM(Document result) {
+                NodeList resultNodes = result.getElementsByTagName(WikiDataAPISearchConnector.ENTITY_TAG);
+                int nodeCt = resultNodes.getLength();
+                if (nodeCt == 0)
+                    return;
+
+                Node n = resultNodes.item(0);
+                if (n.getNodeType() == Node.ELEMENT_NODE)
+                {
+                    String wikiDataID = "";
+                    String label = "";
+
+                    Element e = (Element)n;
+                    if (e.hasAttribute("id")) {
+                        wikiDataID = e.getAttribute("id");
+                    }
+                    if(e.hasAttribute("label")) {
+                        label = e.getAttribute("label");
+                    }
+
+                    //we don't need the description
+                    WikiDataEntity entity = new WikiDataEntity(label, "", wikiDataID, label, WikiDataEntity.CLASSIFICATION_NOT_SET);
+                    db.addSimilarInterest(addedInterest.getWikiDataID(), entity);
+                    db.addSimilarInterest(entity.getWikiDataID(), addedInterest);
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        };
+        List<String> labelList = new ArrayList<>(1);
+        labelList.add(label);
+        //only need the first one
+        WikiDataAPISearchConnector connector = new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE, 1);
+        connector.fetchDOMFromGetRequest(listener, labelList);
+    }
+
+    private Node findNodeByValue(Node node, String value){
+        if (node != null){
+            if (node.getTextContent() != null &&
+                    node.getTextContent().startsWith(value)){
+                return node;
+            }
+            NodeList childNodes = node.getChildNodes();
+            int childNodeCt = childNodes.getLength();
+            for (int i=0; i<childNodeCt; i++){
+                Node childNode = childNodes.item(i);
+                if (childNode != null){
+                    childNode = findNodeByValue(childNode, value);
+                    if (childNode != null)
+                        return childNode;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void findAlsoSearchedForLabels(Node node, String tag, String attribute, List<String> result){
+        if (node == null){
+            return;
+        }
+
+        if (node.getNodeType() == Node.ELEMENT_NODE &&
+                node.getNodeName().equals(tag)){
+            Element e = (Element)node;
+            if (e.hasAttribute(attribute)){
+                String text = e.getAttribute(attribute);
+                result.add(text);
+            }
+        }
+
+        NodeList childNodes = node.getChildNodes();
+        int childNodeCt = childNodes.getLength();
+        for (int i=0; i<childNodeCt; i++){
+            Node childNode =childNodes.item(i);
+            findAlsoSearchedForLabels(childNode, tag, attribute, result);
+        }
     }
 
 }

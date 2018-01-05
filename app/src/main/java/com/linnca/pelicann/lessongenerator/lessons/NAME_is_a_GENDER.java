@@ -53,7 +53,7 @@ public class NAME_is_a_GENDER extends Lesson {
 
     public NAME_is_a_GENDER(EndpointConnectorReturnsXML connector, Database db, LessonListener listener){
         super(connector, db, listener);
-        super.questionSetsToPopulate = 4;
+        super.questionSetsToPopulate = 1;
         super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = KEY;
         super.questionOrder = LessonInstanceData.QUESTION_ORDER_ORDER_BY_QUESTION;
