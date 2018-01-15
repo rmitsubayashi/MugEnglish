@@ -45,7 +45,7 @@ public class LessonDescription extends Fragment {
             return inflater.inflate(R.layout.fragment_lesson_description_not_found, container, false);
         }
 
-        View view = inflater.inflate(layoutID, container, false);
+        View view = inflater.inflate(R.layout.fragment_lesson_description, container, false);
         TextView toClearScoreTextView = view.findViewById(R.id.lesson_description_to_clear_score);
         //we might accidentally publish a lesson description xml file without the view
         if (toClearScoreTextView != null){
@@ -54,7 +54,11 @@ public class LessonDescription extends Fragment {
                             lessonData.getToClearScore())
             );
         }
-        handleExceptionRules(view);
+        ViewGroup contentView = view.findViewById(R.id.lesson_description_content);
+        View lessonView = inflater.inflate(layoutID, contentView, false);
+        handleExceptionRules(lessonView);
+        contentView.addView(lessonView);
+
         return view;
     }
 
