@@ -29,7 +29,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class Question_Spelling_Suggestive extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 6;
     private TableLayout grid;
     private TextView questionTextView;
     private Button submitButton;

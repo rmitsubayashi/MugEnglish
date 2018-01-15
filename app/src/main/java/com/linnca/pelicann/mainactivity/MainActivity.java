@@ -27,37 +27,39 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
-import com.linnca.pelicann.lessondetails.LessonInstanceData;
-import com.linnca.pelicann.lessongenerator.LessonFactory;
 import com.linnca.pelicann.lessonlist.LessonList;
-import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 import com.linnca.pelicann.preferences.PreferencesListener;
-import com.linnca.pelicann.questions.InstanceRecord;
-import com.linnca.pelicann.questions.InstanceReviewManager;
-import com.linnca.pelicann.questions.LessonsReviewManager;
-import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionManager;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.results.ReviewResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
-import com.linnca.pelicann.userprofile.AppUsageLog;
 import com.linnca.pelicann.userprofile.UserProfile;
 import com.linnca.pelicann.vocabulary.VocabularyDetails;
 import com.linnca.pelicann.vocabulary.VocabularyList;
-import com.linnca.pelicann.vocabulary.VocabularyListWord;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
+import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.questions.InstanceReviewManager;
+import pelicann.linnca.com.corefunctionality.questions.LessonsReviewManager;
+import pelicann.linnca.com.corefunctionality.questions.QuestionData;
+import pelicann.linnca.com.corefunctionality.questions.QuestionManager;
+import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -349,7 +351,9 @@ public class MainActivity extends AppCompatActivity implements
         // (unlike the question and instance review manager),
         // instantiate it locally
         lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
-        lessonsReviewManager.startReview(this, reviewKey);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(this);
+        lessonsReviewManager.startReview(networkConnectionChecker, reviewKey);
         switchActionBarUpButton();
     }
 
@@ -529,7 +533,9 @@ public class MainActivity extends AppCompatActivity implements
                 MainActivity.this.onSlowConnection();
             }
         };
-        questionManager.startQuestions(this, lessonInstanceData, lessonKey, noConnectionListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(this);
+        questionManager.startQuestions(networkConnectionChecker, lessonInstanceData, lessonKey, noConnectionListener);
     }
 
     @Override
@@ -546,8 +552,10 @@ public class MainActivity extends AppCompatActivity implements
     // the main activity creates the next question fragment
     @Override
     public void onNextQuestion(boolean correct, OnDBResultListener noConnectionListener){
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(this);
         if (questionManager.questionsStarted()) {
-            questionManager.nextQuestion(this, false, noConnectionListener);
+            questionManager.nextQuestion(networkConnectionChecker, false, noConnectionListener);
         }
         if (instanceReviewManager.reviewStarted()) {
             instanceReviewManager.nextQuestion(false);
@@ -555,10 +563,10 @@ public class MainActivity extends AppCompatActivity implements
         //we might not have instantiated this yet
         if (lessonsReviewManager != null){
             if (correct){
-                lessonsReviewManager.nextQuestion(this, false);
+                lessonsReviewManager.nextQuestion(networkConnectionChecker, false);
             } else {
                 lessonsReviewManager.returnQuestionToStack();
-                lessonsReviewManager.nextQuestion(this, false);
+                lessonsReviewManager.nextQuestion(networkConnectionChecker, false);
             }
         }
     }
@@ -593,7 +601,9 @@ public class MainActivity extends AppCompatActivity implements
         instanceReviewManager.resetManager();
         fragmentManager.rootToLessonList(db, LessonData.extractReviewLevel(lessonData.getKey()));
         lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
-        lessonsReviewManager.startReview(this, lessonData.getKey());
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(this);
+        lessonsReviewManager.startReview(networkConnectionChecker, lessonData.getKey());
     }
 
     @Override

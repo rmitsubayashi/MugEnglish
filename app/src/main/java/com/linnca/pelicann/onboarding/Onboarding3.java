@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
-import com.linnca.pelicann.userinterestcontrols.StarterPacks;
+import pelicann.linnca.com.corefunctionality.userinterests.StarterPacks;
 
 public class Onboarding3 extends Fragment {
     private ViewGroup manButtonLayout;

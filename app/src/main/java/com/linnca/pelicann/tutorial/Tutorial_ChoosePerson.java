@@ -15,12 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
-import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
-import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
 import com.linnca.pelicann.mainactivity.GUIUtils;
-import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -28,6 +23,12 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.connectors.SPARQLDocumentParserHelper;
+import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
+import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
+import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class Tutorial_ChoosePerson extends Fragment {
     private ViewGroup mainLayout;

@@ -26,6 +26,8 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
+
 public class CustomCalendarView extends LinearLayout
 {
     // maximum days to show on the calendar

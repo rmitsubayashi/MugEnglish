@@ -16,8 +16,9 @@ import com.linnca.pelicann.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.questions.ChatQuestionItem;
+
 public class Question_Chat extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 10;
     private TextView fromTextView;
     private LinearLayout chatItemsLayout;
     private EditText chatBoxEditText;

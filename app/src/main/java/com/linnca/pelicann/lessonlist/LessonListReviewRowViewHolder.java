@@ -7,8 +7,10 @@ import android.view.View;
 import android.widget.Button;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
+
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.UserLessonListViewer;
 
 class LessonListReviewRowViewHolder extends RecyclerView.ViewHolder {
     private final Button button;
@@ -19,7 +21,7 @@ class LessonListReviewRowViewHolder extends RecyclerView.ViewHolder {
 
     void populateRow(final LessonData data, final LessonList.LessonListListener listener, int status){
         button.setText(data.getTitle());
-        if (status == LessonListAdapter.STATUS_ACTIVE){
+        if (status == UserLessonListViewer.STATUS_ACTIVE){
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -33,7 +35,7 @@ class LessonListReviewRowViewHolder extends RecyclerView.ViewHolder {
             button.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.gray500));
         }
 
-        if (status == LessonListAdapter.STATUS_CLEARED){
+        if (status == UserLessonListViewer.STATUS_CLEARED){
             button.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {

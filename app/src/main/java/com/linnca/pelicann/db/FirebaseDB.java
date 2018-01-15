@@ -1,6 +1,5 @@
 package com.linnca.pelicann.db;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,20 +15,6 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.lessondetails.LessonInstanceData;
-import com.linnca.pelicann.lessondetails.LessonInstanceDataQuestionSet;
-import com.linnca.pelicann.lessonlist.LessonListRow;
-import com.linnca.pelicann.questions.InstanceRecord;
-import com.linnca.pelicann.questions.QuestionData;
-import com.linnca.pelicann.questions.QuestionSet;
-import com.linnca.pelicann.questions.QuestionSetData;
-import com.linnca.pelicann.results.ResultsVocabularyWord;
-import com.linnca.pelicann.userinterests.WikiDataEntity;
-import com.linnca.pelicann.userprofile.AppUsageLog;
-import com.linnca.pelicann.userprofile.UserProfile_ReportCardDataWrapper;
-import com.linnca.pelicann.vocabulary.VocabularyListWord;
-import com.linnca.pelicann.vocabulary.VocabularyWord;
 
 import org.joda.time.DateTime;
 
@@ -49,6 +34,25 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.FirebaseDBHeaders;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceDataQuestionSet;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
+import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.questions.QuestionData;
+import pelicann.linnca.com.corefunctionality.questions.QuestionSet;
+import pelicann.linnca.com.corefunctionality.questions.QuestionSetData;
+import pelicann.linnca.com.corefunctionality.results.ResultsVocabularyWord;
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
+import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
+import pelicann.linnca.com.corefunctionality.userprofile.UserProfile_ReportCardDataWrapper;
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyWord;
+
 //make sure the behavior replicates the behavior in the mock database
 // (we user the mock database to test methods that would otherwise
 //  connect to an actual database)
@@ -66,7 +70,7 @@ public class FirebaseDB extends Database {
             this.ref = ref;
             this.eventListener = eventListener;
         }
-        
+
         private void removeListener(){
             ref.removeEventListener(eventListener);
             ref = null;
@@ -131,7 +135,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void searchQuestions(Context context, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
+    public void searchQuestions(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
                                 final List<String> questionSetIDsToAvoid,
                                 final OnDBResultListener onDBResultListener){
         final List<QuestionSet> questionSetsToReturn = Collections.synchronizedList(
@@ -227,8 +231,7 @@ public class FirebaseDB extends Database {
                 }
             };
 
-            NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-            networkConnectionChecker.checkConnection();
+            networkConnectionChecker.checkConnection(noConnectionListener, called);
             networkConnections.add(networkConnectionChecker);
         }
     }
@@ -300,7 +303,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void getQuestionSets(Context context, String lessonKey, List<String> questionSetIDs, final OnDBResultListener onDBResultListener){
+    public void getQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<String> questionSetIDs, final OnDBResultListener onDBResultListener){
         //to check each listener to see if all listeners have completed
         final AtomicInteger questionSetsRetrievedCt = new AtomicInteger(0);
         final List<QuestionSet> questionSetsRetrieved = Collections.synchronizedList(
@@ -354,8 +357,7 @@ public class FirebaseDB extends Database {
                 }
             };
 
-            NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-            networkConnectionChecker.checkConnection();
+            networkConnectionChecker.checkConnection(noConnectionListener, called);
             networkConnections.add(networkConnectionChecker);
         }
     }
@@ -386,7 +388,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void getPopularQuestionSets(Context context, String lessonKey,
+    public void getPopularQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey,
                                        final List<String> questionSetsToAvoid,
                                        final int questionSetsToPopulate,
                                        final OnDBResultListener onDBResultListener){
@@ -455,13 +457,12 @@ public class FirebaseDB extends Database {
             }
         };
 
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
     @Override
-    public void getQuestion(Context context, String questionID, final OnDBResultListener onDBResultListener){
+    public void getQuestion(NetworkConnectionChecker networkConnectionChecker, String questionID, final OnDBResultListener onDBResultListener){
         final AtomicBoolean called = new AtomicBoolean(false);
         final DatabaseReference questionRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.QUESTIONS + "/" +
@@ -507,13 +508,12 @@ public class FirebaseDB extends Database {
                 onDBResultListener.onSlowConnection();
             }
         };
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
     @Override
-    public void addLessonInstance(Context context,
+    public void addLessonInstance(NetworkConnectionChecker networkConnectionChecker,
                                   LessonInstanceData lessonInstanceData,
                                   List<String> lessonInstanceVocabularyIDs,
                                   final OnDBResultListener onDBResultListener){
@@ -525,12 +525,12 @@ public class FirebaseDB extends Database {
         lessonInstanceData.setId(key);
         Map<String, Object> consistentUpdate = new HashMap<>();
         consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCES + "/" +
-                getUserID() + "/" +
-                lessonInstanceData.getLessonKey() + "/" +
-                key,
+                        getUserID() + "/" +
+                        lessonInstanceData.getLessonKey() + "/" +
+                        key,
                 lessonInstanceData);
         consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCE_VOCABULARY + "/" +
-                key,
+                        key,
                 lessonInstanceVocabularyIDs);
 
         final AtomicBoolean called = new AtomicBoolean(false);
@@ -558,13 +558,12 @@ public class FirebaseDB extends Database {
             }
         };
 
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
     @Override
-    public void getLessonInstances(Context context, String lessonKey, final boolean persistentConnection, final OnDBResultListener onDBResultListener){
+    public void getLessonInstances(NetworkConnectionChecker networkConnectionChecker, String lessonKey, final boolean persistentConnection, final OnDBResultListener onDBResultListener){
         final AtomicBoolean called = new AtomicBoolean(false);
         final DatabaseReference lessonInstancesRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.LESSON_INSTANCES + "/"+
@@ -618,8 +617,7 @@ public class FirebaseDB extends Database {
             }
         };
 
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
@@ -681,7 +679,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void getVocabularyDetails(Context context, String vocabularyItemID, final OnDBResultListener onDBResultListener){
+    public void getVocabularyDetails(NetworkConnectionChecker networkConnectionChecker, String vocabularyItemID, final OnDBResultListener onDBResultListener){
         AtomicBoolean called = new AtomicBoolean(false);
         final DatabaseReference detailsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.VOCABULARY_DETAILS + "/" +
@@ -711,14 +709,13 @@ public class FirebaseDB extends Database {
         detailsRef.addValueEventListener(detailsListener);
         refListenerPairs.add(new RefListenerPair(detailsRef, detailsListener));
 
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, onDBResultListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(onDBResultListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
 
     @Override
-    public void getVocabularyList(Context context, final OnDBResultListener onDBResultListener){
+    public void getVocabularyList(NetworkConnectionChecker networkConnectionChecker, final OnDBResultListener onDBResultListener){
         String vocabularyPath = FirebaseDBHeaders.VOCABULARY_LIST + "/" +
                 getUserID();
         DatabaseReference vocabularyRef = FirebaseDatabase.getInstance().getReference(
@@ -748,8 +745,7 @@ public class FirebaseDB extends Database {
         vocabularyRef.addValueEventListener(vocabularyEventListener);
         refListenerPairs.add(new RefListenerPair(vocabularyRef, vocabularyEventListener));
 
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, onDBResultListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(onDBResultListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
@@ -862,7 +858,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void getLessonVocabulary(Context context, String lessonInstanceKey, final OnDBResultListener onDBResultListener){
+    public void getLessonVocabulary(NetworkConnectionChecker networkConnectionChecker, String lessonInstanceKey, final OnDBResultListener onDBResultListener){
         final AtomicBoolean called = new AtomicBoolean(false);
         //first get all vocabulary for the lesson instance.
         //second, clump all duplicate vocabulary (i.e. dynamic sentences w/ the same word)
@@ -907,8 +903,7 @@ public class FirebaseDB extends Database {
         refListenerPairs.add(new RefListenerPair(vocabularyRef, vocabularyListener));
 
         //we want to keep listening even if there is no connection
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, onDBResultListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(onDBResultListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
@@ -1033,7 +1028,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void getUserInterests(Context context, final boolean persistentConnection, final OnDBResultListener onDBResultListener){
+    public void getUserInterests(NetworkConnectionChecker networkConnectionChecker, final boolean persistentConnection, final OnDBResultListener onDBResultListener){
         String userInterestPath = FirebaseDBHeaders.USER_INTERESTS + "/" +
                 getUserID();
         DatabaseReference userInterestRef = FirebaseDatabase.getInstance()
@@ -1088,13 +1083,13 @@ public class FirebaseDB extends Database {
                 onDBResultListener.onSlowConnection();
             }
         };
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
     @Override
-    public void addUserInterests(Context context, final List<WikiDataEntity> userInterestsToAdd, final OnDBResultListener onDBResultListener){
+    public void addUserInterests(NetworkConnectionChecker networkConnectionChecker, final List<WikiDataEntity> userInterestsToAdd, final OnDBResultListener onDBResultListener){
         //add the interests here so we don't have to worry about whether
         // we grabbed the updated user interest list or the old one
         Map<String, Object> toAdd = new HashMap<>(userInterestsToAdd.size());
@@ -1129,8 +1124,7 @@ public class FirebaseDB extends Database {
             }
         };
 
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
 
         //add to rankings
@@ -1143,9 +1137,9 @@ public class FirebaseDB extends Database {
     public void setPronunciation(String userInterestID, String pronunciation){
         DatabaseReference pronunciationRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.USER_INTERESTS + "/" +
-                getUserID() + "/" +
-                userInterestID + "/" +
-                FirebaseDBHeaders.USER_INTERESTS_PRONUNCIATION
+                        getUserID() + "/" +
+                        userInterestID + "/" +
+                        FirebaseDBHeaders.USER_INTERESTS_PRONUNCIATION
         );
         pronunciationRef.setValue(pronunciation);
         //also update the pronunciation in the user interest rankings
@@ -1280,7 +1274,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void getPopularUserInterests(Context context, int count, final OnDBResultListener onDBResultListener){
+    public void getPopularUserInterests(NetworkConnectionChecker networkConnectionChecker, int count, final OnDBResultListener onDBResultListener){
         final AtomicBoolean called = new AtomicBoolean(false);
         DatabaseReference popularUserInterestRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.USER_INTEREST_RANKINGS
@@ -1328,13 +1322,13 @@ public class FirebaseDB extends Database {
                 onDBResultListener.onSlowConnection();
             }
         };
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
     @Override
-    public void getClearedLessons(Context context, int lessonLevel, final boolean persistentConnection, final OnDBResultListener onDBResultListener){
+    public void getClearedLessons(NetworkConnectionChecker networkConnectionChecker, int lessonLevel, final boolean persistentConnection, final OnDBResultListener onDBResultListener){
         String clearedLessonsPath = FirebaseDBHeaders.CLEARED_LESSONS + "/" +
                 getUserID() + "/" +
                 lessonLevel;
@@ -1389,8 +1383,8 @@ public class FirebaseDB extends Database {
                 onDBResultListener.onSlowConnection();
             }
         };
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, noConnectionListener, called);
-        networkConnectionChecker.checkConnection();
+
+        networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
@@ -1702,7 +1696,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void getAppUsageForMonths(Context context, String startMonthKey, String endMonthKey, final OnDBResultListener onDBResultListener){
+    public void getAppUsageForMonths(NetworkConnectionChecker networkConnectionChecker, String startMonthKey, String endMonthKey, final OnDBResultListener onDBResultListener){
         final AtomicBoolean called = new AtomicBoolean(false);
         DatabaseReference usageRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.APP_USAGE + "/" +
@@ -1738,8 +1732,7 @@ public class FirebaseDB extends Database {
         usageRefForMonths.addValueEventListener(usageListener);
         refListenerPairs.add(new RefListenerPair(usageRefForMonths, usageListener));
 
-        NetworkConnectionChecker networkConnectionChecker = new NetworkConnectionChecker(context, onDBResultListener, called);
-        networkConnectionChecker.checkConnection();
+        networkConnectionChecker.checkConnection(onDBResultListener, called);
         networkConnections.add(networkConnectionChecker);
     }
 
@@ -1758,8 +1751,8 @@ public class FirebaseDB extends Database {
                 //if empty, clear the lesson count from the previously recorded day
                 if (dailyLessonCt == null || dailyLessonCt == 0){
                     FirebaseDatabase.getInstance().getReference(
-                        FirebaseDBHeaders.DAILY_LESSON_CT + "/" +
-                                getUserID()
+                            FirebaseDBHeaders.DAILY_LESSON_CT + "/" +
+                                    getUserID()
                     ).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -1822,7 +1815,7 @@ public class FirebaseDB extends Database {
 
         DatabaseReference mappingsRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.UTILS + "/" +
-                    FirebaseDBHeaders.UTILS_SPORTS_VERB_MAPPINGS
+                        FirebaseDBHeaders.UTILS_SPORTS_VERB_MAPPINGS
         );
         final int lastSportCt = sportsWikiDataIDs.size();
         final AtomicInteger sportCt = new AtomicInteger(0);

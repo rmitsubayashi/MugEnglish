@@ -8,9 +8,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.lessonlist.LessonListRow;
-import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 
 import java.util.ArrayList;
@@ -18,6 +15,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
+import pelicann.linnca.com.corefunctionality.userprofile.UserProfile_ReportCardDataWrapper;
 
 class UserProfile_ReportCardAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

@@ -21,7 +21,6 @@ import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 //to make it easier for the user to solve
 
 public class Question_FillInBlank_Input extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 4;
     public static final String FILL_IN_BLANK_TEXT = "@blankText@";
     public  static final String FILL_IN_BLANK_NUMBER = "@blankNum@";
     private EditText questionInput;

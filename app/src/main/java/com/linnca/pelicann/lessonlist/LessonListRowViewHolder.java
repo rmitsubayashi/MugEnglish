@@ -10,10 +10,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
+import pelicann.linnca.com.corefunctionality.lessonlist.UserLessonListViewer;
 
 //holder for lesson list list cells
 //very similar to the report card list view holders.
@@ -95,7 +98,7 @@ class LessonListRowViewHolder extends RecyclerView.ViewHolder {
                 int colStatus = status[i];
                 int colTextColor;
                 int colIconColor;
-                boolean colActive = colStatus == LessonListAdapter.STATUS_CLEARED || colStatus == LessonListAdapter.STATUS_ACTIVE;
+                boolean colActive = colStatus == UserLessonListViewer.STATUS_CLEARED || colStatus == UserLessonListViewer.STATUS_ACTIVE;
                 if (colActive) {
                     colTextColor = ThemeColorChanger.getColorFromAttribute(colData.getColorID(), context);
                     colIconColor = colTextColor;
@@ -125,7 +128,7 @@ class LessonListRowViewHolder extends RecyclerView.ViewHolder {
                 colLayout.setOnTouchListener(null);
                 colText.setText(colData.getTitle());
                 colText.setTextColor(colTextColor);
-                colIcon.setImageResource(colStatus == LessonListAdapter.STATUS_LOCKED ?
+                colIcon.setImageResource(colStatus == UserLessonListViewer.STATUS_LOCKED ?
                         R.drawable.ic_lock : colData.getIconID());
                 colIcon.setColorFilter(colIconColor);
             }

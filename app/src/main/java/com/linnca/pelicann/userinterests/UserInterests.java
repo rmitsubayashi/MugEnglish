@@ -23,14 +23,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class UserInterests extends Fragment {
     public static final String TAG = "UserInterests";
@@ -155,7 +159,9 @@ public class UserInterests extends Fragment {
             }
         };
 
-        db.getUserInterests(getContext(), true, onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        db.getUserInterests(networkConnectionChecker, true, onDBResultListener);
     }
 
 
@@ -251,7 +257,9 @@ public class UserInterests extends Fragment {
                             @Override
                             public void onNoConnection(){}
                         };
-                        db.addUserInterests(getContext(), dataToRecover, onDBResultListener);
+                        NetworkConnectionChecker networkConnectionChecker = new
+                                AndroidNetworkConnectionChecker(getContext());
+                        db.addUserInterests(networkConnectionChecker, dataToRecover, onDBResultListener);
                     }
                 }
         );

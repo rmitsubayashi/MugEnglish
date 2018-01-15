@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.connectors.EndpointConnectorReturnsXML;
-import com.linnca.pelicann.connectors.SPARQLDocumentParserHelper;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
-import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
-import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
-import com.linnca.pelicann.searchinterests.RecommendationGetter;
-import com.linnca.pelicann.searchinterests.SearchHelper;
 import com.linnca.pelicann.searchinterests.SearchResultsAdapter;
-import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -41,6 +33,16 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
+
+import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturnsXML;
+import pelicann.linnca.com.corefunctionality.connectors.SPARQLDocumentParserHelper;
+import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
+import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
+import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.searchinterests.RecommendationGetter;
+import pelicann.linnca.com.corefunctionality.searchinterests.SearchHelper;
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class Onboarding3v2 extends Fragment {
     //manages thread work
@@ -70,6 +72,9 @@ public class Onboarding3v2 extends Fragment {
     private boolean typed = false;
     //to communicate with the activity once we are done adding all entities
     private Onboarding3v2Listener listener;
+    //for handler result
+    private final int SUCCESS = 1;
+    private final int FAILURE = 2;
 
     interface Onboarding3v2Listener {
         void onAllEntitiesAdded(List<WikiDataEntity> allEntities);
@@ -81,7 +86,9 @@ public class Onboarding3v2 extends Fragment {
         searchHelper = new SearchHelper(
                 new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7)
         );
-        recommendationGetter = new RecommendationGetter(3, getContext(), new FirebaseDB(), 3);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        recommendationGetter = new RecommendationGetter(3, networkConnectionChecker, new FirebaseDB(), 3);
     }
 
     @Override
@@ -126,7 +133,21 @@ public class Onboarding3v2 extends Fragment {
                     } finally {
                         lock.unlock();
                     }
-                    searchHelper.search(getSearchHandler(query), query);
+                    final Handler handler = getSearchHandler(query);
+                    SearchHelper.SearchHelperListener searchHelperListener = new SearchHelper.SearchHelperListener() {
+                        @Override
+                        public void onSuccess(List<WikiDataEntity> resultList) {
+                            Message message = handler.obtainMessage(SUCCESS, resultList);
+                            handler.sendMessage(message);
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            Message message = handler.obtainMessage(FAILURE);
+                            handler.sendMessage(message);
+                        }
+                    };
+                    searchHelper.search(query, searchHelperListener);
                 }
                 return true;
             }
@@ -163,7 +184,7 @@ public class Onboarding3v2 extends Fragment {
             @Override
             public void handleMessage(Message inputMessage){
                 switch (inputMessage.what){
-                    case SearchHelper.SUCCESS :
+                    case SUCCESS :
                         List<WikiDataEntity> result;
                         try {
                             //I catch the class cast exception but Android Studio
@@ -208,7 +229,7 @@ public class Onboarding3v2 extends Fragment {
 
                         }
                         break;
-                    case SearchHelper.FAILURE:
+                    case FAILURE:
                         Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
                                 .show();
                         adapter.setOffline();

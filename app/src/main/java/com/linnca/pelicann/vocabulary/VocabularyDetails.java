@@ -12,15 +12,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyWord;
 
 public class VocabularyDetails extends Fragment{
     public static final String TAG = "VocabularyDetails";
@@ -114,7 +119,9 @@ public class VocabularyDetails extends Fragment{
                 }
             }
         };
-        db.getVocabularyDetails(getContext(), word.getKey(), onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        db.getVocabularyDetails(networkConnectionChecker, word.getKey(), onDBResultListener);
     }
 
     private void setTitle(VocabularyWord word){

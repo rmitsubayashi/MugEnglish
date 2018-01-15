@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
+
 class VocabularyListAdapter
     extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {

@@ -10,13 +10,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
+
 public class Question_MultipleChoice extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 2;
     private TextView questionTextView;
     private LinearLayout choicesLayout;
 

@@ -9,10 +9,10 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import com.linnca.pelicann.lessongenerator.StringUtils;
-
 import java.text.BreakIterator;
 import java.util.Locale;
+
+import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
 
 public class TextToSpeechHelper {
     static Spannable clickToSpeechTextViewSpannable(final TextView textView, String text, Spannable span, final TextToSpeech tts){

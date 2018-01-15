@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
+
 class LessonDetailsAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<LessonInstanceData> allInstances = new ArrayList<>();

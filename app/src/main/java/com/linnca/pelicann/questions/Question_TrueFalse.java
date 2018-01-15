@@ -10,10 +10,9 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 
+import pelicann.linnca.com.corefunctionality.questions.QuestionSerializer;
+
 public class Question_TrueFalse extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 1;
-    public static final String TRUE_FALSE_QUESTION_TRUE = "true";
-    public static final String TRUE_FALSE_QUESTION_FALSE = "false";
     private TextView questionTextView;
     private Button trueButton;
     private Button falseButton;
@@ -61,15 +60,11 @@ public class Question_TrueFalse extends QuestionFragmentInterface {
     }
 
     private void setButtonActionListeners(){
-        trueButton.setTag(TRUE_FALSE_QUESTION_TRUE);
-        falseButton.setTag(TRUE_FALSE_QUESTION_FALSE);
+        trueButton.setTag(QuestionSerializer.serializeTrueFalseAnswer(true));
+        falseButton.setTag(QuestionSerializer.serializeTrueFalseAnswer(false));
 
         trueButton.setOnClickListener(getResponseListener());
         falseButton.setOnClickListener(getResponseListener());
 
-    }
-
-    public static String getTrueFalseString(boolean tf){
-        return tf ? TRUE_FALSE_QUESTION_TRUE : TRUE_FALSE_QUESTION_FALSE;
     }
 }

@@ -11,12 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.userprofile.UserProfile_ReportCardDataWrapper;
 
 public class UserProfile_ReportCard extends Fragment {
     private RecyclerView list;

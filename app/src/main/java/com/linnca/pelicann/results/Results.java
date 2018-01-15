@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,23 +24,28 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.lessonlist.UserLessonListViewer;
+import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
-import com.linnca.pelicann.questions.InstanceRecord;
-import com.linnca.pelicann.questions.QuestionAttempt;
 
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.UserLessonListViewer;
+import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.questions.QuestionAttempt;
+import pelicann.linnca.com.corefunctionality.results.ResultsManager;
+import pelicann.linnca.com.corefunctionality.results.ResultsVocabularyWord;
 
 //after we are finished with the questions,
 //we redirect to this fragment
@@ -154,7 +158,9 @@ public class Results extends Fragment {
         );
 
         if (!instanceUpdated) {
-            resultsManager.saveInstanceRecord(getContext());
+            NetworkConnectionChecker networkConnectionChecker = new
+                    AndroidNetworkConnectionChecker(getContext());
+            resultsManager.saveInstanceRecord(networkConnectionChecker, new LessonListViewerImplementation());
             instanceUpdated = true;
         }
         setLayout();
@@ -192,7 +198,9 @@ public class Results extends Fragment {
         populateCorrectCount();
         //this will update the UI if this is the user's first time clearing
         // the lesson.
-        resultsManager.clearLesson(getContext());
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        resultsManager.clearLesson(networkConnectionChecker, new LessonListViewerImplementation());
         if (dailyLessonCt == -1) {
             resultsManager.addDailyLessonCt();
         } else {
@@ -238,7 +246,9 @@ public class Results extends Fragment {
                 vocabularyList.addView(noVocabularyTextView);
             }
         };
-        db.getLessonVocabulary(getContext(), instanceRecord.getInstanceId(), onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker2 = new
+                AndroidNetworkConnectionChecker(getContext());
+        db.getLessonVocabulary(networkConnectionChecker2, instanceRecord.getInstanceId(), onDBResultListener);
 
         boolean needToReview = false;
         //user needs to review if the user gets a question wrong

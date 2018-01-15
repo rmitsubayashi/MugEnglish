@@ -19,17 +19,20 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
-import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
-import com.linnca.pelicann.userinterestcontrols.StarterPacks;
-import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.userinterests.AddUserInterestHelper;
+import pelicann.linnca.com.corefunctionality.userinterests.StarterPacks;
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class Onboarding extends AppCompatActivity
 implements Onboarding3v2.Onboarding3v2Listener
@@ -133,8 +136,10 @@ implements Onboarding3v2.Onboarding3v2Listener
     }
 
     private void addStarterPack(int starterPackSelection){
-        List<WikiDataEntity> list = StarterPacks.getStarterPack(starterPackSelection);
-        db.addUserInterests(this, list, new OnDBResultListener() {
+        List<WikiDataEntity> list = new StarterPacks(starterPackSelection).getStarterPack();
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(this);
+        db.addUserInterests(networkConnectionChecker, list, new OnDBResultListener() {
             @Override
             public void onUserInterestsAdded() {
                 super.onUserInterestsAdded();
@@ -187,18 +192,20 @@ implements Onboarding3v2.Onboarding3v2Listener
         if (entitiesToAdd == null)
             return;
 
-        Database db = new FirebaseDB();
+        final Database db = new FirebaseDB();
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onUserInterestsAdded() {
-                AddUserInterestHelper helper = new AddUserInterestHelper();
+                AddUserInterestHelper helper = new AddUserInterestHelper(db);
                 //don't need to get classification
                 for (WikiDataEntity entity : entitiesToAdd){
                     helper.addPronunciation(entity);
                 }
             }
         };
-        db.addUserInterests(this, entitiesToAdd, onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(this);
+        db.addUserInterests(networkConnectionChecker, entitiesToAdd, onDBResultListener);
     }
 
     private void toApp(){

@@ -11,11 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
 
 public class UserProfile extends Fragment{
     public static final String TAG = "UserProfile";

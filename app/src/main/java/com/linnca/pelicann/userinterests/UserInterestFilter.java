@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
+
 public class UserInterestFilter {
     private List<WikiDataEntity> originalList;
     private List<WikiDataEntity> filteredList;

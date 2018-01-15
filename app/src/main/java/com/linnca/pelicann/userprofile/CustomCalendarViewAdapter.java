@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
+
 class CustomCalendarViewAdapter extends ArrayAdapter<DateTime> {
     private LayoutInflater inflater;
     //same instance as the calendar in calendar layout

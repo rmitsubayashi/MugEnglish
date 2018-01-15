@@ -13,14 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.StringUtils;
+import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 import java.util.Collections;
 import java.util.List;
 
 public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 5;
     public static final String FILL_IN_BLANK_MULTIPLE_CHOICE = "@blankMC@";
     private TextView questionTextView;
     private LinearLayout choicesLayout;

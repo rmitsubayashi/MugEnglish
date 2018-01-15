@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.ArrayList;
+
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
 
 public class LessonDescription extends Fragment {
     public static final String TAG = "LessonDescription";

@@ -16,9 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
@@ -26,6 +25,11 @@ import com.linnca.pelicann.mainactivity.ToolbarState;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 
 public class VocabularyList extends Fragment {
     public static final String TAG = "VocabularyList";
@@ -124,7 +128,9 @@ public class VocabularyList extends Fragment {
                 //don't change anything if there is already an adapter (something shown)
             }
         };
-        db.getVocabularyList(getContext(), onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        db.getVocabularyList(networkConnectionChecker, onDBResultListener);
     }
 
     private VocabularyListAdapter.VocabularyListAdapterListener getVocabularyListAdapterListener(){

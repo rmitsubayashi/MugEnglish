@@ -21,7 +21,6 @@ import java.util.List;
 
 
 public class Question_SentencePuzzle extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 3;
     private FlowLayout answerLayout;
     private FlowLayout choicesLayout;
     private TextView questionTextView;

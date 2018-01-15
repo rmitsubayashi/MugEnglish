@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import com.linnca.pelicann.R;
 
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
+
 //holder for user interest list cells
 class UserInterestViewHolder  extends RecyclerView.ViewHolder {
     private WikiDataEntity wikiDataEntity;

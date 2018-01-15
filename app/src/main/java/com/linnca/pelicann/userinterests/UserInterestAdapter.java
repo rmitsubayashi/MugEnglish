@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
+
 class UserInterestAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {

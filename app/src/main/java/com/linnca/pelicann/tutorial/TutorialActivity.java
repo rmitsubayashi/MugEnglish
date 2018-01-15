@@ -15,15 +15,18 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.lessondetails.LessonDescription;
-import com.linnca.pelicann.lessongenerator.lessons.NAME_is_a_GENDER;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
-import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.questions.Question_Spelling_Suggestive;
 import com.linnca.pelicann.questions.Question_TrueFalse;
+
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.lessongeneration.lessons.NAME_is_a_GENDER;
+import pelicann.linnca.com.corefunctionality.questions.QuestionData;
+import pelicann.linnca.com.corefunctionality.questions.QuestionSerializer;
+import pelicann.linnca.com.corefunctionality.questions.QuestionTypeMappings;
 
 public class TutorialActivity extends AppCompatActivity implements
         Tutorial_LessonDetails.Tutorial_LessonDetailsListener,
@@ -179,7 +182,7 @@ public class TutorialActivity extends AppCompatActivity implements
     @Override
     public void lessonDetailsToQuestion1(){
         questionMkr = 1;
-        QuestionData questionData = new QuestionData(null, null, Question_Spelling_Suggestive.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData(null, null, QuestionTypeMappings.SPELLING_SUGGESTIVE,
                 "男性", null, "man", null, null);
         Fragment fragment = new Question_Spelling_Suggestive();
         Bundle bundle = new Bundle();
@@ -194,7 +197,7 @@ public class TutorialActivity extends AppCompatActivity implements
 
     private void question1ToQuestion2(){
         questionMkr = 2;
-        QuestionData questionData = new QuestionData(null, null, Question_Spelling_Suggestive.QUESTION_TYPE,
+        QuestionData questionData = new QuestionData(null, null, QuestionTypeMappings.SPELLING_SUGGESTIVE,
                 "女性", null, "woman", null, null);
         Fragment fragment = new Question_Spelling_Suggestive();
         Bundle bundle = new Bundle();
@@ -211,8 +214,8 @@ public class TutorialActivity extends AppCompatActivity implements
         questionMkr = 3;
         String question = selectedPerson.getEnglishName() + " is a man";
         boolean answer = selectedPerson.getGender() == OnboardingPersonBundle.GENDER_MALE;
-        String answerString = Question_TrueFalse.getTrueFalseString(answer);
-        QuestionData questionData = new QuestionData(null, null, Question_TrueFalse.QUESTION_TYPE,
+        String answerString = QuestionSerializer.serializeTrueFalseAnswer(answer);
+        QuestionData questionData = new QuestionData(null, null, QuestionTypeMappings.TRUEFALSE,
                 question, null, answerString, null, null);
         Fragment fragment = new Question_TrueFalse();
         Bundle bundle = new Bundle();

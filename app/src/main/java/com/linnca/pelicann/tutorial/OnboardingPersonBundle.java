@@ -1,8 +1,8 @@
 package com.linnca.pelicann.tutorial;
 
-import com.linnca.pelicann.userinterests.WikiDataEntity;
-
 import java.io.Serializable;
+
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class OnboardingPersonBundle implements Serializable {
     private final WikiDataEntity data;

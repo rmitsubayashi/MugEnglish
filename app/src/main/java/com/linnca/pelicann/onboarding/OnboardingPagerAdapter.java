@@ -1,13 +1,8 @@
 package com.linnca.pelicann.onboarding;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-
-import com.linnca.pelicann.userinterests.WikiDataEntity;
-
-import java.util.List;
 
 class OnboardingPagerAdapter extends FragmentPagerAdapter {
     //private Onboarding3 onboarding3;

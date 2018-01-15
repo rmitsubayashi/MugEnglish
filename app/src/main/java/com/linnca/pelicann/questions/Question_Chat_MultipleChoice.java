@@ -12,14 +12,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
+import pelicann.linnca.com.corefunctionality.questions.ChatQuestionItem;
+
 public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 9;
     private TextView fromTextView;
     private LinearLayout chatItemsLayout;
     private LinearLayout choicesLayout;

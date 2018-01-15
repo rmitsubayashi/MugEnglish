@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
@@ -30,6 +29,12 @@ import com.linnca.pelicann.mainactivity.ToolbarState;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.questions.MaxNumberOfQuestionAttemptsHelper;
+import pelicann.linnca.com.corefunctionality.questions.QuestionData;
+import pelicann.linnca.com.corefunctionality.questions.QuestionFeedbackFormatter;
+import pelicann.linnca.com.corefunctionality.questions.QuestionResponseChecker;
 
 //sets methods common for all question GUIs
 public abstract class QuestionFragmentInterface extends Fragment {

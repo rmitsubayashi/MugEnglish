@@ -3,46 +3,48 @@ package com.linnca.pelicann.questions;
 
 import android.support.v4.app.Fragment;
 
+import pelicann.linnca.com.corefunctionality.questions.QuestionTypeMappings;
+
 public class QuestionFragmentFactory {
     public static Fragment getQuestionFragment(int questionType){
         switch (questionType) {
-            case Question_FillInBlank_Input.QUESTION_TYPE:
+            case QuestionTypeMappings.FILLINBLANK_INPUT:
                 return new Question_FillInBlank_Input();
                 
-            case Question_FillInBlank_MultipleChoice.QUESTION_TYPE:
+            case QuestionTypeMappings.FILLINBLANK_MULTIPLECHOICE:
                 return new Question_FillInBlank_MultipleChoice();
                 
-            case Question_MultipleChoice.QUESTION_TYPE:
+            case QuestionTypeMappings.MULTIPLECHOICE:
                 return new Question_MultipleChoice();
                 
-            case Question_SentencePuzzle.QUESTION_TYPE:
+            case QuestionTypeMappings.SENTENCEPUZZLE:
                 return new Question_SentencePuzzle();
                 
-            case Question_TrueFalse.QUESTION_TYPE:
+            case QuestionTypeMappings.TRUEFALSE:
                 return new Question_TrueFalse();
                 
-            case Question_Spelling_Suggestive.QUESTION_TYPE:
+            case QuestionTypeMappings.SPELLING_SUGGESTIVE:
                 return new Question_Spelling_Suggestive();
                 
-            case Question_Spelling.QUESTION_TYPE:
+            case QuestionTypeMappings.SPELLING:
                 return new Question_Spelling();
                 
-            case Question_TranslateWord.QUESTION_TYPE:
+            case QuestionTypeMappings.TRANSLATEWORD:
                 return new Question_TranslateWord();
                 
-            case Question_Chat_MultipleChoice.QUESTION_TYPE:
+            case QuestionTypeMappings.CHAT_MULTIPLECHOICE:
                 return new Question_Chat_MultipleChoice();
                 
-            case Question_Chat.QUESTION_TYPE:
+            case QuestionTypeMappings.CHAT:
                 return new Question_Chat();
                 
-            case Question_ChooseCorrectSpelling.QUESTION_TYPE:
+            case QuestionTypeMappings.CHOOSECORRECTSPELLING:
                 return new Question_ChooseCorrectSpelling();
                 
-            case Question_Actions.QUESTION_TYPE:
+            case QuestionTypeMappings.ACTIONS:
                 return new Question_Actions();
                 
-            case Question_Instructions.QUESTION_TYPE:
+            case QuestionTypeMappings.INSTRUCTIONS:
                 return new Question_Instructions();
                 
             default:

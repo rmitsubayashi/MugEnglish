@@ -8,26 +8,22 @@ import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.lessondetails.LessonData;
 
 import java.util.List;
 import java.util.Set;
+
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
+import pelicann.linnca.com.corefunctionality.lessonlist.UserLessonListViewer;
+
+import static pelicann.linnca.com.corefunctionality.lessonlist.UserLessonListViewer.STATUS_LOCKED;
+import static pelicann.linnca.com.corefunctionality.lessonlist.UserLessonListViewer.STATUS_NONE;
 
 class LessonListAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int VIEW_TYPE_NORMAL_ROW = 1;
     private final int VIEW_TYPE_REVIEW_ROW = 2;
-    //gold?
-    static final int STATUS_CLEARED = 0;
-    //with color
-    static final int STATUS_ACTIVE = 1;
-    //gray color
-    static final int STATUS_NEXT_ACTIVE = 2;
-    //lock
-    static final int STATUS_LOCKED = 3;
-    //no view
-    static final int STATUS_NONE = 4;
     private final List<LessonListRow> data;
     private final int lessonLevel;
     private UserLessonListViewer userLessonListViewer;

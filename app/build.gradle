@@ -34,6 +34,8 @@ dependencies {
 }
 
 dependencies {
+    //core code
+    implementation project(":corefunctionality")
     //for puzzle piece question
     implementation 'org.apmem.tools:layouts:1.10@aar'
 

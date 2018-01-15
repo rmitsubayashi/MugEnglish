@@ -11,11 +11,12 @@ import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessondetails.LessonData;
-import com.linnca.pelicann.lessonlist.LessonListRow;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
 
 //holder for report card list cells.
 //very similar to the lesson list view holders.

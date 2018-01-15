@@ -8,14 +8,18 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 
 import org.joda.time.DateTime;
 
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
 public class UserProfile_HoursStudied extends Fragment {
     private final String TAG = "UserProfileHoursStudied";
@@ -97,7 +101,9 @@ public class UserProfile_HoursStudied extends Fragment {
                         .show();
             }
         };
-        db.getAppUsageForMonths(getContext(), prevKey, nextKey, onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        db.getAppUsageForMonths(networkConnectionChecker, prevKey, nextKey, onDBResultListener);
     }
 
     private void setCalendarListeners(){

@@ -23,24 +23,29 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
-import com.linnca.pelicann.connectors.WikiDataSPARQLConnector;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.lessongenerator.Lesson;
-import com.linnca.pelicann.lessongenerator.LessonFactory;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
-import com.linnca.pelicann.questions.InstanceRecord;
-import com.linnca.pelicann.questions.QuestionAttempt;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
+import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessongeneration.Lesson;
+import pelicann.linnca.com.corefunctionality.lessongeneration.LessonFactory;
+import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.questions.QuestionAttempt;
 
 public class LessonDetails extends Fragment {
     public static final String TAG = "LessonDetails";
@@ -190,7 +195,8 @@ public class LessonDetails extends Fragment {
             }
         };
 
-        db.getLessonInstances(getContext(), lessonData.getKey(), true, onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new AndroidNetworkConnectionChecker(getContext());
+        db.getLessonInstances(networkConnectionChecker, lessonData.getKey(), true, onDBResultListener);
     }
 
 
@@ -250,7 +256,9 @@ public class LessonDetails extends Fragment {
         );
 
         if (lesson != null) {
-            lesson.createInstance(getContext());
+            NetworkConnectionChecker networkConnectionChecker = new
+                    AndroidNetworkConnectionChecker(getContext());
+            lesson.createInstance(networkConnectionChecker);
         }
     }
 

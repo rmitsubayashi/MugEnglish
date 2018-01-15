@@ -16,7 +16,6 @@ import com.linnca.pelicann.R;
 // has an open text field for the user to follow the instructions
 //(can't think of a better name)
 public class Question_Instructions extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 13;
     private EditText questionInput;
     private Button submitButton;
     private TextView instructions;

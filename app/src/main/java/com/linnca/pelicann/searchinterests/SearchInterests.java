@@ -17,21 +17,25 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.connectors.WikiBaseEndpointConnector;
-import com.linnca.pelicann.connectors.WikiDataAPISearchConnector;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
-import com.linnca.pelicann.userinterestcontrols.AddUserInterestHelper;
-import com.linnca.pelicann.userinterests.WikiDataEntity;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
+import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.searchinterests.RecommendationGetter;
+import pelicann.linnca.com.corefunctionality.searchinterests.SearchHelper;
+import pelicann.linnca.com.corefunctionality.userinterests.AddUserInterestHelper;
+import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class SearchInterests extends Fragment {
     private Database db;
@@ -52,6 +56,9 @@ public class SearchInterests extends Fragment {
     private SearchHelper searchHelper;
     //helps get recommendations
     private RecommendationGetter recommendationGetter;
+    //for handler result
+    private final int SUCCESS = 1;
+    private final int FAILURE = 2;
 
     private SearchInterestsListener searchInterestsListener;
 
@@ -74,8 +81,10 @@ public class SearchInterests extends Fragment {
         searchHelper = new SearchHelper(
                 new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7)
         );
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
         recommendationGetter = new RecommendationGetter(
-                5, getContext(), db, 3
+                5, networkConnectionChecker, db, 3
         );
     }
 
@@ -168,7 +177,22 @@ public class SearchInterests extends Fragment {
                             } finally {
                                 lock.unlock();
                             }
-                            searchHelper.search(getSearchHandler(query), query);
+                            final Handler handler = getSearchHandler(query);
+                            SearchHelper.SearchHelperListener searchHelperListener = new SearchHelper.SearchHelperListener() {
+                                @Override
+                                public void onSuccess(List<WikiDataEntity> resultList) {
+                                    Message message = handler.obtainMessage(SUCCESS, resultList);
+                                    handler.sendMessage(message);
+                                }
+
+                                @Override
+                                public void onFailure() {
+                                    Message message = handler.obtainMessage(FAILURE);
+                                    handler.sendMessage(message);
+                                }
+                            };
+
+                            searchHelper.search(query, searchHelperListener);
                         }
                         return true;
                     }
@@ -181,7 +205,9 @@ public class SearchInterests extends Fragment {
         // user has added an interest,
         // but if we kept on listening, it would
         // attach a new adapter instead
-        db.getUserInterests(getContext(), false, onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        db.getUserInterests(networkConnectionChecker, false, onDBResultListener);
     }
 
     private SearchResultsAdapter.SearchResultsAdapterListener getSearchResultsAdapterListener(){
@@ -193,7 +219,7 @@ public class SearchInterests extends Fragment {
                     public void onUserInterestsAdded() {
                         //in the background thread, find the item's
                         //classification and pronunciation
-                        AddUserInterestHelper addUserInterestHelper = new AddUserInterestHelper();
+                        AddUserInterestHelper addUserInterestHelper = new AddUserInterestHelper(db);
                         addUserInterestHelper.addClassification(data);
                         addUserInterestHelper.addPronunciation(data);
 
@@ -231,7 +257,9 @@ public class SearchInterests extends Fragment {
                 //we are only adding one, but the method can handle more than one
                 List<WikiDataEntity> dataList = new ArrayList<>(1);
                 dataList.add(data);
-                db.addUserInterests(getContext(), dataList, onDBResultListener);
+                NetworkConnectionChecker networkConnectionChecker = new
+                        AndroidNetworkConnectionChecker(getContext());
+                db.addUserInterests(networkConnectionChecker, dataList, onDBResultListener);
             }
 
             @Override
@@ -265,7 +293,7 @@ public class SearchInterests extends Fragment {
             @Override
             public void handleMessage(Message inputMessage){
                 switch (inputMessage.what){
-                    case SearchHelper.SUCCESS :
+                    case SUCCESS :
                         List<WikiDataEntity> result;
                         try {
                             //I catch the class cast exception but Android Studio
@@ -308,7 +336,7 @@ public class SearchInterests extends Fragment {
 
                         }
                         break;
-                    case SearchHelper.FAILURE:
+                    case FAILURE:
                         Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
                                 .show();
                         if (adapter != null) {

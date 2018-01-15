@@ -13,15 +13,20 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
+import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.db.OnDBResultListener;
-import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.mainactivity.MainActivity;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
 import java.util.Set;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
+import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
 
 public class LessonList extends Fragment {
     public static final String TAG = "LessonList";
@@ -133,7 +138,9 @@ public class LessonList extends Fragment {
                 }
             }
         };
-        db.getClearedLessons(getContext(), lessonLevel, true, onDBResultListener);
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
+        db.getClearedLessons(networkConnectionChecker, lessonLevel, true, onDBResultListener);
     }
 
     @Override

@@ -8,16 +8,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.PreferenceScreen;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.Database;
-import com.linnca.pelicann.lessondetails.LessonData;
 import com.linnca.pelicann.lessondetails.LessonDescription;
 import com.linnca.pelicann.lessondetails.LessonDetails;
 import com.linnca.pelicann.lessonlist.LessonList;
-import com.linnca.pelicann.lessonlist.LessonListViewer;
 import com.linnca.pelicann.preferences.Preferences;
 import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExceptionRule;
-import com.linnca.pelicann.questions.InstanceRecord;
-import com.linnca.pelicann.questions.QuestionData;
 import com.linnca.pelicann.questions.QuestionFragmentFactory;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.results.Results;
@@ -27,9 +22,15 @@ import com.linnca.pelicann.userinterests.UserInterests;
 import com.linnca.pelicann.userprofile.UserProfile;
 import com.linnca.pelicann.vocabulary.VocabularyDetails;
 import com.linnca.pelicann.vocabulary.VocabularyList;
-import com.linnca.pelicann.vocabulary.VocabularyListWord;
 
 import java.util.ArrayList;
+
+import pelicann.linnca.com.corefunctionality.db.Database;
+import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
+import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.questions.QuestionData;
+import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 
 //manages all the fragment transactions
 class MainActivityFragmentManager {

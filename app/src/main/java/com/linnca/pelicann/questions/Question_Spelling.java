@@ -15,7 +15,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessongenerator.StringUtils;
 import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
@@ -27,8 +26,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
+import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
+import pelicann.linnca.com.corefunctionality.questions.RandomCharacterGenerator;
+
 public class Question_Spelling extends QuestionFragmentInterface {
-    public static final int QUESTION_TYPE = 7;
     private TableLayout grid;
     private TextView questionTextView;
     private Button submitButton;
