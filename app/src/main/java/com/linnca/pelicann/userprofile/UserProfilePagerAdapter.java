@@ -27,7 +27,7 @@ class UserProfilePagerAdapter extends FragmentPagerAdapter {
                 fragment = new UserProfile_HoursStudied();
                 break;
             case 1:
-                fragment = new UserProfile_ReportCard();
+                fragment = new UserProfile_HoursStudied();
                 break;
             default:
                 return null;

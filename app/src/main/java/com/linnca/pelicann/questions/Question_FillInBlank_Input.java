@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 //we only have one blank per question

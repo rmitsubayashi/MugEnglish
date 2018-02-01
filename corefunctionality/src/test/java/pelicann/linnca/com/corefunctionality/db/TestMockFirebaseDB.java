@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceDataQuestionSet;
-import pelicann.linnca.com.corefunctionality.questions.QuestionData;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSerializer;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSet;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSetData;
-import pelicann.linnca.com.corefunctionality.questions.QuestionTypeMappings;
+import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionSerializer;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionTypeMappings;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyWord;
@@ -38,67 +36,36 @@ public class TestMockFirebaseDB {
     // (one Mockito test can take ~500 ms,
     // plain JUnit test would take ~5 ms)
     @Test
-    public void searchQuestions_call_resultListenerShouldBeCalled(){
+    public void searchEntityPropertyData_call_resultListenerShouldBeCalled(){
         final boolean[] called = new boolean[]{false};
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
-            public void onQuestionsQueried(List<QuestionSet> questionSets, List<WikiDataEntity> userInterestsSearched) {
+            public void onEntityPropertyDataSearched(List<EntityPropertyData> quesdatationSets, List<WikiDataEntity> userInterestsSearched) {
                 called[0] = true;
             }
         };
         //OnDBResultListener onDBResultListener = mock(OnDBResultListener.class);
-        db.searchQuestions(null, "", new ArrayList<WikiDataEntity>(),
-                0, new ArrayList<String>(), onDBResultListener);
+        db.searchEntityPropertyData(null, "", new ArrayList<WikiDataEntity>(),
+                0, new ArrayList<EntityPropertyData>(), onDBResultListener);
         assertTrue(called[0]);
         //verify(onDBResultListener, times(2)).onQuestionsQueried(new ArrayList<String>(), new ArrayList<WikiDataEntity>());
     }
 
     @Test
-    public void addQuestion_call_resultListenerShouldBeCalled(){
+    public void addEntityPropertyData_call_resultListenerShouldBeCalled(){
         final boolean[] called = new boolean[]{false, false};
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
-            public void onQuestionsAdded() {
+            public void onEntityPropertyDataAdded(EntityPropertyData data) {
                 called[0] = true;
             }
-            @Override
-            public void onQuestionSetAdded(QuestionSet questionSet) {
-                called[1] = true;
-            }
         };
-        //need at least one question for onQuestionSetAdded to be called.
-        //an empty question data wrapper will not call it
-        List<QuestionSetData> questions = new ArrayList<>();
-        questions.add(new QuestionSetData(new ArrayList<List<QuestionData>>(), "wikidataID1",
-                "interestLabel1", new ArrayList<VocabularyWord>()));
-        db.addQuestions("", questions,
+        //need at least one entity property data for the listener to be called
+        List<EntityPropertyData> data = new ArrayList<>();
+        data.add(new EntityPropertyData("","","wikiDataID1",null,null));
+        db.addEntityPropertyData("", data,
                 onDBResultListener);
         assertTrue(called[0] && called[1]);
-    }
-
-    @Test
-    public void getQuestionSets_call_resultListenerShouldBeCalled(){
-        final boolean[] called = new boolean[]{false};
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onQuestionSetsQueried(List<QuestionSet> questionSets) {
-                called[0] = true;
-            }
-        };
-        db.getQuestionSets(null, "",new ArrayList<String>(), onDBResultListener);
-        assertTrue(called[0]);
-    }
-
-    @Test
-    public void getQuestion_call_resultListenerShouldBeCalled(){
-        final boolean[] called = new boolean[]{false};
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onQuestionQueried(QuestionData questionData) {
-                called[0] = true;
-            }
-        };
-        db.getQuestion(null, "", onDBResultListener);
     }
 
     @Test
@@ -274,162 +241,28 @@ public class TestMockFirebaseDB {
     }
 
     @Test
-    public void question_addGenericQuestion_shouldAddQuestionsToDatabase(){
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1", QuestionTypeMappings.TRUEFALSE,
-                "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null));
-        db.addGenericQuestions(newQuestions, new ArrayList<VocabularyWord>());
-        Map<String, QuestionData> questions = db.questions;
-        assertTrue(questions.containsKey("id1"));
-        assertEquals("id1",questions.get("id1").getId());
+    public void entityPropertyData_addEntityPropertyData_shouldAddData(){
+        List<EntityPropertyData> data = new ArrayList<>(1);
+        String id = "wikiDataID1";
+        data.add(new EntityPropertyData("","",id,null,null));
+        db.addEntityPropertyData("", data,
+                new OnDBResultListener() {
+        });
+        assertEquals(1, db.entityPropertyData.size());
+        assertEquals(1, db.entityPropertyData.get(id).size());
     }
 
     @Test
-    public void question_addGenericQuestion_shouldAddVocabulary(){
-        List<VocabularyWord> newWords = new ArrayList<>(1);
-        newWords.add(new VocabularyWord("id1","word1", "meaning1", "example sentence1",
-                "example sentence translation 1",
-                "lesson ID1"));
-        db.addGenericQuestions(new ArrayList<QuestionData>(), newWords);
-        Map<String, VocabularyWord> words = db.questionVocabularyWords;
-        assertTrue(words.containsKey("id1"));
-        assertEquals("id1",words.get("id1").getId());
-    }
+    public void entityPropertyData_addMoreThanOnePerWikidataID_shouldAddBoth(){
+        List<EntityPropertyData> data = new ArrayList<>(2);
+        String id = "wikiDataID1";
+        data.add(new EntityPropertyData("1","",id,null,null));
+        data.add(new EntityPropertyData("2","",id,null,null));
 
-    @Test
-    public void question_addGenericQuestion_shouldNotAddVocabularyToList(){
-        List<VocabularyWord> newWords = new ArrayList<>(1);
-        newWords.add(new VocabularyWord("id1","word1", "meaning1", "example sentence1",
-                "example sentence translation 1",
-                "lesson ID1"));
-        db.addGenericQuestions(new ArrayList<QuestionData>(), newWords);
-        Map<String, VocabularyListWord> wordList = db.vocabularyListWords;
-        assertEquals(0, wordList.size());
-    }
 
-    @Test
-    public void question_addQuestion_shouldAddQuestion(){
-        List<QuestionSetData> questionList = new ArrayList<>(1);
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
-                "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null));
-        List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
-        newQuestionSet.add(newQuestions);
-        questionList.add(new QuestionSetData(newQuestionSet, "wikidataID1",
-                "interestLabel1", new ArrayList<VocabularyWord>()));
-
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onQuestionsAdded() {
-                Map<String, QuestionData> questions = db.questions;
-                boolean matched = true;
-                for (Map.Entry<String, QuestionData> entry : questions.entrySet()){
-                    if (!entry.getValue().getQuestion().equals("question1")){
-                        matched = false;
-                        break;
-                    }
-                }
-                assertTrue(matched);
-            }
-        };
-
-        db.addQuestions("lessonID1", questionList, onDBResultListener);
-    }
-
-    @Test
-    public void question_addOneQuestion_shouldOnlyAddOneQuestion(){
-        List<QuestionSetData> questionList = new ArrayList<>(1);
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
-                "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null));
-        List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
-        newQuestionSet.add(newQuestions);
-        questionList.add(new QuestionSetData(newQuestionSet, "wikidataID1",
-                "interestLabel1", new ArrayList<VocabularyWord>()));
-
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onQuestionsAdded() {
-                Map<String, QuestionData> questions = db.questions;
-                assertEquals(1, questions.size());
-            }
-        };
-
-        db.addQuestions("lessonID1", questionList, onDBResultListener);
-    }
-
-    @Test
-    public void question_addOneQuestion_shouldAddOnlyOneQuestionSet(){
-        List<QuestionSetData> questionList = new ArrayList<>(1);
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
-                "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null));
-        List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
-        newQuestionSet.add(newQuestions);
-        questionList.add(new QuestionSetData(newQuestionSet, "wikidataID1",
-                "interestLabel1", new ArrayList<VocabularyWord>()));
-
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onQuestionsAdded() {
-                Map<String, QuestionSet> questionSet = db.questionSets;
-                assertEquals(1, questionSet.size());
-            }
-        };
-
-        db.addQuestions("lessonID1", questionList, onDBResultListener);
-    }
-
-    @Test
-    public void question_addOneQuestionWithOneVocabularyWord_shouldAddOnlyOneVocabularyWord(){
-        List<QuestionSetData> questionList = new ArrayList<>(1);
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
-                "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null));
-        List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
-        newQuestionSet.add(newQuestions);
-        List<VocabularyWord> words = new ArrayList<>(1);
-        words.add(new VocabularyWord("id1","word1", "meaning1", "example sentence1",
-                "example sentence translation 1",
-                "lesson ID1"));
-        questionList.add(new QuestionSetData(newQuestionSet, "wikidataID1",
-                "interestLabel1", words));
-
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onQuestionsAdded() {
-                Map<String, VocabularyWord> vocabularyWords = db.questionVocabularyWords;
-                assertEquals(1, vocabularyWords.size());
-            }
-        };
-
-        db.addQuestions("lessonID1", questionList, onDBResultListener);
-    }
-
-    @Test
-    public void question_addQuestionWithVocabularyWord_shouldNotAddVocabularyList(){
-        List<QuestionSetData> questionList = new ArrayList<>(1);
-        List<QuestionData> newQuestions = new ArrayList<>(1);
-        newQuestions.add(new QuestionData("id1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
-                "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null));
-        List<List<QuestionData>> newQuestionSet = new ArrayList<>(1);
-        newQuestionSet.add(newQuestions);
-        List<VocabularyWord> words = new ArrayList<>(1);
-        words.add(new VocabularyWord("id1","word1", "meaning1", "example sentence1",
-                "example sentence translation 1",
-                "lesson ID1"));
-        questionList.add(new QuestionSetData(newQuestionSet, "wikidataID1",
-                "interestLabel1", words));
-
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onQuestionsAdded() {
-                Map<String, VocabularyListWord> vocabularyList = db.vocabularyListWords;
-                assertEquals(0, vocabularyList.size());
-            }
-        };
-
-        db.addQuestions("lessonID1", questionList, onDBResultListener);
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {};
+        db.addEntityPropertyData("lessonID1", data, onDBResultListener);
+        assertEquals(2, db.entityPropertyData.get(id).size());
     }
 
     @Test

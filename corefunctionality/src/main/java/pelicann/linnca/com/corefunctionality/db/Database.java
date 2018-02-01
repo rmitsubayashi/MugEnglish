@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
-import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
-import pelicann.linnca.com.corefunctionality.questions.QuestionData;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSetData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyWord;
@@ -39,25 +37,20 @@ public abstract class Database implements Serializable{
         networkConnections.clear();
     }
 
-    //only used in initial run by admin, not called by client
-    public abstract void addGenericQuestions(List<QuestionData> questions, List<VocabularyWord> vocabulary);
     //using 'search' to distinguish from getting questions for answering
-    public abstract void searchQuestions(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests,
-                                                  int toPopulate, List<String> questionSetIDsToAvoid,
+    public abstract void searchEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests,
+                                                  int toPopulate, List<EntityPropertyData> toAvoid,
                                                   OnDBResultListener onDBResultListener);
-    public abstract void addQuestions(String lessonKey, List<QuestionSetData> questions, OnDBResultListener onDBResultListener);
-    public abstract void getQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<String> questionSetIDs, OnDBResultListener onDBResultListener);
-    public abstract void changeQuestionSetCount(String lessonKey, String questionSetID, int amount, OnDBResultListener onDBResultListener);
-    public abstract void getPopularQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<String> questionSetsToAvoid,
-                                                int questionSetsToPopulate, OnDBResultListener onDBResultListener);
-
-    public abstract void getQuestion(NetworkConnectionChecker networkConnectionChecker, String questionID, OnDBResultListener onDBResultListener);
+    public abstract void addEntityPropertyData(String lessonKey, List<EntityPropertyData> data, OnDBResultListener onDBResultListener);
+    public abstract void getRandomEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<EntityPropertyData> toAvoid, int toPopulate, OnDBResultListener onDBResultListener);
 
     public abstract void addLessonInstance(NetworkConnectionChecker networkConnectionChecker, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs,
                                            OnDBResultListener onDBResultListener);
     public abstract void getLessonInstances(NetworkConnectionChecker networkConnectionChecker, String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener);
     public abstract void getLessonInstanceDetails(String lessonKey, String instanceID, OnDBResultListener onDBResultListener);
     public abstract void removeLessonInstance(String lessonKey, LessonInstanceData instance, OnDBResultListener onDBResultListener);
+    public abstract void getMostRecentLessonInstance(NetworkConnectionChecker networkConnectionChecker, String lessonKey,
+                                                     OnDBResultListener onDBResultListener);
 
     public abstract void getVocabularyDetails(NetworkConnectionChecker networkConnectionChecker, String vocabularyItemID, OnDBResultListener onDBResultListener);
     public abstract void getVocabularyList(NetworkConnectionChecker networkConnectionChecker, OnDBResultListener onDBResultListener);
@@ -85,8 +78,6 @@ public abstract class Database implements Serializable{
 
     public abstract void getClearedLessons(NetworkConnectionChecker networkConnectionChecker, int lessonLevel, boolean persistentConnection, OnDBResultListener onDBResultListener);
     public abstract void addClearedLesson(int lessonLevel, String lessonKey, OnDBResultListener onDBResultListener);
-    //for debugging
-    public abstract void clearAllLessons(List<List<LessonListRow>> lessonLevels);
 
     public abstract void addReviewQuestion(List<String> questionKeys, OnDBResultListener onDBResultListener);
     public abstract void removeReviewQuestions(OnDBResultListener onDBResultListener);

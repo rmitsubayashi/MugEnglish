@@ -13,13 +13,10 @@ public class FirebaseDBHeaders {
     public static final String CLEARED_LESSONS = "clearedLessons";
     public static final String REVIEW_QUESTIONS = "reviewQuestions";
     public static final String LESSON_INSTANCES = "lessonInstances";
+    public static final String LESSON_INSTANCE_TIMESTAMP = "timeStamp";
     public static final String LESSON_INSTANCE_VOCABULARY = "lessonInstanceVocabulary";
-    public static final String QUESTIONS = "questions";
-    //public static final String QUESTION_SET_IDS_PER_USER_INTEREST_PER_LESSON = "questionSetIDsPerUserInterestPerLesson";
-    public static final String QUESTION_SETS = "questionSets";
-    //make sure these headers matches the fields in QuestionSet
-    public static final String QUESTION_SET_COUNT = "count";
-    public static final String QUESTION_SET_INTEREST_ID = "interestID";
+    public static final String ENTITY_PROPERTY_DATA = "entityPropertyData";
+    public static final String ENTITY_PROPERTY_DATA_WIKIDATA_ID = "wikidataID";
     public static final String INSTANCE_RECORDS = "instanceRecords";
     public static final String UTILS = "utils";
     public static final String UTILS_SPORTS_VERB_MAPPINGS = "sportsVerbMapping";

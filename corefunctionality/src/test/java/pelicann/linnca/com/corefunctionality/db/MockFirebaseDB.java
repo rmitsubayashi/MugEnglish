@@ -2,16 +2,14 @@ package pelicann.linnca.com.corefunctionality.db;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
-import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
-import pelicann.linnca.com.corefunctionality.questions.QuestionData;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSet;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSetData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
@@ -25,12 +23,10 @@ public class MockFirebaseDB extends Database {
     //all the data will be in public variables
     //so we can easily access them when testing
     public List<WikiDataEntity> userInterests = new ArrayList<>();
-    //ID -> question
-    public Map<String, QuestionData> questions = new HashMap<>();
-    //ID -> question set
-    public Map<String, QuestionSet> questionSets = new HashMap<>();
+    //Wikidata ID, all data pertaining to the wikidata id
+    public Map<String, List<EntityPropertyData>> entityPropertyData = new HashMap<>();
     //ID -> lesson instance
-    public Map<String, LessonInstanceData> lessonInstances = new HashMap<>();
+    public List<LessonInstanceData> lessonInstances = new ArrayList<>();
     //ID -> word
     public Map<String, VocabularyWord> questionVocabularyWords = new HashMap<>();
     //ID -> word
@@ -51,33 +47,22 @@ public class MockFirebaseDB extends Database {
     public void cleanupDB(){}
 
     @Override
-    public void addGenericQuestions(List<QuestionData> questionsToAdd, List<VocabularyWord> vocabulary) {
-        for (QuestionData questionData : questionsToAdd){
-            questions.put(questionData.getId(), questionData);
-        }
-        for (VocabularyWord word : vocabulary){
-            questionVocabularyWords.put(word.getId(), word);
-        }
-    }
-
-    @Override
-    public void searchQuestions(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
-                                List<String> questionSetIDsToAvoid, OnDBResultListener onDBResultListener) {
-        List<QuestionSet> questionSetsToReturn = new ArrayList<>(toPopulate);
+    public void searchEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
+                                List<EntityPropertyData> toAvoid, OnDBResultListener onDBResultListener) {
+        List<EntityPropertyData> entitiesToReturn = new ArrayList<>(toPopulate);
         List<WikiDataEntity> userInterestsChecked = new ArrayList<>(userInterests.size());
         if (toPopulate == 0){
-            onDBResultListener.onQuestionsQueried(questionSetsToReturn, userInterestsChecked);
+            onDBResultListener.onEntityPropertyDataSearched(entitiesToReturn, userInterestsChecked);
         }
         for (WikiDataEntity userInterest : userInterests){
-            for (Map.Entry<String, QuestionSet> setEntry : questionSets.entrySet()) {
-                QuestionSet set = setEntry.getValue();
-                if (set.getInterestID().equals(userInterest.getWikiDataID()) &&
-                        !questionSetIDsToAvoid.contains(set.getKey()) &&
-                        toPopulate != 0) {
-                    questionSetsToReturn.add(set);
-                    toPopulate--;
+            List<EntityPropertyData> set = entityPropertyData.get(userInterest.getWikiDataID());
+            if (set != null &&
+                    set.size() > 0 &&
+                    Collections.disjoint(toAvoid, set) &&
+                    toPopulate != 0) {
+                entitiesToReturn.add(set.get(0));
+                toPopulate--;
 
-                }
             }
             userInterestsChecked.add(userInterest);
             if (toPopulate == 0) {
@@ -85,92 +70,40 @@ public class MockFirebaseDB extends Database {
             }
         }
 
-        onDBResultListener.onQuestionsQueried(questionSetsToReturn, userInterestsChecked);
+        onDBResultListener.onEntityPropertyDataSearched(entitiesToReturn, userInterestsChecked);
 
     }
 
     @Override
-    public void addQuestions(String lessonKey, List<QuestionSetData> questions, OnDBResultListener onDBResultListener) {
-        int mockQuestionID = 1;
-        int mockQuestionSetID = 1;
-        int mockVocabularyID = 1;
-        int mockDateTime = 1;
-        for (QuestionSetData wrapper : questions){
-            List<List<String>> questionIDs = new ArrayList<>();
-            List<String> vocabularyIDs = new ArrayList<>();
-            List<List<QuestionData>> set = wrapper.getQuestionSet();
-            for (List<QuestionData> questionVariations : set){
-                List<String> questionVariationIDs = new ArrayList<>();
-                for (QuestionData question : questionVariations){
-                    String questionID = "questionID" + mockQuestionID++;
-                    question.setId(questionID);
-                    this.questions.put(questionID, question);
-                    questionVariationIDs.add(questionID);
-                }
-                questionIDs.add(questionVariationIDs);
-
-                List<VocabularyWord> setVocabulary = wrapper.getVocabulary();
-                for (VocabularyWord word : setVocabulary){
-                    String wordID = "vocabularyID" + mockVocabularyID++;
-                    word.setId(wordID);
-                    questionVocabularyWords.put(wordID, word);
-                    vocabularyIDs.add(wordID);
-                }
-
+    public void addEntityPropertyData(String lessonKey, List<EntityPropertyData> entities, OnDBResultListener onDBResultListener) {
+        for (EntityPropertyData dataToAdd : entities){
+            List<EntityPropertyData> addList = entityPropertyData.get(dataToAdd.getWikidataID());
+            if (addList == null){
+                addList = new ArrayList<>();
             }
-            String setID = "setID" + mockQuestionSetID++;
-            QuestionSet questionSet = new QuestionSet(setID, wrapper.getInterestID(),
-                    wrapper.getInterestLabel(),
-                    questionIDs, vocabularyIDs, 0);
-            questionSets.put(setID, questionSet);
-
-            onDBResultListener.onQuestionSetAdded(questionSet);
-
+            addList.add(dataToAdd);
+            onDBResultListener.onEntityPropertyDataAdded(dataToAdd);
         }
-
-        onDBResultListener.onQuestionsAdded();
     }
 
     @Override
-    public void getQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<String> questionSetIDs, OnDBResultListener onDBResultListener) {
-        //don't care about lesson key
-        List<QuestionSet> questionSets = new ArrayList<>(questionSetIDs.size());
-        for (String id : questionSetIDs){
-            QuestionSet match = this.questionSets.get(id);
-            if (match != null){
-                questionSets.add(match);
+    public void getRandomEntityPropertyData(NetworkConnectionChecker networkConnectionChecker,
+                                            String lessonKey, final List<EntityPropertyData> toAvoid,
+                                           final int toPopulate,
+                                           final OnDBResultListener onDBResultListener){
+        List<EntityPropertyData> result = new ArrayList<>(toPopulate);
+        for (Map.Entry<String, List<EntityPropertyData>> entry : entityPropertyData.entrySet()){
+            List<EntityPropertyData> set = entry.getValue();
+            if (set != null &&
+                    set.size() != 0 &&
+                    Collections.disjoint(set, toAvoid) ){
+                result.add(set.get(0));
             }
-        }
-        onDBResultListener.onQuestionSetsQueried(questionSets);
-    }
-
-    @Override
-    public void changeQuestionSetCount(String lessonKey, String questionSetID, int amount, OnDBResultListener onDBResultListener){
-
-    }
-
-    @Override
-    public void getPopularQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey, final List<String> questionSetsToAvoid,
-                                       final int questionSetsToPopulate,
-                                       final OnDBResultListener onDBResultListener){
-        //don't care about popularity (just get enough questions0
-        List<QuestionSet> result = new ArrayList<>(questionSetsToPopulate);
-        for (Map.Entry<String, QuestionSet> entry : questionSets.entrySet()){
-            QuestionSet set = entry.getValue();
-            if (!questionSetsToAvoid.contains(set.getKey())){
-                result.add(set);
-            }
-            if (result.size() == questionSetsToPopulate){
+            if (result.size() == toPopulate){
                 break;
             }
         }
-        onDBResultListener.onPopularQuestionSetsQueried(result);
-    }
-
-    @Override
-    public void getQuestion(NetworkConnectionChecker networkConnectionChecker, String questionID, OnDBResultListener onDBResultListener) {
-        QuestionData questionData = questions.get(questionID);
-        onDBResultListener.onQuestionQueried(questionData);
+        onDBResultListener.onRandomEntityPropertyDataQueried(result);
     }
 
     private int incrementLessonInstance = 1;
@@ -178,19 +111,22 @@ public class MockFirebaseDB extends Database {
     public void addLessonInstance(NetworkConnectionChecker networkConnectionChecker, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs, OnDBResultListener onDBResultListener) {
         String id = "testID" + incrementLessonInstance++;
         lessonInstanceData.setId(id);
-        lessonInstances.put(lessonInstanceData.getLessonKey(), lessonInstanceData);
+        lessonInstances.add(lessonInstanceData);
         onDBResultListener.onLessonInstanceAdded();
     }
 
     @Override
     public void getLessonInstances(NetworkConnectionChecker networkConnectionChecker, String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener) {
         // we are assuming a single lesson so we don't need to filter by lesson key
-        List<LessonInstanceData> instancesList = new ArrayList<>();
-
-        for (Map.Entry<String, LessonInstanceData> entry : lessonInstances.entrySet()){
-            instancesList.add(entry.getValue());
-        }
+        List<LessonInstanceData> instancesList = new ArrayList<>(lessonInstances);
         onDBResultListener.onLessonInstancesQueried(instancesList);
+    }
+
+    @Override
+    public void getMostRecentLessonInstance(NetworkConnectionChecker checker, String lessonKey,
+                                                OnDBResultListener onDBResultListener){
+        //first one = most recent
+        onDBResultListener.onLessonInstancesQueried(lessonInstances.subList(0,1));
     }
 
     @Override
@@ -297,11 +233,6 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void addClearedLesson(int lessonLevel, String lessonKey, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void clearAllLessons(List<List<LessonListRow>> lessonLevels) {
 
     }
 

@@ -3,7 +3,7 @@ package com.linnca.pelicann.questions;
 
 import android.support.v4.app.Fragment;
 
-import pelicann.linnca.com.corefunctionality.questions.QuestionTypeMappings;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionTypeMappings;
 
 public class QuestionFragmentFactory {
     public static Fragment getQuestionFragment(int questionType){

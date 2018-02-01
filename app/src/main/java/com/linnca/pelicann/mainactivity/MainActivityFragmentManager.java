@@ -8,9 +8,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.preference.PreferenceScreen;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.lessondetails.LessonDescription;
-import com.linnca.pelicann.lessondetails.LessonDetails;
-import com.linnca.pelicann.lessonlist.LessonList;
+import com.linnca.pelicann.lessoncategorylist.LessonCategoryList;
+import com.linnca.pelicann.lessondetails.LessonScript;
 import com.linnca.pelicann.preferences.Preferences;
 import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExceptionRule;
 import com.linnca.pelicann.questions.QuestionFragmentFactory;
@@ -23,13 +22,11 @@ import com.linnca.pelicann.userprofile.UserProfile;
 import com.linnca.pelicann.vocabulary.VocabularyDetails;
 import com.linnca.pelicann.vocabulary.VocabularyList;
 
-import java.util.ArrayList;
-
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
-import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
-import pelicann.linnca.com.corefunctionality.questions.QuestionData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
 import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 
 //manages all the fragment transactions
@@ -97,27 +94,27 @@ class MainActivityFragmentManager {
         fragmentTransaction.commit();
     }
 
-    void rootToLessonList(Database db, int lessonLevel){
-        clearBackStack();
-        Fragment fragment = new LessonList();
+    void lessonCategoryListToLessonScript(LessonCategory lessonCategory, Database db){
+        Fragment fragment = new LessonScript();
         Bundle bundle = new Bundle();
+        bundle.putSerializable(LessonScript.BUNDLE_LESSON_CATEGORY, lessonCategory);
         bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        bundle.putInt(LessonList.LESSON_LEVEL, lessonLevel);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonList.TAG);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonScript.TAG);
+        fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
 
-    void lessonListToLessonDetails(Database db, LessonData lessonData){
-        Fragment fragment = new LessonDetails();
+    void rootToLessonCategoryList(Database db, int lessonLevel){
+        clearBackStack();
+        Fragment fragment = new LessonCategoryList();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        bundle.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonData);
+        bundle.putInt(LessonCategoryList.LESSON_LEVEL, lessonLevel);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonDetails.TAG);
-        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonCategoryList.TAG);
         fragmentTransaction.commit();
     }
 
@@ -145,6 +142,7 @@ class MainActivityFragmentManager {
     }
 
     void vocabularyDetailsToLessonDetails(Database db, String lessonKey, LessonListViewer lessonListViewer){
+        /*
         //this is not from the same root fragment so
         // reset the back stack
         clearBackStack();
@@ -168,7 +166,7 @@ class MainActivityFragmentManager {
         fragment2.setArguments(bundle2);
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment2, LessonDetails.TAG);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        fragmentTransaction.commit();*/
     }
 
     void notQuestionFragmentToQuestion(QuestionData questionData, int questionNumber, int totalQuestionCount){
@@ -227,13 +225,11 @@ class MainActivityFragmentManager {
         }
     }
 
-    void questionToResults(Database db, InstanceRecord instanceRecord,
-                          ArrayList<String> questionIDs){
+    void questionToResults(Database db, InstanceRecord instanceRecord){
         //saving the instance data handled in the results fragment (results manager)
         Fragment fragment = new Results();
         Bundle bundle = new Bundle();
         bundle.putSerializable(Results.BUNDLE_INSTANCE_RECORD, instanceRecord);
-        bundle.putStringArrayList(Results.BUNDLE_QUESTION_IDS, questionIDs);
         bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
         fragment.setArguments(bundle);
 
@@ -267,9 +263,9 @@ class MainActivityFragmentManager {
     }
 
     void fragmentToLessonDescription(String descriptionLessonKey){
-        Fragment fragment = new LessonDescription();
+        Fragment fragment = new LessonScript();
         Bundle bundle = new Bundle();
-        bundle.putString(LessonDescription.BUNDLE_LESSON_KEY, descriptionLessonKey);
+        //bundle.putString(LessonScript.BUNDLE_LESSON_KEY, descriptionLessonKey);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
                 0, R.anim.slide_out_bottom
@@ -281,17 +277,18 @@ class MainActivityFragmentManager {
             Fragment resultsFragment = fragmentManager.findFragmentByTag(Results.TAG);
             if (resultsFragment != null && resultsFragment.isVisible()){
                 //when we are at the results page, we should always show the exception rule
-                bundle.putBoolean(LessonDescription.BUNDLE_SHOW_EXCEPTION, true);
+                //bundle.putBoolean(LessonScript.BUNDLE_SHOW_EXCEPTION, true);
             }
         } else {
             fragmentTransaction.addToBackStack(null);
         }
         fragment.setArguments(bundle);
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonDescription.TAG);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonScript.TAG);
         fragmentTransaction.commit();
     }
 
-    void resultsToLessonDetails(Database db, LessonData lessonData){
+    void resultsToLessonDetails(Database db){
+        /*
         //removes the lessonDetails -> results transaction
         fragmentManager.popBackStack();
         //removes the lessonList -> lessonDetails transaction
@@ -304,7 +301,7 @@ class MainActivityFragmentManager {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonDetails.TAG);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        fragmentTransaction.commit();*/
     }
 
     boolean toPreferenceScreen(Context context, PreferenceScreen preferenceScreen){

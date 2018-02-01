@@ -23,6 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
+                android:gravity="center"
                 >
                 <TextView
                     android:id="@+id/results_questions_correct_accuracy"
@@ -38,13 +39,6 @@
                     android:layout_marginStart="8dp"
                     android:textSize="15sp"
                     android:text="@string/results_correct_ct_unit"/>
-                <TextView
-                    android:id="@+id/results_passed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/results_questions_correct_accuracy"
-                    android:textSize="21sp"
-                    android:layout_marginTop="16dp"/>
 
             </RelativeLayout>
             <LinearLayout
@@ -149,30 +143,5 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginBottom="32dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="21sp"
-            android:text="@string/results_vocabulary"/>
-        <ProgressBar
-            android:id="@+id/results_vocabulary_loading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:indeterminate="true"
-            />
-        <TextView
-            android:id="@+id/results_no_vocabulary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/results_no_vocabulary"
-            android:visibility="gone"/>
-        <LinearLayout
-            android:id="@+id/results_vocabulary_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
     </LinearLayout>
 </ScrollView>

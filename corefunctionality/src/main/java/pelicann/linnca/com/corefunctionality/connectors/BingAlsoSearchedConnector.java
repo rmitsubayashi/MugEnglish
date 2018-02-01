@@ -16,7 +16,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 
 public class BingAlsoSearchedConnector implements EndpointConnectorReturnsXML {
 

@@ -132,7 +132,7 @@
         preferences:general
     </string>
     <string name="preferences_general_lessons_per_day_key">
-        preferences:lessons per day
+        preferences:lessonInstanceGenerators per day
     </string>
     <string name="preferences_general_lessons_per_day_label">
         1日の目標レッスン数：%1$d
@@ -157,29 +157,13 @@
     <string name="preferences_general_themeColor_dialog_label">新しい色</string>
 
     <string name="preferences_first_time_key">preferences:first time</string>
-    <string name="preferences_last_selected_lesson_level">preferences: last selected lesson level</string>
-    <string name="preferences_report_card_last_selected_lesson_level">preferences: report card last selected lesson level</string>
+    <string name="preferences_last_selected_lesson_level">preferences: last selected lessonInstanceGenerator level</string>
+    <string name="preferences_report_card_last_selected_lesson_level">preferences: report card last selected lessonInstanceGenerator level</string>
+
     <string name="preferences_subscreen_functionality_title">機能</string>
     <string name="preferences_subscreen_reason_title">理由</string>
 
     <!--onboarding pages-->
-    <string name="tutorial_choose_person_title">突然ですが、彼氏（彼女）にしたい有名人の名前を教えてください</string>
-    <string name="tutorial_choose_person_search_button">検索</string>
-    <string name="tutorial_choose_person_not_found1">誤字がないか確認して、もう一度検索してみてください</string>
-    <string name="tutorial_choose_person_not_found2">もう少し有名な人を検索してみてください</string>
-    <string name="tutorial_confirm_person_title">%1$sですね！\nでは%2$sといっしょに最初のレッスンに進みましょう！</string>
-    <string name="tutorial_confirm_person_gender_male">彼</string>
-    <string name="tutorial_confirm_person_gender_female">彼女</string>
-    <string name="tutorial_confirm_person_start">始める</string>
-    <string name="tutorial_lesson_details_go_to_lesson_description">まずはレッスンの説明文を見て勉強しましょう ↑↑</string>
-    <string name="tutorial_lesson_details_go_to_question">ではレッスンを始めましょう　↑↑</string>
-    <string name="tutorial_final_explanation1_title">お疲れ様です！</string>
-    <string name="tutorial_final_explanation2_title">お気に入り</string>
-    <string name="tutorial_final_explanation3_title">なくてもいいです</string>
-    <string name="tutorial_final_explanation1_description">このように、自分の好きな人や場所が例文に出てきます。\n興味がある内容で英語を楽しく学習しましょう！</string>
-    <string name="tutorial_final_explanation2_description">例文に出てくる人や場所は「お気に入り」で管理できます。</string>
-    <string name="tutorial_final_explanation3_description">お気に入りが少なかったり空っぽでも、問題なく学習できます。</string>
-
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_skip">スキップ</string>
     <string name="onboarding_finish">始める</string>
@@ -212,7 +196,10 @@
     <string name="lessons_level2">レベル2</string>
     <string name="navigation_level2_not_ready">レベル2は作成中です</string>
 
-    <!--Lesson list page -->
+    <!-- lesson script -->
+    <string name="lesson_script_to_prev">＜</string>
+    <string name="lesson_script_to_next">＞</string>
+    <string name="lesson_script_to_questions">問題へ</string>
 
 
     <!--results-->
@@ -257,7 +244,7 @@
     <string name="facebook_interests_search_schools">学歴を検索中..</string>
     <string name="facebook_interests_search_locations">行ったことがある場所を検索中</string>
 
-    <!--Lesson Details Page-->
+    LessonGeneratorsson Details Page-->
     <string name="lesson_details_created">作成日</string>
     <string name="lesson_details_item_menu_more_info">詳細</string>
     <string name="lesson_details_item_menu_delete">消去</string>

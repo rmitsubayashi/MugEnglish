@@ -4,14 +4,12 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,10 +27,8 @@ import android.widget.Toast;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
-import com.linnca.pelicann.lessondetails.LessonDescription;
-import com.linnca.pelicann.lessondetails.LessonDetails;
-import com.linnca.pelicann.lessonlist.LessonList;
-import com.linnca.pelicann.lessonlist.LessonListViewerImplementation;
+import com.linnca.pelicann.lessoncategorylist.LessonCategoryList;
+import com.linnca.pelicann.lessondetails.LessonScript;
 import com.linnca.pelicann.preferences.PreferencesListener;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.results.Results;
@@ -50,29 +46,28 @@ import java.util.Locale;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
-import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
-import pelicann.linnca.com.corefunctionality.questions.InstanceReviewManager;
-import pelicann.linnca.com.corefunctionality.questions.LessonsReviewManager;
-import pelicann.linnca.com.corefunctionality.questions.QuestionData;
-import pelicann.linnca.com.corefunctionality.questions.QuestionManager;
+import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewerImplementation;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceReviewManager;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionManager;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        LessonList.LessonListListener,
         UserInterests.UserInterestListener,
         SearchInterests.SearchInterestsListener,
         QuestionFragmentInterface.QuestionListener,
-        LessonDetails.LessonDetailsListener,
         Results.ResultsListener,
         ReviewResults.ReviewResultsListener,
         PreferencesListener,
         PreferenceFragmentCompat.OnPreferenceStartScreenCallback,
-        LessonDescription.LessonDescriptionListener,
+        LessonCategoryList.LessonCategoryListListener,
+        LessonScript.LessonScriptListener,
         UserProfile.UserProfileListener,
         VocabularyList.VocabularyListListener,
         VocabularyDetails.VocabularyDetailsListener
@@ -83,8 +78,6 @@ public class MainActivity extends AppCompatActivity implements
     private final String SAVED_STATE_PREFERENCES = "savedStatePreferences";
     private boolean savedStatePreferences = false;
     private boolean searchIconVisible = false;
-    private boolean descriptionIconVisible = false;
-    private String descriptionLessonKey;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -100,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private QuestionManager questionManager;
     private InstanceReviewManager instanceReviewManager;
-    private LessonsReviewManager lessonsReviewManager;
     //since initialization takes forever, initialize here and use this instance in all questions
     private TextToSpeech textToSpeech = null;
 
@@ -140,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements
         setSpinnerAdapter();
 
         fragmentManager = new MainActivityFragmentManager(getSupportFragmentManager());
-        questionManager = new QuestionManager(db, getQuestionManagerListener());
+        questionManager = new QuestionManager(getQuestionManagerListener());
         instanceReviewManager = new InstanceReviewManager(getInstanceReviewManagerListener());
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
@@ -167,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements
                             fragmentManager.rootToSettings(db);
                             break;
                         case R.id.main_navigation_drawer_lesson_level1 :
-                            fragmentManager.rootToLessonList(db, 1);
+                            fragmentManager.rootToLessonCategoryList(db, 1);
                             setLastSelectedLessonLevel(1);
                             break;
                         case R.id.main_navigation_drawer_lesson_level2 :
@@ -238,11 +230,6 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.app_bar_menu, menu);
-        //change the icon to white
-        menu.findItem(R.id.app_bar_description).getIcon().setColorFilter(
-                ContextCompat.getColor(this, R.color.white),
-                PorterDuff.Mode.SRC_ATOP
-        );
         return true;
     }
 
@@ -251,24 +238,7 @@ public class MainActivity extends AppCompatActivity implements
         //to make sure the animation doesn't trigger on launch,
         //the menu is defaulted to invisible
         animateMenuItem(menu.findItem(R.id.app_bar_search), searchIconVisible);
-        animateMenuItem(menu.findItem(R.id.app_bar_description), descriptionIconVisible);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.app_bar_description :
-                //we set this to null when we don't have a description
-                //associated with the current fragment.
-                //technically this is not needed as we are also hiding the icon
-                if (descriptionLessonKey != null){
-                    fragmentManager.fragmentToLessonDescription(descriptionLessonKey);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -306,12 +276,6 @@ public class MainActivity extends AppCompatActivity implements
                 instanceReviewManager.resetCurrentQuestionIndex();
             }
 
-            if (lessonsReviewManager != null &&
-                    lessonsReviewManager.reviewStarted()) {
-                //release resources
-                lessonsReviewManager = null;
-            }
-
             fragmentManager.fromQuestionToFragment();
 
             if (textToSpeech != null){
@@ -337,24 +301,6 @@ public class MainActivity extends AppCompatActivity implements
             outState.putBoolean(SAVED_STATE_PREFERENCES, true);
         }
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void lessonListToLessonDetails(LessonData lessonData){
-        fragmentManager.lessonListToLessonDetails(db, lessonData);
-        switchActionBarUpButton();
-    }
-
-    @Override
-    public void lessonListToReviewLesson(String reviewKey){
-        //since this will not be called a lot
-        // (unlike the question and instance review manager),
-        // instantiate it locally
-        lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
-        NetworkConnectionChecker networkConnectionChecker = new
-                AndroidNetworkConnectionChecker(this);
-        lessonsReviewManager.startReview(networkConnectionChecker, reviewKey);
-        switchActionBarUpButton();
     }
 
     @Override
@@ -431,11 +377,11 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, ArrayList<String> questionIDs,
+            public void onQuestionsFinished(InstanceRecord instanceRecord,
                                             List<QuestionData> missedQuestions) {
                 //we are updating the database in the result fragment since we need
                 // to update the UI of the result fragment
-                fragmentManager.questionToResults(db, instanceRecord, questionIDs);
+                fragmentManager.questionToResults(db, instanceRecord);
                 //save the missed questions in the instance review manager since
                 //we are resetting the question manager
                 instanceReviewManager.setQuestions(missedQuestions);
@@ -472,72 +418,6 @@ public class MainActivity extends AppCompatActivity implements
         };
     }
 
-    private LessonsReviewManager.LessonReviewManagerListener getLessonsReviewManagerListener(){
-        return new LessonsReviewManager.LessonReviewManagerListener() {
-            @Override
-            public void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion) {
-                if (firstQuestion){
-                    fragmentManager.notQuestionFragmentToQuestion(questionData, questionNumber, totalQuestions);
-                } else {
-                    fragmentManager.questionToQuestion(questionData, questionNumber, totalQuestions);
-                }
-            }
-
-            @Override
-            public void onReviewFinished(int lessonLevel, String reviewID) {
-                fragmentManager.questionToReviewResults();
-                //we won't need a reference to the review manager anymore
-                lessonsReviewManager = null;
-                //mark the review lesson as cleared
-                OnDBResultListener clearLessonOnDBResultListener = new OnDBResultListener() {
-                    @Override
-                    public void onClearedLessonAdded(boolean firstTimeCleared) {
-                        super.onClearedLessonAdded(firstTimeCleared);
-                    }
-                };
-                db.addClearedLesson(lessonLevel, reviewID, clearLessonOnDBResultListener);
-                //the user will never need the review again,
-                // so remove the review questions we stored in the database
-                OnDBResultListener removeReviewOnDBResultListener = new OnDBResultListener() {
-                    @Override
-                    public void onReviewQuestionsRemoved() {
-                        super.onReviewQuestionsRemoved();
-                    }
-                };
-                db.removeReviewQuestions(removeReviewOnDBResultListener);
-
-                if (textToSpeech != null){
-                    textToSpeech.shutdown();
-                    textToSpeech = null;
-                }
-            }
-        };
-    }
-
-    @Override
-    public void lessonDetailsToQuestions(LessonInstanceData lessonInstanceData, String lessonKey){
-        OnDBResultListener noConnectionListener = new OnDBResultListener() {
-            @Override
-            public void onNoConnection() {
-                MainActivity.this.onNoConnection();
-                //question manager starts questions -> can't get question ->
-                // stops listening.
-                //next time user tries to start questions -> questions already started! ->
-                // user can't start questions.
-                //so, reset manager
-                questionManager.resetManager();
-            }
-
-            @Override
-            public void onSlowConnection() {
-                MainActivity.this.onSlowConnection();
-            }
-        };
-        NetworkConnectionChecker networkConnectionChecker = new
-                AndroidNetworkConnectionChecker(this);
-        questionManager.startQuestions(networkConnectionChecker, lessonInstanceData, lessonKey, noConnectionListener);
-    }
-
     @Override
     public void onRecordResponse(String answer, boolean correct){
         if (questionManager.questionsStarted()) {
@@ -555,19 +435,10 @@ public class MainActivity extends AppCompatActivity implements
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(this);
         if (questionManager.questionsStarted()) {
-            questionManager.nextQuestion(networkConnectionChecker, false, noConnectionListener);
+            questionManager.nextQuestion();
         }
         if (instanceReviewManager.reviewStarted()) {
             instanceReviewManager.nextQuestion(false);
-        }
-        //we might not have instantiated this yet
-        if (lessonsReviewManager != null){
-            if (correct){
-                lessonsReviewManager.nextQuestion(networkConnectionChecker, false);
-            } else {
-                lessonsReviewManager.returnQuestionToStack();
-                lessonsReviewManager.nextQuestion(networkConnectionChecker, false);
-            }
         }
     }
 
@@ -587,23 +458,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void resultsToLessonDetails(LessonData lessonData){
+    public void resultsToLessonDetails(){
         //we can remove all the data because the result fragment is
         // not accessible anymore.
         instanceReviewManager.resetManager();
-        fragmentManager.resultsToLessonDetails(db, lessonData);
-    }
-
-    @Override
-    public void resultsToReviewLesson(LessonData lessonData){
-        //we can remove all the data because the result fragment is
-        // not accessible anymore.
-        instanceReviewManager.resetManager();
-        fragmentManager.rootToLessonList(db, LessonData.extractReviewLevel(lessonData.getKey()));
-        lessonsReviewManager = new LessonsReviewManager(db, getLessonsReviewManagerListener());
-        NetworkConnectionChecker networkConnectionChecker = new
-                AndroidNetworkConnectionChecker(this);
-        lessonsReviewManager.startReview(networkConnectionChecker, lessonData.getKey());
+        fragmentManager.resultsToLessonDetails(db);
     }
 
     @Override
@@ -614,6 +473,18 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void resultsToReview(){
         instanceReviewManager.startReview();
+    }
+
+    @Override
+    public void lessonCategoryListToLessonScript(LessonCategory lessonCategory){
+        fragmentManager.lessonCategoryListToLessonScript(lessonCategory, db);
+        switchActionBarUpButton();
+    }
+
+    @Override
+    public void lessonScriptToQuestion(LessonInstanceData lessonInstanceData, List<QuestionData> questions){
+
+        questionManager.startQuestions(questions, lessonInstanceData);
     }
 
     private void setLessonView(){
@@ -633,7 +504,7 @@ public class MainActivity extends AppCompatActivity implements
                 navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level1;
         }
         checkNavigationItem(navigationDrawerItemIDToSelect);
-        fragmentManager.rootToLessonList(db, lastSelectedLessonLevel);
+        fragmentManager.rootToLessonCategoryList(db, lastSelectedLessonLevel);
 
         if (!hamburgerEnabled){
             switchActionBarUpButton();
@@ -765,13 +636,6 @@ public class MainActivity extends AppCompatActivity implements
         toolbar.setTitle(toolbarTitle);
         //icons
         searchIconVisible = state.searchIconVisible();
-        descriptionLessonKey = state.getDescriptionLessonKey();
-        if (descriptionLessonKey == null) {
-            descriptionIconVisible = false;
-        } else {
-            descriptionIconVisible = lessonListViewer.layoutExists(descriptionLessonKey);
-
-        }
 
         //this redraws the toolbar so the initial visibility is always false.
         //this is not the right way (nor the behavior I want) but this can come later...

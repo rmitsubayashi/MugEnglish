@@ -38,14 +38,9 @@ import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.FirebaseDBHeaders;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonData;
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessondetails.LessonInstanceDataQuestionSet;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListRow;
-import pelicann.linnca.com.corefunctionality.questions.InstanceRecord;
-import pelicann.linnca.com.corefunctionality.questions.QuestionData;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSet;
-import pelicann.linnca.com.corefunctionality.questions.QuestionSetData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.results.ResultsVocabularyWord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
@@ -105,61 +100,32 @@ public class FirebaseDB extends Database {
         out.defaultWriteObject();
     }
 
-    //not for client
     @Override
-    public void addGenericQuestions(List<QuestionData> questions, List<VocabularyWord> vocabularyWords){
-        HashMap<String, Object> toUpdate = new HashMap<>(questions.size() + vocabularyWords.size());
-        for (QuestionData data : questions){
-            String id = data.getId();
-            if (id == null){
-                continue;
-            }
-            String questionRef =
-                    FirebaseDBHeaders.QUESTIONS + "/" +
-                            id;
-            toUpdate.put(questionRef, data);
-        }
-
-        for (VocabularyWord word : vocabularyWords){
-            String id = word.getId();
-            if (id == null){
-                continue;
-            }
-            String vocabularyRef =
-                    FirebaseDBHeaders.VOCABULARY + "/" +
-                            id;
-            toUpdate.put(vocabularyRef, word);
-        }
-
-        FirebaseDatabase.getInstance().getReference().updateChildren(toUpdate);
-    }
-
-    @Override
-    public void searchQuestions(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
-                                final List<String> questionSetIDsToAvoid,
+    public void searchEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
+                                final List<EntityPropertyData> toAvoid,
                                 final OnDBResultListener onDBResultListener){
-        final List<QuestionSet> questionSetsToReturn = Collections.synchronizedList(
-                new ArrayList<QuestionSet>(toPopulate)
+        final List<EntityPropertyData> toReturn = Collections.synchronizedList(
+                new ArrayList<EntityPropertyData>(toPopulate)
         );
         final List<WikiDataEntity> userInterestsAlreadyChecked = Collections.synchronizedList(
                 new ArrayList<WikiDataEntity>(userInterests.size())
         );
-        final AtomicInteger questionSetsToPopulateAtomicInt = new AtomicInteger(toPopulate);
+        final AtomicInteger toPopulateAtomicInt = new AtomicInteger(toPopulate);
         final AtomicInteger userInterestsLooped = new AtomicInteger(0);
         final int userInterestsToLoop = userInterests.size();
-        DatabaseReference questionSetRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTION_SETS + "/" +
+        final DatabaseReference entityPropertyDataRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.ENTITY_PROPERTY_DATA + "/" +
                         lessonKey);
 
         for (final WikiDataEntity userInterest : userInterests){
             //we might be finished before looping through the interests.
             //in that case, we shouldn't send a request to the database
-            if (questionSetsToPopulateAtomicInt.get() == 0){
+            if (toPopulateAtomicInt.get() == 0){
                 break;
             }
 
-            final Query userInterestQuestionSetRef = questionSetRef
-                    .orderByChild(FirebaseDBHeaders.QUESTION_SET_INTEREST_ID)
+            final Query userInterestRef = entityPropertyDataRef
+                    .orderByChild(FirebaseDBHeaders.ENTITY_PROPERTY_DATA_WIKIDATA_ID)
                     .equalTo(userInterest.getWikiDataID());
 
             final AtomicBoolean called = new AtomicBoolean(false);
@@ -168,8 +134,8 @@ public class FirebaseDB extends Database {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     called.set(true);
                     //if we don't need to get any more
-                    if (questionSetsToPopulateAtomicInt.get() == 0){
-                        userInterestQuestionSetRef.removeEventListener(this);
+                    if (toPopulateAtomicInt.get() == 0){
+                        userInterestRef.removeEventListener(this);
                         return;
                     }
 
@@ -179,29 +145,34 @@ public class FirebaseDB extends Database {
                     if (dataSnapshot.exists() && dataSnapshot.getValue() != null){
                         userInterestsAlreadyChecked.add(userInterest);
 
-                        for (DataSnapshot questionSetSnapshot : dataSnapshot.getChildren()){
-                            QuestionSet questionSet = questionSetSnapshot.getValue(QuestionSet.class);
-                            if (!questionSetIDsToAvoid.contains(questionSet.getKey())) {
-                                questionSetsToReturn.add(questionSet);
-                                if (questionSetsToPopulateAtomicInt.decrementAndGet() == 0) break;
+                        //we only need one per entity
+                        List<EntityPropertyData> allMatching = new ArrayList<>((int)dataSnapshot.getChildrenCount());
+                        for (DataSnapshot entityDataSnapshot : dataSnapshot.getChildren()){
+                            EntityPropertyData data = entityDataSnapshot.getValue(EntityPropertyData.class);
+                            if (!toAvoid.contains(data)) {
+                                allMatching.add(data);
                             }
                         }
 
-                        //we have found enough questions from the database alone
-                        if (questionSetsToPopulateAtomicInt.get() == 0) {
-                            onDBResultListener.onQuestionsQueried(questionSetsToReturn,
-                                    userInterestsAlreadyChecked);
-                            userInterestQuestionSetRef.removeEventListener(this);
-                            return;
+                        if (allMatching.size() > 0) {
+                            Collections.shuffle(allMatching);
+                            toReturn.add(allMatching.get(0));
+                            //we have found enough questions from the database
+                            if (toPopulateAtomicInt.decrementAndGet() == 0) {
+                                onDBResultListener.onEntityPropertyDataSearched(toReturn,
+                                        userInterestsAlreadyChecked);
+                                entityPropertyDataRef.removeEventListener(this);
+                                return;
+                            }
                         }
                     }
 
                     //if this is the last one, we should finish
                     if (userInterestsLooped.incrementAndGet() == userInterestsToLoop){
-                        onDBResultListener.onQuestionsQueried(questionSetsToReturn,
+                        onDBResultListener.onEntityPropertyDataSearched(toReturn,
                                 userInterestsAlreadyChecked);
                     }
-                    userInterestQuestionSetRef.removeEventListener(this);
+                    entityPropertyDataRef.removeEventListener(this);
                 }
 
                 @Override
@@ -209,8 +180,8 @@ public class FirebaseDB extends Database {
 
                 }
             };
-            userInterestQuestionSetRef.addValueEventListener(userInterestQuestionSetListener);
-            final RefListenerPair pair = new RefListenerPair(userInterestQuestionSetRef, userInterestQuestionSetListener);
+            entityPropertyDataRef.addValueEventListener(userInterestQuestionSetListener);
+            final RefListenerPair pair = new RefListenerPair(entityPropertyDataRef, userInterestQuestionSetListener);
             refListenerPairs.add(pair);
 
             OnDBResultListener noConnectionListener = new OnDBResultListener() {
@@ -222,7 +193,7 @@ public class FirebaseDB extends Database {
                     //we can't just clean up because we are still listening to other locations
                     // (i.e. lesson details -> create lesson -> search questions)
                     refListenerPairs.remove(pair);
-                    userInterestQuestionSetRef.removeEventListener(userInterestQuestionSetListener);
+                    entityPropertyDataRef.removeEventListener(userInterestQuestionSetListener);
                 }
 
                 @Override
@@ -236,13 +207,11 @@ public class FirebaseDB extends Database {
         }
     }
 
+    //TODO vocabulary
     @Override
-    public void addQuestions(String lessonKey, List<QuestionSetData> questions, OnDBResultListener onDBResultListener){
-        DatabaseReference questionRef = FirebaseDatabase.getInstance().getReference(FirebaseDBHeaders.QUESTIONS);
-        //this is the actual question information for when we want to show
-        // questions to the user
-        DatabaseReference questionSetRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTION_SETS + "/" +
+    public void addEntityPropertyData(String lessonKey, List<EntityPropertyData> data, OnDBResultListener onDBResultListener){
+        DatabaseReference entityPropertyDataRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.ENTITY_PROPERTY_DATA + "/" +
                         lessonKey
         );
 
@@ -253,181 +222,52 @@ public class FirebaseDB extends Database {
         //we are looping through each question set.
         // (questionDataWrapper has an extra field to store the wikiData ID
         // associated with the question set)
-        for (QuestionSetData questionSetData : questions){
-            List<List<String>> questionIDs = new ArrayList<>();
-            List<String> vocabularyIDs = new ArrayList<>();
-            //save each question in the database
-            for (List<QuestionData> question : questionSetData.getQuestionSet()) {
-                List<String> questionIDsForEachVariation = new ArrayList<>();
-                //each question may have multiple variations.
-                //save all variations as individual questions
-                for (QuestionData data : question) {
-                    String questionKey = questionRef.push().getKey();
-                    //set ID in data
-                    data.setId(questionKey);
-                    //save in db
-                    DatabaseReference singleQuestionRef = questionRef.child(questionKey);
-                    singleQuestionRef.setValue(data);
-                    questionIDsForEachVariation.add(questionKey);
-                }
-
-                questionIDs.add(questionIDsForEachVariation);
-            }
-
-            //save the vocabulary for the question set
-            List<VocabularyWord> questionSetVocabulary = questionSetData.getVocabulary();
-            if (questionSetVocabulary != null) {
-                for (VocabularyWord word : questionSetVocabulary) {
-                    String vocabularyKey = vocabularyRef.push().getKey();
-                    word.setId(vocabularyKey);
-                    vocabularyRef.child(vocabularyKey).setValue(word);
-                    vocabularyIDs.add(vocabularyKey);
-                }
-            }
-
-            //save the question set (pretty much the same thing as the
-            //questionSetData but just the IDs
-            String questionSetKey = questionSetRef.push().getKey();
-            //the initial count should be 0 since we don't know if the user calling this
-            //is adding this to his lesson instance
-            // (we may be creating extra question sets not needed by the current user)
-            QuestionSet questionSet = new QuestionSet(questionSetKey, questionSetData.getInterestID(),
-                    questionSetData.getInterestLabel(),
-                    questionIDs, vocabularyIDs, 0);
-            questionSetRef.child(questionSetKey).setValue(questionSet);
-
-            onDBResultListener.onQuestionSetAdded(questionSet);
+        for (EntityPropertyData entityPropertyData : data){
+            String entityPropertyDataKey = entityPropertyDataRef.push().getKey();
+            entityPropertyData.setKey(entityPropertyDataKey);
+            //should be handled by each lesson, but just in case
+            entityPropertyData.setLessonKey(lessonKey);
+            entityPropertyDataRef.child(entityPropertyDataKey).setValue(entityPropertyData);
+            onDBResultListener.onEntityPropertyDataAdded(entityPropertyData);
         }
 
-        onDBResultListener.onQuestionsAdded();
+        onDBResultListener.onAllEntityPropertyDataAdded();
     }
 
     @Override
-    public void getQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<String> questionSetIDs, final OnDBResultListener onDBResultListener){
-        //to check each listener to see if all listeners have completed
-        final AtomicInteger questionSetsRetrievedCt = new AtomicInteger(0);
-        final List<QuestionSet> questionSetsRetrieved = Collections.synchronizedList(
-                new ArrayList<QuestionSet>(questionSetIDs.size())
-        );
-        final int questionSetsToRetrieve = questionSetIDs.size();
-        DatabaseReference questionSetsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTION_SETS + "/" +
-                        lessonKey
-        );
-        for (final String questionSetID : questionSetIDs){
-            final AtomicBoolean called = new AtomicBoolean(false);
-            final DatabaseReference questionSetRef = questionSetsRef.child(questionSetID);
-            final ValueEventListener questionSetListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    called.set(true);
-                    QuestionSet questionSet = dataSnapshot.getValue(QuestionSet.class);
-                    questionSetsRetrieved.add(questionSet);
-                    if (questionSetsRetrievedCt.incrementAndGet() == questionSetsToRetrieve){
-                        //all listeners have completed so continue
-                        onDBResultListener.onQuestionSetsQueried(questionSetsRetrieved);
-                    }
-                    //don't need to keep on listening anymore
-                    questionSetRef.removeEventListener(this);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            };
-            questionSetRef.addValueEventListener(questionSetListener);
-            final RefListenerPair pair = new RefListenerPair(questionSetRef, questionSetListener);
-            refListenerPairs.add(pair);
-
-            OnDBResultListener noConnectionListener = new OnDBResultListener() {
-                @Override
-                public void onNoConnection() {
-                    //this is for the UI
-                    onDBResultListener.onNoConnection();
-                    //this is so we don't continue trying to listen after cancelling.
-                    //we can't just clean up because we are still listening to other locations
-                    // (i.e. lesson details -> create lesson -> fetch previous lesson instances)
-                    refListenerPairs.remove(pair);
-                    questionSetRef.removeEventListener(questionSetListener);
-                }
-
-                @Override
-                public void onSlowConnection() {
-                    onDBResultListener.onSlowConnection();
-                }
-            };
-
-            networkConnectionChecker.checkConnection(noConnectionListener, called);
-            networkConnections.add(networkConnectionChecker);
-        }
-    }
-
-    @Override
-    public void changeQuestionSetCount(String lessonKey, String questionSetID, final int amount, OnDBResultListener onDBResultListener){
-        DatabaseReference questionSetCountRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTION_SETS + "/" +
-                        lessonKey + "/" +
-                        questionSetID + "/" +
-                        FirebaseDBHeaders.QUESTION_SET_COUNT
-        );
-        questionSetCountRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Integer currentValue = mutableData.getValue(Integer.class);
-                int newValue;
-                newValue = currentValue == null ? amount : currentValue + amount;
-                mutableData.setValue(newValue);
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-            }
-        });
-    }
-
-    @Override
-    public void getPopularQuestionSets(NetworkConnectionChecker networkConnectionChecker, String lessonKey,
-                                       final List<String> questionSetsToAvoid,
-                                       final int questionSetsToPopulate,
+    public void getRandomEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey,
+                                       final List<EntityPropertyData> toAvoid,
+                                       final int toPopulate,
                                        final OnDBResultListener onDBResultListener){
         //by pigeon hole, we can guarantee that we get enough question sets
         // (only if there are enough questions sets available)
-        int toGet = questionSetsToAvoid.size() + questionSetsToPopulate;
-        DatabaseReference questionSetsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTION_SETS + "/" +
+        final int toGet = toAvoid.size() + toPopulate;
+        DatabaseReference entityPropertyDataRef = FirebaseDatabase.getInstance().getReference(
+                FirebaseDBHeaders.ENTITY_PROPERTY_DATA + "/" +
                         lessonKey
         );
-        //since ordering goes 1, 2, ..., 10
-        // we want the last ones because they are the most popular
-        final Query questionSetPopularityQuery = questionSetsRef.orderByChild(FirebaseDBHeaders.QUESTION_SET_COUNT)
-                .limitToLast(toGet);
+        final Query randomEntityPropertyDataQuery =
+                entityPropertyDataRef.limitToLast(toGet);
         final AtomicBoolean called = new AtomicBoolean(false);
-        final ValueEventListener questionSetPopularityListener = new ValueEventListener() {
+        final ValueEventListener entityPropertyDataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 called.set(true);
-                List<QuestionSet> questionSets = new LinkedList<>();
-                for (DataSnapshot questionSetSnapshot : dataSnapshot.getChildren()){
-                    QuestionSet questionSet = questionSetSnapshot.getValue(QuestionSet.class);
-                    //first filter out every question set that we should avoid
-                    if (questionSet != null &&
-                            !questionSetsToAvoid.contains(questionSet.getKey())){
-                        questionSets.add(questionSet);
+                List<EntityPropertyData> entityPropertyDataList = new ArrayList<>(toGet);
+                for (DataSnapshot entityPropertyDataSnapshot : dataSnapshot.getChildren()){
+                    EntityPropertyData data = entityPropertyDataSnapshot.getValue(EntityPropertyData.class);
+                    if (data != null &&
+                            !data.isUnique(toAvoid)){
+                        entityPropertyDataList.add(data);
+                    }
+
+                    if (entityPropertyDataList.size() == toPopulate){
+                        break;
                     }
                 }
-                //then adjust the size so we only get enough to fill the lesson instance
-                if (questionSets.size() > questionSetsToPopulate){
-                    //the last ones are the most popular so cut everything in the front of the list
-                    questionSets = new LinkedList<>(
-                            questionSets.subList(questionSets.size()-questionSetsToPopulate,
-                                    questionSets.size())
-                    );
-                }
-                onDBResultListener.onPopularQuestionSetsQueried(questionSets);
+                onDBResultListener.onRandomEntityPropertyDataQueried(entityPropertyDataList);
 
-                questionSetPopularityQuery.removeEventListener(this);
+                randomEntityPropertyDataQuery.removeEventListener(this);
             }
 
             @Override
@@ -435,8 +275,8 @@ public class FirebaseDB extends Database {
 
             }
         };
-        questionSetPopularityQuery.addListenerForSingleValueEvent(questionSetPopularityListener);
-        final RefListenerPair pair = new RefListenerPair(questionSetPopularityQuery, questionSetPopularityListener);
+        randomEntityPropertyDataQuery.addListenerForSingleValueEvent(entityPropertyDataListener);
+        final RefListenerPair pair = new RefListenerPair(randomEntityPropertyDataQuery, entityPropertyDataListener);
         refListenerPairs.add(pair);
 
         OnDBResultListener noConnectionListener = new OnDBResultListener() {
@@ -448,7 +288,7 @@ public class FirebaseDB extends Database {
                 //we can't just clean up because we are still listening to other locations
                 // (i.e. lesson details -> create lesson -> fetch popular questions)
                 refListenerPairs.remove(pair);
-                questionSetPopularityQuery.removeEventListener(questionSetPopularityListener);
+                randomEntityPropertyDataQuery.removeEventListener(entityPropertyDataListener);
             }
 
             @Override
@@ -461,9 +301,9 @@ public class FirebaseDB extends Database {
         networkConnections.add(networkConnectionChecker);
     }
 
-    @Override
-    public void getQuestion(NetworkConnectionChecker networkConnectionChecker, String questionID, final OnDBResultListener onDBResultListener){
-        final AtomicBoolean called = new AtomicBoolean(false);
+
+    public void getEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String questionID, final OnDBResultListener onDBResultListener){
+        /*final AtomicBoolean called = new AtomicBoolean(false);
         final DatabaseReference questionRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.QUESTIONS + "/" +
                         questionID
@@ -509,7 +349,7 @@ public class FirebaseDB extends Database {
             }
         };
         networkConnectionChecker.checkConnection(noConnectionListener, called);
-        networkConnections.add(networkConnectionChecker);
+        networkConnections.add(networkConnectionChecker);*/
     }
 
     @Override
@@ -522,6 +362,7 @@ public class FirebaseDB extends Database {
                         getUserID() + "/" +
                         lessonInstanceData.getLessonKey());
         String key = lessonInstanceRef.push().getKey();
+        //lesson generation depends on the id being updated here
         lessonInstanceData.setId(key);
         Map<String, Object> consistentUpdate = new HashMap<>();
         consistentUpdate.put(FirebaseDBHeaders.LESSON_INSTANCES + "/" +
@@ -663,19 +504,44 @@ public class FirebaseDB extends Database {
                 onDBResultListener.onLessonInstanceRemoved();
             }
         });
-        //if any of the question sets were part of the popularity rankings,
-        //decrement the ranking count
-        for (LessonInstanceDataQuestionSet set : instance.getQuestionSets()){
-            if (set.isPartOfPopularityRating()){
-                this.changeQuestionSetCount(lessonKey, set.getId(), -1,
-                        new OnDBResultListener() {
-                            @Override
-                            public void onQuestionSetCountChanged() {
-                                super.onQuestionSetCountChanged();
-                            }
-                        });
+    }
+
+    @Override
+    public void getMostRecentLessonInstance(NetworkConnectionChecker networkConnectionChecker,
+                                            String lessonKey, final OnDBResultListener onDBResultListener){
+        final AtomicBoolean called = new AtomicBoolean(false);
+        String instancesPath = FirebaseDBHeaders.LESSON_INSTANCES + "/" +
+                getUserID() + "/" +
+                lessonKey;
+        DatabaseReference instancesRef = FirebaseDatabase.getInstance().getReference(instancesPath);
+        final Query mostRecentInstanceQuery = instancesRef.orderByChild(FirebaseDBHeaders.LESSON_INSTANCE_TIMESTAMP)
+                .limitToLast(1);
+        ValueEventListener mostRecentInstanceListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                called.set(true);
+                List<LessonInstanceData> result = new ArrayList<>(1);
+                for(DataSnapshot childSnapshot : dataSnapshot.getChildren()){
+                    LessonInstanceData data = childSnapshot.getValue(LessonInstanceData.class);
+                    result.add(data);
+                }
+
+                onDBResultListener.onLessonInstancesQueried(result);
+
+                mostRecentInstanceQuery.removeEventListener(this);
             }
-        }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        mostRecentInstanceQuery.addValueEventListener(mostRecentInstanceListener);
+        refListenerPairs.add(new RefListenerPair(mostRecentInstanceQuery, mostRecentInstanceListener));
+
+        networkConnectionChecker.checkConnection(onDBResultListener, called);
+        networkConnections.add(networkConnectionChecker);
     }
 
     @Override
@@ -1412,42 +1278,6 @@ public class FirebaseDB extends Database {
 
             }
         });
-    }
-
-    //for debugging
-    @Override
-    public void clearAllLessons(List<List<LessonListRow>> lessonLevels){
-        int lessonLevelCt = lessonLevels.size();
-        for (int i=0; i<lessonLevelCt; i++) {
-            List<LessonListRow> lessonRows = lessonLevels.get(i);
-            //0th level is level 1
-            int level = i+1;
-            for (LessonListRow row : lessonRows) {
-                for (LessonData lessonData : row.getLessons()) {
-                    if (lessonData == null)
-                        continue;
-                    final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
-                            FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                                    getUserID() + "/" +
-                                    level + "/" +
-                                    lessonData.getKey()
-                    );
-                    ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (!dataSnapshot.exists()){
-                                ref.setValue(true);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-        }
     }
 
     @Override

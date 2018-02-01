@@ -10,11 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
 import java.util.Collections;
 import java.util.List;
 
-import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 
 public class Question_MultipleChoice extends QuestionFragmentInterface {
     private TextView questionTextView;

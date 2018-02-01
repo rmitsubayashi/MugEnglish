@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
 //the question replaces the instructions with the question and just
 // has an open text field for the user to follow the instructions

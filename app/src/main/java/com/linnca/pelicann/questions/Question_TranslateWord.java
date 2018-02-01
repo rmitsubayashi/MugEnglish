@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
 public class Question_TranslateWord extends QuestionFragmentInterface {
     private EditText questionInput;

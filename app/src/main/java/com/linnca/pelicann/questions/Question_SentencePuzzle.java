@@ -13,6 +13,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
 import org.apmem.tools.layouts.FlowLayout;
 

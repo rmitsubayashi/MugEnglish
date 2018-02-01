@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import pelicann.linnca.com.corefunctionality.questions.MisspelledWordGenerator;
+import pelicann.linnca.com.corefunctionality.lessonquestions.MisspelledWordGenerator;
 
 public class Question_ChooseCorrectSpelling extends QuestionFragmentInterface {
     private TextView questionTextView;

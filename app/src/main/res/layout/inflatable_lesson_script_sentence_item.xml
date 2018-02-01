@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="56dp"
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp"
+    android:background="?attr/selectableItemBackground">
+    <TextView
+        android:id="@+id/lesson_script_sentence_item_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/ic_circle"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="17sp"/>
+    <TextView
+        android:id="@+id/lesson_script_sentence_item_sentence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/lesson_script_sentence_item_icon"
+        android:textSize="16sp"/>
+
+</RelativeLayout>

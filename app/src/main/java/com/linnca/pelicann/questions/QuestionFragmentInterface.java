@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Locale;
 
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
-import pelicann.linnca.com.corefunctionality.questions.MaxNumberOfQuestionAttemptsHelper;
-import pelicann.linnca.com.corefunctionality.questions.QuestionData;
-import pelicann.linnca.com.corefunctionality.questions.QuestionFeedbackFormatter;
-import pelicann.linnca.com.corefunctionality.questions.QuestionResponseChecker;
+import pelicann.linnca.com.corefunctionality.lessonquestions.MaxNumberOfQuestionAttemptsHelper;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionFeedbackFormatter;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionResponseChecker;
 
 //sets methods common for all question GUIs
 public abstract class QuestionFragmentInterface extends Fragment {

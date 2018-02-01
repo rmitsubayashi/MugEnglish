@@ -12,11 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import pelicann.linnca.com.corefunctionality.questions.ChatQuestionItem;
+import pelicann.linnca.com.corefunctionality.lessonquestions.ChatQuestionItem;
 
 public class Question_Chat extends QuestionFragmentInterface {
     private TextView fromTextView;

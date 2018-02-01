@@ -9,8 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
-import pelicann.linnca.com.corefunctionality.questions.QuestionSerializer;
+import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionSerializer;
 
 public class Question_TrueFalse extends QuestionFragmentInterface {
     private TextView questionTextView;

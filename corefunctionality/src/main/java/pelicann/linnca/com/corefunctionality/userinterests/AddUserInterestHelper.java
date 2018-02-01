@@ -19,7 +19,7 @@ import pelicann.linnca.com.corefunctionality.connectors.SPARQLDocumentParserHelp
 import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 
 //search for relevant pronunciation and classification.
 //the pronunciation helps with ordering the user's interests, and

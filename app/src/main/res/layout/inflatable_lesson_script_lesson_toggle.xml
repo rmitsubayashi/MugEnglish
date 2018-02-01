@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <Button
+        android:id="@+id/lesson_script_to_prev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="48dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:textSize="21sp"
+        android:text="@string/lesson_script_to_prev"/>
+    <!-- date title -->
+    <TextView
+        android:id="@+id/lesson_script_lesson_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/lesson_script_to_prev"
+        android:layout_toLeftOf="@+id/lesson_script_to_next"
+        android:gravity="center"
+        android:textSize="18sp"/>
+
+    <!-- next button -->
+    <Button
+        android:id="@+id/lesson_script_to_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="48dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:textSize="21sp"
+        android:text="@string/lesson_script_to_next"/>
+
+</RelativeLayout>

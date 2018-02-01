@@ -12,13 +12,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
+import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import pelicann.linnca.com.corefunctionality.lessongeneration.StringUtils;
-import pelicann.linnca.com.corefunctionality.questions.ChatQuestionItem;
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
+import pelicann.linnca.com.corefunctionality.lessonquestions.ChatQuestionItem;
 
 public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
     private TextView fromTextView;
