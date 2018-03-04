@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 //note: we can install this program on our own server
 //if we end up using a server
+//TODO he api link is down. we need another way of getting pronunciation
 
 public class PronunciationAPIConnector implements EndpointConnectorReturnsJSON {
     public PronunciationAPIConnector(){}

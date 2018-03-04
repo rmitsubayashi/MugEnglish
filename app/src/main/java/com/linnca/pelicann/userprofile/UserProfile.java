@@ -55,7 +55,7 @@ public class UserProfile extends Fragment{
         super.onStart();
         userProfileListener.setToolbarState(
                 new ToolbarState(getString(R.string.user_profile_app_bar_title),
-                        false, false, null)
+                        false)
         );
 
         populateTabs();

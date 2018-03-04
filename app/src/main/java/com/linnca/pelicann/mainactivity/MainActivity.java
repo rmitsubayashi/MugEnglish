@@ -20,8 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
@@ -39,7 +37,6 @@ import com.linnca.pelicann.userprofile.UserProfile;
 import com.linnca.pelicann.vocabulary.VocabularyDetails;
 import com.linnca.pelicann.vocabulary.VocabularyList;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -81,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    private Spinner toolbarSpinner;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private boolean hamburgerEnabled = false;
     private boolean toolbarBackListenerAttached = false;
@@ -125,11 +121,9 @@ public class MainActivity extends AppCompatActivity implements
         lessonListViewer = new LessonListViewerImplementation();
 
         toolbar = findViewById(R.id.tool_bar);
-        toolbarSpinner = toolbar.findViewById(R.id.tool_bar_spinner);
         //to make sure the toolbar text view is not null
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-        setSpinnerAdapter();
 
         fragmentManager = new MainActivityFragmentManager(getSupportFragmentManager());
         questionManager = new QuestionManager(getQuestionManagerListener());
@@ -626,12 +620,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void setToolbarState(ToolbarState state){
-        boolean spinnerVisible = state.spinnerVisible();
-        if (spinnerVisible){
-            //reset the spinner
-            toolbarSpinner.setSelection(0);
-        }
-        toolbarSpinner.setVisibility(spinnerVisible ? View.VISIBLE : View.GONE);
         String toolbarTitle = state.getTitle();
         toolbar.setTitle(toolbarTitle);
         //icons
@@ -640,60 +628,6 @@ public class MainActivity extends AppCompatActivity implements
         //this redraws the toolbar so the initial visibility is always false.
         //this is not the right way (nor the behavior I want) but this can come later...
         invalidateOptionsMenu();
-    }
-
-    private void setSpinnerAdapter(){
-        if (toolbarSpinner.getAdapter() == null){
-            List<ToolbarSpinnerItem> toolbarSpinnerItems = new ArrayList<>();
-            toolbarSpinnerItems.add(
-                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_all), R.drawable.ic_all)
-            );
-            toolbarSpinnerItems.add(
-                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_people), R.drawable.ic_person)
-            );
-            toolbarSpinnerItems.add(
-                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_places), R.drawable.ic_places)
-            );
-            toolbarSpinnerItems.add(
-                    new ToolbarSpinnerItem(getString(R.string.user_interests_filter_other), R.drawable.ic_other)
-            );
-            ToolbarSpinnerAdapter adapter = new ToolbarSpinnerAdapter(this, toolbarSpinnerItems);
-            toolbarSpinner.setAdapter(adapter);
-            toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                    if (fragmentManager.isVisible(UserInterests.TAG)){
-                        //since we don't have ids, differentiate the items by position
-                        int filter;
-                        switch (position){
-                            case 0 :
-                                filter = ToolbarSpinnerAdapter.FILTER_ALL;
-                                break;
-                            case 1 :
-                                filter = ToolbarSpinnerAdapter.FILTER_PERSON;
-                                break;
-                            case 2 :
-                                filter = ToolbarSpinnerAdapter.FILTER_PLACE;
-                                break;
-                            case 3 :
-                                filter = ToolbarSpinnerAdapter.FILTER_OTHER;
-                                break;
-                            default :
-                                filter = ToolbarSpinnerAdapter.FILTER_ALL;
-                        }
-                        ((UserInterests)fragmentManager.getFragment(UserInterests.TAG))
-                                .filterUserInterests(filter);
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
-        } else {
-            toolbarSpinner.setSelection(0);
-        }
     }
 
     public TextToSpeech getTextToSpeech(){

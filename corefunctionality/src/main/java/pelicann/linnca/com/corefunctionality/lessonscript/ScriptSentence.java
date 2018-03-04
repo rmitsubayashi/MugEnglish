@@ -8,10 +8,7 @@ public class ScriptSentence implements Serializable {
     private String sentenceEN;
     private String sentenceJP;
     private String extraInfo;
-    private String speaker;
-
-    public static String SPEAKER_USER = "@user";
-    public static String SPEAKER_NONE = "@none";
+    private ScriptSpeaker speaker;
 
     public ScriptSentence() {
     }
@@ -37,13 +34,24 @@ public class ScriptSentence implements Serializable {
         this.extraInfo = extraInfo;
     }
 
-    public String getSpeaker() {
+    public ScriptSpeaker getSpeaker() {
         return speaker;
     }
 
-    public void setSpeaker(String speakerEN) {
-        this.speaker = speakerEN;
+    public Translation getSpeakerName(){ return speaker.getName(); }
+
+    public String getSpeakerImageURL(){
+        return speaker.getImageURL();
     }
 
-    public void setSpeaker(Translation speaker){ this.speaker = speaker.getEnglish(); }
+    public void setSpeaker(ScriptSpeaker speaker) {
+        this.speaker = speaker;
+    }
+
+    public void setSpeaker(Translation speaker, Translation imageURL, Translation nickname){
+        if (imageURL == null){
+            imageURL = new Translation(ScriptSpeaker.IMAGE_NONE, ScriptSpeaker.IMAGE_NONE);
+        }
+        this.speaker = new ScriptSpeaker(speaker, imageURL, nickname);
+    }
 }

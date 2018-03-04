@@ -8,6 +8,8 @@ import pelicann.linnca.com.corefunctionality.lessonscript.scripts.Script_introdu
 /*
 * 0. person
 * 1. birthday //not age because age changes over time
+* 2. pic
+* 3. 1st name
 * */
 
 public class Introduction_age extends Lesson {

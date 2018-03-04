@@ -84,8 +84,8 @@ public class UserInterests extends Fragment {
     public void onStart(){
         super.onStart();
         userInterestListener.setToolbarState(
-                new ToolbarState("",
-                        false, true, null)
+                new ToolbarState(getString(R.string.fragment_user_interests_title),
+                        false)
         );
         setAdapter();
     }
@@ -117,12 +117,6 @@ public class UserInterests extends Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.user_interests_item_menu, menu);
-    }
-
-    //called by the main activity (which has access to the spinner for the filter)
-    public void filterUserInterests(int filter){
-        if (userInterestListAdapter != null)
-            userInterestListAdapter.setFilter(filter);
     }
 
     private void setAdapter(){

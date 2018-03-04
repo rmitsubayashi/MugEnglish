@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -54,6 +55,7 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	//for each thread, we make a connection to the WikiBase server and get a response.
 	@Override
 	public void fetchDOMFromGetRequest(final OnFetchDOMListener listener, List<String> parameterValues){
+		final AtomicBoolean onStopCalled = new AtomicBoolean(false);
 		int parameterCt = parameterValues.size();
 		ArrayBlockingQueue<Runnable> taskQueue = new ArrayBlockingQueue<>(parameterCt);
 		int coreCt = Runtime.getRuntime().availableProcessors();
@@ -80,7 +82,11 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 						if (listener.shouldStop()) {
 							//doesn't stop threads already running?
 							executor.shutdownNow();
-							listener.onStop();
+							//just in case a non-killed thread tries
+							// to call onStop
+							if (onStopCalled.getAndSet(true)) {
+								listener.onStop();
+							}
 						}
 					} catch (Exception e){
 						listener.onError();

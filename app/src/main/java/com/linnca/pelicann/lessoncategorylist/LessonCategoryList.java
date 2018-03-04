@@ -74,7 +74,7 @@ public class LessonCategoryList extends Fragment {
         super.onStart();
         listener.setToolbarState(
                 new ToolbarState(getString(R.string.fragment_lesson_list_title),
-                        false, false, null)
+                        false)
         );
         populateLessonCategoryList(lessonLevel);
     }

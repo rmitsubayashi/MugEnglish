@@ -25,17 +25,10 @@ import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.searchinterests.SearchResultsAdapter;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturnsXML;
-import pelicann.linnca.com.corefunctionality.connectors.SPARQLDocumentParserHelper;
 import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
@@ -48,18 +41,10 @@ public class Onboarding3v2 extends Fragment {
     //manages thread work
     private SearchHelper searchHelper;
     private ReentrantLock lock = new ReentrantLock();
-    //for checking whether it's a person/country/city
     private final WikiBaseEndpointConnector wikiBaseEndpointConnector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
-    //to communicate with UI thread
-    private final int CHECK_CATEGORY_SUCCESS = 1;
-    private final int CHECK_CATEGORY_FAILURE = 2;
-    private final int peopleToChoose = 2;
-    private final int citiesToChoose = 1;
-    private final int countriesToChoose = 1;
+    private final int peopleToChoose = 3;
     //what the user has chosen
     private List<WikiDataEntity> people = new ArrayList<>(peopleToChoose);
-    private List<WikiDataEntity> countries = new ArrayList<>(countriesToChoose);
-    private List<WikiDataEntity> cities = new ArrayList<>(citiesToChoose);
     private SearchView searchview;
     private RecyclerView listview;
     private TextView instructionsTextview;
@@ -84,7 +69,8 @@ public class Onboarding3v2 extends Fragment {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         searchHelper = new SearchHelper(
-                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7)
+                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7),
+                wikiBaseEndpointConnector
         );
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
@@ -210,8 +196,6 @@ public class Onboarding3v2 extends Fragment {
                             try {
                                 //filter out all of the already added items
                                 result.removeAll(people);
-                                result.removeAll(countries);
-                                result.removeAll(cities);
                                 //remove entities we will never need
                                 searchHelper.removeDisambiguationPages(result);
                                 searchHelper.removeWikiNewsArticlePages(result);
@@ -250,80 +234,23 @@ public class Onboarding3v2 extends Fragment {
                 //give the data to the adapter
                 // so it can give feedback to the user when he adds it
                 adapter.setAddedWikiDataEntity(data);
-                //this might take a while so show loading
-                adapter.showLoading();
-                //check if this is the required type
-                // (person, country, or city).
-                //if so, add
-                String dataID = data.getWikiDataID();
-                String query = getPersonSearchQuery(dataID);
-                String query2 = getCitySearchQuery(dataID);
-                String query3 = getCountrySearchQuery(dataID);
-                List<String> queryList = new ArrayList<>(2);
-                queryList.add(query);
-                queryList.add(query2);
-                queryList.add(query3);
-                final Handler checkCategoryHandler = getCheckCategoryHandler();
-                EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
-                    private AtomicInteger calledCt = new AtomicInteger(0);
-                    private AtomicBoolean matched = new AtomicBoolean(false);
-                    @Override
-                    public boolean shouldStop() {
-                        return false;
-                    }
+                people.add(data);
 
-                    @Override
-                    public void onStop() {
+                adapter.showRecommendations(new ArrayList<WikiDataEntity>(1), false);
+                refreshItemsLeftViews();
+                recommendationGetter.getNewRecommendations(data, new ArrayList<WikiDataEntity>(1),
+                    new RecommendationGetter.RecommendationGetterListener() {
+                        @Override
+                        public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
 
-                    }
-
-                    @Override
-                    public void onFetchDOM(Document result) {
-                        NodeList allResults = result.getElementsByTagName(
-                                WikiDataSPARQLConnector.RESULT_TAG
-                        );
-                        int resultLength = allResults.getLength();
-                        if (resultLength > 0) {
-                            //the result can be either the person query or
-                            // the place query.
-                            String isPerson = SPARQLDocumentParserHelper.findValueByNodeName(allResults.item(0), "person");
-                            String isCountry = SPARQLDocumentParserHelper.findValueByNodeName(allResults.item(0), "country");
-                            String isCity = SPARQLDocumentParserHelper.findValueByNodeName(allResults.item(0), "city");
-                            if (isPerson != null && !isPerson.equals("")){
-                                data.setClassification(WikiDataEntity.CLASSIFICATION_PERSON);
-                                people.add(data);
-                                matched.set(true);
-                            } else if (isCountry != null && !isCountry.equals("")) {
-                                data.setClassification(WikiDataEntity.CLASSIFICATION_PLACE);
-                                countries.add(data);
-                                matched.set(true);
-                            } else if (isCity != null && !isCity.equals("")){
-                                data.setClassification(WikiDataEntity.CLASSIFICATION_PLACE);
-                                cities.add(data);
-                                matched.set(true);
-                            }
                         }
-                        //3 = number of queries
-                        if (calledCt.incrementAndGet() == 3){
-                            //since checking for called count and checking matched are done separately,
-                            //there is a chance something will be called in between...
-                            Message message;
-                            if (matched.get()){
-                                message = checkCategoryHandler.obtainMessage(CHECK_CATEGORY_SUCCESS, data);
-                            } else {
-                                message = checkCategoryHandler.obtainMessage(CHECK_CATEGORY_FAILURE);
-                            }
-                            message.sendToTarget();
+
+                        @Override
+                        public void onNoConnection() {
+
                         }
                     }
-
-                    @Override
-                    public void onError(){
-
-                    }
-                };
-                wikiBaseEndpointConnector.fetchDOMFromGetRequest(onFetchDOMListener, queryList);
-
+                );
             }
 
             @Override
@@ -333,77 +260,12 @@ public class Onboarding3v2 extends Fragment {
         };
     }
 
-    private Handler getCheckCategoryHandler() {
-        //main looper makes sure the handler runs on the UI thread
-        return new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message inputMessage) {
-                switch (inputMessage.what){
-                    case CHECK_CATEGORY_SUCCESS:
-                        //this will just say ("hey, you added the item")
-                        adapter.showRecommendations(new ArrayList<WikiDataEntity>(1), false);
-                        refreshItemsLeftViews();
-                        recommendationGetter.getNewRecommendations((WikiDataEntity) inputMessage.obj, new ArrayList<WikiDataEntity>(1),
-                                new RecommendationGetter.RecommendationGetterListener() {
-                                    @Override
-                                    public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
 
-                                    }
 
-                                    @Override
-                                    public void onNoConnection() {
 
-                                    }
-                                });
-                        return;
-                    case CHECK_CATEGORY_FAILURE:
-
-                        Toast.makeText(getContext(), R.string.onboarding3v2_no_match_category, Toast.LENGTH_SHORT)
-                                .show();
-                        adapter.updateEntries(new ArrayList<WikiDataEntity>(1));
-                        return;
-                    default:
-                        return;
-                }
-            }
-        };
-    }
-
-    private String getPersonSearchQuery(String wikidataID){
-        return "SELECT ?person " +
-                "WHERE " +
-                "{" +
-                "  {?person wdt:P31 wd:Q5} " + //is a person
-                "  UNION {?person wdt:P31/wdt:P279* wd:Q15632617} " + //or a fictional person
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'. } . " +
-                "  BIND (wd:" + wikidataID + " as ?person)" +
-                "}";
-    }
-
-    private String getCitySearchQuery(String wikidataID){
-        return "SELECT DISTINCT ?city " +
-                "WHERE " +
-                "{" +
-                "  ?city wdt:P31/wdt:P279* wd:Q515 . " +
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en' . } " +
-                "  BIND (wd:" + wikidataID + " as ?city) " +
-                "}";
-    }
-
-    private String getCountrySearchQuery(String wikidataID){
-        return "SELECT DISTINCT ?country " +
-                "WHERE " +
-                "{" +
-                "  ?country wdt:P31 wd:Q6256 . " +
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en' . } " +
-                "  BIND (wd:" + wikidataID + " as ?country) " +
-                "}";
-    }
 
     private boolean enoughItems(){
-        return  people.size() >= peopleToChoose &&
-                countries.size() >= countriesToChoose &&
-                cities.size() >= citiesToChoose;
+        return  people.size() >= peopleToChoose;
     }
 
     private void refreshItemsLeftViews(){
@@ -413,12 +275,7 @@ public class Onboarding3v2 extends Fragment {
             itemsToAddTextview.setVisibility(View.GONE);
             itemsLeftTextview.setVisibility(View.GONE);
             finishedTextview.setVisibility(View.VISIBLE);
-            List<WikiDataEntity> allEntities = new ArrayList<>(
-                    people.size() + countries.size() + cities.size());
-            allEntities.addAll(people);
-            allEntities.addAll(countries);
-            allEntities.addAll(cities);
-            listener.onAllEntitiesAdded(allEntities);
+            listener.onAllEntitiesAdded(people);
 
             return;
         }
@@ -426,13 +283,9 @@ public class Onboarding3v2 extends Fragment {
         //we allow users to add more than enough items
         int peopleLeft = peopleToChoose - people.size();
         peopleLeft = peopleLeft > 0 ? peopleLeft : 0;
-        int countriesLeft = countriesToChoose - countries.size();
-        countriesLeft = countriesLeft > 0 ? countriesLeft : 0;
-        int citiesLeft = citiesToChoose - cities.size();
-        citiesLeft = citiesLeft > 0 ? citiesLeft : 0;
 
         String itemsLeftText = getString(R.string.onboarding3v2_items_left,
-                peopleLeft, countriesLeft, citiesLeft);
+                peopleLeft);
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(itemsLeftText);
         //the text may change, so don't put the spans in manually.
         //we are assuming that we will never have to add more than 9
@@ -457,14 +310,6 @@ public class Onboarding3v2 extends Fragment {
         StringBuilder itemsToAddStringBuilder = new StringBuilder("");
         for (WikiDataEntity person : people){
             itemsToAddStringBuilder.append(person.getLabel());
-            itemsToAddStringBuilder.append("  ");
-        }
-        for (WikiDataEntity country : countries){
-            itemsToAddStringBuilder.append(country.getLabel());
-            itemsToAddStringBuilder.append("  ");
-        }
-        for (WikiDataEntity city : cities){
-            itemsToAddStringBuilder.append(city.getLabel());
             itemsToAddStringBuilder.append("  ");
         }
         itemsToAddTextview.setText(itemsToAddStringBuilder);

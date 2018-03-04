@@ -196,7 +196,7 @@ public class RecommendationGetter {
                     }
 
                     //we don't need the description
-                    WikiDataEntity entity = new WikiDataEntity(label, "", wikiDataID, label, WikiDataEntity.CLASSIFICATION_NOT_SET);
+                    WikiDataEntity entity = new WikiDataEntity(label, "", wikiDataID, label);
                     db.addSimilarInterest(addedInterest.getWikiDataID(), entity);
                     db.addSimilarInterest(entity.getWikiDataID(), addedInterest);
                 }

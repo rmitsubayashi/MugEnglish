@@ -31,7 +31,7 @@ public class Preferences extends PreferenceFragmentCompat {
     public void onStart(){
         super.onStart();
         listener.setToolbarState(
-                new ToolbarState(getString(R.string.fragment_settings_title), false, false, null)
+                new ToolbarState(getString(R.string.fragment_settings_title), false)
         );
 
         //do these in onStart so we can handle when we change the value

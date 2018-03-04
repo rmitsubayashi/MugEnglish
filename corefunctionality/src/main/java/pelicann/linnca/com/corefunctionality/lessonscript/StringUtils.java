@@ -287,4 +287,48 @@ public final class StringUtils {
         Years age = Years.yearsBetween(birthday, now);
         return age.getYears();
     }
+
+    //with periods, if the end of the sentence
+    // ie. Martin Luther King Jr. & Leicester F.C.
+    // we shouldn't have duplicate periods. for other punctuations,
+    // it doesn't matter (we add question marks and exclamation marks
+    // after the period
+    public static String addPeriod(String sentence){
+        if (!sentence.endsWith(".")){
+            sentence = sentence + ".";
+        }
+        return sentence;
+    }
+
+    public static String zenkakuKatakanaToZenkakuHiragana(String s) {
+        StringBuilder sb = new StringBuilder(s);
+        int length = sb.length();
+        for (int i = 0; i < length; i++) {
+            char c = sb.charAt(i);
+            if (c >= 'ァ' && c <= 'ン') {
+                sb.setCharAt(i, (char)(c - 'ァ' + 'ぁ'));
+            } else if (c == 'ヵ') {
+                sb.setCharAt(i, 'か');
+            } else if (c == 'ヶ') {
+                sb.setCharAt(i, 'け');
+            } else if (c == 'ヴ') {
+                sb.setCharAt(i, 'う');
+                sb.insert(i + 1, '゛');
+                i++;
+            }
+        }
+        return sb.toString();
+    }
+
+    public static boolean containsKanji(String s){
+        int length = s.length();
+        for (int i=0; i < length; i++){
+            char c = s.charAt(i);
+            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS){
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

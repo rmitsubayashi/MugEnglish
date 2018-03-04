@@ -1,7 +1,5 @@
 package com.linnca.pelicann.userinterests;
 
-import com.linnca.pelicann.mainactivity.ToolbarSpinnerAdapter;
-
 import org.junit.Before;
 import org.junit.Test;
 

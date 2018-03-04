@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
-import pelicann.linnca.com.corefunctionality.lessonscript.ScriptSentence;
+import pelicann.linnca.com.corefunctionality.lessonscript.ScriptSpeaker;
 
 class LessonScriptSentenceItemViewHolder extends RecyclerView.ViewHolder {
     private final TextView iconTextView;
@@ -26,7 +26,7 @@ class LessonScriptSentenceItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     void setIcon(String speaker, int attrResID){
-        if (speaker.equals(ScriptSentence.SPEAKER_NONE)){
+        if (speaker.equals(ScriptSpeaker.SPEAKER_NONE)){
             iconTextView.setVisibility(View.INVISIBLE);
             //placeholder
             iconTextView.setText("I");

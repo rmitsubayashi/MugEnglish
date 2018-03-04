@@ -8,22 +8,15 @@ public class WikiDataEntity implements Serializable{
 	private String wikiDataID;
 	private String description;
 	private String pronunciation;
-	private int classification;
-
-	public static final int CLASSIFICATION_PERSON = 0;
-	public static final int CLASSIFICATION_PLACE = 1;
-	public static final int CLASSIFICATION_OTHER = 2;
-	public static final int CLASSIFICATION_NOT_SET = -1;
 	
 	public WikiDataEntity(){
 	}
 
-	public WikiDataEntity(String label, String description, String wikiDataID, String pronunciation, int classification){
+	public WikiDataEntity(String label, String description, String wikiDataID, String pronunciation){
 		this.label = label;
 		this.description = description;
 		this.wikiDataID = wikiDataID;
 		this.pronunciation = pronunciation;
-		this.classification = classification;
 	}
 
 	public WikiDataEntity(WikiDataEntity copy){
@@ -31,7 +24,6 @@ public class WikiDataEntity implements Serializable{
 		this.description = copy.description;
 		this.wikiDataID = copy.wikiDataID;
 		this.pronunciation = copy.pronunciation;
-		this.classification = copy.classification;
 	}
 
 	public void setLabel(String label){
@@ -62,14 +54,6 @@ public class WikiDataEntity implements Serializable{
 
 	public void setPronunciation(String pronunciation) {
 		this.pronunciation = pronunciation;
-	}
-
-	public int getClassification() {
-		return classification;
-	}
-
-	public void setClassification(int classification) {
-		this.classification = classification;
 	}
 
 	//when we retrieve data from WikiData and want to get the ID

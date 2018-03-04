@@ -38,23 +38,13 @@ class UserInterestViewHolder  extends RecyclerView.ViewHolder {
         this.description.setText(description);
     }
 
-    void setIcon(int classification, boolean selected){
+    void setSelected(boolean selected){
         if (selected){
             icon.setImageResource(R.drawable.ic_check_circle);
-            return;
-        }
-        switch (classification){
-            case WikiDataEntity.CLASSIFICATION_PERSON:
-                icon.setImageResource(R.drawable.ic_person);
-                break;
-            case WikiDataEntity.CLASSIFICATION_PLACE:
-                icon.setImageResource(R.drawable.ic_places);
-                break;
-            case WikiDataEntity.CLASSIFICATION_OTHER:
-                icon.setImageResource(R.drawable.ic_other);
-                break;
-            default:
-                icon.setImageResource(R.drawable.ic_other);
+            itemView.setBackgroundResource(R.drawable.gray_button);
+        } else {
+            icon.setImageDrawable(null);
+            itemView.setBackgroundResource(R.drawable.transparent_button);
         }
     }
 

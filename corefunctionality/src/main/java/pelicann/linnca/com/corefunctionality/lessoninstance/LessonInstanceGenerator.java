@@ -43,9 +43,6 @@ public abstract class LessonInstanceGenerator {
     //makes sure we are not giving duplicate entity property data
     // from previous instances of the user.
     private final Set<EntityPropertyData> userPreviousEntityPropertyData = new HashSet<>();
-    //a category to search for so we don't have to search every user interest.
-    // i.e. people, places, other
-    protected int categoryOfQuestion;
     //what to do after we finish creating an instance
     private LessonInstanceGeneratorListener lessonListener;
 
@@ -91,17 +88,7 @@ public abstract class LessonInstanceGenerator {
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onUserInterestsQueried(List<WikiDataEntity> queriedUserInterests) {
-                userInterests = Collections.synchronizedSet(new HashSet<WikiDataEntity>(
-                        queriedUserInterests.size())
-                );
-                for (WikiDataEntity interest : queriedUserInterests){
-                    //filter by category so we don't have to search for user interests
-                    // that are guaranteed not to work
-                    if (interest.getClassification() == categoryOfQuestion ||
-                            interest.getClassification() == WikiDataEntity.CLASSIFICATION_NOT_SET) {
-                        userInterests.add(interest);
-                    }
-                }
+                userInterests = Collections.synchronizedSet(new HashSet<>(queriedUserInterests));
 
                 populateSimilarUserInterests();
             }

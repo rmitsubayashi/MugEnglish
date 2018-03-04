@@ -20,19 +20,25 @@ public class Instance_introduction_age extends LessonInstanceGenerator {
     public Instance_introduction_age(){
         super();
         super.uniqueEntities = 1;
-        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = Introduction_age.KEY;
     }
 
     @Override
     protected String getSPARQLQuery(){
-        return "SELECT ?person ?personLabel ?personENLabel " +
+        return "SELECT DISTINCT ?person ?personLabel ?personENLabel " +
+                " ?firstNameLabel ?firstNameENLabel " +
+                " ?picLabel " +
                 " ?birthday " +
                 "WHERE " +
                 "{" +
                 "    ?person   wdt:P569   ?birthday; " + //has a birthday
                 "              rdfs:label ?personENLabel . " +
+                "    OPTIONAL { ?person    wdt:P735   ?firstName . " + //first name if possible
+                "               ?firstName rdfs:label ?firstNameENLabel } . " +
+                "    OPTIONAL { ?person    wdt:P18    ?pic } . " + //image if possible
                 "    FILTER (LANG(?personENLabel) = '" +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
+                "    FILTER (LANG(?firstNameENLabel) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" + //JP label if possible
@@ -53,16 +59,34 @@ public class Instance_introduction_age extends LessonInstanceGenerator {
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personENLabel");
+            String firstNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameENLabel");
+            if (firstNameEN == null || firstNameEN.equals("")){
+                firstNameEN = personEN;
+            }
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
+            String firstNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameLabel");
+            if (firstNameJP == null || firstNameJP.equals("")){
+                firstNameJP = personJP;
+            }
             Translation personTranslation = new Translation(personEN, personJP);
+            Translation firstNameTranslation = new Translation(firstNameEN, firstNameJP);
             String birthday = SPARQLDocumentParserHelper.findValueByNodeName(head, "birthday");
             //we only need the date, not the time
             birthday = birthday.substring(0, 10);
             Translation birthdayTranslation = new Translation(birthday, birthday);
+            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "picLabel");
+            if (pic == null || pic.equals("")){
+                pic = Translation.NONE;
+            } else {
+                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
+            }
+            Translation picTranslation = new Translation(pic, pic);
 
             List<Translation> properties = new ArrayList<>();
             properties.add(personTranslation);
             properties.add(birthdayTranslation);
+            properties.add(picTranslation);
+            properties.add(firstNameTranslation);
             EntityPropertyData entityPropertyData = new EntityPropertyData();
             entityPropertyData.setLessonKey(lessonKey);
             entityPropertyData.setWikidataID(personID);

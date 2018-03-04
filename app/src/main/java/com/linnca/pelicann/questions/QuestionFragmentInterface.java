@@ -102,7 +102,7 @@ public abstract class QuestionFragmentInterface extends Fragment {
         super.onStart();
         questionListener.setToolbarState(
                 new ToolbarState(getContext().getString(R.string.question_title, questionNumber, totalQuestions),
-                        false, false, null)
+                        false)
         );
     }
 

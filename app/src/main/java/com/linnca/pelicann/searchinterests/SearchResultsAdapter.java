@@ -2,7 +2,6 @@ package com.linnca.pelicann.searchinterests;
 
 import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -251,7 +250,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void showRecommendations(List<WikiDataEntity> newList, boolean showFooter){
-        Log.d("SEARCH RESULTS ADAPTER", "showing recommencations");
         //if the header and footer is shown, that means we are already showing the user
         // recommendations. so, instead of refreshing a new set of recommendation,
         //insert the data so we can animate it better.

@@ -35,7 +35,7 @@ public class ReviewResults extends Fragment {
     public void onStart(){
         super.onStart();
         listener.setToolbarState(
-                new ToolbarState(getString(R.string.results_app_bar_title), false, false, null)
+                new ToolbarState(getString(R.string.results_app_bar_title), false)
         );
     }
 

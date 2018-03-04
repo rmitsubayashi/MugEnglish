@@ -83,7 +83,6 @@
             android:background="@drawable/transparent_button"
             android:text="@string/onboarding_finish"
             android:textColor="@color/gray500"
-            android:enabled="false"
             android:visibility="gone"/>
 
         <Button

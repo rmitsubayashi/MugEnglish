@@ -4,6 +4,8 @@ public class Translation {
     private String english;
     private String japanese;
 
+    public static final String NONE = "@none";
+
     public Translation(){}
 
     public Translation(String english, String japanese) {

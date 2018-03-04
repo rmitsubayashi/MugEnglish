@@ -70,7 +70,7 @@ public class VocabularyList extends Fragment {
     public void onStart(){
         super.onStart();
         listener.setToolbarState(new ToolbarState(getString(R.string.fragment_vocabulary_list_title),
-                false, false, null));
+                false));
 
         populateList();
         actionModeCallback = getActionModeCallback();

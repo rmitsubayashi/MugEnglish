@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.GUIUtils;
-import com.linnca.pelicann.mainactivity.ToolbarSpinnerAdapter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,9 +19,8 @@ class UserInterestAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
     private final UserInterestAdapterListener listener;
-    private final UserInterestFilter userInterestFilter = new UserInterestFilter();
     private HashSet<Integer> selectedDataPositions = new HashSet<>();
-
+    private List<WikiDataEntity> userInterests = new ArrayList<>();
     static final String EMPTY_STATE_TAG = "empty state";
     static final String NO_NETWORK_TAG = "no network";
     private final int emptyStateViewType = 1;
@@ -43,17 +41,17 @@ class UserInterestAdapter
 
     @Override
     public int getItemCount(){
-        return userInterestFilter.size();
+        return userInterests.size();
     }
 
     @Override
     public long getItemId(int position){
-        return userInterestFilter.get(position).hashCode();
+        return userInterests.get(position).hashCode();
     }
 
     @Override
     public int getItemViewType(int position){
-        WikiDataEntity item = userInterestFilter.get(position);
+        WikiDataEntity item = userInterests.get(position);
         switch (item.getWikiDataID()){
             case EMPTY_STATE_TAG :
                 return emptyStateViewType;
@@ -106,18 +104,12 @@ class UserInterestAdapter
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position){
         if (holder instanceof UserInterestViewHolder) {
-            final WikiDataEntity data = userInterestFilter.get(position);
+            final WikiDataEntity data = userInterests.get(position);
             ((UserInterestViewHolder)holder).setLabel(data.getLabel());
             ((UserInterestViewHolder)holder).setDescription(data.getDescription());
             boolean isSelected = isSelected(position);
-            ((UserInterestViewHolder)holder).setIcon(data.getClassification(), isSelected);
             ((UserInterestViewHolder)holder).setWikiDataEntity(data);
-
-            if (isSelected) {
-                holder.itemView.setBackgroundResource(R.drawable.gray_button);
-            } else {
-                holder.itemView.setBackgroundResource(R.drawable.transparent_button);
-            }
+            ((UserInterestViewHolder) holder).setSelected(isSelected);
         }
 
     }
@@ -143,7 +135,7 @@ class UserInterestAdapter
     List<WikiDataEntity> getSelectedItems(){
         List<WikiDataEntity> copyList = new ArrayList<>(selectedDataPositions.size());
         for (Integer selectedItemPosition : selectedDataPositions){
-            WikiDataEntity selectedItem = userInterestFilter.get(selectedItemPosition);
+            WikiDataEntity selectedItem = userInterests.get(selectedItemPosition);
             WikiDataEntity copy = new WikiDataEntity(selectedItem);
             copyList.add(copy);
         }
@@ -166,41 +158,47 @@ class UserInterestAdapter
         if (updatedList.size() == 0){
             WikiDataEntity emptyState = new WikiDataEntity();
             emptyState.setWikiDataID(EMPTY_STATE_TAG);
-            updatedList.add(emptyState);
-            userInterestFilter.setUserInterests(updatedList);
+            userInterests.clear();
+            userInterests.add(emptyState);
             notifyDataSetChanged();
             return;
         }
         //just update if the displayed list is empty
         //(can be the initial call or just if there is nothing on
         // the screen now)
-        if (userInterestFilter.size() == 0){
-            userInterestFilter.setUserInterests(updatedList);
+        if (userInterests.size() == 1 &&
+                (userInterests.get(0).getWikiDataID().equals(EMPTY_STATE_TAG) ||
+                userInterests.get(0).getWikiDataID().equals(NO_NETWORK_TAG) )
+                ){
+            userInterests.clear();
+            userInterests.addAll(updatedList);
             notifyDataSetChanged();
             return;
         }
 
         //if there is something on the screen,
-        // the list of user interests have changed (!not filtered!)
+        // the list of user interests have changed
+        // because the user removed / undo-ed a remove operation.
         // so animate the inserted/removed items.
         //save the previous list so we can animate
         List<WikiDataEntity> originalList = new ArrayList<>(
-                userInterestFilter.getFilteredList());
+                userInterests);
         //updating the user interests takes care of filtering as well
-        userInterestFilter.setUserInterests(updatedList);
+        userInterests.clear();
+        userInterests.addAll(updatedList);
 
         int prevListSize = originalList.size();
-        int updatedListSize = userInterestFilter.size();
+        int updatedListSize = userInterests.size();
 
         //we should remove
         if (prevListSize > updatedListSize){
-            removeItemsAnimation(originalList, userInterestFilter.getFilteredList());
+            removeItemsAnimation(originalList, userInterests);
             return;
         }
 
         //we should add
         if (prevListSize < updatedListSize){
-            addItemsAnimation(originalList, userInterestFilter.getFilteredList());
+            addItemsAnimation(originalList, userInterests);
             return;
         }
         //this shouldn't happen because we are either
@@ -211,45 +209,12 @@ class UserInterestAdapter
 
     }
 
-    public void setFilter(int newFilter){
-        //just making sure we have the right constant
-        if (!ToolbarSpinnerAdapter.isSpinnerState(newFilter))
-            return;
-
-        //get the current state so we can
-        //animate the changes
-        int oldFilter = userInterestFilter.getFilter();
-        List<WikiDataEntity> oldFilteredList = new ArrayList<>(
-                userInterestFilter.getFilteredList());
-        userInterestFilter.setFilter(newFilter);
-        //should animate filtered list,
-        //but only when it goes from all to something else or vice versa
-        // since the rest is mutually exclusive??
-        //i.e. if we go from people to places, since there will be no items in common,
-        // animating will just remove all items and then add the new ones
-
-        //we want to remove items
-        if (oldFilter == ToolbarSpinnerAdapter.FILTER_ALL){
-            removeItemsAnimation(oldFilteredList, userInterestFilter.getFilteredList());
-            return;
-        }
-        //we want to add items
-        if (newFilter == ToolbarSpinnerAdapter.FILTER_ALL){
-            addItemsAnimation(oldFilteredList, userInterestFilter.getFilteredList());
-            return;
-        }
-
-        //the rest
-        notifyDataSetChanged();
-
-    }
-
     void setOffline(){
-        List<WikiDataEntity> noNetworkList = new ArrayList<>(1);
         WikiDataEntity noNetwork = new WikiDataEntity();
         noNetwork.setWikiDataID(NO_NETWORK_TAG);
-        noNetworkList.add(noNetwork);
-        setInterests(noNetworkList);
+        userInterests.clear();
+        userInterests.add(noNetwork);
+        notifyDataSetChanged();
     }
 
     private void removeItemsAnimation(List<WikiDataEntity> oldList, List<WikiDataEntity> newList){

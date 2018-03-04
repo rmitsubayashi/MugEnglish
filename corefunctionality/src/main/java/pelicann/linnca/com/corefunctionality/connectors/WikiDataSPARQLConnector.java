@@ -1,7 +1,5 @@
 package pelicann.linnca.com.corefunctionality.connectors;
 
-import org.w3c.dom.Document;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -22,17 +20,25 @@ public class WikiDataSPARQLConnector extends WikiBaseEndpointConnector {
 		super(language);
 	}
 
-	public static int countResults(Document doc){
-		return doc.getElementsByTagName(RESULT_TAG).getLength();
-
-	}
-
 	protected String formatURL(String parameterValue) throws Exception{
 		String languageInsertedQuery = super.formatRequestLanguage(parameterValue);
 		String url = "https://query.wikidata.org/sparql?query=";
 		//http URLs have to be in ASCII characters
 		String encodedQuery = URLEncoder.encode(languageInsertedQuery, StandardCharsets.UTF_8.name());
 		url += encodedQuery;
+		return url;
+	}
+
+	// the url given from SPARQL queries redirect 4~5 times.
+	// in Android (Glide API), it gives a too many redirects error.
+	// so, get it to a redirect string further down (not the furthest down)
+	public static String cleanImageURL(String url){
+		if (url.startsWith("http") && !url.startsWith("https")){
+			url = url.replaceFirst("http", "https");
+		}
+
+		url = url.replaceAll("%20", "_");
+
 		return url;
 	}
 }

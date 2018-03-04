@@ -9,8 +9,6 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturnsJSON;
 import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturnsXML;
@@ -40,21 +38,25 @@ public class AddUserInterestHelper {
         //current pronunciation should be the same as the label
         String pronunciation = dataToAdd.getPronunciation();
         //this means we don't have to attempt to find the pronunciation of the Kanji
-        if (!containsKanji(pronunciation)){
+        if (!StringUtils.containsKanji(pronunciation)){
+            System.out.println("not kanji");
             //There are two scenarios here.
             //1. the pronunciation only contains Hiragana / Katakana
             //2. the pronunciation is in English (the label is in English).
             //If the pronunciation is in English, no reason to try and get a Japanese
             // pronunciation so leave it in English so we can order in English.
 
-            //is in English, so don't do anything
+            //is in English, so don't do anything.
+            //alphabet will automatically be sorted alphabetically before all Japanese
+            // pronunciation (like the Android app icon sorting)
             if (StringUtils.isAlphanumeric(pronunciation)){
                 return;
             } else {
                 //we want all the pronunciation to be in hiragana so we can order
                 // lexicographically
-                String toHiragana = zenkakuKatakanaToZenkakuHiragana(pronunciation);
-                //update only if the new pronunciation is different
+                String toHiragana = StringUtils.zenkakuKatakanaToZenkakuHiragana(pronunciation);
+                //update only if the new pronunciation is different.
+                //this is to reduce calls to the DB
                 if (!toHiragana.equals(pronunciation)){
                     db.setPronunciation(dataToAdd.getWikiDataID(), toHiragana);
                 }
@@ -62,67 +64,6 @@ public class AddUserInterestHelper {
         } else {
             searchPronunciation(dataToAdd.getWikiDataID());
         }
-
-    }
-
-    public void addClassification(WikiDataEntity dataToAdd){
-        if (dataToAdd == null)
-            return;
-
-        final String dataID = dataToAdd.getWikiDataID();
-        String query = getPersonSearchQuery(dataToAdd.getWikiDataID());
-        String query2 = getPlaceSearchQuery(dataToAdd.getWikiDataID());
-        List<String> queryList = new ArrayList<>(2);
-        queryList.add(query);
-        queryList.add(query2);
-        EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
-            private AtomicInteger calledCt = new AtomicInteger(0);
-            private AtomicBoolean matched = new AtomicBoolean(false);
-            @Override
-            public boolean shouldStop() {
-                return false;
-            }
-
-            @Override
-            public void onStop() {
-
-            }
-
-            @Override
-            public void onFetchDOM(Document result) {
-                NodeList allResults = result.getElementsByTagName(
-                        WikiDataSPARQLConnector.RESULT_TAG
-                );
-                int resultLength = allResults.getLength();
-                if (resultLength > 0) {
-                    //the result can be either the person query or
-                    // the place query.
-                    String isPerson = SPARQLDocumentParserHelper.findValueByNodeName(allResults.item(0), "person");
-                    if (isPerson != null && !isPerson.equals("")){
-                        db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_PERSON);
-                    } else {
-                        db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_PLACE);
-                    }
-                    matched.set(true);
-                }
-                //2 = number of queries
-                if (calledCt.incrementAndGet() == 2){
-                    //since checking for called count and checking matched are done separately,
-                    //there is a chance something will be called in between...
-                    if (!matched.get()){
-                        //check if we found a match.
-                        //if no match, set the classification to other
-                        db.setClassification(dataID, WikiDataEntity.CLASSIFICATION_OTHER);
-                    }
-                }
-            }
-
-            @Override
-            public void onError(){
-
-            }
-        };
-        wikiBaseEndpointConnector.fetchDOMFromGetRequest(onFetchDOMListener, queryList);
 
     }
 
@@ -141,6 +82,7 @@ public class AddUserInterestHelper {
 
             @Override
             public void onFetchDOM(Document result) {
+                System.out.println("Called wikidata");
                 NodeList nodeList = result.getElementsByTagName(WikiDataSPARQLConnector.RESULT_TAG);
                 int nodeCt = nodeList.getLength();
                 //this should not happen since we are asking for the label of a given id
@@ -149,15 +91,16 @@ public class AddUserInterestHelper {
                     //first and only item
                     Node n = nodeList.item(0);
                     String pronunciation = SPARQLDocumentParserHelper.findValueByNodeName(n, "pronunciationLabel");
-                    if (pronunciation.equals(""))
+                    if (pronunciation == null || pronunciation.equals("")) {
                         pronunciation = SPARQLDocumentParserHelper.findValueByNodeName(n, "entityLabel");
+                    }
 
                     //set pronunciation to ひらがな.
                     // Since the ordering of Firebase is lexicographical,
                     // "カラオケ"　will come after "まくら"
-                    pronunciation = zenkakuKatakanaToZenkakuHiragana(pronunciation);
-
-                    if (containsKanji(pronunciation)){
+                    pronunciation = StringUtils.zenkakuKatakanaToZenkakuHiragana(pronunciation);
+                    System.out.println(pronunciation);
+                    if (StringUtils.containsKanji(pronunciation)){
                         searchMecapiForPronunciation(userInterestID, pronunciation);
                     } else {
                         db.setPronunciation(userInterestID, pronunciation);
@@ -193,7 +136,7 @@ public class AddUserInterestHelper {
                 }
 
                 //all returned queries are in カタカナ
-                pronunciationResult = zenkakuKatakanaToZenkakuHiragana(pronunciationResult);
+                pronunciationResult = StringUtils.zenkakuKatakanaToZenkakuHiragana(pronunciationResult);
                 db.setPronunciation(userInterestID, pronunciationResult);
             }
         };
@@ -203,72 +146,16 @@ public class AddUserInterestHelper {
 
     }
 
-    //not one query because multiple UNIONs time out
-    private String getPersonSearchQuery(String wikidataID){
-        return "SELECT ?person " +
-                "WHERE " +
-                "{" +
-                "  {?person wdt:P31 wd:Q5} " + //is a person
-                "  UNION {?person wdt:P31/wdt:P279* wd:Q15632617} " + //or a fictional person
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en'. } . " +
-                "  BIND (wd:" + wikidataID + " as ?person)" +
-                "}";
-    }
-
-    private String getPlaceSearchQuery(String wikidataID){
-        return "SELECT DISTINCT ?place " +
-                "WHERE " +
-                "{" +
-                "  {?place wdt:P31/wdt:P279* wd:Q2221906} " +
-                "  UNION {?place wdt:P31/wdt:P279* wd:Q3895768} . " +
-                "  SERVICE wikibase:label { bd:serviceParam wikibase:language 'en' . } " +
-                "  BIND (wd:" + wikidataID + " as ?place) " +
-                "}";
-    }
-
     private String getPronunciationQuery(String wikiDataID){
         return "SELECT DISTINCT ?entityLabel ?pronunciationLabel " +
                 "WHERE " +
                 "{ " +
-                "  ?entity ?property ?value . " +
+                "  BIND (wd:" + wikiDataID + " as ?entity) . " +
                 "  OPTIONAL {?entity wdt:P1814 ?pronunciation} . " +
                 "  SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
                 WikiBaseEndpointConnector.LANGUAGE_PLACEHOLDER + "', '" +
                 WikiBaseEndpointConnector.ENGLISH + "' } . " +
-                "  BIND (wd:" + wikiDataID + " as ?entity) " +
                 "} " +
                 "LIMIT 1";
-    }
-
-    private boolean containsKanji(String s){
-        int length = s.length();
-        for (int i=0; i < length; i++){
-            char c = s.charAt(i);
-            if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private String zenkakuKatakanaToZenkakuHiragana(String s) {
-        StringBuilder sb = new StringBuilder(s);
-        int length = sb.length();
-        for (int i = 0; i < length; i++) {
-            char c = sb.charAt(i);
-            if (c >= 'ァ' && c <= 'ン') {
-                sb.setCharAt(i, (char)(c - 'ァ' + 'ぁ'));
-            } else if (c == 'ヵ') {
-                sb.setCharAt(i, 'か');
-            } else if (c == 'ヶ') {
-                sb.setCharAt(i, 'け');
-            } else if (c == 'ヴ') {
-                sb.setCharAt(i, 'う');
-                sb.insert(i + 1, '゛');
-                i++;
-            }
-        }
-        return sb.toString();
     }
 }

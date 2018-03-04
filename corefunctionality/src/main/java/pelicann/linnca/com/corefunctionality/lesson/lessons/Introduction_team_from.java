@@ -11,6 +11,8 @@ import pelicann.linnca.com.corefunctionality.lessonscript.scripts.Script_introdu
 * 2. team city
 * 3. city
 * 4. country
+* 5. pic
+* 6. 1st name
 * */
 
 public class Introduction_team_from extends Lesson {

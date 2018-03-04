@@ -41,7 +41,7 @@ public class PreferencesDescriptionBeforeLessonWithExceptionRule extends Fragmen
     public void onStart(){
         super.onStart();
         listener.setToolbarState(
-                new ToolbarState(getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_label_short), false, false, null)
+                new ToolbarState(getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_label_short), false)
         );
     }
 

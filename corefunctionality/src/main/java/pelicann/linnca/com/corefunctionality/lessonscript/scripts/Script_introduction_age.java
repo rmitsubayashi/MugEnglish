@@ -7,10 +7,10 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
 import pelicann.linnca.com.corefunctionality.lessonscript.Script;
 import pelicann.linnca.com.corefunctionality.lessonscript.ScriptGenerator;
 import pelicann.linnca.com.corefunctionality.lessonscript.ScriptSentence;
+import pelicann.linnca.com.corefunctionality.lessonscript.ScriptSpeaker;
 import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 
 public class Script_introduction_age extends ScriptGenerator {
-
     @Override
     public Script makeScript(List<EntityPropertyData> dataList){
         EntityPropertyData data = dataList.get(0);
@@ -30,21 +30,24 @@ public class Script_introduction_age extends ScriptGenerator {
 
     private ScriptSentence scriptSentence1(EntityPropertyData data){
         ScriptSentence sentence = new ScriptSentence();
-        Translation person = data.getPropertyAt(0);
-        String sentenceEN = "Hi " + person.getEnglish() + "!";
-        String sentenceJP = "こんにちは、" + person.getJapanese() + "！";
+        Translation firstName = data.getPropertyAt(3);
+        String sentenceEN = "Hi " + firstName.getEnglish() + "!";
+        String sentenceJP = "こんにちは、" + firstName.getJapanese() + "！";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSentence.SPEAKER_USER);
+        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
         return sentence;
     }
 
     private ScriptSentence scriptSentence2(EntityPropertyData data){
         Translation person = data.getPropertyAt(0);
         ScriptSentence sentence = new ScriptSentence();
-        String sentenceEN = "Hey " + ScriptSentence.SPEAKER_USER + ".";
-        String sentenceJP = "よっ、" + ScriptSentence.SPEAKER_USER + ".";
+        String sentenceEN = "Hey " + ScriptSpeaker.SPEAKER_USER;
+        sentenceEN = StringUtils.addPeriod(sentenceEN);
+        String sentenceJP = "よっ、" + ScriptSpeaker.SPEAKER_USER + ".";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(person);
+        Translation imageURL = data.getPropertyAt(2);
+        Translation nickname = data.getPropertyAt(3);
+        sentence.setSpeaker(person, imageURL, nickname);
         return sentence;
     }
 
@@ -53,7 +56,7 @@ public class Script_introduction_age extends ScriptGenerator {
         String sentenceEN = "How have you been?";
         String sentenceJP = "元気だった？";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSentence.SPEAKER_USER);
+        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
         return sentence;
     }
 
@@ -63,7 +66,9 @@ public class Script_introduction_age extends ScriptGenerator {
         String sentenceEN = "Great. What about you?";
         String sentenceJP = "元気だったよ。君は？";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(person);
+        Translation imageURL = data.getPropertyAt(2);
+        Translation nickname = data.getPropertyAt(3);
+        sentence.setSpeaker(person, imageURL, nickname);
         return sentence;
     }
 
@@ -72,7 +77,7 @@ public class Script_introduction_age extends ScriptGenerator {
         String sentenceEN = "Meh.";
         String sentenceJP = "まあまあかな。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSentence.SPEAKER_USER);
+        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
         return sentence;
     }
 
@@ -81,7 +86,7 @@ public class Script_introduction_age extends ScriptGenerator {
         String sentenceEN = "You haven't changed a bit.";
         String sentenceJP = "君は全然変わってないね。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSentence.SPEAKER_USER);
+        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
         return sentence;
     }
 
@@ -91,7 +96,9 @@ public class Script_introduction_age extends ScriptGenerator {
         String sentenceEN = "Haha";
         String sentenceJP = "（笑）";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(person);
+        Translation imageURL = data.getPropertyAt(2);
+        Translation nickname = data.getPropertyAt(3);
+        sentence.setSpeaker(person, imageURL, nickname);
         return sentence;
     }
 
@@ -100,7 +107,7 @@ public class Script_introduction_age extends ScriptGenerator {
         String sentenceEN = "How old are you now?";
         String sentenceJP = "いま何歳？";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSentence.SPEAKER_USER);
+        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
         return sentence;
     }
 
@@ -113,7 +120,9 @@ public class Script_introduction_age extends ScriptGenerator {
         String sentenceEN = "I'm " + age + " " + year + " old.";
         String sentenceJP = age + "歳。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(person);
+        Translation imageURL = data.getPropertyAt(2);
+        Translation nickname = data.getPropertyAt(3);
+        sentence.setSpeaker(person, imageURL, nickname);
         return sentence;
     }
 }

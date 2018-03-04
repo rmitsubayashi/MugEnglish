@@ -22,20 +22,23 @@ import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 * 2. team city
 * 3. city
 * 4. country
+* 5. pic URL
+* 6. first name
 * */
 
 public class Instance_introduction_team_from extends LessonInstanceGenerator {
     public Instance_introduction_team_from(){
         super();
         super.uniqueEntities = 1;
-        super.categoryOfQuestion = WikiDataEntity.CLASSIFICATION_PERSON;
         super.lessonKey = Introduction_team_from.KEY;
 
     }
 
     @Override
     protected String getSPARQLQuery(){
-        return "SELECT ?person ?personLabel ?personENLabel " +
+        return "SELECT DISTINCT ?person ?personLabel ?personENLabel " +
+                " ?firstNameLabel ?firstNameENLabel " +
+                " ?pic " +
                 " ?teamENLabel ?teamLabel " +
                 " ?teamCityENLabel ?teamCityLabel " +
                 " ?cityENLabel ?cityLabel " +
@@ -46,6 +49,9 @@ public class Instance_introduction_team_from extends LessonInstanceGenerator {
                 "              wdt:P54           ?team ; " + //on a team
                 "              wdt:P19           ?city ; " + //from a place
                 "              rdfs:label        ?personENLabel . " +
+                "    OPTIONAL { ?person    wdt:P735   ?firstName . " + //optional first name
+                "               ?firstName rdfs:label ?firstNameENLabel } . " +
+                "    OPTIONAL { ?person    wdt:P18    ?pic } .  " + //optional picture
                 "    ?city     wdt:P17           ?country ; " + //in a country
                 "              rdfs:label        ?cityENLabel . " +
                 "    ?country  rdfs:label        ?countryENLabel . " +
@@ -55,6 +61,8 @@ public class Instance_introduction_team_from extends LessonInstanceGenerator {
                 "              rdfs:label        ?teamCityENLabel . " +
                 "   FILTER (?city != ?teamCity) . " + //make sure the city and team city are different
                 "    FILTER (LANG(?personENLabel) = '" +
+                WikiBaseEndpointConnector.ENGLISH + "') . " +
+                "    FILTER (LANG(?firstNameENLabel) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?cityENLabel) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
@@ -83,8 +91,17 @@ public class Instance_introduction_team_from extends LessonInstanceGenerator {
             String personID = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
             personID = WikiDataEntity.getWikiDataIDFromReturnedResult(personID);
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personENLabel");
+            String firstNameEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameENLabel");
+            if (firstNameEN == null || firstNameEN.equals("")){
+                firstNameEN = personEN;
+            }
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
+            String firstNameJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "firstNameLabel");
+            if (firstNameJP == null || firstNameJP.equals("")){
+                firstNameJP = personJP;
+            }
             Translation personTranslation = new Translation(personEN, personJP);
+            Translation firstNameTranslation = new Translation(firstNameEN, firstNameJP);
             String teamEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "teamENLabel");
             String teamJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "teamLabel");
             Translation teamTranslation = new Translation(teamEN, teamJP);
@@ -97,6 +114,13 @@ public class Instance_introduction_team_from extends LessonInstanceGenerator {
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryENLabel");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             Translation countryTranslation = new Translation(countryEN, countryJP);
+            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "pic");
+            if (pic == null || pic.equals("")){
+                pic = Translation.NONE;
+            } else {
+                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
+            }
+            Translation picTranslation = new Translation(pic, pic);
 
             List<Translation> properties = new ArrayList<>();
             properties.add(personTranslation);
@@ -104,6 +128,8 @@ public class Instance_introduction_team_from extends LessonInstanceGenerator {
             properties.add(teamCityTranslation);
             properties.add(cityTranslation);
             properties.add(countryTranslation);
+            properties.add(picTranslation);
+            properties.add(firstNameTranslation);
             EntityPropertyData entityPropertyData = new EntityPropertyData();
             entityPropertyData.setLessonKey(lessonKey);
             entityPropertyData.setWikidataID(personID);

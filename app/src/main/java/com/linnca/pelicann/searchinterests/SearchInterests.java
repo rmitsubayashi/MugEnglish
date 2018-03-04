@@ -29,6 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
+import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
@@ -79,7 +80,8 @@ public class SearchInterests extends Fragment {
             db = new FirebaseDB();
         }
         searchHelper = new SearchHelper(
-                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7)
+                new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7),
+                new WikiDataSPARQLConnector(WikiDataSPARQLConnector.JAPANESE)
         );
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
@@ -100,7 +102,7 @@ public class SearchInterests extends Fragment {
     public void onStart(){
         super.onStart();
         searchInterestsListener.setToolbarState(
-                new ToolbarState("", true, false, null)
+                new ToolbarState("", true)
         );
     }
 
@@ -220,7 +222,6 @@ public class SearchInterests extends Fragment {
                         //in the background thread, find the item's
                         //classification and pronunciation
                         AddUserInterestHelper addUserInterestHelper = new AddUserInterestHelper(db);
-                        addUserInterestHelper.addClassification(data);
                         addUserInterestHelper.addPronunciation(data);
 
                         //also update the list we have saved locally.

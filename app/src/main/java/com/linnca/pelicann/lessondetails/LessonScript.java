@@ -91,7 +91,7 @@ public class LessonScript extends Fragment {
             title = category.getTitleJP();
         }
         listener.setToolbarState(
-                new ToolbarState(title, false, false, null)
+                new ToolbarState(title, false)
         );
     }
 
