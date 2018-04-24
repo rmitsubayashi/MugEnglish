@@ -30,6 +30,10 @@ public abstract class LessonInstanceGenerator {
     protected int uniqueEntities;
     //how many unique entities we have left
     private int uniqueEntitiesLeft;
+    //whether we need to reference another lesson
+    protected String referenceLesson = null;
+    //which property of the lesson we need to reference
+    protected int referencePropertyIndex = 0;
     //the lesson instance we will be creating
     private final LessonInstanceData lessonInstanceData = new LessonInstanceData();
     //vocabulary words for the lesson instance
@@ -69,7 +73,44 @@ public abstract class LessonInstanceGenerator {
         this.db = db;
         this.networkConnectionChecker = networkConnectionChecker;
         uniqueEntitiesLeft = uniqueEntities;
-        startFlow();
+
+        if (!requiresOtherLessonReference()) {
+            //we look into the user's interests to find an entity
+            startFlow();
+        } else {
+            //we are using the same entity as another lesson
+            // (for story-telling consistency)
+            getOtherLessonReference();
+        }
+    }
+
+    private void getOtherLessonReference(){
+        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+            @Override
+            public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstanceData) {
+                if (lessonInstanceData.size() == 0) {
+                    //should not happen because this lesson is after
+                    // the lesson it is referencing,
+                    // but just in case
+                    return;
+                } else {
+                    LessonInstanceData instance = lessonInstanceData.get(0);
+                    List<EntityPropertyData> data = instance.getEntityPropertyData();
+                    //can we always assume 0?
+                    EntityPropertyData referenceEntityPropertyData = data.get(0);
+                    Translation referenceProperty = referenceEntityPropertyData.getPropertyAt(referencePropertyIndex);
+                    WikiDataEntity referenceWikidata = new WikiDataEntity(referenceProperty.getJapanese(),"", referenceProperty.getWikidataID(), referenceProperty.getJapanese());
+                    userInterests = new HashSet<>(1);
+                    userInterests.add(referenceWikidata);
+                    getEntityDataFromDatabase();
+                }
+            }
+            @Override
+            public void onNoConnection() {
+                super.onNoConnection();
+            }
+        };
+        db.getMostRecentLessonInstance(networkConnectionChecker, referenceLesson, onDBResultListener);
     }
 
     //the next method is inside the previous method so we can make these
@@ -286,7 +327,6 @@ public abstract class LessonInstanceGenerator {
                 //only add to the user's current set of questions if
                 //less than the remaining question count.
                 if (uniqueEntitiesLeft != 0 && lessonInstanceData.isUniqueEntity(data)) {
-                    System.out.println("added data to lesson instance");
                     lessonInstanceData.addEntityPropertyData(data);
                     uniqueEntitiesLeft--;
                 }
@@ -390,7 +430,6 @@ public abstract class LessonInstanceGenerator {
         OnDBResultListener onLessonInstanceAddedResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstanceAdded() {
-                System.out.println("added lesson instance");
                 //the lesson instance data adds
                 lessonListener.onLessonCreated(lessonInstanceData);
             }
@@ -403,7 +442,6 @@ public abstract class LessonInstanceGenerator {
                 lessonListener.onNoConnection();
             }
         };
-        System.out.println("adding lesson instance");
         db.addLessonInstance(networkConnectionChecker, lessonInstanceData,
                 lessonInstanceVocabularyWordIDs,
                 onLessonInstanceAddedResultListener);
@@ -413,5 +451,9 @@ public abstract class LessonInstanceGenerator {
     private String addEntityToQuery(String entity){
         String query = this.getSPARQLQuery();
         return String.format(query, entity);
+    }
+
+    private boolean requiresOtherLessonReference(){
+        return referenceLesson != null;
     }
 }

@@ -30,4 +30,15 @@ public final class TermAdjuster {
                 return sportsName;
         }
     }
+
+    public static boolean isMale(String genderID){
+        switch (genderID){
+            case "Q6581097":
+                return true;
+            case "Q6581072":
+                return false;
+            default:
+                return true;
+        }
+    }
 }

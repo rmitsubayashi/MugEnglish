@@ -17,7 +17,6 @@ public abstract class Lesson {
     protected LessonInstanceGenerator lessonInstanceGenerator;
     protected ScriptGenerator scriptGenerator;
     protected QuestionGenerator questionGenerator;
-    //question
 
     public void createLessonInstance(EndpointConnectorReturnsXML connector, Database db,
                                      LessonInstanceGenerator.LessonInstanceGeneratorListener lessonListener,

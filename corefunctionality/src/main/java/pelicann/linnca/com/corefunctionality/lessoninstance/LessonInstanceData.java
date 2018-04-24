@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-//used in lessonDetails to display each instance and start the questions
+//used by the script to read data
 public class LessonInstanceData implements Serializable{
     private String id;
     private String lessonKey;

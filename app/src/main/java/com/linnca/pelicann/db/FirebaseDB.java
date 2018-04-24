@@ -207,7 +207,6 @@ public class FirebaseDB extends Database {
         }
     }
 
-    //TODO vocabulary
     @Override
     public void addEntityPropertyData(String lessonKey, List<EntityPropertyData> data, OnDBResultListener onDBResultListener){
         DatabaseReference entityPropertyDataRef = FirebaseDatabase.getInstance().getReference(

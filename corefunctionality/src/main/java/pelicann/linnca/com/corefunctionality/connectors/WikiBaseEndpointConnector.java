@@ -84,7 +84,7 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 							executor.shutdownNow();
 							//just in case a non-killed thread tries
 							// to call onStop
-							if (onStopCalled.getAndSet(true)) {
+							if (!onStopCalled.getAndSet(true)) {
 								listener.onStop();
 							}
 						}

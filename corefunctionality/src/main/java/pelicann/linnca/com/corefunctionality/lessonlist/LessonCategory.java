@@ -8,14 +8,17 @@ public class LessonCategory implements Serializable{
     private String key;
     private String titleJP;
     private List<String> lessonKeys = new ArrayList<>();
+    private boolean personConsistency;
 
     public LessonCategory() {
     }
 
-    public LessonCategory(String key, String titleJP, List<String> lessonKeys) {
+    public LessonCategory(String key, String titleJP, List<String> lessonKeys,
+                          boolean personConsistency) {
         this.key = key;
         this.titleJP = titleJP;
         this.lessonKeys = lessonKeys;
+        this.personConsistency = personConsistency;
     }
 
     public String getKey() {
@@ -32,6 +35,14 @@ public class LessonCategory implements Serializable{
 
     public void setTitleJP(String titleJP) {
         this.titleJP = titleJP;
+    }
+
+    public boolean isPersonConsistent() {
+        return personConsistency;
+    }
+
+    public void setPersonConsistency(boolean personConsistency) {
+        this.personConsistency = personConsistency;
     }
 
     public void addLessonKey(String lessonKey){

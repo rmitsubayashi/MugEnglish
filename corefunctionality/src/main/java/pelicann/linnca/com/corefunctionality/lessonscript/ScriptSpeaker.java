@@ -37,6 +37,14 @@ public class ScriptSpeaker {
         );
     }
 
+    public static ScriptSpeaker getGuestSpeaker(int number){
+        return new ScriptSpeaker(
+                new Translation(SPEAKER_USER + number, SPEAKER_USER + number), null,
+                new Translation(SPEAKER_USER + number, SPEAKER_USER + number)
+        );
+
+    }
+
     public Translation getName() {
         return name;
     }

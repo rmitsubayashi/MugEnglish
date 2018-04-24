@@ -3,6 +3,11 @@ package pelicann.linnca.com.corefunctionality.lessoninstance;
 public class Translation {
     private String english;
     private String japanese;
+    //if we ever want to reference this in another lesson
+    private String wikidataID;
+
+    public static final int MALE = 1;
+    public static final int FEMALE = 2;
 
     public static final String NONE = "@none";
 
@@ -27,6 +32,31 @@ public class Translation {
 
     public void setJapanese(String japanese) {
         this.japanese = japanese;
+    }
+
+    public String getWikidataID() {
+        return wikidataID;
+    }
+
+    public void setWikidataID(String wikidataID) {
+        this.wikidataID = wikidataID;
+    }
+
+    //util for gender (we will be using a lot of gender)
+    public void setGenderPronoun(int gender){
+        switch (gender){
+            case MALE :
+                this.english = "he";
+                this.japanese = "彼";
+                break;
+            case FEMALE :
+                this.english = "she";
+                this.japanese = "彼女";
+                break;
+            default :
+                this.english = "he";
+                this.japanese = "彼";
+        }
     }
 
     //some of the exact translations may change over time.
