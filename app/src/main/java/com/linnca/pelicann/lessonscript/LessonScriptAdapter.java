@@ -1,4 +1,4 @@
-package com.linnca.pelicann.lessondetails;
+package com.linnca.pelicann.lessonscript;
 
 import android.speech.tts.TextToSpeech;
 import android.support.v7.widget.RecyclerView;
@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +20,7 @@ import pelicann.linnca.com.corefunctionality.lessonscript.ScriptSpeaker;
 
 public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ScriptSentence> sentences;
+    private String imageURL;
     private final String SENTENCE_INFO_TAG = "sentenceInfo";
     private final int SENTENCE_INFO_VIEW_TYPE = 1;
     private final String GO_TO_QUESTION_TAG = "goToQuestion";
@@ -28,8 +28,8 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int SENTENCE_VIEW_TYPE = 3;
     private final String LESSON_NUMBER_TOGGLE_TAG = "lessonNumberToggle";
     private final int LESSON_NUMBER_TOGGLE_VIEW_TYPE = 4;
-    private final String SPEAKER_INFO_TAG = "speakerInfo";
-    private final int SPEAKER_INFO_TYPE = 5;
+    private final String IMAGE_TAG = "image";
+    private final int IMAGE_TYPE = 5;
 
     private int sentenceIndexOfCurrentlyShownInfo = -1;
     //int = index
@@ -54,6 +54,7 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.textToSpeech = tts;
         this.listener = listener;
         this.sentences = new LinkedList<>(script.getSentences());
+        this.imageURL = script.getImageURL();
         setSpeakers(this.sentences);
         addNonSentenceRows();
     }
@@ -73,8 +74,8 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 return GO_TO_QUESTION_VIEW_TYPE;
             case LESSON_NUMBER_TOGGLE_TAG:
                 return LESSON_NUMBER_TOGGLE_VIEW_TYPE;
-            case SPEAKER_INFO_TAG:
-                return SPEAKER_INFO_TYPE;
+            case IMAGE_TAG:
+                return IMAGE_TYPE;
             default:
                 return SENTENCE_VIEW_TYPE;
         }
@@ -82,6 +83,7 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     void updateScript(Script script, int lessonNumber, LessonScriptAdapterListener listener){
         this.sentences = new LinkedList<>(script.getSentences());
+        this.imageURL = script.getImageURL();
         this.speakerIndices.clear();
         setSpeakers(this.sentences);
         this.sentenceIndexOfCurrentlyShownInfo = -1;
@@ -122,7 +124,7 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         sentences.add(0, lessonNumberToggle);
 
         ScriptSentence speakerInfo = new ScriptSentence();
-        speakerInfo.setSentence(SPEAKER_INFO_TAG, SPEAKER_INFO_TAG);
+        speakerInfo.setSentence(IMAGE_TAG, IMAGE_TAG);
         sentences.add(1, speakerInfo);
     }
 
@@ -148,10 +150,10 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 itemView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.inflatable_lesson_script_lesson_toggle, parent, false);
                 return new LessonScriptToggleViewHolder(itemView);
-            case SPEAKER_INFO_TYPE:
+            case IMAGE_TYPE:
                 itemView = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.inflatable_lesson_script_speaker_images, parent, false);
-                return new LessonScriptSpeakerImagesViewHolder(itemView);
+                        .inflate(R.layout.inflatable_lesson_script_image, parent, false);
+                return new LessonScriptImageViewHolder(itemView);
             default:
                 itemView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.inflatable_lesson_script_sentence_item, parent, false);
@@ -188,20 +190,18 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             int colorAttrID = getSpeakerColorAttrID(speakerIndex);
             ((LessonScriptSentenceExtraInfoViewHolder) holder).setBackgroundColor(colorAttrID);
             ((LessonScriptSentenceExtraInfoViewHolder) holder).setTranslation(sentence.getSentenceJP());
-            ((LessonScriptSentenceExtraInfoViewHolder) holder).setContent(sentence.getExtraInfo());
+            String speaker = sentence.getSpeaker().getName().getJapanese();
+            if (ScriptSpeaker.isGuestSpeaker(speaker)){
+                speaker = Integer.toString(ScriptSpeaker.getGuestSpeakerNumber(speaker));
+            }
+            //'~' so we can better differentiate speaker and translation
+            ((LessonScriptSentenceExtraInfoViewHolder) holder).setContent("~ " + speaker + " ~");
         } else if (holder instanceof LessonScriptToggleViewHolder){
             ((LessonScriptToggleViewHolder) holder).setLessonToggleButton(lessonToggleEnabled,
                     lessonNumber, totalLessonCt, listener);
             ((LessonScriptToggleViewHolder) holder).setLessonNumber(lessonNumber, totalLessonCt);
-        } else if (holder instanceof LessonScriptSpeakerImagesViewHolder){
-            List<ScriptSpeaker> allSpeakers = new ArrayList<>(speakerIndices.size());
-            List<Integer> colorAttrIDs = new ArrayList<>(speakerIndices.size());
-            for (Map.Entry<ScriptSpeaker, Integer> entry : speakerIndices.entrySet()){
-                allSpeakers.add(entry.getKey());
-                colorAttrIDs.add(getSpeakerColorAttrID(entry.getValue()));
-
-            }
-            ((LessonScriptSpeakerImagesViewHolder) holder).setSpeakerCards(allSpeakers, colorAttrIDs);
+        } else if (holder instanceof LessonScriptImageViewHolder){
+            ((LessonScriptImageViewHolder) holder).setImage(imageURL);
         }
     }
 

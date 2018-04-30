@@ -18,6 +18,12 @@ public class Translation {
         this.japanese = japanese;
     }
 
+    public Translation(String wikidataID, String english, String japanese) {
+        this.wikidataID = wikidataID;
+        this.english = english;
+        this.japanese = japanese;
+    }
+
     public String getEnglish() {
         return english;
     }

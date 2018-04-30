@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Script implements Serializable {
     private List<ScriptSentence> sentences = new ArrayList<>();
+    private String imageURL;
 
     public Script() {
     }
@@ -18,4 +19,11 @@ public class Script implements Serializable {
         return sentences;
     }
 
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
 }

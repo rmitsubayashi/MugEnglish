@@ -12,18 +12,18 @@ public class EntityPropertyData {
     //all the properties needed for a lesson.
     //order matters.
     private List<Translation> properties;
-    private List<String> vocabularyIDs;
+    private String imageURL = null;
 
     public EntityPropertyData() {
     }
 
     public EntityPropertyData(String key, String lessonKey, String wikidataID,
-                              List<Translation> properties, List<String> vocabularyIDs) {
+                              List<Translation> properties, String imageURL) {
         this.key = key;
         this.lessonKey = lessonKey;
         this.wikidataID = wikidataID;
         this.properties = properties;
-        this.vocabularyIDs = vocabularyIDs;
+        this.imageURL = imageURL;
     }
 
     public EntityPropertyData(EntityPropertyData copy){
@@ -31,7 +31,7 @@ public class EntityPropertyData {
         this.lessonKey = copy.lessonKey;
         this.wikidataID = copy.wikidataID;
         this.properties = new ArrayList<>(copy.properties);
-        this.vocabularyIDs = new ArrayList<>(copy.vocabularyIDs);
+        this.imageURL = copy.imageURL;
     }
 
     public String getKey() {
@@ -65,12 +65,12 @@ public class EntityPropertyData {
         return properties.get(index);
     }
 
-    public List<String> getVocabularyIDs() {
-        return vocabularyIDs;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setVocabularyIDs(List<String> vocabularyIDs) {
-        this.vocabularyIDs = vocabularyIDs;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public String getWikidataID() {

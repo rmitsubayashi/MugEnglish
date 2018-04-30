@@ -1,4 +1,4 @@
-package com.linnca.pelicann.lessondetails;
+package com.linnca.pelicann.lessonscript;
 
 import com.bumptech.glide.module.AppGlideModule;
 

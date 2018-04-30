@@ -1,4 +1,4 @@
-package com.linnca.pelicann.lessondetails;
+package com.linnca.pelicann.lessonscript;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

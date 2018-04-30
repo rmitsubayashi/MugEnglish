@@ -40,18 +40,12 @@ public class ScriptSentence implements Serializable {
 
     public Translation getSpeakerName(){ return speaker.getName(); }
 
-    public String getSpeakerImageURL(){
-        return speaker.getImageURL();
-    }
 
     public void setSpeaker(ScriptSpeaker speaker) {
         this.speaker = speaker;
     }
 
-    public void setSpeaker(Translation speaker, Translation imageURL, Translation nickname){
-        if (imageURL == null){
-            imageURL = new Translation(ScriptSpeaker.IMAGE_NONE, ScriptSpeaker.IMAGE_NONE);
-        }
-        this.speaker = new ScriptSpeaker(speaker, imageURL, nickname);
+    public void setSpeaker(Translation speaker, Translation nickname){
+        this.speaker = new ScriptSpeaker(speaker, nickname);
     }
 }

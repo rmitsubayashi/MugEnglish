@@ -71,22 +71,20 @@ public class Instance_food_restaurant extends LessonInstanceGenerator {
             } else {
                 ingredientTranslation = new Translation(ingredientEN, ingredientJP);
             }
-            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "picLabel");
-            if (pic == null || pic.equals("")){
-                pic = Translation.NONE;
-            } else {
-                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
-            }
-            Translation picTranslation = new Translation(pic, pic);
 
             List<Translation> properties = new ArrayList<>();
             properties.add(foodTranslation);
             properties.add(ingredientTranslation);
-            properties.add(picTranslation);
             EntityPropertyData entityPropertyData = new EntityPropertyData();
             entityPropertyData.setLessonKey(lessonKey);
             entityPropertyData.setWikidataID(foodID);
             entityPropertyData.setProperties(properties);
+
+            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "picLabel");
+            if (pic != null && !pic.equals("")){
+                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
+            }
+            entityPropertyData.setImageURL(pic);
 
             newEntityPropertyData.add(entityPropertyData);
         }

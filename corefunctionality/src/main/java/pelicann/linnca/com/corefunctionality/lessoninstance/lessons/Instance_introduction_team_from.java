@@ -114,13 +114,6 @@ public class Instance_introduction_team_from extends LessonInstanceGenerator {
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryENLabel");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             Translation countryTranslation = new Translation(countryEN, countryJP);
-            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "pic");
-            if (pic == null || pic.equals("")){
-                pic = Translation.NONE;
-            } else {
-                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
-            }
-            Translation picTranslation = new Translation(pic, pic);
 
             List<Translation> properties = new ArrayList<>();
             properties.add(personTranslation);
@@ -128,12 +121,17 @@ public class Instance_introduction_team_from extends LessonInstanceGenerator {
             properties.add(teamCityTranslation);
             properties.add(cityTranslation);
             properties.add(countryTranslation);
-            properties.add(picTranslation);
             properties.add(firstNameTranslation);
             EntityPropertyData entityPropertyData = new EntityPropertyData();
             entityPropertyData.setLessonKey(lessonKey);
             entityPropertyData.setWikidataID(personID);
             entityPropertyData.setProperties(properties);
+
+            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "pic");
+            if (pic != null && !pic.equals("")){
+                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
+            }
+            entityPropertyData.setImageURL(pic);
 
             newEntityPropertyData.add(entityPropertyData);
         }

@@ -27,7 +27,7 @@ public class Instance_food_tv_introduction extends LessonInstanceGenerator {
     @Override
     protected String getSPARQLQuery(){
         return "SELECT DISTINCT ?person ?personLabel ?personENLabel " +
-                " ?countryLabel ?countryENLabel " +
+                " ?country ?countryLabel ?countryENLabel " +
                 " ?food ?foodLabel ?foodENLabel " +
                 " ?gender " +
                 " ?picLabel " +
@@ -70,9 +70,12 @@ public class Instance_food_tv_introduction extends LessonInstanceGenerator {
             String personEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "personENLabel");
             String personJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
             Translation personTranslation = new Translation(personEN, personJP);
+            String countryID = SPARQLDocumentParserHelper.findValueByNodeName(head, "country");
+            countryID = WikiDataEntity.getWikiDataIDFromReturnedResult(countryID);
             String countryEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryENLabel");
             String countryJP = SPARQLDocumentParserHelper.findValueByNodeName(head, "countryLabel");
             Translation countryTranslation = new Translation(countryEN, countryJP);
+            countryTranslation.setWikidataID(countryID);
             String foodID = SPARQLDocumentParserHelper.findValueByNodeName(head, "food");
             foodID = WikiDataEntity.getWikiDataIDFromReturnedResult(foodID);
             String foodEN = SPARQLDocumentParserHelper.findValueByNodeName(head, "foodENLabel");
@@ -85,24 +88,22 @@ public class Instance_food_tv_introduction extends LessonInstanceGenerator {
             boolean isMale = TermAdjuster.isMale(gender);
             Translation genderTranslation = new Translation();
             genderTranslation.setGenderPronoun(isMale ? Translation.MALE : Translation.FEMALE);
-            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "picLabel");
-            if (pic == null || pic.equals("")){
-                pic = Translation.NONE;
-            } else {
-                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
-            }
-            Translation picTranslation = new Translation(pic, pic);
 
             List<Translation> properties = new ArrayList<>();
             properties.add(personTranslation);
             properties.add(countryTranslation);
             properties.add(foodTranslation);
             properties.add(genderTranslation);
-            properties.add(picTranslation);
             EntityPropertyData entityPropertyData = new EntityPropertyData();
             entityPropertyData.setLessonKey(lessonKey);
             entityPropertyData.setWikidataID(personID);
             entityPropertyData.setProperties(properties);
+
+            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "picLabel");
+            if (pic != null && !pic.equals("")){
+                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
+            }
+            entityPropertyData.setImageURL(pic);
 
             newEntityPropertyData.add(entityPropertyData);
         }

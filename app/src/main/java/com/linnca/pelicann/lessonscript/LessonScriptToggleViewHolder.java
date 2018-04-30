@@ -1,4 +1,4 @@
-package com.linnca.pelicann.lessondetails;
+package com.linnca.pelicann.lessonscript;
 
 import android.content.Context;
 import android.support.v4.content.ContextCompat;

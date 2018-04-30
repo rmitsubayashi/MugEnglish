@@ -9,7 +9,7 @@ import android.support.v7.preference.PreferenceScreen;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessoncategorylist.LessonCategoryList;
-import com.linnca.pelicann.lessondetails.LessonScript;
+import com.linnca.pelicann.lessonscript.LessonScript;
 import com.linnca.pelicann.preferences.Preferences;
 import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExceptionRule;
 import com.linnca.pelicann.questions.QuestionFragmentFactory;

@@ -7,6 +7,15 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.FeedbackPair;
 
 public class QuestionFeedbackFormatter {
     public static String formatFeedback(boolean correct, QuestionData questionData, String response, List<String> previousResponses){
+        //first check if we give feedback regardless.
+        // (used when the user inputs a free-form answer)
+        List<FeedbackPair> feedback = questionData.getFeedback();
+        for (FeedbackPair pair : feedback){
+            if (pair.getResponse().contains(FeedbackPair.ALL)){
+                return pair.getFeedback();
+            }
+        }
+
         if (correct)
             return formatCorrectFeedback(questionData, response);
         else {

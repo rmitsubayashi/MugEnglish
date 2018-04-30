@@ -9,7 +9,6 @@ public class ScriptSpeaker {
     // something like 'Hey Yuto' rather than
     // 'Hey Yuto Nagatomo'
     private Translation nickname;
-    private String imageURL;
 
     public static String SPEAKER_USER = "@user";
     public static String SPEAKER_NONE = "@noSpeaker";
@@ -19,30 +18,27 @@ public class ScriptSpeaker {
     public ScriptSpeaker() {
     }
 
-    public ScriptSpeaker(Translation name, Translation imageURL, Translation nickname) {
+    public ScriptSpeaker(Translation name, Translation nickname) {
         this.name = name;
         this.nickname = nickname;
-        if (imageURL == null){
-            this.imageURL = IMAGE_NONE;
-        } else {
-            this.imageURL = imageURL.getEnglish().equals(Translation.NONE) ?
-                    IMAGE_NONE : imageURL.getEnglish();
-        }
-    }
 
-    public static ScriptSpeaker getUserSpeaker(){
-        return new ScriptSpeaker(
-                new Translation(SPEAKER_USER, SPEAKER_USER), null,
-                new Translation(SPEAKER_USER, SPEAKER_USER)
-        );
     }
 
     public static ScriptSpeaker getGuestSpeaker(int number){
         return new ScriptSpeaker(
-                new Translation(SPEAKER_USER + number, SPEAKER_USER + number), null,
+                new Translation(SPEAKER_USER + number, SPEAKER_USER + number),
                 new Translation(SPEAKER_USER + number, SPEAKER_USER + number)
         );
 
+    }
+
+    public static boolean isGuestSpeaker(String speaker){
+        return speaker.contains(SPEAKER_USER);
+    }
+
+    public static int getGuestSpeakerNumber(String speaker){
+        String numString = speaker.replace(SPEAKER_USER, "");
+        return Integer.parseInt(numString);
     }
 
     public Translation getName() {
@@ -57,14 +53,6 @@ public class ScriptSpeaker {
 
     public void setNickName(Translation nickname){ this.nickname = nickname; }
 
-    public String getImageURL() {
-        return imageURL.equals(IMAGE_NONE) ? "" : imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
-
     @Override
     public boolean equals(Object object){
         if (object == null)
@@ -76,7 +64,6 @@ public class ScriptSpeaker {
         //we only check the ID because the label and description might change
         //if a user adds the entity data after it has been modified
         return  (   data.getName().equals(this.name) &&
-                    data.getImageURL().equals(this.getImageURL()) &&
                     data.getNickname().equals(this.nickname)
         );
     }
@@ -86,7 +73,6 @@ public class ScriptSpeaker {
         int result = 17;
         result = 31 * result + name.hashCode();
         result = 31 * result + nickname.hashCode();
-        result = 31 * result + imageURL.hashCode();
         return result;
     }
 }

@@ -22,6 +22,8 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         script.addSentence(scriptSentence5(data));
         script.addSentence(scriptSentence6());
         script.addSentence(scriptSentence7());
+
+        script.setImageURL(data.getImageURL());
         return script;
     }
 
@@ -29,9 +31,9 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         ScriptSentence sentence = new ScriptSentence();
         Translation person = data.getPropertyAt(0);
         String sentenceEN = "Hey " + person.getEnglish() + " is on TV!";
-        String sentenceJP = "おい、" + person.getJapanese() + "がテレビ出てるぞ！";
+        String sentenceJP = "おい、" + person.getJapanese() + "がテレビに出てるぞ！";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 
@@ -42,7 +44,7 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         String sentenceEN = "Is " + gender.getEnglish() + " from " + country.getEnglish() + "?";
         String sentenceJP = gender.getJapanese() + "は" + country.getJapanese() + "出身だったけ？";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(2));
         return sentence;
     }
 
@@ -55,7 +57,7 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         String sentenceJP = "そうだよ。" + country.getJapanese() + "は" +
                 food.getJapanese() + "が有名らしいね。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 
@@ -64,7 +66,7 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         String sentenceEN = "Oh really.";
         String sentenceJP = "そうなんだ。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(2));
         return sentence;
     }
 
@@ -74,7 +76,7 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         String sentenceEN = "Let's go eat " + food.getEnglish() + " sometime.";
         String sentenceJP = "今度" + food.getJapanese() + "を食べに行こう。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 
@@ -83,7 +85,7 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         String sentenceEN = "Let's go now!";
         String sentenceJP = "今行こうよ！";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(2));
         return sentence;
     }
 
@@ -92,7 +94,7 @@ public class Script_food_tv_introduction extends ScriptGenerator {
         String sentenceEN = "Ok.";
         String sentenceJP = "いいよ。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 }

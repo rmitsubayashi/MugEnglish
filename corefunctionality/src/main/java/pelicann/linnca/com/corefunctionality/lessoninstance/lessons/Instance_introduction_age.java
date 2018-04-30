@@ -74,23 +74,20 @@ public class Instance_introduction_age extends LessonInstanceGenerator {
             //we only need the date, not the time
             birthday = birthday.substring(0, 10);
             Translation birthdayTranslation = new Translation(birthday, birthday);
-            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "picLabel");
-            if (pic == null || pic.equals("")){
-                pic = Translation.NONE;
-            } else {
-                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
-            }
-            Translation picTranslation = new Translation(pic, pic);
-
             List<Translation> properties = new ArrayList<>();
             properties.add(personTranslation);
             properties.add(birthdayTranslation);
-            properties.add(picTranslation);
             properties.add(firstNameTranslation);
             EntityPropertyData entityPropertyData = new EntityPropertyData();
             entityPropertyData.setLessonKey(lessonKey);
             entityPropertyData.setWikidataID(personID);
             entityPropertyData.setProperties(properties);
+
+            String pic = SPARQLDocumentParserHelper.findValueByNodeName(head, "picLabel");
+            if (pic != null && !pic.equals("")){
+                pic = WikiDataSPARQLConnector.cleanImageURL(pic);
+            }
+            entityPropertyData.setImageURL(pic);
 
             newEntityPropertyData.add(entityPropertyData);
         }

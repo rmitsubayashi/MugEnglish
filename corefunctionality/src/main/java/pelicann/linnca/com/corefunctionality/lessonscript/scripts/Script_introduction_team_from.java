@@ -22,16 +22,18 @@ public class Script_introduction_team_from extends ScriptGenerator {
         script.addSentence(scriptSentence5(data));
         script.addSentence(scriptSentence6(data));
         script.addSentence(scriptSentence7(data));
+
+        script.setImageURL(data.getImageURL());
         return script;
     }
 
     private ScriptSentence scriptSentence1(EntityPropertyData data){
         ScriptSentence sentence = new ScriptSentence();
-        Translation firstName = data.getPropertyAt(6);
+        Translation firstName = data.getPropertyAt(5);
         String sentenceEN = "Hey " + firstName.getEnglish() + ", nice game!";
         String sentenceJP = "やあ" + firstName.getJapanese() + "、良い試合だったよ。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 
@@ -41,9 +43,8 @@ public class Script_introduction_team_from extends ScriptGenerator {
         String sentenceEN = "Thanks.";
         String sentenceJP = "ありがとう。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        Translation imageURL = data.getPropertyAt(5);
-        Translation nickname = data.getPropertyAt(6);
-        sentence.setSpeaker(person, imageURL, nickname);
+        Translation nickname = data.getPropertyAt(5);
+        sentence.setSpeaker(person, nickname);
         return sentence;
     }
 
@@ -54,7 +55,7 @@ public class Script_introduction_team_from extends ScriptGenerator {
         sentenceEN = StringUtils.addPeriod(sentenceEN);
         String sentenceJP = "君は"+ team.getJapanese() +"の一員だね。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 
@@ -64,7 +65,7 @@ public class Script_introduction_team_from extends ScriptGenerator {
         String sentenceEN = "Are you from " + teamCity.getEnglish() + "?";
         String sentenceJP = "君は"+ teamCity.getJapanese() +"の出身かな。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 
@@ -76,9 +77,8 @@ public class Script_introduction_team_from extends ScriptGenerator {
         sentenceEN = StringUtils.addPeriod(sentenceEN);
         String sentenceJP = "いや、" + city.getJapanese() + "の出身だよ。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        Translation imageURL = data.getPropertyAt(5);
-        Translation nickname = data.getPropertyAt(6);
-        sentence.setSpeaker(person, imageURL, nickname);
+        Translation nickname = data.getPropertyAt(5);
+        sentence.setSpeaker(person, nickname);
         return sentence;
     }
 
@@ -88,7 +88,7 @@ public class Script_introduction_team_from extends ScriptGenerator {
         String sentenceEN = "Oh. " + country.getEnglish() + ", right?";
         String sentenceJP = "そっか。" + country.getJapanese() + "だよね。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        sentence.setSpeaker(ScriptSpeaker.getUserSpeaker());
+        sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(1));
         return sentence;
     }
 
@@ -98,9 +98,8 @@ public class Script_introduction_team_from extends ScriptGenerator {
         String sentenceEN = "Yep!";
         String sentenceJP = "そう。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        Translation imageURL = data.getPropertyAt(5);
-        Translation nickname = data.getPropertyAt(6);
-        sentence.setSpeaker(person, imageURL, nickname);
+        Translation nickname = data.getPropertyAt(5);
+        sentence.setSpeaker(person, nickname);
         return sentence;
     }
 }

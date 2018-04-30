@@ -200,8 +200,6 @@
     <string name="lesson_script_to_prev">＜</string>
     <string name="lesson_script_to_next">＞</string>
     <string name="lesson_script_to_questions">問題へ</string>
-    <string name="lesson_script_images_label">ストーリーの人物</string>
-    <string name="lesson_script_script_label">ストーリー</string>
 
     <!--results-->
     <string name="results_app_bar_title">結果</string>

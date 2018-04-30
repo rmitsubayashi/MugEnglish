@@ -26,7 +26,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.lessoncategorylist.LessonCategoryList;
-import com.linnca.pelicann.lessondetails.LessonScript;
+import com.linnca.pelicann.lessonscript.LessonScript;
 import com.linnca.pelicann.preferences.PreferencesListener;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.results.Results;
