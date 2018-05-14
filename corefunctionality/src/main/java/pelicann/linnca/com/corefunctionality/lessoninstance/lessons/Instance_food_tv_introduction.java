@@ -42,7 +42,7 @@ public class Instance_food_tv_introduction extends LessonInstanceGenerator {
                 "    ?food     wdt:P361/wdt:P279* ?cuisine . " +
                 "    ?food     wdt:P279   wd:Q746549 . " + //is a dish
                 "    ?food     rdfs:label ?foodENLabel . " +
-                "    OPTIONAL { ?food     wdt:P18    ?pic } . " + //image of food if possible
+                "    OPTIONAL { ?person     wdt:P18    ?pic } . " + //image of person
                 "    FILTER (LANG(?personENLabel) = '" +
                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    FILTER (LANG(?countryENLabel) = '" +

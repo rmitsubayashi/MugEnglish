@@ -28,6 +28,19 @@ public class QuestionResponseChecker {
         return false;
     }
 
+    public static boolean isFreeForm(QuestionData questionData){
+        if (questionData.getAnswer().contains(ANYTHING)){
+            return true;
+        }
+
+        for (String acceptableAnswer : questionData.getAcceptableAnswers()){
+            if (acceptableAnswer.contains(ANYTHING)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     static String formatAnswer(String answer){
         //we still accept technically wrong answers for example
         //names should always be capitalized.

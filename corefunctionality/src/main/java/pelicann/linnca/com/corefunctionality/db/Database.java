@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
-import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyWord;
 
 //abstract class for all requests we need to make to the database.
 //easier to read code and makes migrating databases easier.
@@ -51,12 +50,6 @@ public abstract class Database implements Serializable{
     public abstract void removeLessonInstance(String lessonKey, LessonInstanceData instance, OnDBResultListener onDBResultListener);
     public abstract void getMostRecentLessonInstance(NetworkConnectionChecker networkConnectionChecker, String lessonKey,
                                                      OnDBResultListener onDBResultListener);
-
-    public abstract void getVocabularyDetails(NetworkConnectionChecker networkConnectionChecker, String vocabularyItemID, OnDBResultListener onDBResultListener);
-    public abstract void getVocabularyList(NetworkConnectionChecker networkConnectionChecker, OnDBResultListener onDBResultListener);
-    public abstract void addVocabularyWord(VocabularyWord word, OnDBResultListener onDBResultListener);
-    public abstract void removeVocabularyListItems(List<String> vocabularyListItemKeys, OnDBResultListener onDBResultListener);
-    public abstract void getLessonVocabulary(NetworkConnectionChecker networkConnectionChecker, String lessonInstanceKey, OnDBResultListener onDBResultListener);
 
     public abstract void getUserInterests(NetworkConnectionChecker networkConnectionChecker, boolean persistentConnection, OnDBResultListener onDBResultListener);
     public abstract void removeUserInterests(List<WikiDataEntity> userInterests, OnDBResultListener onDBResultListener);

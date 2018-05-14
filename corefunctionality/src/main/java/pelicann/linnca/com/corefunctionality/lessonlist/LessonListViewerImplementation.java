@@ -3,6 +3,7 @@ package pelicann.linnca.com.corefunctionality.lessonlist;
 import java.util.ArrayList;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.lesson.lessons.Food_class;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Food_restaurant;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Food_tv_introduction;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Introduction_age;
@@ -23,7 +24,8 @@ public class LessonListViewerImplementation extends LessonListViewer {
         food.setKey("FOOD");
         food.setTitleJP("食べ物");
         food.addLessonKey(Food_tv_introduction.KEY);
-        food.addLessonKey((Food_restaurant.KEY));
+        food.addLessonKey(Food_restaurant.KEY);
+        food.addLessonKey(Food_class.KEY);
         food.setPersonConsistency(true);
         level1.add(food);
         lessonLevels.add(level1);

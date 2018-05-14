@@ -12,8 +12,6 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
-import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
-import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyWord;
 
 //we are creating a mock database for testing purposes.
 //some of the data is narrowed down.
@@ -27,12 +25,6 @@ public class MockFirebaseDB extends Database {
     public Map<String, List<EntityPropertyData>> entityPropertyData = new HashMap<>();
     //ID -> lesson instance
     public List<LessonInstanceData> lessonInstances = new ArrayList<>();
-    //ID -> word
-    public Map<String, VocabularyWord> questionVocabularyWords = new HashMap<>();
-    //ID -> word
-    public Map<String, VocabularyWord> vocabularyWords = new HashMap<>();
-    //ID -> word
-    public Map<String, VocabularyListWord> vocabularyListWords = new HashMap<>();
     public List<WikiDataEntity> recommendations = new ArrayList<>();
 
     @Override
@@ -136,36 +128,6 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void removeLessonInstance(String lessonKey, LessonInstanceData instanceData, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void getVocabularyDetails(NetworkConnectionChecker networkConnectionChecker, String vocabularyItemID, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void getVocabularyList(NetworkConnectionChecker networkConnectionChecker, OnDBResultListener onDBResultListener) {
-
-    }
-
-    private int incrementVocabularyWord = 1;
-    @Override
-    public void addVocabularyWord(VocabularyWord word, OnDBResultListener onDBResultListener) {
-        String id = "id" + incrementVocabularyWord++;
-        word.setId(id);
-        vocabularyListWords.put(id, new VocabularyListWord(word, id));
-        vocabularyWords.put(word.getId(), word);
-        onDBResultListener.onVocabularyWordAdded();
-    }
-
-    @Override
-    public void removeVocabularyListItems(List<String> vocabularyListItemKeys, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void getLessonVocabulary(NetworkConnectionChecker networkConnectionChecker, String lessonInstanceKey, OnDBResultListener onDBResultListener) {
 
     }
 

@@ -113,7 +113,7 @@ public class QuestionFeedbackFormatter {
         return "正解: " + answer;
     }
 
-    public static String formatSentencePuzzleAnswer(String answer){
+    private static String formatSentencePuzzleAnswer(String answer){
         return answer.replace("|"," ");
     }
 }

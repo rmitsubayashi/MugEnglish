@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.linnca.pelicann.R;
@@ -48,6 +49,7 @@ public class UserInterests extends Fragment {
     private UserInterestListener userInterestListener;
     private ActionMode actionMode;
     private ActionMode.Callback actionModeCallback;
+    private ProgressBar loading;
 
     public interface UserInterestListener {
         void userInterestsToSearchInterests();
@@ -77,6 +79,7 @@ public class UserInterests extends Fragment {
         searchFAB = view.findViewById(R.id.user_interests_search_fab);
         actionModeCallback = getActionModeCallback();
         populateFABs();
+        loading = view.findViewById(R.id.user_interests_loading);
         return view;
     }
 
@@ -128,6 +131,7 @@ public class UserInterests extends Fragment {
                             getUserInterestAdapterListener()
                     );
                     listView.setAdapter(userInterestListAdapter);
+                    loading.setVisibility(View.GONE);
                 }
 
                 //if the user has something selected while updating interests

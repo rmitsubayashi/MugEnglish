@@ -33,9 +33,7 @@ import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.results.ReviewResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
-import com.linnca.pelicann.userprofile.UserProfile;
-import com.linnca.pelicann.vocabulary.VocabularyDetails;
-import com.linnca.pelicann.vocabulary.VocabularyList;
+import com.linnca.pelicann.userprofile.UserProfile_HoursStudied;
 
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +50,6 @@ import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceReviewManag
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionManager;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
-import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -65,9 +62,7 @@ public class MainActivity extends AppCompatActivity implements
         PreferenceFragmentCompat.OnPreferenceStartScreenCallback,
         LessonCategoryList.LessonCategoryListListener,
         LessonScript.LessonScriptListener,
-        UserProfile.UserProfileListener,
-        VocabularyList.VocabularyListListener,
-        VocabularyDetails.VocabularyDetailsListener
+        UserProfile_HoursStudied.UserProfile_HoursStudiedListener
 {
     private final String TAG = "MainActivity";
     private Database db;
@@ -145,9 +140,6 @@ public class MainActivity extends AppCompatActivity implements
                             break;
                         case R.id.main_navigation_drawer_data :
                             fragmentManager.rootToUserProfile(db);
-                            break;
-                        case R.id.main_navigation_drawer_vocabulary :
-                            fragmentManager.rootToVocabularyList(db);
                             break;
                         case R.id.main_navigation_drawer_settings :
                             fragmentManager.rootToSettings(db);
@@ -323,40 +315,6 @@ public class MainActivity extends AppCompatActivity implements
     public void userInterestsToSearchInterests(){
         fragmentManager.userInterestsToSearchInterests(db);
         switchActionBarUpButton();
-    }
-
-    @Override
-    public void vocabularyListToVocabularyDetails(VocabularyListWord word){
-        fragmentManager.vocabularyListToVocabularyDetails(db, word);
-        switchActionBarUpButton();
-    }
-
-    @Override
-    public void vocabularyListToLessonList(){
-        //since the vocabulary list is a root view,
-        //we can just call setLessonView()
-        setLessonView();
-    }
-
-    @Override
-    public void vocabularyDetailsToLessonDetails(String lessonKey){
-        //make sure when the user presses the back button after the redirect,
-        //the user goes to the lesson list screen
-        fragmentManager.vocabularyDetailsToLessonDetails(db, lessonKey, lessonListViewer);
-
-        int lessonLevel = lessonListViewer.getLessonLevel(lessonKey);
-        //select the proper item in the navigation drawer
-        switch (lessonLevel){
-            case 1 :
-                navigationView.getMenu().findItem(R.id.main_navigation_drawer_lesson_level1).setChecked(true);
-                break;
-            case 2 :
-                navigationView.getMenu().findItem(R.id.main_navigation_drawer_lesson_level2).setChecked(true);
-                break;
-        }
-        navigationView.getMenu().findItem(R.id.main_navigation_drawer_vocabulary).setChecked(false);
-
-
     }
 
     private QuestionManager.QuestionManagerListener getQuestionManagerListener(){

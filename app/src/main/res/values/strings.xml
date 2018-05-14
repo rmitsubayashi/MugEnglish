@@ -277,7 +277,7 @@
 
     <!--user profile-->
     <string name="user_profile_app_bar_title">データ</string>
-    <string name="user_profile_tab_hours_studied">勉強時間</string>
+    <string name="user_profile_hours_studied">勉強時間</string>
     <string name="user_profile_tab_report_card">成績</string>
     <string name="user_profile_hours_studied_legend_studied">勉強した日</string>
     <string name="user_profile_hours_studied_legend_no_record">記録なし</string>
@@ -289,6 +289,7 @@
     <string name="question_title">問 %1$d/%2$d</string>
     <string name="question_feedback_correct">正解</string>
     <string name="question_feedback_incorrect">不正解</string>
+    <string name="question_feedback_cant_decide">（要確認）</string>
     <string name="question_feedback_next">次へ</string>
     <string name="question_feedback_finish">終わる</string>
     <string name="question_true_false_instructions">本当ですか？</string>

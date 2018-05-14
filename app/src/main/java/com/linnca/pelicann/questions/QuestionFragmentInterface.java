@@ -229,11 +229,18 @@ public abstract class QuestionFragmentInterface extends Fragment {
         TextView feedbackTitle = feedback.findViewById(R.id.question_feedback_title);
         final String description = QuestionFeedbackFormatter.formatFeedback(correct,
                 questionData, response, allWrongResponses);
+        String feedbackTitleString;
         if (correct){
-            feedbackTitle.setText(R.string.question_feedback_correct);
+            feedbackTitleString = getString(R.string.question_feedback_correct);
         } else {
-            feedbackTitle.setText(R.string.question_feedback_incorrect);
+            feedbackTitleString = getString(R.string.question_feedback_incorrect);
         }
+        if (QuestionResponseChecker.isFreeForm(questionData)){
+            feedbackTitleString = feedbackTitleString + "\n" +
+                    getString(R.string.question_feedback_cant_decide);
+        }
+
+        feedbackTitle.setText(feedbackTitleString);
 
         if (keyboardFocusView == null) {
             openFeedbackHelper(description);

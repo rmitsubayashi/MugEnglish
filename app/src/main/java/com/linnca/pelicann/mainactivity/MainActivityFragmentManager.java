@@ -18,16 +18,13 @@ import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.results.ReviewResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
-import com.linnca.pelicann.userprofile.UserProfile;
-import com.linnca.pelicann.vocabulary.VocabularyDetails;
-import com.linnca.pelicann.vocabulary.VocabularyList;
+import com.linnca.pelicann.userprofile.UserProfile_HoursStudied;
 
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
-import pelicann.linnca.com.corefunctionality.vocabulary.VocabularyListWord;
 
 //manages all the fragment transactions
 class MainActivityFragmentManager {
@@ -42,7 +39,7 @@ class MainActivityFragmentManager {
         return fragmentToFind != null && fragmentToFind.isVisible();
     }
 
-    Fragment getFragment(String fragmentTag){
+    private Fragment getFragment(String fragmentTag){
         return fragmentManager.findFragmentByTag(fragmentTag);
     }
 
@@ -63,23 +60,12 @@ class MainActivityFragmentManager {
 
     void rootToUserProfile(Database db){
         clearBackStack();
-        Fragment fragment = new UserProfile();
+        Fragment fragment = new UserProfile_HoursStudied();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, UserProfile.TAG);
-        fragmentTransaction.commit();
-    }
-
-    void rootToVocabularyList(Database db){
-        clearBackStack();
-        Fragment fragment = new VocabularyList();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        fragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, VocabularyList.TAG);
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, UserProfile_HoursStudied.TAG);
         fragmentTransaction.commit();
     }
 
@@ -125,18 +111,6 @@ class MainActivityFragmentManager {
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, SearchInterests.TAG);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-    }
-
-    void vocabularyListToVocabularyDetails(Database db, VocabularyListWord word){
-        Fragment fragment = new VocabularyDetails();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        bundle.putSerializable(VocabularyDetails.BUNDLE_VOCABULARY_WORD, word);
-        fragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, VocabularyDetails.TAG);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

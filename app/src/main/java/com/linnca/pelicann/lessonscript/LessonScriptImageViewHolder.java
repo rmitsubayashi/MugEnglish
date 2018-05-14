@@ -44,6 +44,7 @@ class LessonScriptImageViewHolder extends RecyclerView.ViewHolder {
             ;
         } else {
             imageView.setImageDrawable(null);
+            loading.setVisibility(View.GONE);
         }
 
     }

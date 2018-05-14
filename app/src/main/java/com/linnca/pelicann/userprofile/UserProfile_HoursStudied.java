@@ -1,5 +1,7 @@
 package com.linnca.pelicann.userprofile;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.mainactivity.MainActivity;
+import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import org.joda.time.DateTime;
 
@@ -22,9 +25,15 @@ import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
 public class UserProfile_HoursStudied extends Fragment {
-    private final String TAG = "UserProfileHoursStudied";
+    public static final String TAG = "UserProfileHoursStudied";
     private Database db;
     private CustomCalendarView calendarView;
+
+    private UserProfile_HoursStudiedListener userProfileHoursStudiedListener;
+
+    public interface UserProfile_HoursStudiedListener {
+        void setToolbarState(ToolbarState state);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -39,6 +48,15 @@ public class UserProfile_HoursStudied extends Fragment {
     }
 
     @Override
+    public void onStart(){
+        super.onStart();
+        userProfileHoursStudiedListener.setToolbarState(
+                new ToolbarState(getString(R.string.user_profile_hours_studied),
+                false)
+        );
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -48,6 +66,27 @@ public class UserProfile_HoursStudied extends Fragment {
         setUsageDataForCurrentMonth();
         setCalendarListeners();
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        implementListeners(context);
+    }
+
+    //must implement to account for lower APIs
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        implementListeners(activity);
+    }
+
+    private void implementListeners(Context context){
+        try {
+            userProfileHoursStudiedListener = (UserProfile_HoursStudiedListener) context;
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
     }
 
     private void setCalendarMinMax(){

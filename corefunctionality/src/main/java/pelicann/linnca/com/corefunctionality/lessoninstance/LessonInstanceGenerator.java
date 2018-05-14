@@ -187,6 +187,7 @@ public abstract class LessonInstanceGenerator {
     // add it to the list of entity data.
     private void getEntityDataFromDatabase(){
         if (userInterests.size() == 0){
+            System.out.println("user interest list is empty : fillRemainingEntityPropertyData()");
             //skip trying to fetch entity data from db/wikiData.
             fillRemainingEntityPropertyData();
             return;
@@ -242,6 +243,7 @@ public abstract class LessonInstanceGenerator {
     protected abstract String getSPARQLQuery();
     //一つ一つのクエリーを送って、まとめる
     private void searchWikiData(Set<WikiDataEntity> interests){
+        System.out.println("Searching wikidata");
         //shuffle so we don't get the same interests over and over
         ArrayList<WikiDataEntity> interestList = new ArrayList<>(interests);
         Collections.shuffle(interestList);
