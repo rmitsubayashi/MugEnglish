@@ -118,18 +118,18 @@ public class FirebaseDB extends Database {
                 break;
             }
 
-            final Query userInterestRef = entityPropertyDataRef
+            final Query matchedUserInterestRef = entityPropertyDataRef
                     .orderByChild(FirebaseDBHeaders.ENTITY_PROPERTY_DATA_WIKIDATA_ID)
                     .equalTo(userInterest.getWikiDataID());
 
             final AtomicBoolean called = new AtomicBoolean(false);
-            final ValueEventListener userInterestQuestionSetListener = new ValueEventListener() {
+            final ValueEventListener matchedUserInterestListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     called.set(true);
                     //if we don't need to get any more
                     if (toPopulateAtomicInt.get() == 0){
-                        userInterestRef.removeEventListener(this);
+                        matchedUserInterestRef.removeEventListener(this);
                         return;
                     }
 
@@ -174,8 +174,8 @@ public class FirebaseDB extends Database {
 
                 }
             };
-            entityPropertyDataRef.addValueEventListener(userInterestQuestionSetListener);
-            final RefListenerPair pair = new RefListenerPair(entityPropertyDataRef, userInterestQuestionSetListener);
+            entityPropertyDataRef.addValueEventListener(matchedUserInterestListener);
+            final RefListenerPair pair = new RefListenerPair(entityPropertyDataRef, matchedUserInterestListener);
             refListenerPairs.add(pair);
 
             OnDBResultListener noConnectionListener = new OnDBResultListener() {
@@ -187,7 +187,7 @@ public class FirebaseDB extends Database {
                     //we can't just clean up because we are still listening to other locations
                     // (i.e. lesson details -> create lesson -> search questions)
                     refListenerPairs.remove(pair);
-                    entityPropertyDataRef.removeEventListener(userInterestQuestionSetListener);
+                    entityPropertyDataRef.removeEventListener(matchedUserInterestListener);
                 }
 
                 @Override
@@ -250,7 +250,7 @@ public class FirebaseDB extends Database {
                 for (DataSnapshot entityPropertyDataSnapshot : dataSnapshot.getChildren()){
                     EntityPropertyData data = entityPropertyDataSnapshot.getValue(EntityPropertyData.class);
                     if (data != null &&
-                            !data.isUnique(toAvoid)){
+                            data.isUnique(toAvoid)){
                         entityPropertyDataList.add(data);
                     }
 

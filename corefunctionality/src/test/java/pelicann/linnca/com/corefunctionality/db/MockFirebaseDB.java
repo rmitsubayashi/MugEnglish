@@ -54,9 +54,8 @@ public class MockFirebaseDB extends Database {
                     toPopulate != 0) {
                 entitiesToReturn.add(set.get(0));
                 toPopulate--;
-
+                userInterestsChecked.add(userInterest);
             }
-            userInterestsChecked.add(userInterest);
             if (toPopulate == 0) {
                 break;
             }
@@ -77,6 +76,7 @@ public class MockFirebaseDB extends Database {
             addList.add(dataToAdd);
             onDBResultListener.onEntityPropertyDataAdded(dataToAdd);
         }
+        onDBResultListener.onAllEntityPropertyDataAdded();
     }
 
     @Override
@@ -181,7 +181,7 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void getSimilarInterest(String  wikidataID, OnDBResultListener onDBResultListener){
-
+        onDBResultListener.onSimilarUserInterestsQueried(new ArrayList<WikiDataEntity>());
     }
 
     @Override

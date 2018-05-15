@@ -3,14 +3,14 @@
     <head>
         <variable name='person'/>
         <variable name='personLabel'/>
-        <variable name='personEN'/>
+        <variable name='personENLabel'/>
     </head>
     <results>
         <result>
             <binding name='person'>
                 <uri>http://www.wikidata.org/entity/Q132345</uri>
             </binding>
-            <binding name='personEN'>
+            <binding name='personENLabel'>
                 <literal xml:lang='en'>Shinzō Abe</literal>
             </binding>
             <binding name='personLabel'>

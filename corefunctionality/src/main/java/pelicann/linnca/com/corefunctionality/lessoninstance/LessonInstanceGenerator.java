@@ -88,12 +88,7 @@ public abstract class LessonInstanceGenerator {
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstanceData) {
-                if (lessonInstanceData.size() == 0) {
-                    //should not happen because this lesson is after
-                    // the lesson it is referencing,
-                    // but just in case
-                    return;
-                } else {
+                if (lessonInstanceData.size() != 0) {
                     LessonInstanceData instance = lessonInstanceData.get(0);
                     List<EntityPropertyData> data = instance.getEntityPropertyData();
                     //can we always assume 0?
@@ -103,6 +98,11 @@ public abstract class LessonInstanceGenerator {
                     userInterests = new HashSet<>(1);
                     userInterests.add(referenceWikidata);
                     getEntityDataFromDatabase();
+                } else {
+                    //should not happen because this lesson is after
+                    // the lesson it is referencing,
+                    // but just in case
+                    lessonListener.onNoConnection();
                 }
             }
             @Override
@@ -130,8 +130,12 @@ public abstract class LessonInstanceGenerator {
             @Override
             public void onUserInterestsQueried(List<WikiDataEntity> queriedUserInterests) {
                 userInterests = Collections.synchronizedSet(new HashSet<>(queriedUserInterests));
-
-                populateSimilarUserInterests();
+                if (userInterests.size() == 0){
+                    //no need to get similar interests
+                    populateUserPreviousEntityData();
+                } else {
+                    populateSimilarUserInterests();
+                }
             }
 
             @Override
@@ -187,7 +191,6 @@ public abstract class LessonInstanceGenerator {
     // add it to the list of entity data.
     private void getEntityDataFromDatabase(){
         if (userInterests.size() == 0){
-            System.out.println("user interest list is empty : fillRemainingEntityPropertyData()");
             //skip trying to fetch entity data from db/wikiData.
             fillRemainingEntityPropertyData();
             return;
@@ -243,7 +246,6 @@ public abstract class LessonInstanceGenerator {
     protected abstract String getSPARQLQuery();
     //一つ一つのクエリーを送って、まとめる
     private void searchWikiData(Set<WikiDataEntity> interests){
-        System.out.println("Searching wikidata");
         //shuffle so we don't get the same interests over and over
         ArrayList<WikiDataEntity> interestList = new ArrayList<>(interests);
         Collections.shuffle(interestList);
@@ -391,6 +393,7 @@ public abstract class LessonInstanceGenerator {
         //add these so we can avoid them
         entityPropertyDataToAvoid.addAll(lessonInstanceData.getEntityPropertyData());
         entityPropertyDataToAvoid.addAll(userPreviousEntityPropertyData);
+        System.out.println("adding random data");
         db.getRandomEntityPropertyData(networkConnectionChecker, lessonKey, entityPropertyDataToAvoid,
                 uniqueEntitiesLeft, onDBResultListener);
     }

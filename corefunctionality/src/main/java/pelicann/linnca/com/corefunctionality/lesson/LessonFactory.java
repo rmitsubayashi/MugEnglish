@@ -24,8 +24,7 @@ public final class LessonFactory {
             case Food_class.KEY :
                 return new Food_class();
             default:
-                System.out.println("lesson not added in lesson factory");
+                return null;
         }
-        return null;
     }
 }
