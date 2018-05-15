@@ -42,6 +42,8 @@ public class QuestionManager{
 	}
 
 	public void startQuestions(List<QuestionData> questions, LessonInstanceData data){
+		if (questions == null || data == null)
+			return;
 		if(!questionsStarted) {
 			questionsStarted = true;
 			this.lessonInstanceData = data;

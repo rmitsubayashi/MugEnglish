@@ -15,13 +15,13 @@ import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
 //we are creating a mock database for testing purposes.
 //some of the data is narrowed down.
-//for example, since we will only ever be testing one lesson at a tmie,
+//for example, since we will only ever be testing one lesson at a time,
 // we don't separate lesson instances by lesson ID (where in the actual database, it does)
 public class MockFirebaseDB extends Database {
     //all the data will be in public variables
     //so we can easily access them when testing
     public List<WikiDataEntity> userInterests = new ArrayList<>();
-    //Wikidata ID, all data pertaining to the wikidata id
+    //Wikidata ID, all data pertaining to the wikidata id.
     public Map<String, List<EntityPropertyData>> entityPropertyData = new HashMap<>();
     //ID -> lesson instance
     public List<LessonInstanceData> lessonInstances = new ArrayList<>();
@@ -72,6 +72,7 @@ public class MockFirebaseDB extends Database {
             List<EntityPropertyData> addList = entityPropertyData.get(dataToAdd.getWikidataID());
             if (addList == null){
                 addList = new ArrayList<>();
+                entityPropertyData.put(dataToAdd.getWikidataID(), addList);
             }
             addList.add(dataToAdd);
             onDBResultListener.onEntityPropertyDataAdded(dataToAdd);

@@ -16,7 +16,7 @@ public class QuestionFeedbackFormatterTest {
     @Test
     public void formatFeedback_wrongResponseWithNoSpecificFeedback_feedbackShouldAtLeastContainTheCorrectAnswer(){
         QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
-                "question1", null, "answer1", null, null);
+                "question1", null, "answer1", null, new ArrayList<FeedbackPair>());
         String response = "wrong response";
         List<String> allWrongResponses = new ArrayList<>(1);
         allWrongResponses.add(response);
@@ -27,7 +27,7 @@ public class QuestionFeedbackFormatterTest {
     @Test
     public void formatFeedback_correctResponseWithNoSpecificFeedback_feedbackShouldBeEmpty(){
         QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
-                "question1", null, "answer1", null, null);
+                "question1", null, "answer1", null, new ArrayList<FeedbackPair>());
         String response = "correct response";
         List<String> allWrongResponses = new ArrayList<>(1);
         String feedback = QuestionFeedbackFormatter.formatFeedback(true, data, response, allWrongResponses);
