@@ -191,9 +191,6 @@ public class LessonScriptAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             ((LessonScriptSentenceExtraInfoViewHolder) holder).setBackgroundColor(colorAttrID);
             ((LessonScriptSentenceExtraInfoViewHolder) holder).setTranslation(sentence.getSentenceJP());
             String speaker = sentence.getSpeaker().getName().getJapanese();
-            if (ScriptSpeaker.isGuestSpeaker(speaker)){
-                speaker = Integer.toString(ScriptSpeaker.getGuestSpeakerNumber(speaker));
-            }
             //'~' so we can better differentiate speaker and translation
             ((LessonScriptSentenceExtraInfoViewHolder) holder).setContent("~ " + speaker + " ~");
         } else if (holder instanceof LessonScriptToggleViewHolder){

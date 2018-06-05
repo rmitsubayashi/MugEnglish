@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
+
 public final class StringUtils {
     //for converting ints to words
     private static final String[] specialNames = {
@@ -330,5 +332,47 @@ public final class StringUtils {
         }
 
         return false;
+    }
+
+    //util for gender (we will be using a lot of gender)
+    public static final int CASE_SUBJECTIVE = 1;
+    public static final int CASE_OBJECTIVE = 2;
+    public static final int CASE_POSSESSIVE = 3;
+    public static Translation getGenderPronoun(boolean isMale, int grammarCase){
+        Translation translation = new Translation();
+        if (isMale) {
+            switch (grammarCase){
+                case CASE_SUBJECTIVE :
+                    translation.setEnglish("he");
+                    translation.setJapanese("彼");
+                    break;
+                case CASE_OBJECTIVE :
+                    translation.setEnglish("him");
+                    translation.setJapanese("彼");
+                    break;
+                case CASE_POSSESSIVE :
+                    translation.setEnglish("his");
+                    translation.setJapanese("彼");
+                    break;
+            }
+
+        } else {
+            switch (grammarCase){
+                case CASE_SUBJECTIVE :
+                    translation.setEnglish("she");
+                    translation.setJapanese("彼女");
+                    break;
+                case CASE_OBJECTIVE :
+                    translation.setEnglish("her");
+                    translation.setJapanese("彼女");
+                    break;
+                case CASE_POSSESSIVE :
+                    translation.setEnglish("her");
+                    translation.setJapanese("彼女");
+                    break;
+            }
+        }
+
+        return translation;
     }
 }

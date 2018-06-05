@@ -23,14 +23,6 @@
         android:key="@string/preferences_category_questions_key"
         android:title="@string/preferences_category_questions_label"
         >
-        <PreferenceScreen
-            android:key="@string/preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key"
-            android:title="@string/preferences_questions_descriptionBeforeLessonWithExceptionRule_label_long"
-            >
-            <CheckBoxPreference
-                android:key="@string/preferences_questions_descriptionBeforeLessonWithExceptionRule_key"
-                />
-        </PreferenceScreen>
         <EditTextPreference
             android:key="@string/preferences_questions_numberOfAttemptsPerQuestion_key"
             android:title="@string/preferences_questions_numberOfAttemptsPerQuestion_label"

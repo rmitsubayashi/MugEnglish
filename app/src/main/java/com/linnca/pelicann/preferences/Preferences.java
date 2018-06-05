@@ -2,12 +2,9 @@ package com.linnca.pelicann.preferences;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceScreen;
 import android.util.Log;
 
 import com.linnca.pelicann.R;
@@ -38,7 +35,6 @@ public class Preferences extends PreferenceFragmentCompat {
         //in a secondary fragment (while this is not destroyed)
         setNumberOfAttemptsPerQuestionPreference();
         setLessonsPerDayPreference();
-        setDescriptionBeforeLessonWithExceptionRulePreference();
         setThemePreference();
     }
 
@@ -180,24 +176,6 @@ public class Preferences extends PreferenceFragmentCompat {
         listValues[2] = Integer.toString(ThemeColorChanger.YELLOW);
         listPreference.setEntryValues(listValues);
 
-    }
-
-    private void setDescriptionBeforeLessonWithExceptionRulePreference(){
-        //we can't access the preference directly from the fragment
-        // unless it's visible on the screen
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(getContext());
-        //the preference is still stored as a string
-        boolean checked = sharedPreferences.getBoolean
-                (getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key), true);
-
-        PreferenceScreen preferenceScreen =
-                (PreferenceScreen)findPreference(getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key));
-        if (checked){
-            preferenceScreen.setSummary(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_true);
-        } else {
-            preferenceScreen.setSummary(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_false);
-        }
     }
 
 }

@@ -11,7 +11,6 @@ import com.linnca.pelicann.R;
 import com.linnca.pelicann.lessoncategorylist.LessonCategoryList;
 import com.linnca.pelicann.lessonscript.LessonScript;
 import com.linnca.pelicann.preferences.Preferences;
-import com.linnca.pelicann.preferences.PreferencesDescriptionBeforeLessonWithExceptionRule;
 import com.linnca.pelicann.questions.QuestionFragmentFactory;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
 import com.linnca.pelicann.results.Results;
@@ -285,14 +284,6 @@ class MainActivityFragmentManager {
         if (preferenceKey.equals(
                 context.getString(R.string.preferences_main_key))) {
             fragment = new Preferences();
-        } else if (preferenceKey.equals(
-                context.getString(R.string.preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key))){
-            fragment = new PreferencesDescriptionBeforeLessonWithExceptionRule();
-            fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
-                    0, R.anim.slide_out_bottom
-            );
-            //refreshes title
-            preferenceScreen.getTitle();
         } else {
             return false;
         }

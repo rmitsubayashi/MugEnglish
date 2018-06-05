@@ -40,7 +40,7 @@ public class Instance_food_class extends LessonInstanceGenerator {
                 "   OPTIONAL { ?food wdt:P361 ?cuisine . " +
                 "               ?cuisine wdt:P2341 ?country . " +
                 "               ?country wdt:P1549 ?demonym . " +
-                "               FILTER (LANG(?demonymLabel) = '" +
+                "               FILTER (LANG(?demonym) = '" +
                                 WikiBaseEndpointConnector.ENGLISH + "') . " +
                 "    } . " +
                 "    SERVICE wikibase:label { bd:serviceParam wikibase:language '" +
@@ -56,7 +56,6 @@ public class Instance_food_class extends LessonInstanceGenerator {
                 WikiDataSPARQLConnector.RESULT_TAG
         );
         int resultLength = allResults.getLength();
-        System.out.println(resultLength + " results returned");
         for (int i=0; i<resultLength; i++){
             Node head = allResults.item(i);
             String foodID = SPARQLDocumentParserHelper.findValueByNodeName(head, "food");

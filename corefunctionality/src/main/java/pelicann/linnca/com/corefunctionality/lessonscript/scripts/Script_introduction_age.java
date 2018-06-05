@@ -43,9 +43,9 @@ public class Script_introduction_age extends ScriptGenerator {
     private ScriptSentence scriptSentence2(EntityPropertyData data){
         Translation person = data.getPropertyAt(0);
         ScriptSentence sentence = new ScriptSentence();
-        String sentenceEN = "Hey 1.";
+        String sentenceEN = "Hey " + ScriptSpeaker.getGuestSpeaker(1).getName().getEnglish() + ".";
         sentenceEN = StringUtils.addPeriod(sentenceEN);
-        String sentenceJP = "よっ、1。";
+        String sentenceJP = "よっ、" + ScriptSpeaker.getGuestSpeaker(1).getName().getJapanese() + "。";
         sentence.setSentence(sentenceEN, sentenceJP);
         Translation nickname = data.getPropertyAt(2);
         sentence.setSpeaker(person, nickname);

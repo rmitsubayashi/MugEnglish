@@ -15,6 +15,7 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.TermAdjuster;
 import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class Instance_food_tv_introduction extends LessonInstanceGenerator {
@@ -86,8 +87,7 @@ public class Instance_food_tv_introduction extends LessonInstanceGenerator {
             String gender = SPARQLDocumentParserHelper.findValueByNodeName(head, "gender");
             gender = WikiDataEntity.getWikiDataIDFromReturnedResult(gender);
             boolean isMale = TermAdjuster.isMale(gender);
-            Translation genderTranslation = new Translation();
-            genderTranslation.setGenderPronoun(isMale ? Translation.MALE : Translation.FEMALE);
+            Translation genderTranslation = StringUtils.getGenderPronoun(isMale, StringUtils.CASE_SUBJECTIVE);
 
             List<Translation> properties = new ArrayList<>();
             properties.add(personTranslation);

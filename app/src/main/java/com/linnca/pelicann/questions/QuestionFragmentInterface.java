@@ -3,8 +3,11 @@ package com.linnca.pelicann.questions;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.design.widget.BottomSheetBehavior;
@@ -174,10 +177,9 @@ public abstract class QuestionFragmentInterface extends Fragment {
                     } else {
                         //the user still has attempts remaining
                         final View finalView = view;
-                        Animation wrongAnswerAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
                         //we want to disable the button (if we have to)
                         // after the wrong animation ends
-                        wrongAnswerAnimation.setAnimationListener(new Animation.AnimationListener() {
+                        Animation.AnimationListener animationListener = new Animation.AnimationListener() {
                             @Override
                             public void onAnimationStart(Animation animation) {
 
@@ -192,15 +194,31 @@ public abstract class QuestionFragmentInterface extends Fragment {
                             public void onAnimationRepeat(Animation animation) {
 
                             }
-                        });
+                        };
+                        shakeDevice(animationListener);
 
-                        siblingViewGroupForFeedback.startAnimation(wrongAnswerAnimation);
                     }
                 }
 
                 doSomethingAfterResponse();
             }
         };
+    }
+
+    private void shakeDevice(Animation.AnimationListener listener){
+        Animation wrongAnswerAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
+        wrongAnswerAnimation.setAnimationListener(listener);
+        siblingViewGroupForFeedback.startAnimation(wrongAnswerAnimation);
+
+        Vibrator vibrator = (Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator == null)
+            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(300,VibrationEffect.DEFAULT_AMPLITUDE));
+        }else{
+            //deprecated in API 26
+            vibrator.vibrate(300);
+        }
     }
 
     protected void inflateFeedback(LayoutInflater inflater){

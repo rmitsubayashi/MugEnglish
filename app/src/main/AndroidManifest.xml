@@ -5,6 +5,8 @@
     <!-- so we can connect to wikiData -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--for when the user inputs the wrong answer but can try again-->
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <!-- right to left support tag needed for firebase ui -->
     <application

@@ -3,15 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="56dp"
+    android:minHeight="72dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:background="?attr/selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground">
     <TextView
         android:id="@+id/lesson_category_list_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:textSize="24sp"/>
+        android:textSize="32sp"/>
 
 </FrameLayout>

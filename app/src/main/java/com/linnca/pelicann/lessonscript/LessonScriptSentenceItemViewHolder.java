@@ -33,14 +33,8 @@ class LessonScriptSentenceItemViewHolder extends RecyclerView.ViewHolder {
         } else {
             //in case it was invisible
             iconTextView.setVisibility(View.VISIBLE);
-            char iconLetter;
-            if (ScriptSpeaker.isGuestSpeaker(speaker)){
-                int speakerNumber = ScriptSpeaker.getGuestSpeakerNumber(speaker);
-                iconLetter = Character.forDigit(speakerNumber,10);
-            } else {
-                iconLetter = speaker.charAt(0);
-                iconLetter = Character.toUpperCase(iconLetter);
-            }
+            char iconLetter = speaker.charAt(0);
+            iconLetter = Character.toUpperCase(iconLetter);
             iconTextView.setText(Character.toString(iconLetter));
             ColorStateList colorStateList = new ColorStateList(
                     new int[][]{

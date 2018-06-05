@@ -284,6 +284,7 @@ public abstract class LessonInstanceGenerator {
             public void onFetchDOM(Document result) {
                 DOMsFetched.incrementAndGet();
                 if (!onStoppedCalled.get()) {
+                    System.out.println("fetched DOM");
                     processResultsIntoEntityPropertyData(result);
                 }
             }

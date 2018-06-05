@@ -9,8 +9,6 @@ public class ScriptSpeaker {
     // something like 'Hey Yuto' rather than
     // 'Hey Yuto Nagatomo'
     private Translation nickname;
-
-    public static String SPEAKER_USER = "@user";
     public static String SPEAKER_NONE = "@noSpeaker";
 
     public static String IMAGE_NONE = "@none";
@@ -24,21 +22,35 @@ public class ScriptSpeaker {
 
     }
 
+    public ScriptSpeaker(Translation name){
+        this.name = name;
+        this.nickname = name;
+    }
+
     public static ScriptSpeaker getGuestSpeaker(int number){
+        switch (number){
+            case 1 :
+                return new ScriptSpeaker(new Translation("Susie", "スージー"),
+                        new Translation("Susie", "スージー"));
+            case 2 :
+                return new ScriptSpeaker(new Translation("Joe", "ジョー"),
+                        new Translation("Joe", "ジョー"));
+            case 3 :
+                return new ScriptSpeaker(new Translation("Ken", "ケン"),
+                        new Translation("Ken", "ケン"));
+            default:
+                return new ScriptSpeaker(new Translation("Lindsay", "リンジー"),
+                        new Translation("Lindsay", "リンジー"));
+        }
+
+    }
+
+    public static ScriptSpeaker getNoSpeaker(){
         return new ScriptSpeaker(
-                new Translation(SPEAKER_USER + number, SPEAKER_USER + number),
-                new Translation(SPEAKER_USER + number, SPEAKER_USER + number)
+                new Translation(SPEAKER_NONE, SPEAKER_NONE),
+                new Translation(SPEAKER_NONE, SPEAKER_NONE)
         );
 
-    }
-
-    public static boolean isGuestSpeaker(String speaker){
-        return speaker.contains(SPEAKER_USER);
-    }
-
-    public static int getGuestSpeakerNumber(String speaker){
-        String numString = speaker.replace(SPEAKER_USER, "");
-        return Integer.parseInt(numString);
     }
 
     public Translation getName() {

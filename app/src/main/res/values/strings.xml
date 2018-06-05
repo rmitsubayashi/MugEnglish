@@ -90,28 +90,6 @@
     <string name="preferences_category_questions_key">
         preferences:questions
     </string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_screen_key">
-        preferenceScreen:description before exception question
-    </string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_key">
-        preferences:description before exception question
-    </string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_label_short">
-        例外的な文法の説明文
-    </string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_show">表示する</string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_label_long">
-        例外的な文法の説明文を表示する
-    </string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_true">表示</string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_false">非表示</string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_description_functionality">
-        例外的な文法が出題されるレッスンを学習するとき、レッスン選択画面の説明文にその文法の説明を載せるかどうか選択できます。非表示にした場合、問題を間違えた際に表示されるアドバイス画面と結果画面で文法を学べます（結果画面の説明文には例外的な文法の説明も表示されます）。
-    </string>
-    <string name="preferences_questions_descriptionBeforeLessonWithExceptionRule_description_reason">
-        説明文を隠すので、Pelicannで勉強した事前知識のみで問題を解くことになります。そして当たり前のように例外的な文法に引っ掛かります。\n問題を間違えた後のアドバイスで例外的な文法の説明をします。「こうだったと思ったのに、実はこうだった」という発見ができると思います。事前に説明文を読むとこの発見はできません。\n\n
-        なぜこの発見が重要なのか。自分の誤りと正しい文法を比べることにより、より効率的にその文法を覚えられます。これは Garden Path Technique (ガーデンパステクニック)といい、何人もの研究者が実証しています。良ければ調べてみてください。（似たような単語に「ガーデンパス現象」がありますが、これは全くの別物です）
-    </string>
     <string name="preferences_questions_numberOfAttemptsPerQuestion_key">
         preferences:number of question attempts
     </string>

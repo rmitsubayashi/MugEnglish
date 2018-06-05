@@ -222,4 +222,23 @@ public final class GrammarRules {
 			return result;
 		}
 	}
+
+	public static String commasInASeriesJP(List<String> series, String conjunction){
+		if (series.size() == 0){
+			return "";
+		}
+		else if (series.size() == 1){
+			return series.get(0);
+		} else if (series.size() == 2){
+			return series.get(0) +conjunction + series.get(1);
+		} else {
+			String result = "";
+			for (int i=0; i<series.size()-1; i++){
+				result += series.get(i) + "、";
+			}
+			result += conjunction + series.get(series.size()-1);
+
+			return result;
+		}
+	}
 }

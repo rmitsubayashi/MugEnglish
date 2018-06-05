@@ -51,7 +51,7 @@ public class Script_food_restaurant extends ScriptGenerator {
 
     private ScriptSentence scriptSentence3(EntityPropertyData data){
         ScriptSentence sentence = new ScriptSentence();
-        String sentenceEN = "I love the " + data.getPropertyAt(1).getEnglish();
+        String sentenceEN = "I love the " + data.getPropertyAt(1).getEnglish() + ".";
         String sentenceJP = data.getPropertyAt(1).getJapanese() + "がいいね。";
         sentence.setSentence(sentenceEN, sentenceJP);
         sentence.setSpeaker(ScriptSpeaker.getGuestSpeaker(2));
