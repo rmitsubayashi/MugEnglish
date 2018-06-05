@@ -40,7 +40,7 @@ public class TestMockFirebaseDB {
         };
         //OnDBResultListener onDBResultListener = mock(OnDBResultListener.class);
         db.searchEntityPropertyData(null, "", new ArrayList<WikiDataEntity>(),
-                0, new ArrayList<EntityPropertyData>(), onDBResultListener);
+                0, onDBResultListener);
         assertTrue(called[0]);
         //verify(onDBResultListener, times(2)).onQuestionsQueried(new ArrayList<String>(), new ArrayList<WikiDataEntity>());
     }

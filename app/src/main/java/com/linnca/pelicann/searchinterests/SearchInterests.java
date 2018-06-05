@@ -33,8 +33,8 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
-import pelicann.linnca.com.corefunctionality.searchinterests.RecommendationGetter;
 import pelicann.linnca.com.corefunctionality.searchinterests.SearchHelper;
+import pelicann.linnca.com.corefunctionality.searchinterests.SimilarUserInterestGetter;
 import pelicann.linnca.com.corefunctionality.userinterests.AddUserInterestHelper;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
@@ -55,8 +55,7 @@ public class SearchInterests extends Fragment {
     private final List<WikiDataEntity> userInterests = new ArrayList<>();
     //manages threads for searching
     private SearchHelper searchHelper;
-    //helps get recommendations
-    private RecommendationGetter recommendationGetter;
+    private SimilarUserInterestGetter similarUserInterestGetter;
     //for handler result
     private final int SUCCESS = 1;
     private final int FAILURE = 2;
@@ -83,9 +82,10 @@ public class SearchInterests extends Fragment {
                 new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE,7),
                 new WikiDataSPARQLConnector(WikiDataSPARQLConnector.JAPANESE)
         );
+
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
-        recommendationGetter = new RecommendationGetter(
+        similarUserInterestGetter = new SimilarUserInterestGetter(
                 5, networkConnectionChecker, db, 3
         );
     }
@@ -239,10 +239,10 @@ public class SearchInterests extends Fragment {
                         //give the data to the adapter
                         // so it can give feedback to the user
                         adapter.setAddedWikiDataEntity(data);
-                        //get recommendations for the user
-                        recommendationGetter.getNewRecommendations(data,
+
+                        similarUserInterestGetter.getNewRecommendations(data,
                                 userInterests,
-                                getRecommendationGetterListener());
+                                getSimilarUserInterestGetterListener());
                     }
 
                     @Override
@@ -262,17 +262,11 @@ public class SearchInterests extends Fragment {
                         AndroidNetworkConnectionChecker(getContext());
                 db.addUserInterests(networkConnectionChecker, dataList, onDBResultListener);
             }
-
-            @Override
-            public void onLoadMoreRecommendations(){
-                recommendationGetter.loadMoreRecommendations(userInterests,
-                        getRecommendationGetterListener());
-            }
         };
     }
 
-    private RecommendationGetter.RecommendationGetterListener getRecommendationGetterListener(){
-        return new RecommendationGetter.RecommendationGetterListener() {
+    private SimilarUserInterestGetter.SimilarUserInterestGetterListener getSimilarUserInterestGetterListener(){
+        return new SimilarUserInterestGetter.SimilarUserInterestGetterListener() {
             @Override
             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
                 //adapter.showRecommendations(results, showLoadMoreButton);

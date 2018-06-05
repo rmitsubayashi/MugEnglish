@@ -44,9 +44,6 @@ public abstract class LessonInstanceGenerator {
             new ArrayList<EntityPropertyData>());
     //interests to search
     private Set<WikiDataEntity> userInterests;
-    //makes sure we are not giving duplicate entity property data
-    // from previous instances of the user.
-    private final Set<EntityPropertyData> userPreviousEntityPropertyData = new HashSet<>();
     //what to do after we finish creating an instance
     private LessonInstanceGeneratorListener lessonListener;
 
@@ -132,7 +129,7 @@ public abstract class LessonInstanceGenerator {
                 userInterests = Collections.synchronizedSet(new HashSet<>(queriedUserInterests));
                 if (userInterests.size() == 0){
                     //no need to get similar interests
-                    populateUserPreviousEntityData();
+                    getEntityDataFromDatabase();
                 } else {
                     populateSimilarUserInterests();
                 }
@@ -155,9 +152,11 @@ public abstract class LessonInstanceGenerator {
             @Override
             public void onSimilarUserInterestsQueried(List<WikiDataEntity> userInterests) {
                 LessonInstanceGenerator.this.userInterests.addAll(userInterests);
-
+                for (WikiDataEntity entity : userInterests){
+                    System.out.println(entity.getLabel());
+                }
                 if (userInterestsQueried.incrementAndGet() == userInterestSize){
-                    populateUserPreviousEntityData();
+                    getEntityDataFromDatabase();
                 }
             }
         };
@@ -167,29 +166,13 @@ public abstract class LessonInstanceGenerator {
         }
     }
 
-    //we need to skip over entity data the user has already had
-    private void populateUserPreviousEntityData(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances) {
-                for (LessonInstanceData instanceData : lessonInstances){
-                    userPreviousEntityPropertyData.addAll(instanceData.getEntityPropertyData());
-                }
-
-                getEntityDataFromDatabase();
-            }
-            @Override
-            public void onNoConnection(){
-                lessonListener.onNoConnection();
-            }
-        };
-        db.getLessonInstances(networkConnectionChecker, lessonKey, false, onDBResultListener);
-    }
-
     //we should try fetching already created data from the database
     // by matching the user's interests. if the user has not had that data yet,
     // add it to the list of entity data.
     private void getEntityDataFromDatabase(){
+        for (WikiDataEntity entity : userInterests){
+            System.out.println(entity.getLabel());
+        }
         if (userInterests.size() == 0){
             //skip trying to fetch entity data from db/wikiData.
             fillRemainingEntityPropertyData();
@@ -202,11 +185,10 @@ public abstract class LessonInstanceGenerator {
         //set -> list so we can shuffle
         final List<WikiDataEntity> userInterestList = new ArrayList<>(userInterests);
         Collections.shuffle(userInterestList);
-        //we don't want to match any question the user has already had
-        List<EntityPropertyData> entityPropertyDataToAvoid = new ArrayList<>(userPreviousEntityPropertyData);
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onEntityPropertyDataSearched(List<EntityPropertyData> entityPropertyDataFound, List<WikiDataEntity> userInterestsSearched) {
+                System.out.println("size" + entityPropertyDataFound.size());
                 for (EntityPropertyData data : entityPropertyDataFound) {
                     lessonInstanceData.addEntityPropertyData(data);
                     uniqueEntitiesLeft --;
@@ -226,7 +208,6 @@ public abstract class LessonInstanceGenerator {
                     //we don't need to check for interests we've already matched or
                     // know we can't match
                     Set<WikiDataEntity> copy = new HashSet<>(userInterests);
-                    copy.removeAll(userInterestsSearched);
                     searchWikiData(copy);
                 }
             }
@@ -238,7 +219,7 @@ public abstract class LessonInstanceGenerator {
         };
 
         db.searchEntityPropertyData(networkConnectionChecker, lessonKey, userInterestList, uniqueEntitiesLeft,
-                entityPropertyDataToAvoid, onDBResultListener);
+                onDBResultListener);
     }
 
     //検索するのは特定のentityひとつに対するクエリー
@@ -246,6 +227,7 @@ public abstract class LessonInstanceGenerator {
     protected abstract String getSPARQLQuery();
     //一つ一つのクエリーを送って、まとめる
     private void searchWikiData(Set<WikiDataEntity> interests){
+        System.out.println("searching");
         //shuffle so we don't get the same interests over and over
         ArrayList<WikiDataEntity> interestList = new ArrayList<>(interests);
         Collections.shuffle(interestList);
@@ -373,10 +355,6 @@ public abstract class LessonInstanceGenerator {
                         break;
                     }
                 }
-
-                if (uniqueEntitiesLeft != 0){
-                    addEntityPropertyDataFromUserHistory();
-                }
                 //now we are done
                 saveInstance();
             }
@@ -387,40 +365,14 @@ public abstract class LessonInstanceGenerator {
             }
         };
         List<EntityPropertyData> entityPropertyDataToAvoid = new ArrayList<>(
-                userPreviousEntityPropertyData.size() + lessonInstanceData.getEntityPropertyData().size()
+                lessonInstanceData.getEntityPropertyData().size()
         );
         //this stores the IDs we created for this instance.
         //since we already saved them in the database, we need to
         //add these so we can avoid them
         entityPropertyDataToAvoid.addAll(lessonInstanceData.getEntityPropertyData());
-        entityPropertyDataToAvoid.addAll(userPreviousEntityPropertyData);
-        System.out.println("adding random data");
         db.getRandomEntityPropertyData(networkConnectionChecker, lessonKey, entityPropertyDataToAvoid,
                 uniqueEntitiesLeft, onDBResultListener);
-    }
-
-    private void addEntityPropertyDataFromUserHistory(){
-        //last resort, populate with already created questions.
-        //this happens when the user has every question
-        // stocked in the database.
-
-        //make it a list so we can shuffle
-        List<EntityPropertyData> userHistoryList = new ArrayList<>(userPreviousEntityPropertyData);
-        Collections.shuffle(userHistoryList);
-        //no need to check if the user's question history is more than the remaining question count
-        //because it is guaranteed to be at least equal
-        for (EntityPropertyData data : userHistoryList){
-            //just making sure.
-            //we don't want duplicate questions
-            if (lessonInstanceData.isUniqueEntity(data)) {
-                lessonInstanceData.addEntityPropertyData(data);
-                uniqueEntitiesLeft--;
-            }
-
-            //we are finished populating questions
-            if (uniqueEntitiesLeft == 0)
-                break;
-        }
     }
 
     private void saveInstance(){

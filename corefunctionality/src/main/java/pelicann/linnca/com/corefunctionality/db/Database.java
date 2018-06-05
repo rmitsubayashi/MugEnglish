@@ -38,7 +38,7 @@ public abstract class Database implements Serializable{
 
     //using 'search' to distinguish from getting questions for answering
     public abstract void searchEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests,
-                                                  int toPopulate, List<EntityPropertyData> toAvoid,
+                                                  int toPopulate,
                                                   OnDBResultListener onDBResultListener);
     public abstract void addEntityPropertyData(String lessonKey, List<EntityPropertyData> data, OnDBResultListener onDBResultListener);
     public abstract void getRandomEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<EntityPropertyData> toAvoid, int toPopulate, OnDBResultListener onDBResultListener);

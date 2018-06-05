@@ -33,6 +33,7 @@ public class Instance_introduction_age extends LessonInstanceGenerator {
                 "{" +
                 "    ?person   wdt:P569   ?birthday; " + //has a birthday
                 "              rdfs:label ?personENLabel . " +
+                "    FILTER NOT EXISTS { ?person wdt:P570 ?dateDeath } . " + //but not a death date
                 "    OPTIONAL { ?person    wdt:P735   ?firstName . " + //first name if possible
                 "               ?firstName rdfs:label ?firstNameENLabel } . " +
                 "    OPTIONAL { ?person    wdt:P18    ?pic } . " + //image if possible

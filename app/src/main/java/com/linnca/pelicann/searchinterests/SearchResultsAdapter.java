@@ -23,7 +23,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
     private final String VIEW_TYPE_OFFLINE_AFTER_ADDING_WIKIDATA_ID = "offline after adding";
 
     private final int VIEW_TYPE_RECOMMENDATION_HEADER = 1;
-    private final int VIEW_TYPE_RECOMMENDATION_FOOTER = 2;
     private final int VIEW_TYPE_NORMAL = 3;
     private final int VIEW_TYPE_EMPTY = 4;
     private final int VIEW_TYPE_LOADING = 5;
@@ -39,14 +38,12 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
     // when the user can load more recommendations
     private boolean recommendationFooterShown = false;
     private String headerLabel = "";
-    private WikiDataEntity recommendationWikiDataEntity;
 
     //prevent fast double clicks on any of the buttons
     private long lastClickTime = 0;
 
     public interface SearchResultsAdapterListener {
         void onAddInterest(WikiDataEntity data);
-        void onLoadMoreRecommendations();
     }
 
     public SearchResultsAdapter(SearchResultsAdapterListener listener){
@@ -71,8 +68,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
         switch (data.getWikiDataID()){
             case VIEW_TYPE_RECOMMENDATION_HEADER_WIKIDATA_ID:
                 return VIEW_TYPE_RECOMMENDATION_HEADER;
-            case VIEW_TYPE_RECOMMENDATION_FOOTER_WIKIDATA_ID:
-                return VIEW_TYPE_RECOMMENDATION_FOOTER;
             case VIEW_TYPE_EMPTY_STATE_WIKIDATA_ID:
                 return VIEW_TYPE_EMPTY;
             case VIEW_TYPE_LOADING_WIKIDATA_ID:
@@ -95,10 +90,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
         if (viewType == VIEW_TYPE_RECOMMENDATION_HEADER){
             itemView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_header, parent, false);
             return new SearchResultsRecommendationHeaderViewHolder(itemView);
-        }
-        else if (viewType == VIEW_TYPE_RECOMMENDATION_FOOTER){
-            itemView = inflater.inflate(R.layout.inflatable_search_interest_recommendations_footer, parent, false);
-            return new SearchResultsRecommendationFooterViewHolder(itemView);
         }
         else if (viewType == VIEW_TYPE_EMPTY){
             itemView = inflater.inflate(R.layout.inflatable_search_interests_empty_state, parent, false);
@@ -154,14 +145,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
             //if there are no items, we should not show a rankings header
             ((SearchResultsRecommendationHeaderViewHolder) viewHolder)
                     .setRankingsHeaderVisibility(getSearchResultSize() != 0);
-        } else if (viewHolder instanceof SearchResultsRecommendationFooterViewHolder){
-            ((SearchResultsRecommendationFooterViewHolder) viewHolder)
-                    .setButtonListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    searchResultsAdapterListener.onLoadMoreRecommendations();
-                }
-            });
         } else if (viewHolder instanceof SearchResultsEmptyStateViewHolder){
             WikiDataEntity data = results.get(position);
             ((SearchResultsEmptyStateViewHolder) viewHolder).setQuery(data.getLabel());
@@ -296,7 +279,6 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void setAddedWikiDataEntity(WikiDataEntity data){
-        this.recommendationWikiDataEntity = data;
         headerLabel = data.getLabel();
         //to help with distinguishing between headers/footers shown
         //in more recommendations and headers/footers shown

@@ -33,8 +33,8 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnecto
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.searchinterests.RecommendationGetter;
 import pelicann.linnca.com.corefunctionality.searchinterests.SearchHelper;
+import pelicann.linnca.com.corefunctionality.searchinterests.SimilarUserInterestGetter;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class Onboarding3v2 extends Fragment {
@@ -42,7 +42,7 @@ public class Onboarding3v2 extends Fragment {
     private SearchHelper searchHelper;
     private ReentrantLock lock = new ReentrantLock();
     private final WikiBaseEndpointConnector wikiBaseEndpointConnector = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
-    private final int peopleToChoose = 3;
+    private final int peopleToChoose = 5;
     //what the user has chosen
     private List<WikiDataEntity> people = new ArrayList<>(peopleToChoose);
     private SearchView searchview;
@@ -52,7 +52,7 @@ public class Onboarding3v2 extends Fragment {
     private TextView itemsToAddTextview;
     private TextView finishedTextview;
     private SearchResultsAdapter adapter;
-    private RecommendationGetter recommendationGetter;
+    private SimilarUserInterestGetter similarUserInterestGetter;
     //to see if this is the first time the user typed
     private boolean typed = false;
     //to communicate with the activity once we are done adding all entities
@@ -74,7 +74,8 @@ public class Onboarding3v2 extends Fragment {
         );
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
-        recommendationGetter = new RecommendationGetter(3, networkConnectionChecker, new FirebaseDB(), 3);
+        similarUserInterestGetter = new SimilarUserInterestGetter(3, networkConnectionChecker,
+                new FirebaseDB(), 3);
     }
 
     @Override
@@ -238,31 +239,21 @@ public class Onboarding3v2 extends Fragment {
 
                 adapter.showRecommendations(new ArrayList<WikiDataEntity>(1), false);
                 refreshItemsLeftViews();
-                recommendationGetter.getNewRecommendations(data, new ArrayList<WikiDataEntity>(1),
-                    new RecommendationGetter.RecommendationGetterListener() {
-                        @Override
-                        public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
+                similarUserInterestGetter.getNewRecommendations(data, new ArrayList<WikiDataEntity>(1),
+                        new SimilarUserInterestGetter.SimilarUserInterestGetterListener() {
+                            @Override
+                            public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onNoConnection() {
+                            @Override
+                            public void onNoConnection() {
 
-                        }
-                    }
-                );
-            }
-
-            @Override
-            public void onLoadMoreRecommendations() {
-
+                            }
+                        });
             }
         };
     }
-
-
-
-
 
     private boolean enoughItems(){
         return  people.size() >= peopleToChoose;

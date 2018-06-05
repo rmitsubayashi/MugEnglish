@@ -5,75 +5,6 @@
     <string name="facebook_application_id" translatable="false">159539307868031</string>
     <string name="twitter_consumer_key" translatable="false">AYlTVxRfSPi7tjlEH14aQOeAD</string>
     <string name="twitter_consumer_secret" translatable="false">p4QlSmmog6Vm4Kq7bnqBFVOXcysMfvcB1rPeJ41S4b2sONGY3Y</string>
-    <!--override English text to Japanese-->
-    <!-- Common -->
-    <string name="default_toolbar_title">@string/app_name</string>
-    <string name="progress_dialog_loading">ロード中…</string>
-    <string name="sign_in_default">サインイン</string>
-    <string name="general_error">エラーが起こりました。</string>
-
-    <!-- Provider -->
-    <string name="idp_name_google">Google</string>
-    <string name="idp_name_facebook">Facebook</string>
-    <string name="idp_name_twitter">Twitter</string>
-
-    <!-- Auth method picker -->
-    <string name="sign_in_with_google">Googleでサインイン</string>
-    <string name="sign_in_with_facebook">Facebookでサインイン</string>
-    <string name="sign_in_with_twitter">Twitterでサインイン</string>
-    <string name="sign_in_with_email">メールでサインイン</string>
-
-    <!-- Email common-->
-    <string name="next_default">次へ</string>
-    <string name="email_hint">メールアドレス</string>
-    <string name="password_hint">パスワード</string>
-    <string name="required_field">You can\'t leave this empty.</string>
-    <string name="invalid_email_address">メールアドレスが間違っています</string>
-    <string name="missing_email_address">Enter your email address to continue</string>
-    <string name="progress_dialog_checking_accounts">既存アカウントを確認中…</string>
-
-    <!-- Email sign up -->
-    <string name="title_register_email">アカウント登録</string>
-    <string name="name_hint">First &amp; last name</string>
-    <string name="button_text_save">保存</string>
-    <string name="progress_dialog_signing_up">アカウント登録中…</string>
-    <plurals name="error_weak_password">
-        <item quantity="one">パスワードをもっと強くしましょう. %1$d文字以上、文字と数字両方を使用してください</item>
-        <item quantity="other">パスワードをもっと強くしましょう. %1$d文字以上、文字と数字両方を使用してください</item>
-    </plurals>
-    <string name="email_account_creation_error">アカウント登録に失敗しました</string>
-    <string name="error_user_collision">そのメールアドレスのアカウントはすでに存在します</string>
-    <string name="create_account_preamble">"By tapping SAVE you are indicating that you agree to the "</string>
-    <string name="terms_of_service">Terms of Service</string>
-
-    <!-- Idp/Email welcome back -->
-    <string name="title_welcome_back_idp_prompt">@string/sign_in_default</string>
-    <string name="title_welcome_back_password_prompt">@string/sign_in_default</string>
-    <string name="welcome_back_idp_header">すでにアカウントが登録されています</string>
-    <string name="welcome_back_email_header">ようこそ!</string>
-    <string name="welcome_back_idp_prompt">
-        <xliff:g example="jane.doe@example.com" id="email_addr">%1$s</xliff:g>は登録されています。
-        <xliff:g example="Google" id="provider_name">%2$s</xliff:g>でサインインしてください。
-    </string>
-    <string name="welcome_back_password_prompt_body">
-        <xliff:g example="jane.doe@example.com" id="email_addr">%1$s</xliff:g>は登録されています。
-        そのアカウントのパスワードでサインインしてください。
-    </string>
-    <string name="progress_dialog_signing_in">サインイン中…</string>
-    <string name="trouble_signing_in">サインインできませんか?</string>
-
-    <!-- Password recovery -->
-    <string name="title_recover_password_activity">パスワードを復旧</string>
-    <string name="title_confirm_recover_password">メールを確認してください</string>
-    <string name="password_recovery_body">Get instructions sent to this email that explain how to
-        reset your password.</string>
-    <string name="button_text_send">送信</string>
-    <string name="confirm_recovery_body">%1$sに送られた指示に従ってパスワードを復元してください。</string>
-    <string name="progress_dialog_sending">送信中…</string>
-    <string name="error_email_does_not_exist">アカウントのメールアドレスと一致しません</string>
-
-    <!-- accessibility -->
-    <string name="accessibility_logo">App logo</string>
 
     <!--app bar icon titles-->
     <string name="toolbar_search_title">検索</string>
@@ -145,18 +76,13 @@
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_skip">スキップ</string>
     <string name="onboarding_finish">始める</string>
-    <string name="onboarding1_explanation">「お気に入り」に好きな人や場所を追加すると・・・</string>
+    <string name="onboarding1_explanation">「お気に入り」に好きな人を追加すると・・・</string>
     <string name="onboarding2_explanation">例文に出てきます！</string>
-    <string name="onboarding3_explanation">お気に入りを追加します。\nおすすめセットを選択してください</string>
-    <string name="onboarding3_starter_pack_boy">こども（男性）</string>
-    <string name="onboarding3_starter_pack_girl">こども(女性)</string>
-    <string name="onboarding3_starter_pack_man">大人（男性）</string>
-    <string name="onboarding3_starter_pack_woman">大人（女性）</string>
-    <string name="onboarding3v2_instructions">最初のレッスンに出てくる人と場所を追加しましょう。\n\n
-    人を2人、国を1国、都市を1つ検索して、追加してください。</string>
+    <string name="onboarding3v2_instructions">最初のレッスンに出てくる人を追加しましょう。\n\n
+    おすすめはスポーツ選手2人、芸能人3人です！</string>
     <string name="onboarding3v2_items_left">あと<b>%1$d</b>人選んでください</string>
-    <string name="onboarding3v2_no_match_category">人、国、都市を検索してください</string>
-    <string name="onboarding3v2_finished">お疲れ様です。\nこれでレッスンにあなたが追加した人と場所が登場します。\n「始める」で勉強画面に移りましょう。</string>
+    <string name="onboarding3v2_no_match_category">人を検索してください</string>
+    <string name="onboarding3v2_finished">お疲れ様です。\nこれでレッスンにあなたが追加した人が登場します。\n「始める」で勉強画面に移りましょう。</string>
 
     <string name="fragment_user_interests_title">お気に入り</string>
     <string name="fragment_search_interests_title">検索</string>
@@ -292,17 +218,6 @@
     <string name="question_actions_start">スタート</string>
     <string name="question_instructions_hint">解答を記入してください</string>
     <string name="question_instructions_submit">確定</string>
-
-    <!--vocabulary-->
-    <string name="vocabulary_list_item_delete">消去</string>
-    <string name="vocabulary_list_empty_state_description">単語帳に単語がありません。\n
-    勉強して、新しい単語を追加しましょう。</string>
-    <string name="vocabulary_list_empty_state_go_to_lesson">レッスンに行く</string>
-
-    <string name="vocabulary_details_meaning">意味</string>
-    <string name="vocabulary_details_example_sentence">例文</string>
-    <string name="vocabulary_details_go_to_lesson">レッスンにいく</string>
-    <string name="vocabulary_details_offline_notification">詳細を見るにはネットに接続してください</string>
 
     <!--for the calendar view-->
     <string name="calendar_sunday">日</string>

@@ -37,7 +37,7 @@ public class Onboarding extends AppCompatActivity
 implements Onboarding3v2.Onboarding3v2Listener
 {
     private int pageIndex = 0;
-    private final int maxPageIndex = 1;
+    private final int maxPageIndex = 2;
     private Button nextButton;
     private Button finishButton;
     private final List<ImageView> indicators = new ArrayList<>(3);
@@ -68,10 +68,10 @@ implements Onboarding3v2.Onboarding3v2Listener
         viewPager.setAdapter(adapter);
         ImageView indicator1 = findViewById(R.id.onboarding_indicator1);
         ImageView indicator2 = findViewById(R.id.onboarding_indicator2);
-        //ImageView indicator3 = findViewById(R.id.onboarding_indicator3);
+        ImageView indicator3 = findViewById(R.id.onboarding_indicator3);
         indicators.add(indicator1);
         indicators.add(indicator2);
-        //indicators.add(indicator3);
+        indicators.add(indicator3);
 
         setActionListeners();
 
@@ -132,12 +132,12 @@ implements Onboarding3v2.Onboarding3v2Listener
             }
         });
 
-        /*finishButton.setOnClickListener(new View.OnClickListener() {
+        finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toApp();
             }
-        });*/
+        });
 
     }
 
@@ -163,12 +163,12 @@ implements Onboarding3v2.Onboarding3v2Listener
         viewPager.setVisibility(View.VISIBLE);
         loading.setVisibility(View.GONE);
         finishButton.setTextColor(ThemeColorChanger.getColorFromAttribute(R.attr.color500,this));
-        /*finishButton.setOnClickListener(new View.OnClickListener() {
+        finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 toApp();
             }
-        });*/
+        });
     }
 
     @Override

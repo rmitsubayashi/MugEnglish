@@ -20,11 +20,11 @@ class OnboardingPagerAdapter extends FragmentPagerAdapter {
                 return new Onboarding1();
             case 1 :
                 return new Onboarding2();
-            /*case 2 :
+            case 2 :
                 //save so we can access the user selection
                 //onboarding3 = new Onboarding3();
                 //return onboarding3;
-                return new Onboarding3v2();*/
+                return new Onboarding3v2();
             default :
                 return null;
         }

@@ -40,7 +40,7 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void searchEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
-                                List<EntityPropertyData> toAvoid, OnDBResultListener onDBResultListener) {
+                                OnDBResultListener onDBResultListener) {
         List<EntityPropertyData> entitiesToReturn = new ArrayList<>(toPopulate);
         List<WikiDataEntity> userInterestsChecked = new ArrayList<>(userInterests.size());
         if (toPopulate == 0){
@@ -50,7 +50,6 @@ public class MockFirebaseDB extends Database {
             List<EntityPropertyData> set = entityPropertyData.get(userInterest.getWikiDataID());
             if (set != null &&
                     set.size() > 0 &&
-                    Collections.disjoint(toAvoid, set) &&
                     toPopulate != 0) {
                 entitiesToReturn.add(set.get(0));
                 toPopulate--;

@@ -17,7 +17,7 @@ import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
-public class RecommendationGetter {
+public class SimilarUserInterestGetter {
     //to get connection status
     private NetworkConnectionChecker networkConnectionChecker;
     //to get popular user interests
@@ -38,12 +38,12 @@ public class RecommendationGetter {
 
     //the interface is to determine what will happen to the UI.
     //the results here should only contain enough items to display (not the entire list)
-    public interface RecommendationGetterListener {
+    public interface SimilarUserInterestGetterListener {
         void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton);
         void onNoConnection();
     }
 
-    public RecommendationGetter(int defaultRecommendationCt, NetworkConnectionChecker networkConnectionChecker, Database db, int loadMoreRecommendationCt){
+    public SimilarUserInterestGetter(int defaultRecommendationCt, NetworkConnectionChecker networkConnectionChecker, Database db, int loadMoreRecommendationCt){
         this.networkConnectionChecker = networkConnectionChecker;
         this.db = db;
         this.defaultRecommendationCt = defaultRecommendationCt;
@@ -55,25 +55,25 @@ public class RecommendationGetter {
     }
 
     public void getNewRecommendations(final WikiDataEntity addedInterest, List<WikiDataEntity> userInterests,
-                            final RecommendationGetterListener recommendationGetterListener){
+                                      final SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
         if (addedInterest == null || addedInterest.getLabel() == null){
             return;
         }
         this.addedInterest = addedInterest;
         //reset the recommendation count to the default
         toDisplayRecommendationCt = defaultRecommendationCt;
-        //getPopularWikidataEntities(userInterests, recommendationGetterListener);
+        //getPopularWikidataEntities(userInterests, SimilarUserInterestGetterListener);
         new Thread(){
             @Override
             public void run(){
-                getPeopleAlsoSearchedFor(addedInterest.getLabel(), recommendationGetterListener);
+                getPeopleAlsoSearchedFor(addedInterest.getLabel(), SimilarUserInterestGetterListener);
             }
         }.start();
 
     }
 
     public void loadMoreRecommendations(List<WikiDataEntity> userInterests,
-                                 RecommendationGetterListener recommendationGetterListener){
+                                        SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
         toDisplayRecommendationCt += loadMoreRecommendationCt;
         //check first if we can still populate the recommendations with
         //the initial list we grabbed.
@@ -82,15 +82,15 @@ public class RecommendationGetter {
             // but then we don't know whether we should show the load more button or not.
             List<WikiDataEntity> toDisplay = new ArrayList<>(
                     savedRecommendations.subList(0, toDisplayRecommendationCt));
-            recommendationGetterListener.onGetRecommendations(toDisplay, true);
+            SimilarUserInterestGetterListener.onGetRecommendations(toDisplay, true);
         } else {
             //grab more from the database
-            getPopularWikidataEntities(userInterests, recommendationGetterListener);
+            getPopularWikidataEntities(userInterests, SimilarUserInterestGetterListener);
         }
     }
 
     private void getPopularWikidataEntities(final List<WikiDataEntity> userInterests,
-                                    final RecommendationGetterListener recommendationGetterListener){
+                                            final SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onUserInterestRankingsQueried(List<WikiDataEntity> rankings) {
@@ -108,12 +108,12 @@ public class RecommendationGetter {
                 } else {
                     showLoadMoreButton = false;
                 }
-                recommendationGetterListener.onGetRecommendations(rankings, showLoadMoreButton);
+                SimilarUserInterestGetterListener.onGetRecommendations(rankings, showLoadMoreButton);
             }
 
             @Override
             public void onNoConnection(){
-                recommendationGetterListener.onNoConnection();
+                SimilarUserInterestGetterListener.onNoConnection();
             }
         };
 
@@ -126,7 +126,7 @@ public class RecommendationGetter {
         db.getPopularUserInterests(networkConnectionChecker, toGetUserInterestCt, onDBResultListener);
     }
 
-    private void getPeopleAlsoSearchedFor(final String addedInterestLabel, final RecommendationGetterListener recommendationGetterListener){
+    private void getPeopleAlsoSearchedFor(final String addedInterestLabel, final SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
         EndpointConnectorReturnsXML.OnFetchDOMListener listener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
             @Override
             public boolean shouldStop() {
@@ -152,7 +152,7 @@ public class RecommendationGetter {
 
             @Override
             public void onError() {
-                recommendationGetterListener.onNoConnection();
+                SimilarUserInterestGetterListener.onNoConnection();
             }
         };
 
