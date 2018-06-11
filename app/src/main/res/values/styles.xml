@@ -68,25 +68,6 @@
 
     <!--no style for the background of descriptions because
     that messes with the transition animation-->
-    <style name="description_lesson_subheader">
-        <item name="android:textSize">21sp</item>
-        <item name="android:textColor">?attr/colorAccent500</item>
-        <item name="android:layout_marginBottom">16dp</item>
-        <item name="android:layout_marginTop">16dp</item>
-    </style>
-    <style name="description_lesson_text">
-        <item name="android:textSize">17sp</item>
-        <item name="android:layout_marginBottom">24dp</item>
-    </style>
-    <style name="description_table_highlighted_item">
-        <item name="android:textColor">?attr/color500</item>
-        <item name="android:textSize">15sp</item>
-        <item name="android:padding">12dp</item>
-    </style>
-    <style name="description_table_plain_item">
-        <item name="android:textSize">15sp</item>
-        <item name="android:padding">12dp</item>
-    </style>
 
 
     <!--setting a window background is apparently the best way to go with splash screens-->

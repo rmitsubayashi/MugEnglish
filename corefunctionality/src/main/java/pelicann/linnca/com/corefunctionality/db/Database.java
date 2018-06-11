@@ -77,7 +77,7 @@ public abstract class Database implements Serializable{
     public abstract void getReviewQuestions(OnDBResultListener onDBResultListener);
 
     public abstract void getReportCard(int level, OnDBResultListener onDBResultListener);
-    public abstract void addReportCard(int level, String lessonKey, int correctCt, int totalCt, OnDBResultListener onDBResultListener);
+    public abstract void addReportCard(String lessonKey, int correctCt, int totalCt, OnDBResultListener onDBResultListener);
 
     public abstract void addAppUsageLog(AppUsageLog log);
     public abstract void getFirstAppUsageDate(OnDBResultListener onDBResultListener);

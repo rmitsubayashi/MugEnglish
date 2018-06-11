@@ -11,13 +11,11 @@ import java.util.List;
 
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
 public class LessonCategoryListAdapter extends RecyclerView.Adapter<LessonCategoryListViewHolder>  {
-    private final int lessonLevel;
     private final List<LessonCategory> lessonCategories;
     private final LessonCategoryList.LessonCategoryListListener listener;
 
-    LessonCategoryListAdapter(int lessonLevel, List<LessonCategory> categories,
+    LessonCategoryListAdapter(List<LessonCategory> categories,
                               LessonCategoryList.LessonCategoryListListener listener){
-        this.lessonLevel = lessonLevel;
         this.lessonCategories = categories;
         this.listener = listener;
     }

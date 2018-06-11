@@ -11,7 +11,6 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 //this means that any new instances will be generated before calling this class
 
 public class QuestionManager{
-	private final String TAG = "QuestionManager";
 	private boolean questionsStarted = false;
 	private LessonInstanceData lessonInstanceData = null;
 	private List<QuestionData> questions;

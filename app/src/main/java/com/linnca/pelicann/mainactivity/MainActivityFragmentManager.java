@@ -13,17 +13,22 @@ import com.linnca.pelicann.lessonscript.LessonScript;
 import com.linnca.pelicann.preferences.Preferences;
 import com.linnca.pelicann.questions.QuestionFragmentFactory;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
+import com.linnca.pelicann.questions.VerbQuestionStart;
 import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.results.ReviewResults;
+import com.linnca.pelicann.results.VerbQuestionResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
 import com.linnca.pelicann.userprofile.UserProfile_HoursStudied;
 
+import java.io.Serializable;
+import java.util.List;
+
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
+import pelicann.linnca.com.corefunctionality.lessonquestions.WordDefinitionPair;
 
 //manages all the fragment transactions
 class MainActivityFragmentManager {
@@ -54,6 +59,14 @@ class MainActivityFragmentManager {
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, UserInterests.TAG);
+        fragmentTransaction.commit();
+    }
+
+    void rootToVerbQuestionStart(){
+        clearBackStack();
+        Fragment fragment = new VerbQuestionStart();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, VerbQuestionStart.TAG);
         fragmentTransaction.commit();
     }
 
@@ -91,12 +104,11 @@ class MainActivityFragmentManager {
         fragmentTransaction.commit();
     }
 
-    void rootToLessonCategoryList(Database db, int lessonLevel){
+    void rootToLessonCategoryList(Database db){
         clearBackStack();
         Fragment fragment = new LessonCategoryList();
         Bundle bundle = new Bundle();
         bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        bundle.putInt(LessonCategoryList.LESSON_LEVEL, lessonLevel);
         fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonCategoryList.TAG);
@@ -112,34 +124,6 @@ class MainActivityFragmentManager {
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, SearchInterests.TAG);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
-    }
-
-    void vocabularyDetailsToLessonDetails(Database db, String lessonKey, LessonListViewer lessonListViewer){
-        /*
-        //this is not from the same root fragment so
-        // reset the back stack
-        clearBackStack();
-        //add the lesson list fragment, and then
-        // add the lesson details on top of it
-        Fragment fragment1 = new LessonList();
-        int lessonLevel = lessonListViewer.getLessonLevel(lessonKey);
-        Bundle bundle1 = new Bundle();
-        bundle1.putInt(LessonList.LESSON_LEVEL, lessonLevel);
-        bundle1.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        fragment1.setArguments(bundle1);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment1, LessonList.TAG);
-        fragmentTransaction.commit();
-
-        fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment fragment2 = new LessonDetails();
-        Bundle bundle2 = new Bundle();
-        bundle2.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonListViewer.getLessonData(lessonKey));
-        bundle2.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        fragment2.setArguments(bundle2);
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment2, LessonDetails.TAG);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();*/
     }
 
     void notQuestionFragmentToQuestion(QuestionData questionData, int questionNumber, int totalQuestionCount){
@@ -216,6 +200,27 @@ class MainActivityFragmentManager {
             fragmentManager.popBackStack();
         }
         fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, Results.TAG);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    void questionToVerbQuestionResults(int correctCt, List<WordDefinitionPair> wrongWords){
+        Fragment fragment = new VerbQuestionResults();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(VerbQuestionResults.BUNDLE_CORRECT_CT, correctCt);
+        bundle.putSerializable(VerbQuestionResults.BUNDLE_WRONG_WORDS, (Serializable)wrongWords);
+        fragment.setArguments(bundle);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment questionFragment = fragmentManager.findFragmentByTag(QuestionFragmentInterface.TAG);
+        if (questionFragment != null) {
+            fragmentTransaction.remove(questionFragment);
+            fragmentTransaction.commit();
+            fragmentTransaction = fragmentManager.beginTransaction();
+            //this would remove the lesson details -> question transaction
+            fragmentManager.popBackStack();
+        }
+        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, VerbQuestionResults.TAG);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }

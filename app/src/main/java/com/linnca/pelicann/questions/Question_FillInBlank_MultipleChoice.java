@@ -13,13 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
-
 import com.linnca.pelicann.mainactivity.TextToSpeechHelper;
 import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 
 import java.util.Collections;
 import java.util.List;
+
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 
 public class Question_FillInBlank_MultipleChoice extends QuestionFragmentInterface {
     public static final String FILL_IN_BLANK_MULTIPLE_CHOICE = "@blankMC@";

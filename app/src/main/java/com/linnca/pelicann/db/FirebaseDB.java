@@ -1049,13 +1049,12 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void addReportCard(int level, String lessonKey, final int correctCt, final int totalCt, final OnDBResultListener onDBResultListener){
+    public void addReportCard(String lessonKey, final int correctCt, final int totalCt, final OnDBResultListener onDBResultListener){
         final AtomicInteger finishedCt = new AtomicInteger(0);
         final int updateLocationCt = 2;
         final DatabaseReference correctCtRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.REPORT_CARD + "/" +
                         getUserID() + "/" +
-                        Integer.toString(level) + "/" +
                         lessonKey + "/" +
                         FirebaseDBHeaders.REPORT_CARD_CORRECT
         );
@@ -1087,7 +1086,6 @@ public class FirebaseDB extends Database {
         final DatabaseReference totalCtRef = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.REPORT_CARD + "/" +
                         getUserID() + "/" +
-                        Integer.toString(level) + "/" +
                         lessonKey + "/" +
                         FirebaseDBHeaders.REPORT_CARD_TOTAL
         );

@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -227,18 +226,6 @@ public class Results extends Fragment {
             correctCtTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.red500));
             correctCtUnitTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.red500));
         }
-    }
-
-    private void disableAddButton(Button button){
-        button.setTextColor(ContextCompat.getColorStateList(getContext(), R.color.gray500));
-        button.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
-        button.setOnClickListener(null);
-        button.setText(R.string.results_vocabulary_item_added);
     }
 
     //if we need to grab the lessons per day from the preferences

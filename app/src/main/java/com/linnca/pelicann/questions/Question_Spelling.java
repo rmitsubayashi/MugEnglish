@@ -26,8 +26,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
-import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 import pelicann.linnca.com.corefunctionality.lessonquestions.RandomCharacterGenerator;
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 
 public class Question_Spelling extends QuestionFragmentInterface {
     private TableLayout grid;

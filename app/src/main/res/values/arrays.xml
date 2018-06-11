@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="daysOfTheWeek">
-        <item>月</item>
-        <item>火</item>
-        <item>水</item>
-        <item>木</item>
-        <item>金</item>
-        <item>土</item>
-        <item>日</item>
-    </string-array>
 
 
 </resources>

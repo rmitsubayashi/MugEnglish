@@ -2,13 +2,9 @@
     <string name="app_name">Pelicann</string>
 
     <!--firebase UI-->
-    <string name="facebook_application_id" translatable="false">159539307868031</string>
-    <string name="twitter_consumer_key" translatable="false">AYlTVxRfSPi7tjlEH14aQOeAD</string>
-    <string name="twitter_consumer_secret" translatable="false">p4QlSmmog6Vm4Kq7bnqBFVOXcysMfvcB1rPeJ41S4b2sONGY3Y</string>
 
     <!--app bar icon titles-->
     <string name="toolbar_search_title">検索</string>
-    <string name="toolbar_description_title">説明</string>
 
     <!--general-->
     <string name="no_connection">ネットに接続してください</string>
@@ -60,81 +56,63 @@
     </string>
     <string name="preferences_general_themeColor_blue">青</string>
     <string name="preferences_general_themeColor_green">緑</string>
-    <string name="preferences_general_themeColor_red">赤</string>
     <string name="preferences_general_themeColor_yellow">黄色</string>
     <string name="preferences_general_themeColor_label">背景の色</string>
     <string name="preferences_general_themeColor_dialog_label">新しい色</string>
 
     <string name="preferences_first_time_key">preferences:first time</string>
-    <string name="preferences_last_selected_lesson_level">preferences: last selected lessonInstanceGenerator level</string>
-    <string name="preferences_report_card_last_selected_lesson_level">preferences: report card last selected lessonInstanceGenerator level</string>
-
-    <string name="preferences_subscreen_functionality_title">機能</string>
-    <string name="preferences_subscreen_reason_title">理由</string>
 
     <!--onboarding pages-->
     <string name="onboarding_next">次へ</string>
-    <string name="onboarding_skip">スキップ</string>
     <string name="onboarding_finish">始める</string>
     <string name="onboarding1_explanation">「お気に入り」に好きな人を追加すると・・・</string>
     <string name="onboarding2_explanation">例文に出てきます！</string>
     <string name="onboarding3v2_instructions">最初のレッスンに出てくる人を追加しましょう。\n\n
     おすすめはスポーツ選手2人、芸能人3人です！</string>
     <string name="onboarding3v2_items_left">あと<b>%1$d</b>人選んでください</string>
-    <string name="onboarding3v2_no_match_category">人を検索してください</string>
     <string name="onboarding3v2_finished">お疲れ様です。\nこれでレッスンにあなたが追加した人が登場します。\n「始める」で勉強画面に移りましょう。</string>
 
     <string name="fragment_user_interests_title">お気に入り</string>
-    <string name="fragment_search_interests_title">検索</string>
-    <string name="fragment_user_data_title">データ</string>
     <string name="fragment_settings_title">設定</string>
     <string name="fragment_lesson_list_title">勉強</string>
-    <string name="fragment_tutorial_lesson_details_title">第一歩</string>
-    <string name="fragment_vocabulary_list_title">単語帳</string>
-    <string name="fragment_vocabulary_details_title">単語</string>
 
     <!--navigation-->
     <string name="navigation_drawer_open">開く</string>
     <string name="navigation_drawer_close">閉じる</string>
-    <string name="lessons_level1">レベル1</string>
-    <string name="lessons_level2">レベル2</string>
-    <string name="navigation_level2_not_ready">レベル2は作成中です</string>
+    <string name="drawer_lessons">レッスン</string>
+    <string name="drawer_verb_questions">単語クイズ</string>
 
     <!-- lesson script -->
     <string name="lesson_script_to_prev">＜</string>
     <string name="lesson_script_to_next">＞</string>
     <string name="lesson_script_to_questions">問題へ</string>
 
+    <!--verb question start page-->
+    <string name="verb_question_title">重要動詞を覚えよう！</string>
+    <string name="verb_question_explanation">英語には何度も出てくる動詞がいくつかあります。\n
+    この動詞を覚えれば英語力がグンとアップ！</string>
+    <string name="verb_question_start">始める</string>
+
     <!--results-->
     <string name="results_app_bar_title">結果</string>
     <string name="results_correct_ct_unit">点</string>
-    <string name="results_first_clear">初クリア!</string>
-    <string name="results_passed">合格！</string>
-    <string name="results_not_passed">不合格</string>
     <string name="results_review">復習する</string>
     <string name="results_finish_review">このまま終了する</string>
     <string name="results_finish_no_review">終了する</string>
-    <string name="results_vocabulary">新しい単語</string>
-    <string name="results_no_vocabulary">新しい単語はありません</string>
-    <string name="results_vocabulary_item_add">+ 追加</string>
-    <string name="results_vocabulary_item_added">追加済</string>
-    <string name="results_unlocked_lesson_title">解放されたレッスン</string>
-    <string name="results_no_unlocked_lessons_title">解放されたレッスンはありません</string>
-    <string name="results_unlocked_lesson_item_go_to_lesson">レッスンに行く</string>
-    <string name="results_vocabulary_no_connection">新しい単語を追加するにはネットに接続してください</string>
     <string name="results_daily_lesson_ct_title">今日のレッスン数</string>
     <string name="results_daily_lesson_ct_set">設定する</string>
     <!--results after review-->
     <string name="review_results_title">復習お疲れ様です</string>
-    <string name="review_results_correct_ct">正解数</string>
     <string name="review_results_finish">終了する</string>
+    <!--results after verb questions-->
+    <string name="verb_question_results_app_bar_title">結果</string>
+    <string name="verb_question_results_correct_ct_unit">点</string>
+    <string name="verb_question_results_finish_no_review">終了する</string>
 
     <!--Search Interest page-->
     <string name="search_interests_search_hint">検索</string>
-    <string name="search_interests_add">追加</string>
     <string name="search_interests_recommendations_success">%1$sを追加しました！</string>
     <string name="search_interests_recommendations_rankings_title">おすすめランキング</string>
-    <string name="search_interests_recommendations_more">もっと表示する</string>
     <string name="search_interests_empty_state_title">「%1$s」の検索結果　0件</string>
     <string name="search_interests_empty_state_title_backup">見つかりませんでした</string>
     <string name="search_interests_empty_state_advice">検索エンジンはWikipedia（ウィキペディア）を参照しています。\nWikipediaの記事に載っている題名を検索してみてください！</string>
@@ -143,51 +121,23 @@
 
 
     <!--Facebook interests-->
-    <string name="facebook_interests_app_bar_title">Facebookで検索</string>
-    <string name="facebook_interests_search_schools">学歴を検索中..</string>
-    <string name="facebook_interests_search_locations">行ったことがある場所を検索中</string>
 
-    LessonGeneratorsson Details Page-->
-    <string name="lesson_details_created">作成日</string>
-    <string name="lesson_details_item_menu_more_info">詳細</string>
-    <string name="lesson_details_item_menu_delete">消去</string>
-    <string name="lesson_details_no_items_add_guide">+ボタンを押してレッスンを\n作成してください\n↓↓</string>
-    <string name="lesson_details_no_items_description_guide">↑↑\n合格点、レッスンの説明を見れます</string>
-
-    <string name="lesson_details_instance_details_title">詳細</string>
-    <string name="lesson_details_instance_details_played_number">学習回数</string>
-    <string name="lesson_details_instance_details_average_score">平均正解率</string>
-    <string name="lesson_details_instance_details_last_played">最終学習日</string>
-    <string name="lesson_details_instance_details_last_played_never">なし</string>
-    <string name="lesson_details_instance_details_last_played_score">最終学習正解率</string>
+    <!--Lesson Details Page-->
 
     <string name="lesson_description_title">説明</string>
-    <string name="lesson_description_no_description_available">残念ながらこのレッスンの説明文はありません</string>
-    <string name="lesson_description_exception_tag">exception</string>
-    <string name="lesson_description_to_clear_score_title">合格ライン</string>
-    <string name="lesson_description_to_clear_score_template">%1$d点</string>
 
     <!--user interests list-->
     <string name="user_interests_list_item_delete">消去</string>
     <string name="user_interests_list_item_deleted">消去しました</string>
     <string name="user_interests_list_item_deleted_undo">戻す</string>
-    <string name="user_interests_filter_all">すべて</string>
-    <string name="user_interests_filter_people">人間</string>
-    <string name="user_interests_filter_places">場所</string>
-    <string name="user_interests_filter_other">その他</string>
     <string name="user_interests_no_feature">機能は今後追加します</string>
     <string name="user_interests_empty_state_description">お気に入りを追加すると\n
     勉強がもっと面白くなりますよ</string>
 
     <!--user profile-->
-    <string name="user_profile_app_bar_title">データ</string>
     <string name="user_profile_hours_studied">勉強時間</string>
-    <string name="user_profile_tab_report_card">成績</string>
     <string name="user_profile_hours_studied_legend_studied">勉強した日</string>
     <string name="user_profile_hours_studied_legend_no_record">記録なし</string>
-    <string name="user_profile_report_card_average_score">平均正解率</string>
-    <string name="user_profile_report_card_cleared">合格ライン以上</string>
-    <string name="user_profile_report_card_not_clear">不合格</string>
 
     <!--questions-->
     <string name="question_title">問 %1$d/%2$d</string>

@@ -12,11 +12,11 @@
 
     <item android:title="@string/fragment_lesson_list_title">
         <menu>
-            <item android:id="@+id/main_navigation_drawer_lesson_level1"
-                android:title="@string/lessons_level1"
+            <item android:id="@+id/main_navigation_drawer_lessons"
+                android:title="@string/drawer_lessons"
                 />
-            <item android:id="@+id/main_navigation_drawer_lesson_level2"
-                  android:title="@string/lessons_level2"
+            <item android:id="@+id/main_navigation_drawer_verb_questions"
+                  android:title="@string/drawer_verb_questions"
                 />
         </menu>
     </item>

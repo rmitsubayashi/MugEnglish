@@ -39,7 +39,6 @@ public class ResultsManager {
 
         //save correct count for displaying the report card
         String lessonKey = instanceRecord.getLessonId();
-        int level = lessonListViewer.getLessonLevel(lessonKey);
         final int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
         OnDBResultListener reportCardOnDBResultListener = new OnDBResultListener() {
             @Override
@@ -47,7 +46,7 @@ public class ResultsManager {
                 super.onReportCardAdded();
             }
         };
-        db.addReportCard(level, lessonKey, correctCt[0], correctCt[1], reportCardOnDBResultListener);
+        db.addReportCard(lessonKey, correctCt[0], correctCt[1], reportCardOnDBResultListener);
 
     }
 

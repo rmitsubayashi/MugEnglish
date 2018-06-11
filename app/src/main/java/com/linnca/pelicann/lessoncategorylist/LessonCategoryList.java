@@ -25,11 +25,9 @@ import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewerImplemen
 
 public class LessonCategoryList extends Fragment {
     public static final String TAG = "LessonList";
-    public static final String LESSON_LEVEL = "lessonLevel";
     private final String SAVED_STATE_LIST_STATE = "listState";
     private Database db;
     private RecyclerView listView;
-    private int lessonLevel;
     private RecyclerView.LayoutManager layoutManager;
     private LessonCategoryListAdapter adapter;
 
@@ -65,7 +63,6 @@ public class LessonCategoryList extends Fragment {
             );
         }
         listView.setLayoutManager(layoutManager);
-        lessonLevel = getArguments().getInt(LESSON_LEVEL);
         return view;
     }
 
@@ -76,7 +73,7 @@ public class LessonCategoryList extends Fragment {
                 new ToolbarState(getString(R.string.fragment_lesson_list_title),
                         false)
         );
-        populateLessonCategoryList(lessonLevel);
+        populateLessonCategoryList();
     }
 
     @Override
@@ -100,11 +97,11 @@ public class LessonCategoryList extends Fragment {
         }
     }
 
-    private void populateLessonCategoryList(final int lessonLevel){
+    private void populateLessonCategoryList(){
         LessonListViewer lessonListViewer = new LessonListViewerImplementation();
-        List<LessonCategory> categories = lessonListViewer.getLessonsAtLevel(lessonLevel);
+        List<LessonCategory> categories = lessonListViewer.getLessons();
         if (adapter == null) {
-            adapter = new LessonCategoryListAdapter(lessonLevel, categories, listener);
+            adapter = new LessonCategoryListAdapter(categories, listener);
             listView.setAdapter(adapter);
         } else {
             if (listView.getAdapter() == null){

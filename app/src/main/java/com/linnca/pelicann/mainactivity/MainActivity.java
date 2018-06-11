@@ -20,17 +20,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.lessoncategorylist.LessonCategoryList;
 import com.linnca.pelicann.lessonscript.LessonScript;
 import com.linnca.pelicann.preferences.PreferencesListener;
 import com.linnca.pelicann.questions.QuestionFragmentInterface;
+import com.linnca.pelicann.questions.VerbQuestionStart;
 import com.linnca.pelicann.results.Results;
 import com.linnca.pelicann.results.ReviewResults;
+import com.linnca.pelicann.results.VerbQuestionResults;
 import com.linnca.pelicann.searchinterests.SearchInterests;
 import com.linnca.pelicann.userinterests.UserInterests;
 import com.linnca.pelicann.userprofile.UserProfile_HoursStudied;
@@ -39,16 +39,14 @@ import java.util.List;
 import java.util.Locale;
 
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewerImplementation;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceReviewManager;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionManager;
+import pelicann.linnca.com.corefunctionality.lessonquestions.VerbQuestionManager;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
 public class MainActivity extends AppCompatActivity implements
@@ -56,7 +54,9 @@ public class MainActivity extends AppCompatActivity implements
         UserInterests.UserInterestListener,
         SearchInterests.SearchInterestsListener,
         QuestionFragmentInterface.QuestionListener,
+        VerbQuestionStart.VerbQuestionStartListener,
         Results.ResultsListener,
+        VerbQuestionResults.VerbQuestionResultsListener,
         ReviewResults.ReviewResultsListener,
         PreferencesListener,
         PreferenceFragmentCompat.OnPreferenceStartScreenCallback,
@@ -79,11 +79,11 @@ public class MainActivity extends AppCompatActivity implements
     private MainActivityFragmentManager fragmentManager;
     private boolean navigationItemSelected = false;
     private int selectedNavigationItemID = -1;
-    private LessonListViewer lessonListViewer;
     private long startAppTimestamp;
 
     private QuestionManager questionManager;
     private InstanceReviewManager instanceReviewManager;
+    private VerbQuestionManager verbQuestionManager;
     //since initialization takes forever, initialize here and use this instance in all questions
     private TextToSpeech textToSpeech = null;
 
@@ -112,9 +112,6 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
 
-        //LessonFactory.saveGenericQuestions(db);
-        lessonListViewer = new LessonListViewerImplementation();
-
         toolbar = findViewById(R.id.tool_bar);
         //to make sure the toolbar text view is not null
         toolbar.setTitle("");
@@ -123,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements
         fragmentManager = new MainActivityFragmentManager(getSupportFragmentManager());
         questionManager = new QuestionManager(getQuestionManagerListener());
         instanceReviewManager = new InstanceReviewManager(getInstanceReviewManagerListener());
+        verbQuestionManager = new VerbQuestionManager(getVerbQuestionManagerListener());
 
         drawerLayout = findViewById(R.id.main_activity_drawer_layout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(
@@ -144,15 +142,11 @@ public class MainActivity extends AppCompatActivity implements
                         case R.id.main_navigation_drawer_settings :
                             fragmentManager.rootToSettings(db);
                             break;
-                        case R.id.main_navigation_drawer_lesson_level1 :
-                            fragmentManager.rootToLessonCategoryList(db, 1);
-                            setLastSelectedLessonLevel(1);
+                        case R.id.main_navigation_drawer_lessons :
+                            fragmentManager.rootToLessonCategoryList(db);
                             break;
-                        case R.id.main_navigation_drawer_lesson_level2 :
-                            //fragmentManager.rootToLessonList(db, 2);
-                            //setLastSelectedLessonLevel(2);
-                            Toast.makeText(MainActivity.this, R.string.navigation_level2_not_ready, Toast.LENGTH_SHORT)
-                                    .show();
+                        case R.id.main_navigation_drawer_verb_questions :
+                            fragmentManager.rootToVerbQuestionStart();
                             break;
                         default:
                             return;
@@ -195,20 +189,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStart(){
         super.onStart();
         startAppTimestamp = System.currentTimeMillis();
-
-        /*
-        DateTime temp1 = DateTime.now();
-        temp1 = temp1.minusMonths(1);
-        DateTime temp2 = DateTime.now();
-        temp2 = temp2.minusMonths(1).plusHours(1);
-        db.addAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));
-
-        temp1 = temp1.minusMonths(1);
-        temp2 = temp2.minusMonths(1).plusHours(1);
-        db.addAppUsageLog(new AppUsageLog(temp1.getMillis(), temp2.getMillis()));*/
-        /*
-        SportsHelper helper = new SportsHelper();
-        helper.run();*/
 
     }
 
@@ -317,6 +297,12 @@ public class MainActivity extends AppCompatActivity implements
         switchActionBarUpButton();
     }
 
+    @Override
+    public void verbQuestionStartToQuestion(){
+        verbQuestionManager.startQuestions();
+        switchActionBarUpButton();
+    }
+
     private QuestionManager.QuestionManagerListener getQuestionManagerListener(){
         return new QuestionManager.QuestionManagerListener() {
             @Override
@@ -370,10 +356,34 @@ public class MainActivity extends AppCompatActivity implements
         };
     }
 
+    private VerbQuestionManager.VerbQuestionManagerListener getVerbQuestionManagerListener(){
+        return new VerbQuestionManager.VerbQuestionManagerListener() {
+            @Override
+            public void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion) {
+                if (firstQuestion){
+                    fragmentManager.notQuestionFragmentToQuestion(questionData, questionNumber, totalQuestions);
+                } else {
+                    fragmentManager.questionToQuestion(questionData, questionNumber, totalQuestions);
+                }
+            }
+
+            @Override
+            public void onQuestionsFinished() {
+                fragmentManager.questionToVerbQuestionResults(verbQuestionManager.getCorrectCt(), verbQuestionManager.getWrongWords());
+            }
+        };
+    }
+
     @Override
     public void onRecordResponse(String answer, boolean correct){
         if (questionManager.questionsStarted()) {
             questionManager.saveResponse(answer, correct);
+        } else if (verbQuestionManager.isVerbQuestionsStarted()){
+            if (correct) {
+                verbQuestionManager.incrementCorrectCt();
+            } else {
+                verbQuestionManager.addCurrentWrongWord();
+            }
         }
     }
 
@@ -384,21 +394,15 @@ public class MainActivity extends AppCompatActivity implements
     // the main activity creates the next question fragment
     @Override
     public void onNextQuestion(boolean correct, OnDBResultListener noConnectionListener){
-        NetworkConnectionChecker networkConnectionChecker = new
-                AndroidNetworkConnectionChecker(this);
         if (questionManager.questionsStarted()) {
             questionManager.nextQuestion();
         }
-        if (instanceReviewManager.reviewStarted()) {
+        else if (instanceReviewManager.reviewStarted()) {
             instanceReviewManager.nextQuestion(false);
         }
-    }
-
-    private void setLastSelectedLessonLevel(int level){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(getString(R.string.preferences_last_selected_lesson_level), level);
-        editor.apply();
+        else if (verbQuestionManager.isVerbQuestionsStarted()){
+            verbQuestionManager.nextQuestion(false);
+        }
     }
 
     @Override
@@ -406,6 +410,11 @@ public class MainActivity extends AppCompatActivity implements
         //we can remove all the data because the result fragment is
         // not accessible anymore.
         instanceReviewManager.resetManager();
+        setLessonView();
+    }
+
+    @Override
+    public void verbQuestionResultsToLessonList(){
         setLessonView();
     }
 
@@ -435,28 +444,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void lessonScriptToQuestion(LessonInstanceData lessonInstanceData, List<QuestionData> questions){
-
         questionManager.startQuestions(questions, lessonInstanceData);
     }
 
     private void setLessonView(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        //default is lowest level (1)
-        int lastSelectedLessonLevel = preferences.getInt(getString(R.string.preferences_last_selected_lesson_level), 1);
         //finding the ID of the navigation drawer
-        int navigationDrawerItemIDToSelect;
-        switch (lastSelectedLessonLevel){
-            case 1 :
-                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level1;
-                break;
-            case 2 :
-                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level2;
-                break;
-            default:
-                navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lesson_level1;
-        }
+        int navigationDrawerItemIDToSelect = R.id.main_navigation_drawer_lessons;
         checkNavigationItem(navigationDrawerItemIDToSelect);
-        fragmentManager.rootToLessonCategoryList(db, lastSelectedLessonLevel);
+        fragmentManager.rootToLessonCategoryList(db);
 
         if (!hamburgerEnabled){
             switchActionBarUpButton();
@@ -600,13 +595,6 @@ public class MainActivity extends AppCompatActivity implements
 
         return textToSpeech;
     }
-
-    private void onNoConnection(){
-        Toast.makeText(this, R.string.no_connection, Toast.LENGTH_SHORT)
-                .show();
-    }
-
-    private void onSlowConnection(){}
 
     @Override
     protected void onStop(){

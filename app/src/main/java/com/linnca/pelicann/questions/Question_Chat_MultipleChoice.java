@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 import pelicann.linnca.com.corefunctionality.lessonquestions.ChatQuestionItem;
+import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 
 public class Question_Chat_MultipleChoice extends QuestionFragmentInterface {
     private TextView fromTextView;
