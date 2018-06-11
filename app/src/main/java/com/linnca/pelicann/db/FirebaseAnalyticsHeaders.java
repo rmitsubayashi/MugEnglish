@@ -5,5 +5,5 @@ public class FirebaseAnalyticsHeaders {
     public static final String EVENT_ACTION = "action";
     public static final String EVENT_LOAD = "load";
     public static final String PARAMS_ACTION_TYPE = "action_type";
-    private FirebaseAnalyticsHeaders(){};
+    private FirebaseAnalyticsHeaders(){}
 }

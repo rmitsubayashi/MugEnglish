@@ -5,7 +5,7 @@ import java.util.List;
 
 class InstanceRecordManager {
     //handles writing into the instance record while the user is answering questions
-    private InstanceRecord instanceRecord;
+    private final InstanceRecord instanceRecord;
     private long questionAttemptStartTimestamp;
     private long questionAttemptEndTimestamp;
 
@@ -15,10 +15,6 @@ class InstanceRecordManager {
         instanceRecord.setInstanceId(instanceID);
         instanceRecord.setLessonId(lessonID);
         instanceRecord.setAttempts(new ArrayList<QuestionAttempt>());
-    }
-
-    InstanceRecordManager(InstanceRecord instanceRecord){
-        this.instanceRecord = instanceRecord;
     }
 
     InstanceRecord getInstanceRecord(){
@@ -54,7 +50,7 @@ class InstanceRecordManager {
         questionAttemptStartTimestamp = System.currentTimeMillis();
     }
 
-    void setQuestionAttemptEndTimestamp(){
+    private void setQuestionAttemptEndTimestamp(){
         questionAttemptEndTimestamp = System.currentTimeMillis();
     }
 

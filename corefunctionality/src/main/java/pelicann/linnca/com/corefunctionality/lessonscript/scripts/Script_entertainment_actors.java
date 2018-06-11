@@ -86,8 +86,9 @@ public class Script_entertainment_actors extends ScriptGenerator {
 
     private ScriptSentence scriptSentence7(EntityPropertyData data){
         ScriptSentence sentence = new ScriptSentence();
-        String sentenceEN = data.getPropertyAt(3).getEnglish() + " won the " +
-                data.getPropertyAt(1).getEnglish() + " in " + data.getPropertyAt(2).getEnglish() + ".";
+        String sentenceEN = data.getPropertyAt(3).getEnglish() + " won " +
+                GrammarRules.definiteArticleBeforeAward(data.getPropertyAt(1).getEnglish()) +
+                " in " + data.getPropertyAt(2).getEnglish() + ".";
         sentenceEN = GrammarRules.uppercaseFirstLetterOfSentence(sentenceEN);
         String sentenceJP = data.getPropertyAt(3).getJapanese() + "は" + data.getPropertyAt(2).getJapanese() +
                 "年に" + data.getPropertyAt(1).getJapanese() + "を受賞したんだよ。";

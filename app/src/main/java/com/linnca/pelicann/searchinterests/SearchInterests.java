@@ -48,9 +48,6 @@ public class SearchInterests extends Fragment {
     private final int defaultRowCt = 10;
     //so only one thread can edit the UI at one time
     private Lock lock = new ReentrantLock();
-    //we can do continue=# to get the results from that number of results
-    //increment when we want more rows
-    private Integer currentRowCt = defaultRowCt;
     //so we can filter out user interests we don't need
     private final List<WikiDataEntity> userInterests = new ArrayList<>();
     //manages threads for searching
@@ -83,11 +80,7 @@ public class SearchInterests extends Fragment {
                 new WikiDataSPARQLConnector(WikiDataSPARQLConnector.JAPANESE)
         );
 
-        NetworkConnectionChecker networkConnectionChecker = new
-                AndroidNetworkConnectionChecker(getContext());
-        similarUserInterestGetter = new SimilarUserInterestGetter(
-                5, networkConnectionChecker, db, 3
-        );
+        similarUserInterestGetter = new SimilarUserInterestGetter(db);
     }
 
     @Override
@@ -241,7 +234,6 @@ public class SearchInterests extends Fragment {
                         adapter.setAddedWikiDataEntity(data);
 
                         similarUserInterestGetter.getNewRecommendations(data,
-                                userInterests,
                                 getSimilarUserInterestGetterListener());
                     }
 

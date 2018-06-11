@@ -6,7 +6,7 @@ public class WikipediaConnector extends WikiBaseEndpointConnector {
 	}
 
 	@Override
-	protected String formatURL(String parameterValue) throws Exception{
+	protected String formatURL(String parameterValue) {
 		//already encoded
 		return "https://en.wikipedia.org/w/api.php?action=query&prop=revisions&"
 				+ "titles=" + parameterValue +

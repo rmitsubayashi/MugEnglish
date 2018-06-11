@@ -12,9 +12,9 @@ public abstract class LessonListViewer {
     //     +lesson
     //   +category
     //     +lesson
-    protected final List<LessonCategory> lessons = new ArrayList<>();
+    final List<LessonCategory> lessons = new ArrayList<>();
 
-    public LessonListViewer(){
+    LessonListViewer(){
         populateLessons();
     }
 

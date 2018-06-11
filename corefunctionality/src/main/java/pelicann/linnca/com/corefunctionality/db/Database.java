@@ -20,8 +20,9 @@ import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 //(we can't return values from a Firebase request)
 
 public abstract class Database implements Serializable{
-    protected List<NetworkConnectionChecker> networkConnections = new ArrayList<>();
-
+    protected final List<NetworkConnectionChecker> networkConnections = new ArrayList<>();
+    //whatever db we use, we will always need some sort of ID
+    // to identify users
     public abstract String getUserID();
     public void cleanup(){
         cleanupDB();
@@ -29,7 +30,7 @@ public abstract class Database implements Serializable{
     }
     public abstract void cleanupDB();
 
-    protected void cleanupNetworkConnections(){
+    private void cleanupNetworkConnections(){
         for (NetworkConnectionChecker connection : networkConnections){
             connection.stop();
         }
@@ -46,8 +47,6 @@ public abstract class Database implements Serializable{
     public abstract void addLessonInstance(NetworkConnectionChecker networkConnectionChecker, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs,
                                            OnDBResultListener onDBResultListener);
     public abstract void getLessonInstances(NetworkConnectionChecker networkConnectionChecker, String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener);
-    public abstract void getLessonInstanceDetails(String lessonKey, String instanceID, OnDBResultListener onDBResultListener);
-    public abstract void removeLessonInstance(String lessonKey, LessonInstanceData instance, OnDBResultListener onDBResultListener);
     public abstract void getMostRecentLessonInstance(NetworkConnectionChecker networkConnectionChecker, String lessonKey,
                                                      OnDBResultListener onDBResultListener);
 
@@ -56,27 +55,15 @@ public abstract class Database implements Serializable{
     //note that this is just to update.
     //when adding a new interest, we most likely have to fetch pronunciation/classification info
     public abstract void addUserInterests(NetworkConnectionChecker networkConnectionChecker, List<WikiDataEntity> userInterest, OnDBResultListener onDBResultListener);
-    //fetching pronunciation/classification info will be handled with these.
-    //add user interest -> onResultListener -> add pronunciation/classification concurrently
+    //fetching pronunciation info will be handled with this.
+    //add user interest -> onResultListener -> add pronunciation concurrently
     public abstract void setPronunciation(String userInterestID, String pronunciation);
-    public abstract void setClassification(String userInterestID, int classification);
 
     public abstract void addSimilarInterest(String fromID, WikiDataEntity toEntity);
     public abstract void getSimilarInterest(String id, OnDBResultListener onDBResultListener);
 
-    public abstract void changeUserInterestRanking(WikiDataEntity data, int count);
-    public abstract void getPopularUserInterests(NetworkConnectionChecker networkConnectionChecker, int count, OnDBResultListener onDBResultListener);
-
     public abstract void addInstanceRecord(InstanceRecord record, OnDBResultListener onDBResultListener);
 
-    public abstract void getClearedLessons(NetworkConnectionChecker networkConnectionChecker, int lessonLevel, boolean persistentConnection, OnDBResultListener onDBResultListener);
-    public abstract void addClearedLesson(int lessonLevel, String lessonKey, OnDBResultListener onDBResultListener);
-
-    public abstract void addReviewQuestion(List<String> questionKeys, OnDBResultListener onDBResultListener);
-    public abstract void removeReviewQuestions(OnDBResultListener onDBResultListener);
-    public abstract void getReviewQuestions(OnDBResultListener onDBResultListener);
-
-    public abstract void getReportCard(int level, OnDBResultListener onDBResultListener);
     public abstract void addReportCard(String lessonKey, int correctCt, int totalCt, OnDBResultListener onDBResultListener);
 
     public abstract void addAppUsageLog(AppUsageLog log);

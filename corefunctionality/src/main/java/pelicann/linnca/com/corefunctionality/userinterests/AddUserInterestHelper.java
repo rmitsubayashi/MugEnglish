@@ -49,9 +49,7 @@ public class AddUserInterestHelper {
             //is in English, so don't do anything.
             //alphabet will automatically be sorted alphabetically before all Japanese
             // pronunciation (like the Android app icon sorting)
-            if (StringUtils.isAlphanumeric(pronunciation)){
-                return;
-            } else {
+            if (!StringUtils.isAlphanumeric(pronunciation)) {
                 //we want all the pronunciation to be in hiragana so we can order
                 // lexicographically
                 String toHiragana = StringUtils.zenkakuKatakanaToZenkakuHiragana(pronunciation);

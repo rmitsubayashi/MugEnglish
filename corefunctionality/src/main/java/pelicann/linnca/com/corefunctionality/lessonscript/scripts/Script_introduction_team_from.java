@@ -43,8 +43,7 @@ public class Script_introduction_team_from extends ScriptGenerator {
         String sentenceEN = "Thanks.";
         String sentenceJP = "ありがとう。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        Translation nickname = data.getPropertyAt(5);
-        sentence.setSpeaker(person, nickname);
+        sentence.setSpeaker(new ScriptSpeaker(person));
         return sentence;
     }
 
@@ -77,8 +76,7 @@ public class Script_introduction_team_from extends ScriptGenerator {
         sentenceEN = StringUtils.addPeriod(sentenceEN);
         String sentenceJP = "いや、" + city.getJapanese() + "の出身だよ。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        Translation nickname = data.getPropertyAt(5);
-        sentence.setSpeaker(person, nickname);
+        sentence.setSpeaker(new ScriptSpeaker(person));
         return sentence;
     }
 
@@ -98,8 +96,7 @@ public class Script_introduction_team_from extends ScriptGenerator {
         String sentenceEN = "Yep!";
         String sentenceJP = "そう。";
         sentence.setSentence(sentenceEN, sentenceJP);
-        Translation nickname = data.getPropertyAt(5);
-        sentence.setSpeaker(person, nickname);
+        sentence.setSpeaker(new ScriptSpeaker(person));
         return sentence;
     }
 }

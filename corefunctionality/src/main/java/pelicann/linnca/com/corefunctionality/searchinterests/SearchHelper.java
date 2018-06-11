@@ -29,12 +29,12 @@ import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class SearchHelper {
     //helps search
-    private WikiBaseEndpointConnector searchConnector;
+    private final WikiBaseEndpointConnector searchConnector;
     //checks if person
-    private WikiBaseEndpointConnector sparqlConnector;
-    private AtomicInteger searchRequestCt = new AtomicInteger(0);
-    private ScheduledThreadPoolExecutor executor;
-    private List<ScheduledFuture> queuedTasks = new ArrayList<>();
+    private final WikiBaseEndpointConnector sparqlConnector;
+    private final AtomicInteger searchRequestCt = new AtomicInteger(0);
+    private final ScheduledThreadPoolExecutor executor;
+    private final List<ScheduledFuture> queuedTasks = new ArrayList<>();
 
     public interface SearchHelperListener {
         void onSuccess(List<WikiDataEntity> resultList);
@@ -99,11 +99,9 @@ public class SearchHelper {
                     Node n = resultNodes.item(i);
                     if (n.getNodeType() == Node.ELEMENT_NODE)
                     {
-                        String wikiDataID = "";
-
                         Element e = (Element)n;
                         if (e.hasAttribute("id")) {
-                            wikiDataID = e.getAttribute("id");
+                            String wikiDataID = e.getAttribute("id");
                             searchResultWikidataIDs.add(wikiDataID);
                         }
                     }

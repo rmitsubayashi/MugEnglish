@@ -240,48 +240,6 @@ class MainActivityFragmentManager {
         fragmentTransaction.commit();
     }
 
-    void fragmentToLessonDescription(String descriptionLessonKey){
-        Fragment fragment = new LessonScript();
-        Bundle bundle = new Bundle();
-        //bundle.putString(LessonScript.BUNDLE_LESSON_KEY, descriptionLessonKey);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.slide_in_bottom, R.anim.stay,
-                0, R.anim.slide_out_bottom
-        );
-        if (fragmentManager.getBackStackEntryCount() != 0 ){
-            String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
-            fragmentTransaction.addToBackStack(fragmentTag);
-
-            Fragment resultsFragment = fragmentManager.findFragmentByTag(Results.TAG);
-            if (resultsFragment != null && resultsFragment.isVisible()){
-                //when we are at the results page, we should always show the exception rule
-                //bundle.putBoolean(LessonScript.BUNDLE_SHOW_EXCEPTION, true);
-            }
-        } else {
-            fragmentTransaction.addToBackStack(null);
-        }
-        fragment.setArguments(bundle);
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonScript.TAG);
-        fragmentTransaction.commit();
-    }
-
-    void resultsToLessonDetails(Database db){
-        /*
-        //removes the lessonDetails -> results transaction
-        fragmentManager.popBackStack();
-        //removes the lessonList -> lessonDetails transaction
-        fragmentManager.popBackStack();
-        Fragment fragment = new LessonDetails();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
-        bundle.putSerializable(LessonDetails.BUNDLE_LESSON_DATA, lessonData);
-        fragment.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_activity_fragment_container, fragment, LessonDetails.TAG);
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();*/
-    }
-
     boolean toPreferenceScreen(Context context, PreferenceScreen preferenceScreen){
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment fragment;

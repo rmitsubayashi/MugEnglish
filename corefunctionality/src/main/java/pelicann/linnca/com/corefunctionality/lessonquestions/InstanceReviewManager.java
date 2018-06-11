@@ -11,7 +11,7 @@ public class InstanceReviewManager {
     private int questionMkr = 0;
     private int totalQuestions;
     private boolean reviewStarted = false;
-    private InstanceReviewManagerListener instanceReviewManagerListener;
+    private final InstanceReviewManagerListener instanceReviewManagerListener;
 
     public interface InstanceReviewManagerListener {
         void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion);

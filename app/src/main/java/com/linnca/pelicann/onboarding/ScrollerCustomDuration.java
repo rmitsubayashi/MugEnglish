@@ -1,6 +1,5 @@
 package com.linnca.pelicann.onboarding;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
@@ -9,17 +8,8 @@ import android.widget.Scroller;
 class ScrollerCustomDuration extends Scroller {
     private double mScrollFactor = 1;
 
-    public ScrollerCustomDuration(Context context) {
-        super(context);
-    }
-
     ScrollerCustomDuration(Context context, Interpolator interpolator) {
         super(context, interpolator);
-    }
-
-    @SuppressLint("NewApi")
-    public ScrollerCustomDuration(Context context, Interpolator interpolator, boolean flywheel) {
-        super(context, interpolator, flywheel);
     }
 
     /**

@@ -419,14 +419,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void resultsToLessonDetails(){
-        //we can remove all the data because the result fragment is
-        // not accessible anymore.
-        instanceReviewManager.resetManager();
-        fragmentManager.resultsToLessonDetails(db);
-    }
-
-    @Override
     public void reviewResultsToLessonList(){
         setLessonView();
     }

@@ -35,11 +35,4 @@ class OnboardingPagerAdapter extends FragmentPagerAdapter {
         return maxPageCt;
     }
 
-    int getStarterPackSelection(){
-        /*if (onboarding3 == null)
-            return -1;
-        return onboarding3.getCurrentSelection();
-        */return 1;
-    }
-
 }

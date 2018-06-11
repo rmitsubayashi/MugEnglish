@@ -9,7 +9,6 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.FeedbackPair;
 //Used to store questions
 public class QuestionData implements Serializable{
     private String id;
-    private String lessonId;
     private Integer questionType;
     private String question;
     private List<String> choices = new ArrayList<>();
@@ -19,13 +18,12 @@ public class QuestionData implements Serializable{
 
     public QuestionData(){}
 
-    public QuestionData(String id, String lessonId,
+    public QuestionData(String id,
                         Integer questionType,
                         String question, List<String> choices,
                         String answer, List<String> acceptableAnswers,
                         List<FeedbackPair> feedback) {
         this.id = id;
-        this.lessonId = lessonId;
         this.questionType = questionType;
         this.question = question;
         this.choices = choices;
@@ -40,14 +38,6 @@ public class QuestionData implements Serializable{
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getLessonId() {
-        return lessonId;
-    }
-
-    public void setLessonId(String lessonId) {
-        this.lessonId = lessonId;
     }
 
     public Integer getQuestionType() {
@@ -72,10 +62,6 @@ public class QuestionData implements Serializable{
 
     public void setChoices(List<String> choices) {
         this.choices = choices;
-    }
-
-    public void addChoice(String choice){
-        this.choices.add(choice);
     }
 
     public String getAnswer() {

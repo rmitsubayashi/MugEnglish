@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Script implements Serializable {
-    private List<ScriptSentence> sentences = new ArrayList<>();
+    private final List<ScriptSentence> sentences = new ArrayList<>();
     private String imageURL;
 
     public Script() {

@@ -74,8 +74,7 @@ public class Onboarding3v2 extends Fragment {
         );
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
-        similarUserInterestGetter = new SimilarUserInterestGetter(3, networkConnectionChecker,
-                new FirebaseDB(), 3);
+        similarUserInterestGetter = new SimilarUserInterestGetter(new FirebaseDB());
     }
 
     @Override
@@ -239,7 +238,7 @@ public class Onboarding3v2 extends Fragment {
 
                 adapter.showRecommendations(new ArrayList<WikiDataEntity>(1), false);
                 refreshItemsLeftViews();
-                similarUserInterestGetter.getNewRecommendations(data, new ArrayList<WikiDataEntity>(1),
+                similarUserInterestGetter.getNewRecommendations(data,
                         new SimilarUserInterestGetter.SimilarUserInterestGetterListener() {
                             @Override
                             public void onGetRecommendations(List<WikiDataEntity> results, boolean showLoadMoreButton) {

@@ -16,7 +16,7 @@ public class Script_body_height extends ScriptGenerator {
         Script script = new Script();
         script.addSentence(scriptSentence1());
         script.addSentence(scriptSentence2(data));
-        script.addSentence(scriptSentence3(data));
+        script.addSentence(scriptSentence3());
         script.addSentence(scriptSentence4(data));
         script.addSentence(scriptSentence5());
         script.addSentence(scriptSentence6());
@@ -44,7 +44,7 @@ public class Script_body_height extends ScriptGenerator {
         return sentence;
     }
 
-    private ScriptSentence scriptSentence3(EntityPropertyData data){
+    private ScriptSentence scriptSentence3(){
         ScriptSentence sentence = new ScriptSentence();
         String sentenceEN = "Can you get that can on the shelf there?";
         String sentenceJP = "その棚の缶をとってくれますか。";

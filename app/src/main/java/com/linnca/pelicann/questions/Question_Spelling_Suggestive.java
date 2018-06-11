@@ -39,8 +39,7 @@ public class Question_Spelling_Suggestive extends QuestionFragmentInterface {
     private GridContainer[][] gridContainers;
     private Button[] answerButtons;
     private int answerTextProgress = 0;
-    //we still want a button for spaces
-    private final char space = '空';
+
     //since we have a lot of random variables,
     //save so we don't have to create redundant objects
     private final Random random = new Random(System.currentTimeMillis());
@@ -226,6 +225,8 @@ public class Question_Spelling_Suggestive extends QuestionFragmentInterface {
         final Button letterButton = (Button)inflater.inflate(R.layout.inflatable_question_spelling_letter_button, container, false);
         //no reason to have it uppercase
         char letter = letterWithIndex.letter;
+        //we still want a button for spaces
+        final char space = '空';
         if (letter == ' '){
             letter = space;
         }

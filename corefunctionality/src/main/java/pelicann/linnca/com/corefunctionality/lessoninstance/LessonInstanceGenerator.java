@@ -21,9 +21,9 @@ import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 //from the second time on, we can just read the questions in from the db
 public abstract class LessonInstanceGenerator {
     protected static final String TAG = "lessongeneration";
-    //there are lessons that need to access the database,
-    //so make this protected
-    protected Database db;
+    //if there are lessons that need to access the database,
+    //make this protected
+    private Database db;
     //each lesson will have a unique key
     protected String lessonKey;
     //how many unique entities we need entity property data for
@@ -104,7 +104,7 @@ public abstract class LessonInstanceGenerator {
             }
             @Override
             public void onNoConnection() {
-                super.onNoConnection();
+
             }
         };
         db.getMostRecentLessonInstance(networkConnectionChecker, referenceLesson, onDBResultListener);
@@ -239,9 +239,9 @@ public abstract class LessonInstanceGenerator {
         }
         final int queryCt = allQueries.size();
         EndpointConnectorReturnsXML.OnFetchDOMListener onFetchDOMListener = new EndpointConnectorReturnsXML.OnFetchDOMListener() {
-            AtomicInteger DOMsFetched = new AtomicInteger(0);
-            AtomicBoolean onStoppedCalled = new AtomicBoolean(false);
-            AtomicBoolean error = new AtomicBoolean(false);
+            final AtomicInteger DOMsFetched = new AtomicInteger(0);
+            final AtomicBoolean onStoppedCalled = new AtomicBoolean(false);
+            final AtomicBoolean error = new AtomicBoolean(false);
             @Override
             public boolean shouldStop() {
                 //should stop either if we've got enough data or
@@ -289,17 +289,6 @@ public abstract class LessonInstanceGenerator {
     // methods.
     //a synchronized list doesn't lock the list during iterations,
     // so still causes concurrent modification exceptions..
-    protected synchronized int getUniqueNewEntityPropertyDataCt(){
-        Set<String> covered = new HashSet<>(newEntityPropertyData.size());
-        //iterating a synchronized list doesn't lock it,
-        //so to make sure we are consistent, make a copy and iterate the copy
-        List<EntityPropertyData> copy = new ArrayList<>(newEntityPropertyData);
-        for (EntityPropertyData copyData : copy){
-            covered.add(copyData.getWikidataID());
-        }
-        return covered.size();
-
-    }
 
     //wrap the data into entity property data
     protected abstract void processResultsIntoEntityPropertyData(Document document);

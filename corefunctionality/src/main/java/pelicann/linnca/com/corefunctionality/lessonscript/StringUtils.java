@@ -91,7 +91,7 @@ public final class StringUtils {
         return " " + ones[number-1] + " hundred" + current;
     }
 
-    public static String convertIntToWord(int number) {
+    private static String convertIntToWord(int number) {
 
         if (number == 0) { return "zero"; }
 
@@ -102,7 +102,7 @@ public final class StringUtils {
             prefix = "negative";
         }
 
-        String current = "";
+        StringBuilder current = new StringBuilder("");
         int place = 0;
 
         do {
@@ -110,15 +110,15 @@ public final class StringUtils {
             if (n != 0){
                 String s = convertLessThanOneThousand(n);
                 if (place != 0)
-                    current = s + " " + specialNames[place-1] + current;
+                    current = current.insert(0, s + " " + specialNames[place-1]);
                 else
-                    current = s + current;
+                    current = current.insert(0, s);
             }
             place++;
             number /= 1000;
         } while (number > 0);
 
-        return (prefix + current).trim();
+        return (prefix + current.toString()).trim();
     }
 
     public static String convertIntToWord(String numberString){
@@ -183,16 +183,20 @@ public final class StringUtils {
                         typicalNumberToAdd += "zero ";
                     }
 
-                    if (zeroCt == 1){
-                        zerosToHundredsAndThousandsNumberToAdd += "zero ";
-                    } else if (zeroCt == 2) {
-                        zerosToHundredsAndThousandsNumberToAdd += "hundred ";
-                    } else if (zeroCt == 3) {
-                        zerosToHundredsAndThousandsNumberToAdd += "thousand ";
-                    } else {
-                        for (int j=0; j<zeroCt; j++){
+                    switch (zeroCt){
+                        case 1:
                             zerosToHundredsAndThousandsNumberToAdd += "zero ";
-                        }
+                            break;
+                        case 2:
+                            zerosToHundredsAndThousandsNumberToAdd += "hundred ";
+                            break;
+                        case 3:
+                            zerosToHundredsAndThousandsNumberToAdd += "thousand ";
+                            break;
+                        default:
+                            for (int j=0; j<zeroCt; j++){
+                                zerosToHundredsAndThousandsNumberToAdd += "zero ";
+                            }
                     }
 
                     //reset

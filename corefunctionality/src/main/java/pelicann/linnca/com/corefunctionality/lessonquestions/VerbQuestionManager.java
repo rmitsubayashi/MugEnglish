@@ -18,7 +18,8 @@ public class VerbQuestionManager {
     private List<WordDefinitionPair> wrongWords;
 
     public interface VerbQuestionManagerListener {
-        void onNextQuestion(QuestionData data, int questionIndex, int totalQuestions, boolean isFirstQuestion);
+        //not questionIndex but questionNumber (that we show the user)
+        void onNextQuestion(QuestionData data, int questionNumber, int totalQuestions, boolean isFirstQuestion);
         void onQuestionsFinished();
     }
 
@@ -124,8 +125,8 @@ public class VerbQuestionManager {
             currentQuestionIndex = -1;
             listener.onQuestionsFinished();
         } else {
-            int questionIndex = currentQuestionIndex + 1;
-            listener.onNextQuestion(questions.get(currentQuestionIndex), questionIndex, QUESTION_CT, isFirstQuestion);
+            int questionNumber = currentQuestionIndex + 1;
+            listener.onNextQuestion(questions.get(currentQuestionIndex), questionNumber, QUESTION_CT, isFirstQuestion);
         }
     }
 

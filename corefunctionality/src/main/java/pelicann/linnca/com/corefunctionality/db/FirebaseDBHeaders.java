@@ -5,13 +5,7 @@ public class FirebaseDBHeaders {
     public static final String USER_INTERESTS = "userInterests";
     //make sure these match the class variable names in WikiDataEntity
     public static final String USER_INTERESTS_PRONUNCIATION = "pronunciation";
-    public static final String USER_INTERESTS_CLASSIFICATION = "classification";
-    public static final String USER_INTEREST_RANKINGS = "userInterestRankings";
-    public static final String USER_INTEREST_RANKINGS_COUNT = "count";
-    public static final String USER_INTEREST_RANKINGS_DATA = "data";
     public static final String SIMILAR_USER_INTERESTS = "similarUserInterests";
-    public static final String CLEARED_LESSONS = "clearedLessons";
-    public static final String REVIEW_QUESTIONS = "reviewQuestions";
     public static final String LESSON_INSTANCES = "lessonInstances";
     public static final String LESSON_INSTANCE_TIMESTAMP = "timeStamp";
     public static final String LESSON_INSTANCE_VOCABULARY = "lessonInstanceVocabulary";
@@ -24,10 +18,6 @@ public class FirebaseDBHeaders {
     public static final String UTILS_SPORT_VERB_MAPPING_VERB = "verb";
     public static final String APP_USAGE = "appUsage";
     public static final String VOCABULARY = "vocabulary";
-    public static final String VOCABULARY_LIST = "vocabularyList";
-    //make sure this matches the field in the class VocabularyListWord
-    public static final String VOCABULARY_LIST_WORD_WORD = "word";
-    public static final String VOCABULARY_DETAILS = "vocabularyDetails";
     public static final String REPORT_CARD = "reportCard";
     public static final String REPORT_CARD_CORRECT = "correct";
     public static final String REPORT_CARD_TOTAL = "total";

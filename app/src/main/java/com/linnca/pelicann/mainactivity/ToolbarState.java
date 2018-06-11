@@ -13,15 +13,7 @@ public class ToolbarState {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     boolean searchIconVisible() {
         return searchIcon;
-    }
-
-    public void setSearchIcon(boolean visible) {
-        this.searchIcon = visible;
     }
 }

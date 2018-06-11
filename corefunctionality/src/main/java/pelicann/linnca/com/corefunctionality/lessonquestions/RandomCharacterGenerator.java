@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-//gets random characters based on weight
+//gets random characters based on actual occurrence probability
 public class RandomCharacterGenerator {
     private List<Character> characterList = new ArrayList<>();
 

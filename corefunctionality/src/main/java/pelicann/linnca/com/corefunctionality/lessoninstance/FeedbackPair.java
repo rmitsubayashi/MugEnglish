@@ -18,9 +18,6 @@ public class FeedbackPair implements Serializable{
     //for when we give feedback no matter the answer
     public static final String ALL = "@all";
 
-    public FeedbackPair() {
-    }
-
     public FeedbackPair(List<String> response, String feedback, int responseCheckType) {
         this.response = response;
         this.feedback = feedback;
@@ -40,23 +37,11 @@ public class FeedbackPair implements Serializable{
         return response;
     }
 
-    public void setResponse(List<String> response) {
-        this.response = response;
-    }
-
     public String getFeedback() {
         return feedback;
     }
 
-    public void setFeedback(String feedback) {
-        this.feedback = feedback;
-    }
-
     public int getResponseCheckType() {
         return responseCheckType;
-    }
-
-    public void setResponseCheckType(int responseCheckType) {
-        this.responseCheckType = responseCheckType;
     }
 }

@@ -14,7 +14,6 @@ public class AndroidNetworkConnectionChecker implements NetworkConnectionChecker
     //to detect connection
     private Context context;
     //for UI
-    private OnDBResultListener listener;
     private AtomicBoolean dataRetrievedFromDB;
     //if we need to stop listening without updating any UI
     // (for example when the user leaves the screen
@@ -66,11 +65,10 @@ public class AndroidNetworkConnectionChecker implements NetworkConnectionChecker
 
     @Override
     public void checkConnection(OnDBResultListener onDBResultListener, AtomicBoolean dataRetrievedFromDB){
-        this.listener = onDBResultListener;
         this.dataRetrievedFromDB = dataRetrievedFromDB;
         //context is here instead of in the initialization -> class variable
         // because contexts aren't serializable
-        new Handler().postDelayed(new NetworkConnectionRunnable(listener), 1000);
+        new Handler().postDelayed(new NetworkConnectionRunnable(onDBResultListener), 1000);
     }
 
     @Override

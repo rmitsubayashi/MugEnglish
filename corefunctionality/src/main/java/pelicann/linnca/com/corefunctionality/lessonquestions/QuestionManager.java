@@ -15,7 +15,7 @@ public class QuestionManager{
 	private LessonInstanceData lessonInstanceData = null;
 	private List<QuestionData> questions;
 	private String lessonKey = null;
-	private QuestionManagerListener questionManagerListener;
+	private final QuestionManagerListener questionManagerListener;
 	private int questionMkr = -1;
 	private int totalQuestions = 0;
 	//store information about this run of the instance.
@@ -26,9 +26,10 @@ public class QuestionManager{
 	//save the missed questions for the instance review.
 	//we can fetch them again from the question ID, but this prevents another connection to the database.
 	//store in a set to prevent duplicates (we are adding every time we get a question attempt)
-	private Set<QuestionData> missedQuestionsForReview = new HashSet<>();
+	private final Set<QuestionData> missedQuestionsForReview = new HashSet<>();
 
 	public interface QuestionManagerListener {
+		//not questionIndex but questionNumber (that we show the user)
 		void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion);
 
 		//arrayList so we can easily save it in a bundle

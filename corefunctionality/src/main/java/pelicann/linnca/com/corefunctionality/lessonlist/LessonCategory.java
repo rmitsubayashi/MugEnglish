@@ -37,20 +37,12 @@ public class LessonCategory implements Serializable{
         this.titleJP = titleJP;
     }
 
-    public boolean isPersonConsistent() {
-        return personConsistency;
-    }
-
     public void setPersonConsistency(boolean personConsistency) {
         this.personConsistency = personConsistency;
     }
 
     public void addLessonKey(String lessonKey){
         this.lessonKeys.add(lessonKey);
-    }
-
-    public boolean hasLesson(String lessonKey){
-        return this.lessonKeys.contains(lessonKey);
     }
 
     public String getLessonKey(int index){

@@ -22,10 +22,6 @@ public final class GUIUtils {
     public static final int SIGN_IN_PROVIDER_TWITTER = 2;*/
 
     private GUIUtils(){}
-    public static int stringToDrawableID(String imageString, Context context){
-        return context.getResources().getIdentifier(imageString, "drawable",
-                context.getApplicationInfo().packageName);
-    }
 
     public static int getDp(int num, Context context){
         return (int)(TypedValue.applyDimension(

@@ -1,18 +1,12 @@
 package com.linnca.pelicann.db;
 
-import android.support.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
@@ -23,11 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,7 +31,6 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
-import pelicann.linnca.com.corefunctionality.userprofile.UserProfile_ReportCardDataWrapper;
 
 //make sure the behavior replicates the behavior in the mock database
 // (we user the mock database to test methods that would otherwise
@@ -205,10 +195,6 @@ public class FirebaseDB extends Database {
                         lessonKey
         );
 
-        //any new vocabulary examples
-        DatabaseReference vocabularyRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.VOCABULARY
-        );
         //we are looping through each question set.
         // (questionDataWrapper has an extra field to store the wikiData ID
         // associated with the question set)
@@ -289,57 +275,6 @@ public class FirebaseDB extends Database {
 
         networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
-    }
-
-
-    public void getEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String questionID, final OnDBResultListener onDBResultListener){
-        /*final AtomicBoolean called = new AtomicBoolean(false);
-        final DatabaseReference questionRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.QUESTIONS + "/" +
-                        questionID
-        );
-
-        final ValueEventListener questionListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                QuestionData questionData = dataSnapshot.getValue(QuestionData.class);
-                onDBResultListener.onQuestionQueried(questionData);
-                called.set(true);
-                //we want to remove this listener
-                FirebaseDB.this.cleanup();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-        final RefListenerPair pair = new RefListenerPair(questionRef, questionListener);
-        refListenerPairs.add(pair);
-        questionRef.addValueEventListener(questionListener);
-
-        //if we can't establish a connection,
-        // we want to remove the connection so we don't try to query the question
-        // when connection is re-established
-        OnDBResultListener noConnectionListener = new OnDBResultListener() {
-            @Override
-            public void onNoConnection() {
-                //this is for the UI
-                onDBResultListener.onNoConnection();
-                //remove the listener.
-                //we can't call cleanUp() because that will remove all listeners.
-                //we still want to attempt to listen to the other locations
-                // (i.e. lesson details)
-                refListenerPairs.remove(pair);
-                questionRef.removeEventListener(questionListener);
-            }
-
-            @Override
-            public void onSlowConnection() {
-                onDBResultListener.onSlowConnection();
-            }
-        };
-        networkConnectionChecker.checkConnection(noConnectionListener, called);
-        networkConnections.add(networkConnectionChecker);*/
     }
 
     @Override
@@ -450,50 +385,6 @@ public class FirebaseDB extends Database {
 
         networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
-    }
-
-    @Override
-    public void getLessonInstanceDetails(String lessonKey, String instanceID, final OnDBResultListener onDBResultListener){
-        DatabaseReference recordsRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.INSTANCE_RECORDS + "/" +
-                        getUserID() + "/" +
-                        lessonKey + "/" +
-                        instanceID
-        );
-        recordsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<InstanceRecord> allRecords = new ArrayList<>((int)dataSnapshot.getChildrenCount());
-                for (DataSnapshot recordSnapshot : dataSnapshot.getChildren()){
-                    InstanceRecord record = recordSnapshot.getValue(InstanceRecord.class);
-                    allRecords.add(record);
-                }
-
-                onDBResultListener.onLessonInstanceDetailsQueried(allRecords);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    public void removeLessonInstance(String lessonKey, LessonInstanceData instance, final OnDBResultListener onDBResultListener){
-        String instancesPath = FirebaseDBHeaders.LESSON_INSTANCES + "/"+
-                getUserID()+"/"+
-                lessonKey + "/" +
-                instance.getId();
-        DatabaseReference instanceRef = FirebaseDatabase.getInstance().getReference(
-                instancesPath
-        );
-        instanceRef.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                onDBResultListener.onLessonInstanceRemoved();
-            }
-        });
     }
 
     @Override
@@ -633,11 +524,6 @@ public class FirebaseDB extends Database {
 
         networkConnectionChecker.checkConnection(noConnectionListener, called);
         networkConnections.add(networkConnectionChecker);
-
-        //add to rankings
-        for (WikiDataEntity data : userInterestsToAdd) {
-            this.changeUserInterestRanking(data, 1);
-        }
     }
 
     @Override
@@ -649,33 +535,6 @@ public class FirebaseDB extends Database {
                         FirebaseDBHeaders.USER_INTERESTS_PRONUNCIATION
         );
         pronunciationRef.setValue(pronunciation);
-        //also update the pronunciation in the user interest rankings
-        DatabaseReference rankingPronunciationRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.USER_INTEREST_RANKINGS + "/" +
-                        userInterestID + "/" +
-                        FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA + "/" +
-                        FirebaseDBHeaders.USER_INTERESTS_PRONUNCIATION
-        );
-        rankingPronunciationRef.setValue(pronunciation);
-    }
-
-    @Override
-    public void setClassification(String userInterestID, int classification){
-        DatabaseReference classificationRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.USER_INTERESTS + "/" +
-                        getUserID() + "/" +
-                        userInterestID + "/" +
-                        FirebaseDBHeaders.USER_INTERESTS_CLASSIFICATION
-        );
-        classificationRef.setValue(classification);
-        //also update the classification in the user interest rankings
-        DatabaseReference rankingClassificationRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.USER_INTEREST_RANKINGS + "/" +
-                        userInterestID + "/" +
-                        FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA + "/" +
-                        FirebaseDBHeaders.USER_INTERESTS_CLASSIFICATION
-        );
-        rankingClassificationRef.setValue(classification);
     }
 
     @Override
@@ -737,250 +596,6 @@ public class FirebaseDB extends Database {
                         onDBResultListener.onUserInterestsRemoved();
                     }
                 });
-        for (WikiDataEntity data : userInterestsToRemove){
-            this.changeUserInterestRanking(data, -1);
-        }
-    }
-
-    @Override
-    public void changeUserInterestRanking(final WikiDataEntity data, final int count){
-        DatabaseReference rankingRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.USER_INTEREST_RANKINGS + "/" +
-                        data.getWikiDataID()
-        );
-        rankingRef.runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(MutableData mutableData) {
-                Integer currentCt = mutableData
-                        .child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
-                        .getValue(Integer.class);
-                if (currentCt == null){
-                    //this is a new interest no one else has ranked
-                    mutableData.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
-                            .setValue(count);
-                    mutableData.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA)
-                            .setValue(data);
-                } else {
-                    int newCt = currentCt + count;
-                    if (newCt <= 0){
-                        //remove if the count goes below 0
-                        mutableData.setValue(null);
-                    } else {
-                        mutableData.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
-                                .setValue(newCt);
-                    }
-                }
-                return Transaction.success(mutableData);
-            }
-
-            @Override
-            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-            }
-        });
-    }
-
-    @Override
-    public void getPopularUserInterests(NetworkConnectionChecker networkConnectionChecker, int count, final OnDBResultListener onDBResultListener){
-        final AtomicBoolean called = new AtomicBoolean(false);
-        DatabaseReference popularUserInterestRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.USER_INTEREST_RANKINGS
-        );
-        final Query popularUserInterestQuery = popularUserInterestRef
-                .orderByChild(FirebaseDBHeaders.USER_INTEREST_RANKINGS_COUNT)
-                .limitToLast(count);
-        final ValueEventListener popularUserInterestListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                called.set(true);
-                List<WikiDataEntity> userInterests = new LinkedList<>();
-                //since the ordering is 1, 2, ... , 10,
-                //reverse the order
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    userInterests.add(0,
-                            snapshot.child(FirebaseDBHeaders.USER_INTEREST_RANKINGS_DATA)
-                                    .getValue(WikiDataEntity.class)
-                    );
-                }
-                onDBResultListener.onUserInterestRankingsQueried(userInterests);
-
-                popularUserInterestQuery.removeEventListener(this);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        popularUserInterestQuery.addValueEventListener(popularUserInterestListener);
-        final RefListenerPair pair = new RefListenerPair(popularUserInterestQuery, popularUserInterestListener);
-        refListenerPairs.add(pair);
-
-        OnDBResultListener noConnectionListener = new OnDBResultListener() {
-            @Override
-            public void onNoConnection() {
-                onDBResultListener.onNoConnection();
-                refListenerPairs.remove(pair);
-                popularUserInterestQuery.removeEventListener(popularUserInterestListener);
-            }
-
-            @Override
-            public void onSlowConnection() {
-                onDBResultListener.onSlowConnection();
-            }
-        };
-
-        networkConnectionChecker.checkConnection(noConnectionListener, called);
-        networkConnections.add(networkConnectionChecker);
-    }
-
-    @Override
-    public void getClearedLessons(NetworkConnectionChecker networkConnectionChecker, int lessonLevel, final boolean persistentConnection, final OnDBResultListener onDBResultListener){
-        String clearedLessonsPath = FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                getUserID() + "/" +
-                lessonLevel;
-        final DatabaseReference clearedLessonsRef = FirebaseDatabase.getInstance().getReference(
-                clearedLessonsPath
-        );
-        final AtomicBoolean called = new AtomicBoolean(false);
-        final ValueEventListener clearedLessonsListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                called.set(true);
-                Set<String> clearedLessonKeys = new HashSet<>((int)dataSnapshot.getChildrenCount()+1);
-                for (DataSnapshot lessonSnapshot : dataSnapshot.getChildren()){
-                    String lessonKey = lessonSnapshot.getKey();
-                    clearedLessonKeys.add(lessonKey);
-                }
-                onDBResultListener.onClearedLessonsQueried(clearedLessonKeys);
-                if (!persistentConnection){
-                    clearedLessonsRef.removeEventListener(this);
-                    //we can't remove the connection from the saved list,
-                    // but removing the same listener twice doesn't throw any exceptions
-                    // so we are technically fine
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-        clearedLessonsRef.addValueEventListener(clearedLessonsListener);
-
-        final RefListenerPair pair = new RefListenerPair(clearedLessonsRef, clearedLessonsListener);
-        refListenerPairs.add(pair);
-
-        //just handling persistent connections for now (one step at a time so we don't break things)
-        //if we can't establish a connection,
-        // we want to remove the connection so we don't try to query the question
-        // when connection is re-established
-        OnDBResultListener noConnectionListener = new OnDBResultListener() {
-            @Override
-            public void onNoConnection() {
-                //this is for the UI
-                onDBResultListener.onNoConnection();
-                //don't need to stop listening for the persistent connection.
-                //not sure about the single connection
-            }
-
-            @Override
-            public void onSlowConnection() {
-                onDBResultListener.onSlowConnection();
-            }
-        };
-
-        networkConnectionChecker.checkConnection(noConnectionListener, called);
-        networkConnections.add(networkConnectionChecker);
-    }
-
-    @Override
-    public void addClearedLesson(int lessonLevel, String lessonKey, final OnDBResultListener onDBResultListener){
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.CLEARED_LESSONS + "/" +
-                        getUserID() + "/" +
-                        Integer.toString(lessonLevel) + "/" +
-                        lessonKey
-        );
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()){
-                    ref.setValue(true);
-                    onDBResultListener.onClearedLessonAdded(true);
-                } else {
-                    onDBResultListener.onClearedLessonAdded(false);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    @Override
-    public void addReviewQuestion(List<String> questionIDs, final OnDBResultListener onDBResultListener){
-        DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
-                        getUserID() + "/"
-        );
-
-        Map<String, Object> toUpdate = new HashMap<>(questionIDs.size());
-        for (String questionID : questionIDs){
-            toUpdate.put(questionID, true);
-        }
-        reviewRef.updateChildren(toUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                onDBResultListener.onReviewQuestionsAdded();
-            }
-        });
-    }
-
-    @Override
-    public void getReviewQuestions(final OnDBResultListener onDBResultListener){
-        DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
-                        getUserID() + "/"
-        );
-        reviewRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<String> questionKeys = new ArrayList<>(
-                        (int)dataSnapshot.getChildrenCount()
-                );
-                for (DataSnapshot questionSnapshot : dataSnapshot.getChildren()){
-                    Boolean exists = questionSnapshot.getValue(Boolean.class);
-                    if (exists != null && exists){
-                        questionKeys.add(questionSnapshot.getKey());
-                    }
-                }
-                onDBResultListener.onReviewQuestionsQueried(questionKeys);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
-    @Override
-    public void removeReviewQuestions(final OnDBResultListener onDBResultListener){
-        DatabaseReference reviewRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.REVIEW_QUESTIONS + "/" +
-                        getUserID() + "/"
-        );
-        reviewRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                onDBResultListener.onReviewQuestionsRemoved();
-            }
-        });
     }
 
     @Override
@@ -1004,48 +619,6 @@ public class FirebaseDB extends Database {
                 onDBResultListener.onInstanceRecordAdded(recordKey);
             }
         });
-    }
-
-    @Override
-    public void getReportCard(int level, final OnDBResultListener onDBResultListener){
-        String reportCardPath = FirebaseDBHeaders.REPORT_CARD + "/" +
-                getUserID() + "/" +
-                Integer.toString(level);
-        DatabaseReference reportCardRef = FirebaseDatabase.getInstance().getReference(
-                reportCardPath
-        );
-        ValueEventListener reportCardListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<UserProfile_ReportCardDataWrapper> reportCardData =
-                        new ArrayList<>((int)dataSnapshot.getChildrenCount());
-                for (DataSnapshot lessonSnapshot : dataSnapshot.getChildren()){
-                    String lessonKey = lessonSnapshot.getKey();
-                    Integer correctCt = lessonSnapshot.child(FirebaseDBHeaders.REPORT_CARD_CORRECT)
-                            .getValue(Integer.class);
-                    if (correctCt == null)
-                        correctCt = 0;
-                    Integer totalCt = lessonSnapshot.child(FirebaseDBHeaders.REPORT_CARD_TOTAL)
-                            .getValue(Integer.class);
-                    if (totalCt == null)
-                        totalCt = 0;
-                    UserProfile_ReportCardDataWrapper wrapper =
-                            new UserProfile_ReportCardDataWrapper(lessonKey, correctCt, totalCt);
-                    reportCardData.add(wrapper);
-                }
-
-                onDBResultListener.onReportCardQueried(reportCardData);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-
-        reportCardRef.addValueEventListener(reportCardListener);
-        refListenerPairs.add(new RefListenerPair(reportCardRef, reportCardListener));
-
     }
 
     @Override

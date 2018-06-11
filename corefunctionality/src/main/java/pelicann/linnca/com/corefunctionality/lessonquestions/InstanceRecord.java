@@ -44,10 +44,6 @@ public class InstanceRecord implements Serializable{
         this.attempts = attempts;
     }
 
-    public Boolean getCompleted() {
-        return completed;
-    }
-
     void setCompleted(Boolean completed) {
         this.completed = completed;
     }

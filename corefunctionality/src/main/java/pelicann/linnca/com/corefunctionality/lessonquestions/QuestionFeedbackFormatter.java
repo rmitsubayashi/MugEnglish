@@ -19,7 +19,7 @@ public class QuestionFeedbackFormatter {
         if (correct)
             return formatCorrectFeedback(questionData, response);
         else {
-            return formatWrongFeedback(questionData, response, previousResponses);
+            return formatWrongFeedback(questionData, previousResponses);
         }
     }
 
@@ -56,7 +56,7 @@ public class QuestionFeedbackFormatter {
         return "";
     }
 
-    private static String formatWrongFeedback(QuestionData questionData, String response, List<String> allWrongResponses){
+    private static String formatWrongFeedback(QuestionData questionData, List<String> allWrongResponses){
         if (questionData.getFeedback() != null) {
             List<FeedbackPair> feedbackPairs = questionData.getFeedback();
             List<String> implicitAllWrongResponses = null;

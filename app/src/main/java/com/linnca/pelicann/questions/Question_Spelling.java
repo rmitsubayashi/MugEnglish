@@ -40,8 +40,6 @@ public class Question_Spelling extends QuestionFragmentInterface {
     private int columnCt;
     private GridContainer[][] gridContainers;
     private final Stack<Button> answerButtons = new Stack<>();
-    //we still want a button for spaces
-    private final char space = '空';
     //since we have a lot of random variables,
     //save so we don't have to create redundant objects
     private final Random random = new Random(System.currentTimeMillis());
@@ -226,6 +224,8 @@ public class Question_Spelling extends QuestionFragmentInterface {
         //no reason to have it uppercase
         letter = Character.toLowerCase(letter);
         final char letterToAddToTextView = letter;
+        //we still want a button for spaces
+        final char space = '空';
         if (letter == ' '){
             letter = space;
         }

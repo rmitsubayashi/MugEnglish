@@ -16,10 +16,10 @@ import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenera
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
 
 public class LessonScriptManager {
-    private LocalStorageManager localStorageManager;
-    private Database db;
-    private NetworkConnectionChecker networkConnectionChecker;
-    private LessonScriptManagerListener listener;
+    private final LocalStorageManager localStorageManager;
+    private final Database db;
+    private final NetworkConnectionChecker networkConnectionChecker;
+    private final LessonScriptManagerListener listener;
     private LessonCategory currentLessonCategory;
     private int currentLessonIndex = -1;
 
@@ -76,7 +76,7 @@ public class LessonScriptManager {
 
             @Override
             public void onNoConnection() {
-                super.onNoConnection();
+
             }
         };
 

@@ -42,7 +42,6 @@ implements Onboarding3v2.Onboarding3v2Listener
     private Button finishButton;
     private final List<ImageView> indicators = new ArrayList<>(3);
     private ProgressBar loading;
-    private Database db = new FirebaseDB();
     private List<WikiDataEntity> entitiesToAdd = null;
 
     /**

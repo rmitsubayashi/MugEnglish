@@ -15,7 +15,6 @@ public class Questions_food_class extends QuestionGenerator {
     @Override
     public List<QuestionData> makeQuestions(List<EntityPropertyData> dataList) {
         List<QuestionData> questions = new ArrayList<>(5);
-        EntityPropertyData data = dataList.get(0);
         questions.add(multipleChoice());
         questions.add(multipleChoice2());
         questions.add(sentencePuzzle());

@@ -11,10 +11,9 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+//fetches pronunciation from mecapi
 //note: we can install this program on our own server
 //if we end up using a server
-//TODO he api link is down. we need another way of getting pronunciation
-
 public class PronunciationAPIConnector implements EndpointConnectorReturnsJSON {
     public PronunciationAPIConnector(){}
 

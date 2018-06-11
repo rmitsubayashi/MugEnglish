@@ -2,6 +2,7 @@ package pelicann.linnca.com.corefunctionality.connectors;
 
 import org.w3c.dom.Document;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -38,9 +39,10 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	//クエリーの言語設定
 	//@language@を指定言語に置き換える
 	private final String language;
-	//候補(Constructorに入れる用)
+	//main languages
 	static public final String ENGLISH = "en";
 	static public final String JAPANESE = "ja";
+	//if we want to extend to other languages
 	static public final String LANGUAGE_PLACEHOLDER = "@language@";
 	
 	WikiBaseEndpointConnector(){
@@ -55,13 +57,13 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	//for each thread, we make a connection to the WikiBase server and get a response.
 	@Override
 	public void fetchDOMFromGetRequest(final OnFetchDOMListener listener, List<String> parameterValues){
-		final AtomicBoolean onStopCalled = new AtomicBoolean(false);
 		int parameterCt = parameterValues.size();
 		ArrayBlockingQueue<Runnable> taskQueue = new ArrayBlockingQueue<>(parameterCt);
 		int coreCt = Runtime.getRuntime().availableProcessors();
 		final ThreadPoolExecutor executor = new ThreadPoolExecutor(coreCt, coreCt,
 				1, TimeUnit.SECONDS, taskQueue,
 				new ThreadPoolExecutor.DiscardOldestPolicy());
+		final AtomicBoolean alreadyCalledListenerOnStop = new AtomicBoolean(false);
 		for (final String parameter : parameterValues){
 			Runnable runnable = new Runnable() {
 				@Override
@@ -72,19 +74,21 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 					try {
 						HttpURLConnection conn = formatHttpConnection(parameter);
 						InputStream resultInputStream = fetchHttpConnectionResponse(conn);
+						if (resultInputStream == null)
+							return;
 						DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 						DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 						Document document = documentBuilder.parse(resultInputStream);
 						document.getDocumentElement().normalize();
 						if (!listener.shouldStop()) {
 							listener.onFetchDOM(document);
-						}
-						if (listener.shouldStop()) {
+						} else {
 							//doesn't stop threads already running?
 							executor.shutdownNow();
 							//just in case a non-killed thread tries
 							// to call onStop
-							if (!onStopCalled.getAndSet(true)) {
+							// (we only want one call to the listener's onStop)
+							if (!alreadyCalledListenerOnStop.getAndSet(true)) {
 								listener.onStop();
 							}
 						}
@@ -97,7 +101,7 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 		}
 	}
 	
-	protected abstract String formatURL(String parameterValue) throws Exception;
+	protected abstract String formatURL(String parameterValue);
 	
 	String formatRequestLanguage(String str){
 		return str.replace(LANGUAGE_PLACEHOLDER, language);
@@ -116,7 +120,12 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 	
 	
 	
-	private InputStream fetchHttpConnectionResponse(HttpURLConnection conn) throws Exception{
-		return conn.getInputStream();
+	private InputStream fetchHttpConnectionResponse(HttpURLConnection conn){
+		try {
+			return conn.getInputStream();
+		} catch (IOException e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

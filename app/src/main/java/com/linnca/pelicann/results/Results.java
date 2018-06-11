@@ -67,7 +67,6 @@ public class Results extends Fragment {
 
     public interface ResultsListener {
         void resultsToLessonList();
-        void resultsToLessonDetails();
         //this is for reviewing the lesson he just did
         void resultsToReview();
         void setToolbarState(ToolbarState state);

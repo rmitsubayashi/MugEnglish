@@ -34,10 +34,6 @@ public class LessonInstanceData implements Serializable{
         return entityPropertyData;
     }
 
-    public void setEntityPropertyData(List<EntityPropertyData> entityPropertyData) {
-        this.entityPropertyData = entityPropertyData;
-    }
-
     public long getTimeStamp() {
         return timeStamp;
     }

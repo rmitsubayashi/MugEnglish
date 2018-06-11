@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -72,7 +73,8 @@ public class BingAlsoSearchedConnector implements EndpointConnectorReturnsXML {
         }
     }
 
-    private HttpURLConnection formatHttpConnection(String parameterValue) throws Exception{
+    //should handle the exceptions better (look into this later)
+    private HttpURLConnection formatHttpConnection(String parameterValue) throws Exception {
         String urlString = formatURL(parameterValue);
         URL url = new URL(urlString);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -83,7 +85,7 @@ public class BingAlsoSearchedConnector implements EndpointConnectorReturnsXML {
         return conn;
     }
 
-    private String formatURL(String parameterValue) throws Exception {
+    private String formatURL(String parameterValue) {
         //get language.
         //bing doesn't show 'people also searched' if the input language and search engine language
         // are mismatched
@@ -93,7 +95,13 @@ public class BingAlsoSearchedConnector implements EndpointConnectorReturnsXML {
         } else {
             searchLanguage = "en-us";
         }
-        String encodedSearchText = URLEncoder.encode(parameterValue, StandardCharsets.UTF_8.name());
+        String encodedSearchText;
+        try {
+            encodedSearchText = URLEncoder.encode(parameterValue, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+            encodedSearchText = parameterValue;
+        }
         return "https://www.bing.com/search?q=" + encodedSearchText +
                 "&setlang=" + searchLanguage;
     }

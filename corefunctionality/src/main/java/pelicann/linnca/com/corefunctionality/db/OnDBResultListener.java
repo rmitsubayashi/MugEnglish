@@ -3,14 +3,11 @@ package pelicann.linnca.com.corefunctionality.db;
 import org.joda.time.DateTime;
 
 import java.util.List;
-import java.util.Set;
 
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
-import pelicann.linnca.com.corefunctionality.userprofile.UserProfile_ReportCardDataWrapper;
 
 public abstract class OnDBResultListener {
     public void onNoConnection(){}
@@ -25,8 +22,6 @@ public abstract class OnDBResultListener {
 
     public void onLessonInstanceAdded(){}
     public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstances){}
-    public void onLessonInstanceDetailsQueried(List<InstanceRecord> records){}
-    public void onLessonInstanceRemoved(){}
 
     public void onUserInterestsQueried(List<WikiDataEntity> userInterests){}
     public void onUserInterestsAdded(){}
@@ -36,16 +31,8 @@ public abstract class OnDBResultListener {
 
     public void onUserInterestRankingsQueried(List<WikiDataEntity> userInterests){}
 
-    public void onClearedLessonsQueried(Set<String> clearedLessonKeys){}
-    public void onClearedLessonAdded(boolean firstTimeCleared){}
-
-    public void onReviewQuestionsAdded(){}
-    public void onReviewQuestionsRemoved(){}
-    public void onReviewQuestionsQueried(List<String> questionKeys){}
-
     public void onInstanceRecordAdded(String generatedRecordKey){}
 
-    public void onReportCardQueried(List<UserProfile_ReportCardDataWrapper> reportCardInfo){}
     public void onReportCardAdded(){}
 
     public void onFirstAppUsageDateQueried(DateTime date){}

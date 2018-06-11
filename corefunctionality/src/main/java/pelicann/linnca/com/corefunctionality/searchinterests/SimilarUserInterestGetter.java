@@ -13,27 +13,13 @@ import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturns
 import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class SimilarUserInterestGetter {
-    //to get connection status
-    private NetworkConnectionChecker networkConnectionChecker;
     //to get popular user interests
-    private Database db;
+    private final Database db;
     //to get recommendations from Bing
-    private BingAlsoSearchedConnector bingConnector = new BingAlsoSearchedConnector();
-    private int toDisplayRecommendationCt = 0;
-    private int defaultRecommendationCt;
-    //how many recommendations to add when the user loads
-    // more recommendations
-    private int loadMoreRecommendationCt;
-    //we get more recommendations than we need
-    // to guarantee populating recommendations,
-    //so save the leftovers and when the user loads more,
-    // we can check this first
-    private List<WikiDataEntity> savedRecommendations = new ArrayList<>();
+    private final BingAlsoSearchedConnector bingConnector = new BingAlsoSearchedConnector();
     private WikiDataEntity addedInterest = null;
 
     //the interface is to determine what will happen to the UI.
@@ -43,25 +29,16 @@ public class SimilarUserInterestGetter {
         void onNoConnection();
     }
 
-    public SimilarUserInterestGetter(int defaultRecommendationCt, NetworkConnectionChecker networkConnectionChecker, Database db, int loadMoreRecommendationCt){
-        this.networkConnectionChecker = networkConnectionChecker;
+    public SimilarUserInterestGetter(Database db){
         this.db = db;
-        this.defaultRecommendationCt = defaultRecommendationCt;
-        this.loadMoreRecommendationCt = loadMoreRecommendationCt;
     }
 
-    int getToDisplayRecommendationCt(){
-        return toDisplayRecommendationCt;
-    }
-
-    public void getNewRecommendations(final WikiDataEntity addedInterest, List<WikiDataEntity> userInterests,
+    public void getNewRecommendations(final WikiDataEntity addedInterest,
                                       final SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
         if (addedInterest == null || addedInterest.getLabel() == null){
             return;
         }
         this.addedInterest = addedInterest;
-        //reset the recommendation count to the default
-        toDisplayRecommendationCt = defaultRecommendationCt;
         //getPopularWikidataEntities(userInterests, SimilarUserInterestGetterListener);
         new Thread(){
             @Override
@@ -70,60 +47,6 @@ public class SimilarUserInterestGetter {
             }
         }.start();
 
-    }
-
-    public void loadMoreRecommendations(List<WikiDataEntity> userInterests,
-                                        SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
-        toDisplayRecommendationCt += loadMoreRecommendationCt;
-        //check first if we can still populate the recommendations with
-        //the initial list we grabbed.
-        if (savedRecommendations.size() > toDisplayRecommendationCt){
-            //we technically can display the list if we have recommendations equal to the display count,
-            // but then we don't know whether we should show the load more button or not.
-            List<WikiDataEntity> toDisplay = new ArrayList<>(
-                    savedRecommendations.subList(0, toDisplayRecommendationCt));
-            SimilarUserInterestGetterListener.onGetRecommendations(toDisplay, true);
-        } else {
-            //grab more from the database
-            getPopularWikidataEntities(userInterests, SimilarUserInterestGetterListener);
-        }
-    }
-
-    private void getPopularWikidataEntities(final List<WikiDataEntity> userInterests,
-                                            final SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onUserInterestRankingsQueried(List<WikiDataEntity> rankings) {
-                //clearing out all of the user interests is handled in the database,
-                // but this guarantees that user interests will be left out
-                rankings.removeAll(userInterests);
-                //save all of the list for future use
-                savedRecommendations.clear();
-                savedRecommendations.addAll(rankings);
-
-                boolean showLoadMoreButton = true;
-                //if we have more than we need
-                if (rankings.size() > toDisplayRecommendationCt){
-                    rankings = rankings.subList(0, toDisplayRecommendationCt);
-                } else {
-                    showLoadMoreButton = false;
-                }
-                SimilarUserInterestGetterListener.onGetRecommendations(rankings, showLoadMoreButton);
-            }
-
-            @Override
-            public void onNoConnection(){
-                SimilarUserInterestGetterListener.onNoConnection();
-            }
-        };
-
-        //we get the to display recommendation count + 1 so we know
-        // whether we can load more recommendations.
-        // we want to get at least the number of the user interests
-        // so we guarantee that the returned list will contain new items
-        int toGetUserInterestCt = userInterests.size() +
-                toDisplayRecommendationCt + 1;
-        db.getPopularUserInterests(networkConnectionChecker, toGetUserInterestCt, onDBResultListener);
     }
 
     private void getPeopleAlsoSearchedFor(final String addedInterestLabel, final SimilarUserInterestGetterListener SimilarUserInterestGetterListener){
@@ -212,27 +135,6 @@ public class SimilarUserInterestGetter {
         //only need the first one
         WikiDataAPISearchConnector connector = new WikiDataAPISearchConnector(WikiBaseEndpointConnector.JAPANESE, 1);
         connector.fetchDOMFromGetRequest(listener, labelList);
-    }
-
-    private Node findNodeByValue(Node node, String value){
-        if (node != null){
-            if (node.getTextContent() != null &&
-                    node.getTextContent().startsWith(value)){
-                return node;
-            }
-            NodeList childNodes = node.getChildNodes();
-            int childNodeCt = childNodes.getLength();
-            for (int i=0; i<childNodeCt; i++){
-                Node childNode = childNodes.item(i);
-                if (childNode != null){
-                    childNode = findNodeByValue(childNode, value);
-                    if (childNode != null)
-                        return childNode;
-                }
-            }
-        }
-
-        return null;
     }
 
     private void findAlsoSearchedForLabels(Node node, String tag, String attribute, List<String> result){

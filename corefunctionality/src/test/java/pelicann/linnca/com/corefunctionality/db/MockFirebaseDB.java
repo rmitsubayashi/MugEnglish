@@ -22,10 +22,9 @@ public class MockFirebaseDB extends Database {
     //so we can easily access them when testing
     public List<WikiDataEntity> userInterests = new ArrayList<>();
     //Wikidata ID, all data pertaining to the wikidata id.
-    public Map<String, List<EntityPropertyData>> entityPropertyData = new HashMap<>();
+    public final Map<String, List<EntityPropertyData>> entityPropertyData = new HashMap<>();
     //ID -> lesson instance
-    public List<LessonInstanceData> lessonInstances = new ArrayList<>();
-    public List<WikiDataEntity> recommendations = new ArrayList<>();
+    public final List<LessonInstanceData> lessonInstances = new ArrayList<>();
 
     @Override
     public String getUserID() {
@@ -122,16 +121,6 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getLessonInstanceDetails(String lessonKey, String instanceID, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void removeLessonInstance(String lessonKey, LessonInstanceData instanceData, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
     public void getUserInterests(NetworkConnectionChecker networkConnectionChecker, boolean persistentConnection, OnDBResultListener onDBResultListener) {
         onDBResultListener.onUserInterestsQueried(userInterests);
     }
@@ -149,27 +138,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void changeUserInterestRanking(WikiDataEntity data, int count){}
-
-    @Override
-    public void getPopularUserInterests(NetworkConnectionChecker networkConnectionChecker, int count, OnDBResultListener onDBResultListener){
-        if (count > recommendations.size()){
-            count = recommendations.size();
-        }
-        //we don't care about order
-        List<WikiDataEntity> popularUserInterestList = new ArrayList<>(
-                recommendations.subList(0, count)
-        );
-        onDBResultListener.onUserInterestRankingsQueried(popularUserInterestList);
-    }
-
-    @Override
     public void setPronunciation(String userInterestID, String pronunciation){
-
-    }
-
-    @Override
-    public void setClassification(String userInterestID, int classification){
 
     }
 
@@ -185,41 +154,6 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void addInstanceRecord(InstanceRecord record, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void getClearedLessons(NetworkConnectionChecker networkConnectionChecker, int lessonLevel, boolean persistentConnection, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void addClearedLesson(int lessonLevel, String lessonKey, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void addReviewQuestion(List<String> questionKeys, OnDBResultListener onDBResultListener){
-
-    }
-
-    @Override
-    public void removeReviewQuestions(OnDBResultListener onDBResultListener){
-
-    }
-
-    @Override
-    public void getReviewQuestions(OnDBResultListener onDBResultListener){
-
-    }
-
-    @Override
-    public void getReportCard(int level, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void addReportCard(int level, String lessonKey, int correctCt, int totalCt, OnDBResultListener onDBResultListener) {
 
     }
 
@@ -250,4 +184,10 @@ public class MockFirebaseDB extends Database {
     public void getSports(Collection<String> sportWikiDataIDs, OnDBResultListener onDBResultListener) {
 
     }
+
+    @Override
+    public void addReportCard(String lessonKey, int correctCt, int totalCt, OnDBResultListener onDBResultListener){
+
+    }
+
 }

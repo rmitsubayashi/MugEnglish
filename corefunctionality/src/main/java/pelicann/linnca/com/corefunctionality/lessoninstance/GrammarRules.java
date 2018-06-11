@@ -47,7 +47,7 @@ public final class GrammarRules {
 
 	//not sure if this is the rule
 	public static String definiteArticleBeforeWar(String warName){
-		if (warName.substring(0,4).equals("The ") || warName.substring(0,4).equals("the ")){
+		if (warName.length() > 4 && (warName.substring(0,4).equals("The ") || warName.substring(0,4).equals("the "))){
 			return warName;
 		}
 
