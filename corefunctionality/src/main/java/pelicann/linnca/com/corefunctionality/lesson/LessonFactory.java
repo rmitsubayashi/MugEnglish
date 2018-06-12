@@ -18,6 +18,7 @@ import pelicann.linnca.com.corefunctionality.lesson.lessons.Social_media_blog;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Social_media_twitter;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Sports_introduction;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Sports_play;
+import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_about;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_fired;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_hired;
 
@@ -63,6 +64,8 @@ public final class LessonFactory {
                 return new Work_hired();
             case Work_fired.KEY :
                 return new Work_fired();
+            case Work_about.KEY :
+                return new Work_about();
             default:
                 return null;
         }

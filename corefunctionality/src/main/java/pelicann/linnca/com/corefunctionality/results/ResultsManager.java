@@ -5,9 +5,7 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewer;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionAttempt;
 
@@ -27,7 +25,7 @@ public class ResultsManager {
         this.db = db;
     }
 
-    public void saveInstanceRecord(NetworkConnectionChecker networkConnectionChecker, final LessonListViewer lessonListViewer){
+    public void saveInstanceRecord(){
         //save the whole instance record
         final OnDBResultListener instanceRecordOnDBResultListener = new OnDBResultListener() {
             @Override

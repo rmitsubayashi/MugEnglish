@@ -16,6 +16,7 @@ import pelicann.linnca.com.corefunctionality.lesson.lessons.Social_media_blog;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Social_media_twitter;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Sports_introduction;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Sports_play;
+import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_about;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_fired;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_hired;
 
@@ -40,6 +41,7 @@ public class LessonListViewerImplementation extends LessonListViewer {
         work.setKey("WORK");
         work.setTitleJP("仕事");
         work.addLessonKey(Work_hired.KEY);
+        work.addLessonKey(Work_about.KEY);
         work.addLessonKey(Work_fired.KEY);
         work.setPersonConsistency(true);
         lessons.add(work);
@@ -50,7 +52,7 @@ public class LessonListViewerImplementation extends LessonListViewer {
         sports.addLessonKey(Sports_introduction.KEY);
         lessons.add(sports);
         LessonCategory socialMedia = new LessonCategory();
-        socialMedia.setKey("SOCIALMEDIA");
+        socialMedia.setKey("SOCIAL_MEDIA");
         socialMedia.setTitleJP("ソーシャルメディア");
         socialMedia.addLessonKey(Social_media_blog.KEY);
         socialMedia.addLessonKey(Social_media_twitter.KEY);

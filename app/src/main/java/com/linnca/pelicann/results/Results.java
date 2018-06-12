@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.linnca.pelicann.R;
-import com.linnca.pelicann.db.AndroidNetworkConnectionChecker;
 import com.linnca.pelicann.db.FirebaseDB;
 import com.linnca.pelicann.mainactivity.GUIUtils;
 import com.linnca.pelicann.mainactivity.MainActivity;
@@ -33,8 +32,6 @@ import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.lessonlist.LessonListViewerImplementation;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionAttempt;
 import pelicann.linnca.com.corefunctionality.results.ResultsManager;
@@ -120,9 +117,7 @@ public class Results extends Fragment {
         );
 
         if (!instanceUpdated) {
-            NetworkConnectionChecker networkConnectionChecker = new
-                    AndroidNetworkConnectionChecker(getContext());
-            resultsManager.saveInstanceRecord(networkConnectionChecker, new LessonListViewerImplementation());
+            resultsManager.saveInstanceRecord();
             instanceUpdated = true;
         }
         setLayout();

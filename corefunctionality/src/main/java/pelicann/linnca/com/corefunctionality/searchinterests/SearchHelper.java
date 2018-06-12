@@ -159,15 +159,10 @@ public class SearchHelper {
 
             @Override
             public void onStop() {
-                System.out.println("TAG onStop()");
                 //also check the most recent here.
                 //if not the most recent at this point, don't update the UI
                 if (requestNumber < searchRequestCt.get()){
                     return;
-                }
-
-                for (WikiDataEntity entity : peopleResults){
-                    System.out.println("TAG " + entity.getLabel());
                 }
                 listener.onSuccess(peopleResults);
             }
@@ -183,7 +178,6 @@ public class SearchHelper {
                     String id = SPARQLDocumentParserHelper.findValueByNodeName(head, "person");
                     id = WikiDataEntity.getWikiDataIDFromReturnedResult(id);
                     String label = SPARQLDocumentParserHelper.findValueByNodeName(head, "personLabel");
-                    System.out.println("is person " + label);
                     String description = SPARQLDocumentParserHelper.findValueByNodeName(head, "personDescription");
                     //set pronunciation to label for now
                     peopleResults.add(new WikiDataEntity(label, description, id, label));

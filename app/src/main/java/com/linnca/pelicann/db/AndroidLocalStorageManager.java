@@ -13,12 +13,15 @@ public class AndroidLocalStorageManager extends LocalStorageManager {
         this.context = context;
     }
 
+    @Override
     public int getLastSavedLessonIndexAtCategory(String category){
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getInt
                 (category, -1);
     }
+
+    @Override
     public void saveLessonIndexAtCategory(String category, int index){
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(context);
