@@ -28,7 +28,7 @@ import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
@@ -599,7 +599,7 @@ public class FirebaseDB extends Database {
     }
 
     @Override
-    public void addInstanceRecord(InstanceRecord record, final OnDBResultListener onDBResultListener){
+    public void addInstanceRecord(InstanceAttemptRecord record, final OnDBResultListener onDBResultListener){
         final String recordKey = FirebaseDatabase.getInstance().getReference(
                 FirebaseDBHeaders.INSTANCE_RECORDS + "/" +
                         getUserID() + "/" +
@@ -617,73 +617,6 @@ public class FirebaseDB extends Database {
             @Override
             public void onSuccess(Void aVoid) {
                 onDBResultListener.onInstanceRecordAdded(recordKey);
-            }
-        });
-    }
-
-    @Override
-    public void addReportCard(String lessonKey, final int correctCt, final int totalCt, final OnDBResultListener onDBResultListener){
-        final AtomicInteger finishedCt = new AtomicInteger(0);
-        final int updateLocationCt = 2;
-        final DatabaseReference correctCtRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.REPORT_CARD + "/" +
-                        getUserID() + "/" +
-                        lessonKey + "/" +
-                        FirebaseDBHeaders.REPORT_CARD_CORRECT
-        );
-        correctCtRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Integer currentVal = dataSnapshot.getValue(Integer.class);
-                if (currentVal == null){
-                    currentVal = 0;
-                }
-                int newVal = currentVal + correctCt;
-                correctCtRef.setValue(newVal).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //only do this if both updates are complete
-                        if (finishedCt.incrementAndGet() == updateLocationCt){
-                            onDBResultListener.onReportCardAdded();
-                        }
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        final DatabaseReference totalCtRef = FirebaseDatabase.getInstance().getReference(
-                FirebaseDBHeaders.REPORT_CARD + "/" +
-                        getUserID() + "/" +
-                        lessonKey + "/" +
-                        FirebaseDBHeaders.REPORT_CARD_TOTAL
-        );
-        totalCtRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Long currentVal = dataSnapshot.getValue(Long.class);
-                if (currentVal == null){
-                    currentVal = 0L;
-                }
-                long newVal = currentVal + totalCt;
-                totalCtRef.setValue(newVal).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //only do this if both updates are finished
-                        if (finishedCt.incrementAndGet() == updateLocationCt){
-                            onDBResultListener.onReportCardAdded();
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }

@@ -12,7 +12,7 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnecto
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Introduction_team_from;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
@@ -26,7 +26,7 @@ import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 * 6. first name
 * */
 
-public class Instance_introduction_team_from extends LessonInstanceGenerator {
+public class Instance_introduction_team_from extends InstanceGenerator {
     public Instance_introduction_team_from(){
         super();
         super.uniqueEntities = 1;

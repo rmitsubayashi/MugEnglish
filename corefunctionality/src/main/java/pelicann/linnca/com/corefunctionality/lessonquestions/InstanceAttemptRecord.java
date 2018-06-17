@@ -3,14 +3,13 @@ package pelicann.linnca.com.corefunctionality.lessonquestions;
 import java.io.Serializable;
 import java.util.List;
 
-public class InstanceRecord implements Serializable{
+public class InstanceAttemptRecord implements Serializable{
     private String id;
     private String instanceId;
     private String lessonId;
     private List<QuestionAttempt> attempts;
-    private Boolean completed;
 
-    InstanceRecord(){}
+    InstanceAttemptRecord(){}
 
     public String getId() {
         return id;
@@ -44,19 +43,15 @@ public class InstanceRecord implements Serializable{
         this.attempts = attempts;
     }
 
-    void setCompleted(Boolean completed) {
-        this.completed = completed;
-    }
-
     @Override
     public boolean equals(Object object){
         if (object == null)
             return false;
 
-        if (!(object instanceof InstanceRecord))
+        if (!(object instanceof InstanceAttemptRecord))
             return false;
 
-        InstanceRecord record = (InstanceRecord) object;
+        InstanceAttemptRecord record = (InstanceAttemptRecord) object;
         return  ((record.getId()).equals(this.id));
     }
 

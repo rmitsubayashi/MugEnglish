@@ -9,7 +9,7 @@ import java.util.Map;
 
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
@@ -153,7 +153,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void addInstanceRecord(InstanceRecord record, OnDBResultListener onDBResultListener) {
+    public void addInstanceRecord(InstanceAttemptRecord record, OnDBResultListener onDBResultListener) {
 
     }
 
@@ -182,11 +182,6 @@ public class MockFirebaseDB extends Database {
 
     @Override
     public void getSports(Collection<String> sportWikiDataIDs, OnDBResultListener onDBResultListener) {
-
-    }
-
-    @Override
-    public void addReportCard(String lessonKey, int correctCt, int totalCt, OnDBResultListener onDBResultListener){
 
     }
 

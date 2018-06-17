@@ -13,13 +13,13 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_fired;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Work_hired;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.TermAdjuster;
 import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
 import pelicann.linnca.com.corefunctionality.lessonscript.StringUtils;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
-public class Instance_work_fired extends LessonInstanceGenerator {
+public class Instance_work_fired extends InstanceGenerator {
     public Instance_work_fired(){
         super();
         super.uniqueEntities = 1;

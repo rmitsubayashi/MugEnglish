@@ -12,11 +12,11 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnecto
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Introduction_age;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
-public class Instance_introduction_age extends LessonInstanceGenerator {
+public class Instance_introduction_age extends InstanceGenerator {
     public Instance_introduction_age(){
         super();
         super.uniqueEntities = 1;

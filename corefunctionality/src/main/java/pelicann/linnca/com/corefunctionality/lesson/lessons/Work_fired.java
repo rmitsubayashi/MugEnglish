@@ -9,7 +9,7 @@ public class Work_fired extends Lesson{
     public static final String KEY = "workFired";
 
     public Work_fired(){
-        this.lessonInstanceGenerator = new Instance_work_fired();
+        this.instanceGenerator = new Instance_work_fired();
         this.scriptGenerator = new Script_work_fired();
         this.questionGenerator = new Questions_work_fired();
     }

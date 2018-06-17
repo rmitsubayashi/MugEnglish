@@ -13,11 +13,11 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Food_restaurant;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Food_tv_introduction;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
-public class Instance_food_restaurant extends LessonInstanceGenerator {
+public class Instance_food_restaurant extends InstanceGenerator {
     public Instance_food_restaurant(){
         super();
         super.uniqueEntities = 1;

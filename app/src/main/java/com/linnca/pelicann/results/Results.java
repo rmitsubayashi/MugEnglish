@@ -32,7 +32,7 @@ import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionAttempt;
 import pelicann.linnca.com.corefunctionality.results.ResultsManager;
 
@@ -44,7 +44,7 @@ public class Results extends Fragment {
     public static final String TAG = "Results";
     private Database db;
     public static final String BUNDLE_INSTANCE_RECORD = "bundleInstanceRecord";
-    private InstanceRecord instanceRecord;
+    private InstanceAttemptRecord instanceAttemptRecord;
     private ResultsManager resultsManager;
     private TextView correctCtTextView;
     private TextView correctCtUnitTextView;
@@ -79,8 +79,8 @@ public class Results extends Fragment {
             //hard code a new database instance
             db = new FirebaseDB();
         }
-        instanceRecord = (InstanceRecord) getArguments().getSerializable(BUNDLE_INSTANCE_RECORD);
-        resultsManager = new ResultsManager(instanceRecord, db,
+        instanceAttemptRecord = (InstanceAttemptRecord) getArguments().getSerializable(BUNDLE_INSTANCE_RECORD);
+        resultsManager = new ResultsManager(instanceAttemptRecord, db,
                 new ResultsManager.ResultsManagerListener() {
                     @Override
                     public void onAddDailyLessonCt(int oldCt, int newCt){
@@ -164,7 +164,7 @@ public class Results extends Fragment {
         boolean needToReview = false;
         //user needs to review if the user gets a question wrong
         // (doesn't matter if the user gets it right on following attempts)
-        for (QuestionAttempt attempt : instanceRecord.getAttempts()){
+        for (QuestionAttempt attempt : instanceAttemptRecord.getAttempts()){
             if (!attempt.getCorrect()){
                 needToReview = true;
                 break;
@@ -202,7 +202,7 @@ public class Results extends Fragment {
     }
 
     private void populateCorrectCount(){
-        int[] result = ResultsManager.calculateCorrectCount(instanceRecord.getAttempts());
+        int[] result = ResultsManager.calculateCorrectCount(instanceAttemptRecord.getAttempts());
         int correctCt = result[0];
         int totalCt = result[1];
 

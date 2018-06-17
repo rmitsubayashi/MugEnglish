@@ -47,7 +47,7 @@ public class LessonTest {
 
     @Test
     public void createLessonInstance_withUserInterests_shouldSaveEntityPropertyDataInDatabase(){
-        //adding user interests for lessonInstanceGenerator generation
+        //adding user interests for instanceGenerator generation
         List<WikiDataEntity> userInterests = new ArrayList<>(2);
         userInterests.add(new WikiDataEntity("安倍晋三", "desc", "Q132345", "あべしんぞう"));
         userInterests.add(new WikiDataEntity("バラク・オバマ ", "desc", "Q76", "ばらくおばま"));
@@ -87,7 +87,7 @@ public class LessonTest {
             }
         };
 
-        LessonInstanceGenerator.LessonInstanceGeneratorListener lessonListener = new LessonInstanceGenerator.LessonInstanceGeneratorListener() {
+        InstanceGenerator.LessonInstanceGeneratorListener lessonListener = new InstanceGenerator.LessonInstanceGeneratorListener() {
             @Override
             public void onLessonCreated(LessonInstanceData data) {
                 assertTrue(db.entityPropertyData.size() == 1);
@@ -97,14 +97,14 @@ public class LessonTest {
                 assertTrue(false);
             }
         };
-        LessonInstanceGenerator lessonInstanceGenerator = new MockLessonInstanceGenerator();
-        lessonInstanceGenerator.createInstance(mockConnector, db, lessonListener, null);
+        InstanceGenerator instanceGenerator = new MockInstanceGenerator();
+        instanceGenerator.createInstance(mockConnector, db, lessonListener, null);
     }
 
 
     @Test
     public void createLessonInstance_withUserInterests_shouldCreateLessonInstance(){
-        //adding user interests for lessonInstanceGenerator generation
+        //adding user interests for instanceGenerator generation
         List<WikiDataEntity> userInterests = new ArrayList<>(2);
         userInterests.add(new WikiDataEntity("安倍晋三", "desc", "Q132345", "あべしんぞう"));
         userInterests.add(new WikiDataEntity("バラク・オバマ ", "desc", "Q76", "ばらくおばま"));
@@ -144,7 +144,7 @@ public class LessonTest {
             }
         };
 
-        LessonInstanceGenerator.LessonInstanceGeneratorListener lessonListener = new LessonInstanceGenerator.LessonInstanceGeneratorListener() {
+        InstanceGenerator.LessonInstanceGeneratorListener lessonListener = new InstanceGenerator.LessonInstanceGeneratorListener() {
             @Override
             public void onLessonCreated(LessonInstanceData data) {
                 assertTrue(db.lessonInstances.size() == 1);
@@ -152,8 +152,8 @@ public class LessonTest {
             @Override
             public void onNoConnection(){}
         };
-        LessonInstanceGenerator lessonInstanceGenerator = new MockLessonInstanceGenerator();
-        lessonInstanceGenerator.createInstance(mockConnector, db, lessonListener, null);
+        InstanceGenerator instanceGenerator = new MockInstanceGenerator();
+        instanceGenerator.createInstance(mockConnector, db, lessonListener, null);
     }
 
 
@@ -173,7 +173,7 @@ public class LessonTest {
             }
         };
 
-        LessonInstanceGenerator.LessonInstanceGeneratorListener lessonListener = new LessonInstanceGenerator.LessonInstanceGeneratorListener() {
+        InstanceGenerator.LessonInstanceGeneratorListener lessonListener = new InstanceGenerator.LessonInstanceGeneratorListener() {
             @Override
             public void onLessonCreated(LessonInstanceData data) {
                 assertEquals(db.lessonInstances.size(),1);
@@ -182,7 +182,7 @@ public class LessonTest {
             @Override
             public void onNoConnection(){}
         };
-        LessonInstanceGenerator lessonInstanceGenerator = new MockLessonInstanceGenerator();
-        lessonInstanceGenerator.createInstance(mockConnector, db, lessonListener, null);
+        InstanceGenerator instanceGenerator = new MockInstanceGenerator();
+        instanceGenerator.createInstance(mockConnector, db, lessonListener, null);
     }
 }

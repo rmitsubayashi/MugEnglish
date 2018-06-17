@@ -16,7 +16,7 @@ public class Introduction_age extends Lesson {
     public static final String KEY = "introductionAge";
 
     public Introduction_age(){
-        this.lessonInstanceGenerator = new Instance_introduction_age();
+        this.instanceGenerator = new Instance_introduction_age();
         this.questionGenerator = new Questions_introduction_age();
         this.scriptGenerator = new Script_introduction_age();
     }

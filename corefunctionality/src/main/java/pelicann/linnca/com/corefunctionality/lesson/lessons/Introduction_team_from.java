@@ -19,7 +19,7 @@ public class Introduction_team_from extends Lesson {
     public static final String KEY = "introductionTeamFrom";
 
     public Introduction_team_from(){
-        this.lessonInstanceGenerator = new Instance_introduction_team_from();
+        this.instanceGenerator = new Instance_introduction_team_from();
         this.scriptGenerator = new Script_introduction_team_from();
         this.questionGenerator = new Questions_introduction_team_from();
         this.key = KEY;

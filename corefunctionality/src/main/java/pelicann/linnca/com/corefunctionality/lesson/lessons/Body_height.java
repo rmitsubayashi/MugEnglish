@@ -9,7 +9,7 @@ public class Body_height extends Lesson {
     public static final String KEY = "bodyHeight";
 
     public Body_height(){
-        this.lessonInstanceGenerator = new Instance_body_height();
+        this.instanceGenerator = new Instance_body_height();
         this.scriptGenerator = new Script_body_height();
         this.questionGenerator = new Questions_body_height();
     }

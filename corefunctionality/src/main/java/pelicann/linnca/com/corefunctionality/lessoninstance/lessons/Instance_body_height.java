@@ -12,11 +12,11 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnecto
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Body_height;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
-public class Instance_body_height extends LessonInstanceGenerator {
+public class Instance_body_height extends InstanceGenerator {
     public Instance_body_height(){
         super();
         this.lessonKey = Body_height.KEY;

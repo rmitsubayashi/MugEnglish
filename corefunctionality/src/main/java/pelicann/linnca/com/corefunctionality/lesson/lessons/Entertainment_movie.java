@@ -9,7 +9,7 @@ public class Entertainment_movie extends Lesson {
     public static final String KEY = "entertainmentMovie";
 
     public Entertainment_movie(){
-        this.lessonInstanceGenerator = new Instance_entertainment_movie();
+        this.instanceGenerator = new Instance_entertainment_movie();
         this.scriptGenerator = new Script_entertainment_movie();
         this.questionGenerator = new Questions_entertainment_movie();
     }

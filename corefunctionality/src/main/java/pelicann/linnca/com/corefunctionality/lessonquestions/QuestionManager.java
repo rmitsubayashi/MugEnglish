@@ -21,7 +21,7 @@ public class QuestionManager{
 	//store information about this run of the instance.
 	//a user can run an instance multiple times,
 	// getting multiple records for an instance
-	private InstanceRecordManager instanceRecordManager;
+	private InstanceAttemptRecordManager instanceAttemptRecordManager;
 
 	//save the missed questions for the instance review.
 	//we can fetch them again from the question ID, but this prevents another connection to the database.
@@ -33,7 +33,7 @@ public class QuestionManager{
 		void onNextQuestion(QuestionData questionData, int questionNumber, int totalQuestions, boolean firstQuestion);
 
 		//arrayList so we can easily save it in a bundle
-		void onQuestionsFinished(InstanceRecord instanceRecord,
+		void onQuestionsFinished(InstanceAttemptRecord instanceAttemptRecord,
                                  List<QuestionData> missedQuestions);
 	}
 
@@ -68,12 +68,11 @@ public class QuestionManager{
 		if (!questionsStarted){
 			return;
 		}
-		instanceRecordManager.setQuestionAttemptStartTimestamp();
+		instanceAttemptRecordManager.setQuestionAttemptStartTimestamp();
 
 		//if we are done with the questions
 		if (questionMkr+1 == totalQuestions) {
-			instanceRecordManager.markInstanceCompleted();
-			questionManagerListener.onQuestionsFinished(instanceRecordManager.getInstanceRecord(),
+			questionManagerListener.onQuestionsFinished(instanceAttemptRecordManager.getInstanceAttemptRecord(),
 					new ArrayList<>(missedQuestionsForReview));
 			//the user will not be able to go back and redo this question again,
 			// so we can reset everything
@@ -87,7 +86,7 @@ public class QuestionManager{
 	}
 
 	public void saveResponse(String response, Boolean correct){
-		instanceRecordManager.addQuestionAttempt(questions.get(questionMkr).getId(), response, correct);
+		instanceAttemptRecordManager.addQuestionAttempt(questions.get(questionMkr).getId(), response, correct);
 
 		//save incorrect responses for when the user reviews
 		if (!correct){
@@ -99,7 +98,7 @@ public class QuestionManager{
 	}
 
 	private void startNewInstanceRecord(){
-		instanceRecordManager = new InstanceRecordManager(lessonInstanceData.getId(),
+		instanceAttemptRecordManager = new InstanceAttemptRecordManager(lessonInstanceData.getId(),
 				lessonKey);
 	}
 
@@ -110,7 +109,7 @@ public class QuestionManager{
 		questions = null;
 		questionMkr = -1;
 		totalQuestions = 0;
-		instanceRecordManager = null;
+		instanceAttemptRecordManager = null;
 		missedQuestionsForReview.clear();
 	}
 }

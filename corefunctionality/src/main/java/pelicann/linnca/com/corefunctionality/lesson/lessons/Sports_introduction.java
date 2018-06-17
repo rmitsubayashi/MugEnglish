@@ -9,7 +9,7 @@ public class Sports_introduction extends Lesson {
     public static final String KEY = "sportsIntroduction";
 
     public Sports_introduction(){
-        this.lessonInstanceGenerator = new Instance_sports_introduction();
+        this.instanceGenerator = new Instance_sports_introduction();
         this.scriptGenerator = new Script_sports_introduction();
         this.questionGenerator = new Questions_sports_introduction();
     }

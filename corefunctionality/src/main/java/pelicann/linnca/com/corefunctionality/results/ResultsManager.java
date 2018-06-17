@@ -6,21 +6,21 @@ import java.util.List;
 
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionAttempt;
 
 //this manages the results displayed to the user
 public class ResultsManager {
     private final Database db;
-    private final InstanceRecord instanceRecord;
+    private final InstanceAttemptRecord instanceAttemptRecord;
     private final ResultsManagerListener resultsManagerListener;
 
     public interface ResultsManagerListener {
         void onAddDailyLessonCt(int oldCt, int newCt);
     }
 
-    public ResultsManager(InstanceRecord instanceRecord, Database db, ResultsManagerListener listener){
-        this.instanceRecord = instanceRecord;
+    public ResultsManager(InstanceAttemptRecord instanceAttemptRecord, Database db, ResultsManagerListener listener){
+        this.instanceAttemptRecord = instanceAttemptRecord;
         this.resultsManagerListener = listener;
         this.db = db;
     }
@@ -33,19 +33,7 @@ public class ResultsManager {
                 super.onInstanceRecordAdded(generatedRecordKey);
             }
         };
-        db.addInstanceRecord(instanceRecord, instanceRecordOnDBResultListener);
-
-        //save correct count for displaying the report card
-        String lessonKey = instanceRecord.getLessonId();
-        final int[] correctCt = calculateCorrectCount(instanceRecord.getAttempts());
-        OnDBResultListener reportCardOnDBResultListener = new OnDBResultListener() {
-            @Override
-            public void onReportCardAdded() {
-                super.onReportCardAdded();
-            }
-        };
-        db.addReportCard(lessonKey, correctCt[0], correctCt[1], reportCardOnDBResultListener);
-
+        db.addInstanceRecord(instanceAttemptRecord, instanceRecordOnDBResultListener);
     }
 
     public static int[] calculateCorrectCount(List<QuestionAttempt> attempts){

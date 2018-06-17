@@ -8,7 +8,7 @@ import pelicann.linnca.com.corefunctionality.lessonscript.scripts.Script_work_hi
 public class Work_hired extends Lesson {
     public static final String KEY = "workHired";
     public Work_hired(){
-        this.lessonInstanceGenerator = new Instance_work_hired();
+        this.instanceGenerator = new Instance_work_hired();
         this.scriptGenerator = new Script_work_hired();
         this.questionGenerator = new Questions_work_hired();
     }

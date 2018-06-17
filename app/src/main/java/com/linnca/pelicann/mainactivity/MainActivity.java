@@ -42,7 +42,7 @@ import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceReviewManager;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionManager;
@@ -315,11 +315,11 @@ public class MainActivity extends AppCompatActivity implements
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord,
+            public void onQuestionsFinished(InstanceAttemptRecord instanceAttemptRecord,
                                             List<QuestionData> missedQuestions) {
                 //we are updating the database in the result fragment since we need
                 // to update the UI of the result fragment
-                fragmentManager.questionToResults(db, instanceRecord);
+                fragmentManager.questionToResults(db, instanceAttemptRecord);
                 //save the missed questions in the instance review manager since
                 //we are resetting the question manager
                 instanceReviewManager.setQuestions(missedQuestions);

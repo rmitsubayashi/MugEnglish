@@ -9,7 +9,7 @@ public class Body_weight extends Lesson {
     public static final String KEY = "bodyWeight";
 
     public Body_weight(){
-        this.lessonInstanceGenerator = new Instance_body_weight();
+        this.instanceGenerator = new Instance_body_weight();
         this.scriptGenerator = new Script_body_weight();
         this.questionGenerator = new Questions_body_weight();
     }

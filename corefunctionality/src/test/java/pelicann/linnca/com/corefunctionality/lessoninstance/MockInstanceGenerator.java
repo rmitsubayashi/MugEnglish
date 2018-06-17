@@ -11,8 +11,8 @@ import pelicann.linnca.com.corefunctionality.connectors.SPARQLDocumentParserHelp
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
-class MockLessonInstanceGenerator extends LessonInstanceGenerator{
-    MockLessonInstanceGenerator(){
+class MockInstanceGenerator extends InstanceGenerator {
+    MockInstanceGenerator(){
         super();
         super.uniqueEntities = 1;
         super.lessonKey = "mockKey";

@@ -9,7 +9,7 @@ public class Food_class extends Lesson {
     public static final String KEY = "foodClass";
 
     public Food_class(){
-        this.lessonInstanceGenerator = new Instance_food_class();
+        this.instanceGenerator = new Instance_food_class();
         this.scriptGenerator = new Script_food_class();
         this.questionGenerator = new Questions_food_class();
     }

@@ -11,8 +11,8 @@ import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lesson.Lesson;
 import pelicann.linnca.com.corefunctionality.lesson.LessonFactory;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
 
 public class LessonScriptManager {
@@ -86,8 +86,8 @@ public class LessonScriptManager {
 
     private void createNewLessonInstance(){
         Lesson lesson = getCurrentLesson();
-        LessonInstanceGenerator.LessonInstanceGeneratorListener lessonInstanceGeneratorListener =
-                new LessonInstanceGenerator.LessonInstanceGeneratorListener() {
+        InstanceGenerator.LessonInstanceGeneratorListener lessonInstanceGeneratorListener =
+                new InstanceGenerator.LessonInstanceGeneratorListener() {
                     @Override
                     public void onLessonCreated(LessonInstanceData lessonInstanceData) {
                         Script script = createScript(lessonInstanceData.getEntityPropertyData());

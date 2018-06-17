@@ -6,7 +6,7 @@ import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturns
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionGenerator;
 import pelicann.linnca.com.corefunctionality.lessonscript.Script;
@@ -14,14 +14,14 @@ import pelicann.linnca.com.corefunctionality.lessonscript.ScriptGenerator;
 
 public abstract class Lesson {
     protected String key;
-    protected LessonInstanceGenerator lessonInstanceGenerator;
+    protected InstanceGenerator instanceGenerator;
     protected ScriptGenerator scriptGenerator;
     protected QuestionGenerator questionGenerator;
 
     public void createLessonInstance(EndpointConnectorReturnsXML connector, Database db,
-                                     LessonInstanceGenerator.LessonInstanceGeneratorListener lessonListener,
+                                     InstanceGenerator.LessonInstanceGeneratorListener lessonListener,
                                      NetworkConnectionChecker networkConnectionChecker){
-        lessonInstanceGenerator.createInstance(connector, db, lessonListener,
+        instanceGenerator.createInstance(connector, db, lessonListener,
                 networkConnectionChecker);
     }
 

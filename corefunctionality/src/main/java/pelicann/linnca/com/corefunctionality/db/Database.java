@@ -7,7 +7,7 @@ import java.util.List;
 
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
@@ -62,9 +62,7 @@ public abstract class Database implements Serializable{
     public abstract void addSimilarInterest(String fromID, WikiDataEntity toEntity);
     public abstract void getSimilarInterest(String id, OnDBResultListener onDBResultListener);
 
-    public abstract void addInstanceRecord(InstanceRecord record, OnDBResultListener onDBResultListener);
-
-    public abstract void addReportCard(String lessonKey, int correctCt, int totalCt, OnDBResultListener onDBResultListener);
+    public abstract void addInstanceRecord(InstanceAttemptRecord record, OnDBResultListener onDBResultListener);
 
     public abstract void addAppUsageLog(AppUsageLog log);
     public abstract void getFirstAppUsageDate(OnDBResultListener onDBResultListener);

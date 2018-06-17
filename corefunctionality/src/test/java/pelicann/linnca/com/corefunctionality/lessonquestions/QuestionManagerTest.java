@@ -32,7 +32,7 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, List<QuestionData> missedQuestions) {
+            public void onQuestionsFinished(InstanceAttemptRecord instanceRecord, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
@@ -58,7 +58,7 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, List<QuestionData> missedQuestions) {
+            public void onQuestionsFinished(InstanceAttemptRecord instanceRecord, List<QuestionData> missedQuestions) {
                 //not testing this
             }
             
@@ -83,7 +83,7 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, List<QuestionData> missedQuestions) {
+            public void onQuestionsFinished(InstanceAttemptRecord instanceRecord, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
@@ -111,7 +111,7 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, List<QuestionData> missedQuestions) {
+            public void onQuestionsFinished(InstanceAttemptRecord instanceRecord, List<QuestionData> missedQuestions) {
                 //not testing this
             }
 
@@ -145,7 +145,7 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, List<QuestionData> missedQuestions) {
+            public void onQuestionsFinished(InstanceAttemptRecord instanceRecord, List<QuestionData> missedQuestions) {
                 //not testing this
             }
         };
@@ -175,7 +175,7 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, List<QuestionData> missedQuestions) {
+            public void onQuestionsFinished(InstanceAttemptRecord instanceRecord, List<QuestionData> missedQuestions) {
                 called[0] = true;
             }
 
@@ -209,7 +209,7 @@ public class QuestionManagerTest {
             }
 
             @Override
-            public void onQuestionsFinished(InstanceRecord instanceRecord, List<QuestionData> missedQuestions) {
+            public void onQuestionsFinished(InstanceAttemptRecord instanceRecord, List<QuestionData> missedQuestions) {
                 called[0] = true;
             }
 

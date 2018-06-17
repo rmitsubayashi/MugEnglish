@@ -12,12 +12,12 @@ import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnecto
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Social_media_blog;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
-import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceGenerator;
+import pelicann.linnca.com.corefunctionality.lessoninstance.InstanceGenerator;
 import pelicann.linnca.com.corefunctionality.lessoninstance.TermAdjuster;
 import pelicann.linnca.com.corefunctionality.lessoninstance.Translation;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
-public class Instance_social_media_blog extends LessonInstanceGenerator {
+public class Instance_social_media_blog extends InstanceGenerator {
     public Instance_social_media_blog(){
         super();
         this.uniqueEntities =1;

@@ -9,7 +9,7 @@ public class Emergency_phone extends Lesson {
     public static final String KEY = "emergencyPhone";
 
     public Emergency_phone(){
-        this.lessonInstanceGenerator = new Instance_emergency_phone();
+        this.instanceGenerator = new Instance_emergency_phone();
         this.scriptGenerator = new Script_emergency_phone();
         this.questionGenerator = new Questions_emergency_phone();
     }

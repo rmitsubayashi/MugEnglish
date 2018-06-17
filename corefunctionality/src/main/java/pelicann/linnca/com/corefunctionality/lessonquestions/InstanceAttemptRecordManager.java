@@ -3,26 +3,25 @@ package pelicann.linnca.com.corefunctionality.lessonquestions;
 import java.util.ArrayList;
 import java.util.List;
 
-class InstanceRecordManager {
+class InstanceAttemptRecordManager {
     //handles writing into the instance record while the user is answering questions
-    private final InstanceRecord instanceRecord;
+    private final InstanceAttemptRecord instanceAttemptRecord;
     private long questionAttemptStartTimestamp;
     private long questionAttemptEndTimestamp;
 
-    InstanceRecordManager(String instanceID, String lessonID){
-        instanceRecord = new InstanceRecord();
-        instanceRecord.setCompleted(false);
-        instanceRecord.setInstanceId(instanceID);
-        instanceRecord.setLessonId(lessonID);
-        instanceRecord.setAttempts(new ArrayList<QuestionAttempt>());
+    InstanceAttemptRecordManager(String instanceID, String lessonID){
+        instanceAttemptRecord = new InstanceAttemptRecord();
+        instanceAttemptRecord.setInstanceId(instanceID);
+        instanceAttemptRecord.setLessonId(lessonID);
+        instanceAttemptRecord.setAttempts(new ArrayList<QuestionAttempt>());
     }
 
-    InstanceRecord getInstanceRecord(){
-        return instanceRecord;
+    InstanceAttemptRecord getInstanceAttemptRecord(){
+        return instanceAttemptRecord;
     }
 
     void addQuestionAttempt(String questionID, String response, boolean correct){
-        List<QuestionAttempt> attempts = instanceRecord.getAttempts();
+        List<QuestionAttempt> attempts = instanceAttemptRecord.getAttempts();
         int attemptNumber;
         //first attempt at first question
         if (attempts.size() == 0) {
@@ -52,9 +51,5 @@ class InstanceRecordManager {
 
     private void setQuestionAttemptEndTimestamp(){
         questionAttemptEndTimestamp = System.currentTimeMillis();
-    }
-
-    void markInstanceCompleted(){
-        instanceRecord.setCompleted(true);
     }
 }

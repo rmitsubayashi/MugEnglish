@@ -26,7 +26,7 @@ import java.util.List;
 
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
-import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceRecord;
+import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.WordDefinitionPair;
 
@@ -182,11 +182,11 @@ class MainActivityFragmentManager {
         }
     }
 
-    void questionToResults(Database db, InstanceRecord instanceRecord){
+    void questionToResults(Database db, InstanceAttemptRecord instanceAttemptRecord){
         //saving the instance data handled in the results fragment (results manager)
         Fragment fragment = new Results();
         Bundle bundle = new Bundle();
-        bundle.putSerializable(Results.BUNDLE_INSTANCE_RECORD, instanceRecord);
+        bundle.putSerializable(Results.BUNDLE_INSTANCE_RECORD, instanceAttemptRecord);
         bundle.putSerializable(MainActivity.BUNDLE_DATABASE, db);
         fragment.setArguments(bundle);
 

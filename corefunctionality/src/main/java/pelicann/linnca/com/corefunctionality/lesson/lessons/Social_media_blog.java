@@ -9,7 +9,7 @@ public class Social_media_blog extends Lesson {
     public static final String KEY = "socialMediaBlog";
 
     public Social_media_blog(){
-        this.lessonInstanceGenerator = new Instance_social_media_blog();
+        this.instanceGenerator = new Instance_social_media_blog();
         this.scriptGenerator = new Script_social_media_blog();
         this.questionGenerator = new Questions_social_media_blog();
     }

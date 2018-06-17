@@ -9,7 +9,7 @@ public class Work_about extends Lesson {
     public static final String KEY = "workAbout";
 
     public Work_about(){
-        this.lessonInstanceGenerator = new Instance_work_about();
+        this.instanceGenerator = new Instance_work_about();
         this.scriptGenerator = new Script_work_about();
         this.questionGenerator = new Questions_work_about();
     }

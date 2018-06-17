@@ -19,7 +19,7 @@ import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 //this class (inherited classes) will create the questions for the lesson
 //the first time around.
 //from the second time on, we can just read the questions in from the db
-public abstract class LessonInstanceGenerator {
+public abstract class InstanceGenerator {
     protected static final String TAG = "lessongeneration";
     //if there are lessons that need to access the database,
     //make this protected
@@ -56,7 +56,7 @@ public abstract class LessonInstanceGenerator {
         void onNoConnection();
     }
 
-    protected LessonInstanceGenerator(){
+    protected InstanceGenerator(){
     }
 
     // 1. check if a question already exists in the database
@@ -151,7 +151,7 @@ public abstract class LessonInstanceGenerator {
         OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onSimilarUserInterestsQueried(List<WikiDataEntity> userInterests) {
-                LessonInstanceGenerator.this.userInterests.addAll(userInterests);
+                InstanceGenerator.this.userInterests.addAll(userInterests);
                 for (WikiDataEntity entity : userInterests){
                     System.out.println(entity.getLabel());
                 }

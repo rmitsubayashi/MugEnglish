@@ -9,7 +9,7 @@ public class Emergency_blood extends Lesson {
     public static final String KEY = "emergencyBlood";
 
     public Emergency_blood(){
-        this.lessonInstanceGenerator = new Instance_emergency_blood();
+        this.instanceGenerator = new Instance_emergency_blood();
         this.scriptGenerator = new Script_emergency_blood();
         this.questionGenerator = new Questions_emergency_blood();
     }
