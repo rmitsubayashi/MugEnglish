@@ -16,7 +16,7 @@ public class MaxNumberOfQuestionAttemptsHelperTest {
                 return 1;
             }
         };
-        QuestionData unlimitedQuestion = new QuestionData("questionID1","lessonID1", QuestionTypeMappings.SENTENCEPUZZLE,
+        QuestionData unlimitedQuestion = new QuestionData("questionID1", QuestionTypeMappings.SENTENCEPUZZLE,
                 "question1", null, "answer1", null, null);
 
         int maxAttempts = MaxNumberOfQuestionAttemptsHelper.getMaxNumberOfQuestionAttempts(unlimitedQuestion, userGetter);
@@ -36,7 +36,7 @@ public class MaxNumberOfQuestionAttemptsHelperTest {
         choices.add("choice2");
         choices.add("choice3");
         choices.add("answer1");
-        QuestionData limitedQuestion = new QuestionData("questionID1","lessonID1", QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData limitedQuestion = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", choices, "answer1", null, null);
 
         int maxAttempts = MaxNumberOfQuestionAttemptsHelper.getMaxNumberOfQuestionAttempts(limitedQuestion, userGetter);
@@ -56,7 +56,7 @@ public class MaxNumberOfQuestionAttemptsHelperTest {
         choices.add("choice2");
         choices.add("choice3");
         choices.add("answer1");
-        QuestionData limitedQuestion = new QuestionData("questionID1","lessonID1", QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData limitedQuestion = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", choices, "answer1", null, null);
 
         int maxAttempts = MaxNumberOfQuestionAttemptsHelper.getMaxNumberOfQuestionAttempts(limitedQuestion, userGetter);
@@ -76,7 +76,7 @@ public class MaxNumberOfQuestionAttemptsHelperTest {
         choices.add("choice2");
         choices.add("choice3");
         choices.add("answer1");
-        QuestionData limitedQuestion = new QuestionData("questionID1","lessonID1", QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData limitedQuestion = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", choices, "answer1", null, null);
 
         int maxAttempts = MaxNumberOfQuestionAttemptsHelper.getMaxNumberOfQuestionAttempts(limitedQuestion, userGetter);

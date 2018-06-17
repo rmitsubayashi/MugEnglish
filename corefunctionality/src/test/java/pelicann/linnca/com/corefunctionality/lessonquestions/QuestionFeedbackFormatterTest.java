@@ -15,7 +15,7 @@ public class QuestionFeedbackFormatterTest {
 
     @Test
     public void formatFeedback_wrongResponseWithNoSpecificFeedback_feedbackShouldAtLeastContainTheCorrectAnswer(){
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, new ArrayList<FeedbackPair>());
         String response = "wrong response";
         List<String> allWrongResponses = new ArrayList<>(1);
@@ -26,7 +26,7 @@ public class QuestionFeedbackFormatterTest {
 
     @Test
     public void formatFeedback_correctResponseWithNoSpecificFeedback_feedbackShouldBeEmpty(){
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, new ArrayList<FeedbackPair>());
         String response = "correct response";
         List<String> allWrongResponses = new ArrayList<>(1);
@@ -43,7 +43,7 @@ public class QuestionFeedbackFormatterTest {
         FeedbackPair feedbackPair = new FeedbackPair(feedbackResponses, feedback, FeedbackPair.IMPLICIT);
         List<FeedbackPair> feedbackList = new ArrayList<>(1);
         feedbackList.add(feedbackPair);
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, feedbackList);
         List<String> allWrongResponses = new ArrayList<>(1);
         allWrongResponses.add(response);
@@ -60,7 +60,7 @@ public class QuestionFeedbackFormatterTest {
         FeedbackPair feedbackPair = new FeedbackPair(feedbackResponses, feedback, FeedbackPair.IMPLICIT);
         List<FeedbackPair> feedbackList = new ArrayList<>(1);
         feedbackList.add(feedbackPair);
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, feedbackList);
         List<String> allWrongResponses = new ArrayList<>(1);
         String feedbackReturned = QuestionFeedbackFormatter.formatFeedback(true, data, response, allWrongResponses);
@@ -77,7 +77,7 @@ public class QuestionFeedbackFormatterTest {
         FeedbackPair feedbackPair = new FeedbackPair(explicitFeedbackResponses, feedback, FeedbackPair.EXPLICIT);
         List<FeedbackPair> feedbackList = new ArrayList<>(1);
         feedbackList.add(feedbackPair);
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, feedbackList);
         List<String> allWrongResponses = new ArrayList<>(1);
         String feedbackReturned = QuestionFeedbackFormatter.formatFeedback(true, data, response, allWrongResponses);
@@ -102,7 +102,7 @@ public class QuestionFeedbackFormatterTest {
         FeedbackPair feedbackPair = new FeedbackPair(implicitFeedbackResponses, feedback, FeedbackPair.IMPLICIT);
         List<FeedbackPair> feedbackList = new ArrayList<>(1);
         feedbackList.add(feedbackPair);
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, feedbackList);
         List<String> allWrongResponses = new ArrayList<>(1);
         String feedbackReturned = QuestionFeedbackFormatter.formatFeedback(true, data, response, allWrongResponses);
@@ -120,7 +120,7 @@ public class QuestionFeedbackFormatterTest {
         FeedbackPair feedbackPair = new FeedbackPair(explicitFeedbackResponses, feedback, FeedbackPair.EXPLICIT);
         List<FeedbackPair> feedbackList = new ArrayList<>(1);
         feedbackList.add(feedbackPair);
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, feedbackList);
         List<String> allWrongResponses = new ArrayList<>(1);
         String feedbackReturned = QuestionFeedbackFormatter.formatFeedback(true, data, response, allWrongResponses);
@@ -137,7 +137,7 @@ public class QuestionFeedbackFormatterTest {
         FeedbackPair feedbackPair = new FeedbackPair(implicitFeedbackResponses, feedback, FeedbackPair.IMPLICIT);
         List<FeedbackPair> feedbackList = new ArrayList<>(1);
         feedbackList.add(feedbackPair);
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, feedbackList);
         List<String> allWrongResponses = new ArrayList<>(1);
         allWrongResponses.add(response);
@@ -156,7 +156,7 @@ public class QuestionFeedbackFormatterTest {
         FeedbackPair feedbackPair = new FeedbackPair(explicitFeedbackResponses, feedback, FeedbackPair.EXPLICIT);
         List<FeedbackPair> feedbackList = new ArrayList<>(1);
         feedbackList.add(feedbackPair);
-        QuestionData data = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.MULTIPLECHOICE,
+        QuestionData data = new QuestionData("questionID1", QuestionTypeMappings.MULTIPLECHOICE,
                 "question1", null, "answer1", null, feedbackList);
         List<String> allWrongResponses = new ArrayList<>(1);
         allWrongResponses.add(response);

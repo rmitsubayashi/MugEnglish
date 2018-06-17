@@ -42,7 +42,7 @@ public class QuestionManagerTest {
         //ids are set during adding
         LessonInstanceData lessonInstanceData = new LessonInstanceData();
         List<QuestionData> questions = new ArrayList<>();
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1", QuestionTypeMappings.TRUEFALSE,
                 "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(firstQuestion);
         questionManager.startQuestions(questions, lessonInstanceData);
@@ -65,7 +65,7 @@ public class QuestionManagerTest {
         };
         questionManager = new QuestionManager(listener);
         List<QuestionData> questions = new ArrayList<>();
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1", QuestionTypeMappings.TRUEFALSE,
                 "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(firstQuestion);
 
@@ -91,7 +91,7 @@ public class QuestionManagerTest {
         };
         questionManager = new QuestionManager(listener);
         List<QuestionData> questions = new ArrayList<>();
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1", QuestionTypeMappings.TRUEFALSE,
                 "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(firstQuestion);
 
@@ -119,10 +119,10 @@ public class QuestionManagerTest {
         };
         questionManager = new QuestionManager(listener);
         List<QuestionData> questions = new ArrayList<>();
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1", QuestionTypeMappings.TRUEFALSE,
                 "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(firstQuestion);
-        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData secondQuestion = new QuestionData("questionID2", QuestionTypeMappings.TRUEFALSE,
                 "question2", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(secondQuestion);
         LessonInstanceData lessonInstanceData = new LessonInstanceData();
@@ -151,10 +151,10 @@ public class QuestionManagerTest {
         };
         questionManager = new QuestionManager(listener);
         List<QuestionData> questions = new ArrayList<>();
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1", QuestionTypeMappings.TRUEFALSE,
                 "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(firstQuestion);
-        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData secondQuestion = new QuestionData("questionID2", QuestionTypeMappings.TRUEFALSE,
                 "question2", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(secondQuestion);
         LessonInstanceData lessonInstanceData = new LessonInstanceData();
@@ -183,10 +183,10 @@ public class QuestionManagerTest {
         };
         questionManager = new QuestionManager(listener);
         List<QuestionData> questions = new ArrayList<>();
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1", QuestionTypeMappings.TRUEFALSE,
                 "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(firstQuestion);
-        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData secondQuestion = new QuestionData("questionID2", QuestionTypeMappings.TRUEFALSE,
                 "question2", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(secondQuestion);
         LessonInstanceData lessonInstanceData = new LessonInstanceData();
@@ -217,10 +217,10 @@ public class QuestionManagerTest {
         };
         questionManager = new QuestionManager(listener);
         List<QuestionData> questions = new ArrayList<>();
-        QuestionData firstQuestion = new QuestionData("questionID1","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData firstQuestion = new QuestionData("questionID1", QuestionTypeMappings.TRUEFALSE,
                 "question1", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(firstQuestion);
-        QuestionData secondQuestion = new QuestionData("questionID2","lessonID1",  QuestionTypeMappings.TRUEFALSE,
+        QuestionData secondQuestion = new QuestionData("questionID2", QuestionTypeMappings.TRUEFALSE,
                 "question2", null, QuestionSerializer.serializeTrueFalseAnswer(true), null, null);
         questions.add(secondQuestion);
         LessonInstanceData lessonInstanceData = new LessonInstanceData();
