@@ -25,6 +25,7 @@ public class LessonScriptManager {
 
     public interface LessonScriptManagerListener {
         void onLessonScriptLoaded(Script lessonScript, LessonInstanceData lessonInstanceData);
+        void onNoConnection();
     }
 
     public LessonScriptManager(LocalStorageManager localStorageManager, Database db,
@@ -76,7 +77,7 @@ public class LessonScriptManager {
 
             @Override
             public void onNoConnection() {
-
+                listener.onNoConnection();
             }
         };
 

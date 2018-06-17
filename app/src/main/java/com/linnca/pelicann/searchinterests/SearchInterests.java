@@ -44,8 +44,6 @@ public class SearchInterests extends Fragment {
     private SearchView searchView;
     private RecyclerView list;
     private SearchResultsAdapter adapter = null;
-    //initial row count of search results
-    private final int defaultRowCt = 10;
     //so only one thread can edit the UI at one time
     private Lock lock = new ReentrantLock();
     //so we can filter out user interests we don't need
@@ -195,13 +193,15 @@ public class SearchInterests extends Fragment {
 
             }
         };
+
+        NetworkConnectionChecker networkConnectionChecker = new
+                AndroidNetworkConnectionChecker(getContext());
         //we don't want to keep listening because
         // we want to show the recommendations after a
         // user has added an interest,
         // but if we kept on listening, it would
         // attach a new adapter instead
-        NetworkConnectionChecker networkConnectionChecker = new
-                AndroidNetworkConnectionChecker(getContext());
+        // (persistentConnection=false)
         db.getUserInterests(networkConnectionChecker, false, onDBResultListener);
     }
 

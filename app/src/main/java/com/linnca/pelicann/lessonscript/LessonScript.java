@@ -36,6 +36,7 @@ public class LessonScript extends Fragment {
     private LessonScriptManager manager;
     private LessonScriptListener listener;
     private RecyclerView list;
+    private ViewGroup offlineLayout;
     private ProgressBar loading;
     private TextToSpeech textToSpeech;
     private LessonScriptAdapter adapter;
@@ -76,6 +77,7 @@ public class LessonScript extends Fragment {
         manager.loadLessonScript(category);
         View view = inflater.inflate(R.layout.fragment_lesson_script, container, false);
         list = view.findViewById(R.id.lesson_script_sentence_list);
+        offlineLayout = view.findViewById(R.id.lesson_script_offline_layout);
         loading = view.findViewById(R.id.lesson_script_loading);
         return view;
     }
@@ -122,11 +124,19 @@ public class LessonScript extends Fragment {
             public void onLessonScriptLoaded(Script lessonScript, LessonInstanceData data) {
                 showScript(lessonScript, data);
             }
+
+            @Override
+            public void onNoConnection(){
+                showOffline();
+            }
         };
     }
 
     private void showScript(Script script, LessonInstanceData data){
         hideLoading();
+        hideOffline();
+        //in case we hid it when offline but the user came back online
+        list.setVisibility(View.VISIBLE);
         LessonScriptAdapter.LessonScriptAdapterListener adapterListener =
                 getAdapterListener(data);
         int lessonNumber = manager.getLessonNumber();
@@ -139,6 +149,21 @@ public class LessonScript extends Fragment {
         } else {
             adapter.updateScript(script, lessonNumber, adapterListener);
         }
+    }
+
+    private void hideScript(){
+        list.setVisibility(View.GONE);
+    }
+
+    private void showOffline(){
+        //default hidden
+        hideLoading();
+        hideScript();
+        offlineLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void hideOffline(){
+        offlineLayout.setVisibility(View.GONE);
     }
 
     private LessonScriptAdapter.LessonScriptAdapterListener getAdapterListener(final LessonInstanceData data){

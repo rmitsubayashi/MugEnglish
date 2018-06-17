@@ -9,6 +9,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="32dp"
         android:clipToPadding="false"/>
+    <include layout="@layout/inflatable_lesson_script_offline"/>
     <ProgressBar
         android:id="@+id/lesson_script_loading"
         android:layout_width="wrap_content"

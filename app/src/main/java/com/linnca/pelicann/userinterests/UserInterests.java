@@ -150,6 +150,7 @@ public class UserInterests extends Fragment {
                     );
                     listView.setAdapter(userInterestListAdapter);
                     userInterestListAdapter.setOffline();
+                    loading.setVisibility(View.GONE);
                 } else {
                     Log.d(TAG, "user interest adapter is not null");
                 }
