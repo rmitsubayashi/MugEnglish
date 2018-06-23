@@ -20,7 +20,7 @@ public class Splash extends AppCompatActivity{
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         //if this is the user's first time opening the application, send him through a tutorial
-        boolean firstTime = preferences.getBoolean(getResources().getString(R.string.preferences_first_time_key), true);
+        boolean firstTime = preferences.getBoolean(getResources().getString(R.string.preferences_first_time_app_key), true);
         Intent intent;
         if (firstTime){
             intent = new Intent(this, Onboarding.class);

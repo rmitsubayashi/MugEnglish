@@ -1,8 +1,12 @@
 package com.linnca.pelicann.lessonscript;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -142,6 +146,7 @@ public class LessonScript extends Fragment {
     private void showScript(Script script, LessonInstanceData data){
         hideLoading();
         hideOffline();
+
         //in case we hid it when offline but the user came back online
         list.setVisibility(View.VISIBLE);
         LessonScriptAdapter.LessonScriptAdapterListener adapterListener =
@@ -156,10 +161,34 @@ public class LessonScript extends Fragment {
         } else {
             adapter.updateScript(script, lessonNumber, adapterListener);
         }
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        boolean firstTime = preferences.getBoolean(getResources().getString(R.string.preferences_first_time_lesson_key), true);
+        if (firstTime){
+            showFirstTimeGuideDialog();
+        }
     }
 
     private void hideScript(){
         list.setVisibility(View.GONE);
+    }
+
+    private void showFirstTimeGuideDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.lesson_script_first_time_title);
+        builder.setMessage(R.string.lesson_script_first_time_description);
+
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LessonScript.this.getContext());
+                preferences.edit()
+                        .putBoolean(getResources().getString(R.string.preferences_first_time_lesson_key), false)
+                        .apply();
+            }
+        });
+
+        builder.create().show();
     }
 
     private void showOffline(){

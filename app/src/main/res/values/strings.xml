@@ -60,14 +60,15 @@
     <string name="preferences_general_themeColor_label">背景の色</string>
     <string name="preferences_general_themeColor_dialog_label">新しい色</string>
 
-    <string name="preferences_first_time_key">preferences:first time</string>
+    <string name="preferences_first_time_app_key">preferences:first time app</string>
+    <string name="preferences_first_time_lesson_key">preferences:first time lesson</string>
 
     <!--onboarding pages-->
     <string name="onboarding_next">次へ</string>
     <string name="onboarding_finish">始める</string>
     <string name="onboarding1_explanation">「お気に入り」に好きな人を追加すると・・・</string>
     <string name="onboarding2_explanation">例文に出てきます！</string>
-    <string name="onboarding3v2_instructions">最初のレッスンに出てくる人を追加しましょう。\n\n
+    <string name="onboarding3v2_instructions">ではレッスンに出てくる<b>有名人</b>を追加しましょう。\n\n
     おすすめはスポーツ選手2人、芸能人3人です！</string>
     <string name="onboarding3v2_items_left">あと<b>%1$d</b>人選んでください</string>
     <string name="onboarding3v2_finished">お疲れ様です。\nこれでレッスンにあなたが追加した人が登場します。\n「始める」で勉強画面に移りましょう。</string>
@@ -87,6 +88,9 @@
     <string name="lesson_script_to_next">＞</string>
     <string name="lesson_script_to_questions">問題へ</string>
     <string name="lesson_script_load_failed">レッスンを読み込めませんでした</string>
+    <string name="lesson_script_first_time_title">使い方</string>
+    <string name="lesson_script_first_time_description">タップで和訳を表示、長押しで音声が聞けます。\n
+    内容を理解できたら問題を解いてみよう。</string>
 
     <!--verb question start page-->
     <string name="verb_question_title">重要動詞を覚えよう！</string>

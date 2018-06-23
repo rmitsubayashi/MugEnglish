@@ -148,7 +148,7 @@ implements Onboarding3v2.Onboarding3v2Listener
         SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(
                 Onboarding.this.getApplicationContext());
         SharedPreferences.Editor editor = preference.edit();
-        editor.putBoolean(getResources().getString(R.string.preferences_first_time_key), false);
+        editor.putBoolean(getResources().getString(R.string.preferences_first_time_app_key), false);
         editor.apply();
     }
 
