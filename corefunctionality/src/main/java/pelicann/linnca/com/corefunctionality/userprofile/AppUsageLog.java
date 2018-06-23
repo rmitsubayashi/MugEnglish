@@ -16,13 +16,4 @@ public class AppUsageLog {
     public long getEndTimeStamp() {
         return endTimeStamp;
     }
-
-    public static String formatKey(int month, int year){
-        String key = year + "-";
-        if (month < 10){
-            key += "0";
-        }
-        key += month;
-        return key;
-    }
 }

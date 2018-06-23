@@ -13,7 +13,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturnsXML;
 import pelicann.linnca.com.corefunctionality.db.MockFirebaseDB;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lesson.Lesson;
 import pelicann.linnca.com.corefunctionality.lesson.LessonFactory;
 import pelicann.linnca.com.corefunctionality.lesson.lessons.Food_class;
@@ -164,7 +163,7 @@ public class LessonTest {
         data.setWikidataID("Q132345");
         List<EntityPropertyData> dataList = new ArrayList<>();
         dataList.add(data);
-        db.addEntityPropertyData("lessonKey", dataList, new OnDBResultListener() {});
+        db.addEntityPropertyData(dataList, "lessonKey", new OnDBResultListener() {});
         EndpointConnectorReturnsXML mockConnector = new EndpointConnectorReturnsXML() {
             @Override
             public void fetchDOMFromGetRequest(OnFetchDOMListener listener, List<String> queryList) {

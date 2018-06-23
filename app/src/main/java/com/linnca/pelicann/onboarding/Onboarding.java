@@ -27,9 +27,10 @@ import com.linnca.pelicann.mainactivity.ThemeColorChanger;
 import java.util.ArrayList;
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBUserInterestListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.userinterests.AddUserInterestHelper;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
@@ -188,7 +189,7 @@ implements Onboarding3v2.Onboarding3v2Listener
             return;
 
         final Database db = new FirebaseDB();
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBUserInterestListener userInterestListener = new DBUserInterestListener() {
             @Override
             public void onUserInterestsAdded() {
                 AddUserInterestHelper helper = new AddUserInterestHelper(db);
@@ -197,10 +198,28 @@ implements Onboarding3v2.Onboarding3v2Listener
                     helper.addPronunciation(entity);
                 }
             }
+
+            @Override
+            public void onUserInterestsQueried(List<WikiDataEntity> data){}
+
+            @Override
+            public void onUserInterestsRemoved(){}
         };
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
+            public void onNoConnection() {
+            }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
+        };
+
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(this);
-        db.addUserInterests(networkConnectionChecker, entitiesToAdd, onDBResultListener);
+        db.addUserInterests(entitiesToAdd, userInterestListener, connectionResultListener, networkConnectionChecker);
     }
 
     private void toApp(){

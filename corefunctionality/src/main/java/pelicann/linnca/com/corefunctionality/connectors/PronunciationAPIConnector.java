@@ -21,6 +21,7 @@ public class PronunciationAPIConnector implements EndpointConnectorReturnsJSON {
     public void fetchJSONArrayFromGetRequest(final OnFetchJSONListener listener, List<String> parameters){
         int parameterCt = parameters.size();
         ArrayBlockingQueue<Runnable> taskQueue = new ArrayBlockingQueue<>(parameterCt);
+        //we want to multi-thread to reduce wait time.
         int coreCt = Runtime.getRuntime().availableProcessors();
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(coreCt, coreCt,
                 1, TimeUnit.SECONDS, taskQueue,

@@ -19,9 +19,10 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.db.DBAppUsageResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.userprofile.AppUsageLog;
 
 public class UserProfile_HoursStudied extends Fragment {
@@ -90,20 +91,20 @@ public class UserProfile_HoursStudied extends Fragment {
     }
 
     private void setCalendarMinMax(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBAppUsageResultListener appUsageResultListener = new DBAppUsageResultListener() {
             @Override
             public void onFirstAppUsageDateQueried(DateTime date) {
                 calendarView.setMin(date);
                 DateTime now = DateTime.now();
                 calendarView.setMax(now);
             }
+
             @Override
-            public void onNoConnection(){
-                //notifying the user that there is no connection
-                // is handled when we get the actual data
+            public void onAppUsageForMonthsQueried(List<AppUsageLog> logs) {
+
             }
         };
-        db.getFirstAppUsageDate(onDBResultListener);
+        db.getFirstAppUsageDate(appUsageResultListener);
     }
 
     private void setUsageDataForCurrentMonth(){
@@ -114,21 +115,20 @@ public class UserProfile_HoursStudied extends Fragment {
     }
 
     private void setUsageDataForMonth(int month, int year, final boolean initial){
-        int prevMonth = month == 1 ? 12 : month - 1;
-        int prevYear = month == 1 ? year - 1 : year;
-        int nextMonth = month == 12 ? 1 : month + 1;
-        int nextYear = month == 12 ? year + 1 : year;
+        DBAppUsageResultListener appUsageResultListener = new DBAppUsageResultListener() {
+            @Override
+            public void onFirstAppUsageDateQueried(DateTime date) {
 
-        String prevKey = AppUsageLog.formatKey(prevMonth, prevYear);
-        String nextKey = AppUsageLog.formatKey(nextMonth, nextYear);
+            }
 
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
             @Override
             public void onAppUsageForMonthsQueried(List<AppUsageLog> logs) {
                 calendarView.setUsageData(logs, initial);
             }
+        };
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
             @Override
-            public void onNoConnection(){
+            public void onNoConnection() {
                 //the empty calendar is enough to indicate no data.
                 //just let the user know that this is because of no connection.
                 //we do this ONCE here since
@@ -139,10 +139,21 @@ public class UserProfile_HoursStudied extends Fragment {
                 Toast.makeText(getContext(), R.string.no_connection, Toast.LENGTH_SHORT)
                         .show();
             }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
         };
+        int prevMonth = month == 1 ? 12 : month - 1;
+        int prevYear = month == 1 ? year - 1 : year;
+        int nextMonth = month == 12 ? 1 : month + 1;
+        int nextYear = month == 12 ? year + 1 : year;
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
-        db.getAppUsageForMonths(networkConnectionChecker, prevKey, nextKey, onDBResultListener);
+        db.getAppUsageForMonths(prevMonth, prevYear, nextMonth, nextYear,
+                appUsageResultListener,
+                connectionResultListener, networkConnectionChecker);
     }
 
     private void setCalendarListeners(){

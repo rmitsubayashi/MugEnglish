@@ -4,8 +4,9 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.db.DBDailyLessonResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBInstanceRecordResultListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionAttempt;
 
@@ -16,7 +17,7 @@ public class ResultsManager {
     private final ResultsManagerListener resultsManagerListener;
 
     public interface ResultsManagerListener {
-        void onAddDailyLessonCt(int oldCt, int newCt);
+        void onIncrementDailyLessonCt(int oldCt, int newCt);
     }
 
     public ResultsManager(InstanceAttemptRecord instanceAttemptRecord, Database db, ResultsManagerListener listener){
@@ -27,13 +28,12 @@ public class ResultsManager {
 
     public void saveInstanceRecord(){
         //save the whole instance record
-        final OnDBResultListener instanceRecordOnDBResultListener = new OnDBResultListener() {
+        final DBInstanceRecordResultListener instanceRecordResultListener = new DBInstanceRecordResultListener() {
             @Override
             public void onInstanceRecordAdded(String generatedRecordKey) {
-                super.onInstanceRecordAdded(generatedRecordKey);
             }
         };
-        db.addInstanceRecord(instanceAttemptRecord, instanceRecordOnDBResultListener);
+        db.addInstanceAttemptRecord(instanceAttemptRecord, instanceRecordResultListener);
     }
 
     public static int[] calculateCorrectCount(List<QuestionAttempt> attempts){
@@ -55,15 +55,15 @@ public class ResultsManager {
         return new int[]{correctCt, totalCt};
     }
 
-    public void addDailyLessonCt(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+    public void incrementDailyLessonCt(){
+        DBDailyLessonResultListener dailyLessonResultListener = new DBDailyLessonResultListener() {
             @Override
             public void onDailyLessonAdded(int newCt) {
                 int oldCt = newCt - 1;
-                resultsManagerListener.onAddDailyLessonCt(oldCt, newCt);
+                resultsManagerListener.onIncrementDailyLessonCt(oldCt, newCt);
             }
         };
-        db.addDailyLesson(formatDailyLessonCtDate(), onDBResultListener);
+        db.incrementDailyLesson(formatDailyLessonCtDate(), dailyLessonResultListener);
     }
 
     private String formatDailyLessonCtDate(){

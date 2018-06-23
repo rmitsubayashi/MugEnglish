@@ -16,33 +16,24 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 public abstract class WikiBaseEndpointConnector implements EndpointConnectorReturnsXML {
+	//we can choose XML or json in WikiData.
+	//Speed Differences:
+	//when I tested speed on Bill Gate's school,
+	// there was practically on difference in speed.
+	// (json should be faster because of less overhead)
+	//Readability Differences(for us programmers)
+	//not much difference
+	// https://www.w3.org/TR/sparql11-results-json/ and
+	// https://www.w3.org/TR/rdf-sparql-XMLres/
+	// (both not readable)
+	// so, I chose XML because I couldn't get the json version working
+	// the first time I tried implementing :P
 
-	/*
-	 * WikiDataのデータはjsonとxml形式、どっちかを選べる。
-	 * ビルゲーツの出身学校をクエリーしたところ、
-	 * クエリーの時間はxmlとjsonでほとんど変わらなかった。
-	 * httpURLConnectionで送る→返信→コンソールにアウトプットする時間
-	 * どっちも660ms ~ 700msの間の数値。
-	 * 「どちらが速いから」は採用理由として不適切？？
-	 * 
-	 * 見やすいのはどっち？
-	 * そんなに変わらないと思う。
-	 * https://www.w3.org/TR/sparql11-results-json/
-	 * と
-	 * https://www.w3.org/TR/rdf-sparql-XMLres/
-	 * 両方とも見にくい..
-	 *
-	 * 追記
-	 * FB APIはjsonだから統一するべき？
-	 */
-	
-	//クエリーの言語設定
-	//@language@を指定言語に置き換える
 	private final String language;
 	//main languages
 	static public final String ENGLISH = "en";
 	static public final String JAPANESE = "ja";
-	//if we want to extend to other languages
+	//if we want to extend to other languages in future versions
 	static public final String LANGUAGE_PLACEHOLDER = "@language@";
 	
 	WikiBaseEndpointConnector(){

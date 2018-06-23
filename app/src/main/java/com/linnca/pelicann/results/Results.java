@@ -83,7 +83,7 @@ public class Results extends Fragment {
         resultsManager = new ResultsManager(instanceAttemptRecord, db,
                 new ResultsManager.ResultsManagerListener() {
                     @Override
-                    public void onAddDailyLessonCt(int oldCt, int newCt){
+                    public void onIncrementDailyLessonCt(int oldCt, int newCt){
                         dailyLessonCt = newCt;
                         setDailyLessonCtLayout(oldCt, newCt);
                     }
@@ -156,7 +156,7 @@ public class Results extends Fragment {
         //this will update the UI if this is the user's first time clearing
         // the lesson.
         if (dailyLessonCt == -1) {
-            resultsManager.addDailyLessonCt();
+            resultsManager.incrementDailyLessonCt();
         } else {
             setDailyLessonCtLayout(dailyLessonCt, dailyLessonCt);
         }

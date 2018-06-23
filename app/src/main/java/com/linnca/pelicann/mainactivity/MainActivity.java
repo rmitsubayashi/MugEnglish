@@ -38,8 +38,8 @@ import com.linnca.pelicann.userprofile.UserProfile_HoursStudied;
 import java.util.List;
 import java.util.Locale;
 
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lessoninstance.LessonInstanceData;
 import pelicann.linnca.com.corefunctionality.lessonlist.LessonCategory;
 import pelicann.linnca.com.corefunctionality.lessonquestions.InstanceAttemptRecord;
@@ -393,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements
     // the question manager tells the main activity what to do next ->
     // the main activity creates the next question fragment
     @Override
-    public void onNextQuestion(boolean correct, OnDBResultListener noConnectionListener){
+    public void onNextQuestion(boolean correct, DBConnectionResultListener noConnectionListener){
         if (questionManager.questionsStarted()) {
             questionManager.nextQuestion();
         }

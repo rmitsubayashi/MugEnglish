@@ -9,6 +9,7 @@ import java.util.List;
 
 import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturnsXML;
 import pelicann.linnca.com.corefunctionality.connectors.SPARQLDocumentParserHelper;
+import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikipediaConnector;
 import pelicann.linnca.com.corefunctionality.db.Database;
@@ -64,7 +65,7 @@ public class SportsHelper {
 	public static final String PRESENTPARTICIPLE = "presentParticiple";
 	
 	public SportsHelper(Database db){
-		sparqlConn = new WikiDataSPARQLConnector();
+		sparqlConn = new WikiDataSPARQLConnector(WikiBaseEndpointConnector.JAPANESE);
 		wikipediaConn = new WikipediaConnector();
 		this.db = db;
 	}

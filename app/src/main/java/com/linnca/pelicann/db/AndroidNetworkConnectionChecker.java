@@ -7,8 +7,8 @@ import android.os.Handler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 
 public class AndroidNetworkConnectionChecker implements NetworkConnectionChecker{
     //to detect connection
@@ -26,13 +26,13 @@ public class AndroidNetworkConnectionChecker implements NetworkConnectionChecker
 
     private class NetworkConnectionRunnable implements Runnable {
         //for network connection checker
-        private OnDBResultListener onDBResultListener;
+        private DBConnectionResultListener connectionResultListener;
 
-        NetworkConnectionRunnable(final OnDBResultListener uiListener){
+        NetworkConnectionRunnable(final DBConnectionResultListener uiListener){
             //we need to make a new one so we can add slow connection functionality
             // where if we are connected but haven't gotten a response yet,
             // we should try again
-            onDBResultListener = new OnDBResultListener() {
+            this.connectionResultListener = new DBConnectionResultListener() {
                 @Override
                 public void onNoConnection() {
                     uiListener.onNoConnection();
@@ -55,20 +55,20 @@ public class AndroidNetworkConnectionChecker implements NetworkConnectionChecker
             if (!dataRetrievedFromDB.get()) {
                 //check for a connection.
                 if (isConnected()){
-                    onDBResultListener.onSlowConnection();
+                    connectionResultListener.onSlowConnection();
                 } else {
-                    onDBResultListener.onNoConnection();
+                    connectionResultListener.onNoConnection();
                 }
             }
         }
     }
 
     @Override
-    public void checkConnection(OnDBResultListener onDBResultListener, AtomicBoolean dataRetrievedFromDB){
+    public void checkConnection(DBConnectionResultListener connectionResultListener, AtomicBoolean dataRetrievedFromDB){
         this.dataRetrievedFromDB = dataRetrievedFromDB;
         //context is here instead of in the initialization -> class variable
         // because contexts aren't serializable
-        new Handler().postDelayed(new NetworkConnectionRunnable(onDBResultListener), 1000);
+        new Handler().postDelayed(new NetworkConnectionRunnable(connectionResultListener), 1000);
     }
 
     @Override

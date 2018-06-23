@@ -13,25 +13,26 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 public class SPARQLDocumentParserHelper {
-	//attributeで検索する機能がJavaのDOMに付いてないから
-	//簡単に作った
-	//ノードの構成図
+	//no method to search by attribute in the Java DOM :(
+	//The node looks like:
 	//<result>
 	//  <binding name='name'>
 	//    <literal xml:lang='ja/en'>value</literal>
 	//  </binding>
 	//</result>
 	public static String findValueByNodeName(Node headNode, String name){
-		//"name"が固定なのはSPARQLクエリーすべてに対して
+		//we want all the 'name' attributes because that's what is returned
+		// by SPARQL queries
 		Node resultNode = findNodeByNameOfAttribute(headNode, "name", name);
-		//なかった場合
+		//if the SPARQL query returned empty
 		if (resultNode == null)
 			return "";
-		//なぜか<literal>タグの周りに二つtextタグが付いてる。
-		//だからitem(0) ではなくてitem(1)をとる
+		//there are two random text tags around the <literal> tag,
+		// so don't get item(0) but item(1)
 		return resultNode.getChildNodes().item(1).getTextContent();
 	}
 
+	//recursive method to check all nodes and their children
 	private static Element findNodeByNameOfAttribute(Node node, String attribute, String name){
 		if (node.getNodeType() == Node.ELEMENT_NODE){
 			Element e =(Element)node;

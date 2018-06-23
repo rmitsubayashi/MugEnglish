@@ -4,10 +4,11 @@ import java.util.List;
 
 import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBLessonInstanceResultListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.LocalStorageManager;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.lesson.Lesson;
 import pelicann.linnca.com.corefunctionality.lesson.LessonFactory;
 import pelicann.linnca.com.corefunctionality.lessoninstance.EntityPropertyData;
@@ -60,7 +61,7 @@ public class LessonScriptManager {
 
     private void getLessonInstanceFromDB(final String lessonKey){
         //try to find a lesson already created by the user
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBLessonInstanceResultListener lessonInstanceResultListener = new DBLessonInstanceResultListener() {
             @Override
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstanceData){
                 if (lessonInstanceData.size() == 0){
@@ -76,12 +77,22 @@ public class LessonScriptManager {
             }
 
             @Override
+            public void onLessonInstanceAdded(){}
+        };
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
             public void onNoConnection() {
                 listener.onNoConnection();
             }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
         };
 
-        db.getMostRecentLessonInstance(networkConnectionChecker, lessonKey, onDBResultListener);
+        db.getMostRecentLessonInstance(lessonKey, lessonInstanceResultListener, connectionResultListener, networkConnectionChecker);
 
     }
 

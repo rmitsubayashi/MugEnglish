@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
 import pelicann.linnca.com.corefunctionality.lessonquestions.MaxNumberOfQuestionAttemptsHelper;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionData;
 import pelicann.linnca.com.corefunctionality.lessonquestions.QuestionFeedbackFormatter;
@@ -72,7 +72,7 @@ public abstract class QuestionFragmentInterface extends Fragment {
 
     public interface QuestionListener {
         //this is for every time the user moves on to the next question
-        void onNextQuestion(boolean correct, OnDBResultListener noConnectionListener);
+        void onNextQuestion(boolean correct, DBConnectionResultListener noConnectionListener);
         //this is for every response, whether the user moves on to
         // the next question or not
         void onRecordResponse(String response, boolean correct);
@@ -285,8 +285,8 @@ public abstract class QuestionFragmentInterface extends Fragment {
 
     //what happens when we can't get a connection when going to the next
     // question
-    private OnDBResultListener getNoConnectionListener(){
-        return new OnDBResultListener() {
+    private DBConnectionResultListener getNoConnectionListener(){
+        return new DBConnectionResultListener() {
             @Override
             public void onNoConnection() {
                 //enable the button
@@ -298,7 +298,7 @@ public abstract class QuestionFragmentInterface extends Fragment {
 
             @Override
             public void onSlowConnection() {
-                super.onSlowConnection();
+
             }
         };
     }

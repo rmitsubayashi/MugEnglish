@@ -5,16 +5,9 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 public class WikiDataSPARQLConnector extends WikiBaseEndpointConnector {
-	/*
-	 * WikiDataのSPARQLエンドポイントに接続
-	 */
 	//when we request an XML file from SPARQL, each result
-	// will have this tag
+	// will have this 'result' tag
 	public static final String RESULT_TAG = "result";
-	
-	public WikiDataSPARQLConnector(){
-		super();
-	}
 
 	//we plug in the language (only Japanese now)
 	public WikiDataSPARQLConnector(String language){

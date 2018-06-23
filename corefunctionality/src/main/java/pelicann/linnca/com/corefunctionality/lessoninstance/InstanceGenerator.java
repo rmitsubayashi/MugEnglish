@@ -11,9 +11,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import pelicann.linnca.com.corefunctionality.connectors.EndpointConnectorReturnsXML;
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBEntityPropertyDataResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBLessonInstanceResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBSimilarUserInterestResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBUserInterestListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 //this class (inherited classes) will create the questions for the lesson
@@ -36,9 +40,6 @@ public abstract class InstanceGenerator {
     protected int referencePropertyIndex = 0;
     //the lesson instance we will be creating
     private final LessonInstanceData lessonInstanceData = new LessonInstanceData();
-    //vocabulary words for the lesson instance
-    //(we have these in a separate location in the db)
-    private final List<String> lessonInstanceVocabularyWordIDs = new ArrayList<>();
     //where we will populate new entity property data for this instance
     protected final List<EntityPropertyData> newEntityPropertyData = Collections.synchronizedList(
             new ArrayList<EntityPropertyData>());
@@ -82,7 +83,10 @@ public abstract class InstanceGenerator {
     }
 
     private void getOtherLessonReference(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBLessonInstanceResultListener lessonInstanceResultListener = new DBLessonInstanceResultListener() {
+            @Override
+            public void onLessonInstanceAdded(){}
+
             @Override
             public void onLessonInstancesQueried(List<LessonInstanceData> lessonInstanceData) {
                 if (lessonInstanceData.size() != 0) {
@@ -102,12 +106,22 @@ public abstract class InstanceGenerator {
                     lessonListener.onNoConnection();
                 }
             }
+        };
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
             @Override
             public void onNoConnection() {
 
             }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
         };
-        db.getMostRecentLessonInstance(networkConnectionChecker, referenceLesson, onDBResultListener);
+
+        db.getMostRecentLessonInstance(referenceLesson, lessonInstanceResultListener, connectionResultListener,
+                networkConnectionChecker);
     }
 
     //the next method is inside the previous method so we can make these
@@ -123,7 +137,7 @@ public abstract class InstanceGenerator {
     }
 
     private void populateUserInterests(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBUserInterestListener userInterestListener = new DBUserInterestListener() {
             @Override
             public void onUserInterestsQueried(List<WikiDataEntity> queriedUserInterests) {
                 userInterests = Collections.synchronizedSet(new HashSet<>(queriedUserInterests));
@@ -136,11 +150,26 @@ public abstract class InstanceGenerator {
             }
 
             @Override
-            public void onNoConnection(){
-                lessonListener.onNoConnection();
+            public void onUserInterestsAdded(){}
+
+            @Override
+            public void onUserInterestsRemoved(){
             }
         };
-        db.getUserInterests(networkConnectionChecker, false, onDBResultListener);
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
+            public void onNoConnection() {
+                lessonListener.onNoConnection();
+            }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
+        };
+
+        db.getUserInterests(false, userInterestListener, connectionResultListener, networkConnectionChecker);
     }
 
     //the similar interests are currently based on Bing search results.
@@ -148,7 +177,8 @@ public abstract class InstanceGenerator {
     private void populateSimilarUserInterests(){
         final AtomicInteger userInterestsQueried = new AtomicInteger(0);
         final int userInterestSize = userInterests.size();
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBSimilarUserInterestResultListener similarUserInterestResultListener =
+                new DBSimilarUserInterestResultListener() {
             @Override
             public void onSimilarUserInterestsQueried(List<WikiDataEntity> userInterests) {
                 InstanceGenerator.this.userInterests.addAll(userInterests);
@@ -162,7 +192,7 @@ public abstract class InstanceGenerator {
         };
         for (WikiDataEntity interest  : userInterests){
             String interestID = interest.getWikiDataID();
-            db.getSimilarInterest(interestID, onDBResultListener);
+            db.getSimilarInterest(interestID, similarUserInterestResultListener);
         }
     }
 
@@ -185,10 +215,21 @@ public abstract class InstanceGenerator {
         //set -> list so we can shuffle
         final List<WikiDataEntity> userInterestList = new ArrayList<>(userInterests);
         Collections.shuffle(userInterestList);
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBEntityPropertyDataResultListener entityPropertyDataResultListener =
+                new DBEntityPropertyDataResultListener() {
+            @Override
+            public void onRandomEntityPropertyDataQueried(List<EntityPropertyData> data){
+
+            }
+
+            @Override
+            public void onAllEntityPropertyDataAdded(){}
+
+            @Override
+            public void onEntityPropertyDataAdded(EntityPropertyData data){}
+
             @Override
             public void onEntityPropertyDataSearched(List<EntityPropertyData> entityPropertyDataFound, List<WikiDataEntity> userInterestsSearched) {
-                System.out.println("size" + entityPropertyDataFound.size());
                 for (EntityPropertyData data : entityPropertyDataFound) {
                     lessonInstanceData.addEntityPropertyData(data);
                     uniqueEntitiesLeft --;
@@ -211,15 +252,22 @@ public abstract class InstanceGenerator {
                     searchWikiData(copy);
                 }
             }
+        };
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
+            public void onNoConnection() {
+                lessonListener.onNoConnection();
+            }
 
             @Override
-            public void onNoConnection(){
-                lessonListener.onNoConnection();
+            public void onSlowConnection() {
+
             }
         };
 
-        db.searchEntityPropertyData(networkConnectionChecker, lessonKey, userInterestList, uniqueEntitiesLeft,
-                onDBResultListener);
+        db.searchEntityPropertyData(lessonKey, userInterestList, uniqueEntitiesLeft,
+                entityPropertyDataResultListener, connectionResultListener, networkConnectionChecker);
     }
 
     //検索するのは特定のentityひとつに対するクエリー
@@ -266,7 +314,6 @@ public abstract class InstanceGenerator {
             public void onFetchDOM(Document result) {
                 DOMsFetched.incrementAndGet();
                 if (!onStoppedCalled.get()) {
-                    System.out.println("fetched DOM");
                     processResultsIntoEntityPropertyData(result);
                 }
             }
@@ -297,7 +344,7 @@ public abstract class InstanceGenerator {
     //we may create more data than the user will be using for this instance,
     //but we still save all so all possible data for one entity are created.
     private void saveNewEntityPropertyData(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBEntityPropertyDataResultListener entityPropertyDataResultListener = new DBEntityPropertyDataResultListener() {
             @Override
             public void onEntityPropertyDataAdded(EntityPropertyData data) {
                 //only add to the user's current set of questions if
@@ -319,14 +366,21 @@ public abstract class InstanceGenerator {
                 }
             }
 
-            //saving new questions in offline state already handled by FireBase
-            // (FireBase just queues all write operations for the next time
-            // the user is connected).
-            //no need to notify if the user is not connected because
-            // we can handle it in the next methods
-        };
+            @Override
+            public void onEntityPropertyDataSearched(List<EntityPropertyData> data, List<WikiDataEntity> wikiDataEntities){
 
-        db.addEntityPropertyData(lessonKey, newEntityPropertyData, onDBResultListener);
+            }
+
+            @Override
+            public void onRandomEntityPropertyDataQueried(List<EntityPropertyData> data){}
+
+        };
+        //saving new questions in offline state already handled by FireBase
+        // (FireBase just queues all write operations for the next time
+        // the user is connected).
+        //no need to notify if the user is not connected because
+        // we can handle it in the next methods
+        db.addEntityPropertyData(newEntityPropertyData, lessonKey, entityPropertyDataResultListener);
 
     }
 
@@ -334,7 +388,22 @@ public abstract class InstanceGenerator {
     //first, we check for any data in the db non-related to the user.
     //if that doesn't work, then repeat the user's existing data
     private void fillRemainingEntityPropertyData(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBEntityPropertyDataResultListener entityPropertyDataResultListener = new DBEntityPropertyDataResultListener() {
+            @Override
+            public void onEntityPropertyDataSearched(List<EntityPropertyData> found, List<WikiDataEntity> searched) {
+
+            }
+
+            @Override
+            public void onEntityPropertyDataAdded(EntityPropertyData added) {
+
+            }
+
+            @Override
+            public void onAllEntityPropertyDataAdded() {
+
+            }
+
             @Override
             public void onRandomEntityPropertyDataQueried(List<EntityPropertyData> result) {
                 for (EntityPropertyData data : result){
@@ -347,10 +416,17 @@ public abstract class InstanceGenerator {
                 //now we are done
                 saveInstance();
             }
+        };
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
+            public void onNoConnection() {
+                lessonListener.onNoConnection();
+            }
 
             @Override
-            public void onNoConnection(){
-                lessonListener.onNoConnection();
+            public void onSlowConnection() {
+
             }
         };
         List<EntityPropertyData> entityPropertyDataToAvoid = new ArrayList<>(
@@ -360,8 +436,9 @@ public abstract class InstanceGenerator {
         //since we already saved them in the database, we need to
         //add these so we can avoid them
         entityPropertyDataToAvoid.addAll(lessonInstanceData.getEntityPropertyData());
-        db.getRandomEntityPropertyData(networkConnectionChecker, lessonKey, entityPropertyDataToAvoid,
-                uniqueEntitiesLeft, onDBResultListener);
+        db.getRandomEntityPropertyData(lessonKey, entityPropertyDataToAvoid,
+                uniqueEntitiesLeft, entityPropertyDataResultListener, connectionResultListener,
+                networkConnectionChecker);
     }
 
     private void saveInstance(){
@@ -374,7 +451,7 @@ public abstract class InstanceGenerator {
             return;
         }
 
-        OnDBResultListener onLessonInstanceAddedResultListener = new OnDBResultListener() {
+        DBLessonInstanceResultListener onLessonInstanceAddedResultListener = new DBLessonInstanceResultListener() {
             @Override
             public void onLessonInstanceAdded() {
                 //the lesson instance data adds
@@ -382,16 +459,28 @@ public abstract class InstanceGenerator {
             }
 
             @Override
-            public void onNoConnection(){
+            public void onLessonInstancesQueried(List<LessonInstanceData> data){}
+
+        };
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
+            public void onNoConnection() {
                 //this will still queue the lesson instance to be updated (FireBase).
                 //so when the user regains connection,
                 // the new lesson instance show up
                 lessonListener.onNoConnection();
             }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
         };
-        db.addLessonInstance(networkConnectionChecker, lessonInstanceData,
-                lessonInstanceVocabularyWordIDs,
-                onLessonInstanceAddedResultListener);
+        db.addLessonInstance(lessonInstanceData,
+                onLessonInstanceAddedResultListener,
+                connectionResultListener,
+                networkConnectionChecker);
     }
 
     //will we ever have multiple entities per query?

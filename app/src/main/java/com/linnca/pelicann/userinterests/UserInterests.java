@@ -32,9 +32,10 @@ import com.linnca.pelicann.mainactivity.ToolbarState;
 
 import java.util.List;
 
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBUserInterestListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.userinterests.WikiDataEntity;
 
 public class UserInterests extends Fragment {
@@ -123,7 +124,7 @@ public class UserInterests extends Fragment {
     }
 
     private void setAdapter(){
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBUserInterestListener userInterestListener = new DBUserInterestListener() {
             @Override
             public void onUserInterestsQueried(List<WikiDataEntity> userInterests) {
                 if (userInterestListAdapter == null) {
@@ -143,7 +144,15 @@ public class UserInterests extends Fragment {
             }
 
             @Override
-            public void onNoConnection(){
+            public void onUserInterestsAdded(){}
+
+            @Override
+            public void onUserInterestsRemoved(){}
+        };
+
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
+            public void onNoConnection() {
                 if (userInterestListAdapter == null) {
                     userInterestListAdapter = new UserInterestAdapter(
                             getUserInterestAdapterListener()
@@ -156,11 +165,17 @@ public class UserInterests extends Fragment {
                 }
                 //don't do anything if we have a list already populated
             }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
         };
 
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
-        db.getUserInterests(networkConnectionChecker, true, onDBResultListener);
+        db.getUserInterests(true, userInterestListener,
+                connectionResultListener, networkConnectionChecker);
     }
 
 
@@ -244,7 +259,7 @@ public class UserInterests extends Fragment {
                     @Override
                     public void onClick(View view) {
                         //undo
-                        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+                        DBUserInterestListener userInterestListener = new DBUserInterestListener() {
                             @Override
                             public void onUserInterestsAdded() {
                                 if (undoOnTouchListener != null) {
@@ -254,11 +269,27 @@ public class UserInterests extends Fragment {
                             }
 
                             @Override
-                            public void onNoConnection(){}
+                            public void onUserInterestsQueried(List<WikiDataEntity> data){}
+
+                            @Override
+                            public void onUserInterestsRemoved(){}
+                        };
+
+                        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+                            @Override
+                            public void onNoConnection() {
+
+                            }
+
+                            @Override
+                            public void onSlowConnection() {
+
+                            }
                         };
                         NetworkConnectionChecker networkConnectionChecker = new
                                 AndroidNetworkConnectionChecker(getContext());
-                        db.addUserInterests(networkConnectionChecker, dataToRecover, onDBResultListener);
+                        db.addUserInterests(dataToRecover, userInterestListener,
+                                connectionResultListener, networkConnectionChecker);
                     }
                 }
         );
@@ -291,14 +322,19 @@ public class UserInterests extends Fragment {
                     case R.id.user_interest_item_menu_delete:
                         final List<WikiDataEntity> toRemove =
                                 userInterestListAdapter.getSelectedItems();
-                        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+                        DBUserInterestListener userInterestListener = new DBUserInterestListener() {
                             @Override
                             public void onUserInterestsRemoved() {
                                 showUndoSnackBar(toRemove);
                                 mode.finish();
                             }
+                            @Override
+                            public void onUserInterestsAdded(){}
+
+                            @Override
+                            public void onUserInterestsQueried(List<WikiDataEntity> data){}
                         };
-                        db.removeUserInterests(toRemove, onDBResultListener);
+                        db.removeUserInterests(toRemove, userInterestListener);
                         return true;
 
                     default:

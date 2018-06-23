@@ -30,6 +30,8 @@ public abstract class Database implements Serializable{
     }
     public abstract void cleanupDB();
 
+    //since the NetworkConnectionChecker is abstract,
+    // no need to make the whole method abstract
     private void cleanupNetworkConnections(){
         for (NetworkConnectionChecker connection : networkConnections){
             connection.stop();
@@ -37,41 +39,77 @@ public abstract class Database implements Serializable{
         networkConnections.clear();
     }
 
-    //using 'search' to distinguish from getting questions for answering
-    public abstract void searchEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests,
+    //ENTITY PROPERTY DATA
+    //using 'search' to distinguish from getting questions for answering.
+    public abstract void searchEntityPropertyData(String lessonKey, List<WikiDataEntity> userInterests,
                                                   int toPopulate,
-                                                  OnDBResultListener onDBResultListener);
-    public abstract void addEntityPropertyData(String lessonKey, List<EntityPropertyData> data, OnDBResultListener onDBResultListener);
-    public abstract void getRandomEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<EntityPropertyData> toAvoid, int toPopulate, OnDBResultListener onDBResultListener);
+                                                  DBEntityPropertyDataResultListener entityPropertyDataResultListener,
+                                                  DBConnectionResultListener connectionResultListener,
+                                                  NetworkConnectionChecker networkConnectionChecker);
+    public abstract void addEntityPropertyData(List<EntityPropertyData> data, String lessonKey, DBEntityPropertyDataResultListener entityPropertyDataResultListener);
+    public abstract void getRandomEntityPropertyData(String lessonKey, List<EntityPropertyData> toAvoid, int toPopulate,
+                                                     DBEntityPropertyDataResultListener entityPropertyDataResultListener,
+                                                     DBConnectionResultListener connectionResultListener,
+                                                     NetworkConnectionChecker networkConnectionChecker);
 
-    public abstract void addLessonInstance(NetworkConnectionChecker networkConnectionChecker, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs,
-                                           OnDBResultListener onDBResultListener);
-    public abstract void getLessonInstances(NetworkConnectionChecker networkConnectionChecker, String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener);
-    public abstract void getMostRecentLessonInstance(NetworkConnectionChecker networkConnectionChecker, String lessonKey,
-                                                     OnDBResultListener onDBResultListener);
+    //LESSON INSTANCE
+    //the lesson instances are all of one user
+    public abstract void addLessonInstance(LessonInstanceData lessonInstanceData,
+                                           DBLessonInstanceResultListener lessonInstanceResultListener,
+                                           DBConnectionResultListener connectionResultListener,
+                                           NetworkConnectionChecker networkConnectionChecker);
+    public abstract void getLessonInstances(String lessonKey, boolean persistentConnection,
+                                            DBLessonInstanceResultListener lessonInstanceResultListener,
+                                            DBConnectionResultListener connectionResultListener,
+                                            NetworkConnectionChecker networkConnectionChecker);
+    public abstract void getMostRecentLessonInstance(String lessonKey,
+                                                     DBLessonInstanceResultListener lessonInstanceResultListener,
+                                                     DBConnectionResultListener connectionResultListener,
+                                                     NetworkConnectionChecker networkConnectionChecker);
 
-    public abstract void getUserInterests(NetworkConnectionChecker networkConnectionChecker, boolean persistentConnection, OnDBResultListener onDBResultListener);
-    public abstract void removeUserInterests(List<WikiDataEntity> userInterests, OnDBResultListener onDBResultListener);
+    //USER INTEREST
+    public abstract void getUserInterests(boolean persistentConnection,
+                                          DBUserInterestListener userInterestListener,
+                                          DBConnectionResultListener connectionResultListener,
+                                          NetworkConnectionChecker networkConnectionChecker);
+    public abstract void removeUserInterests(List<WikiDataEntity> userInterests,
+                                             DBUserInterestListener userInterestListener);
     //note that this is just to update.
     //when adding a new interest, we most likely have to fetch pronunciation/classification info
-    public abstract void addUserInterests(NetworkConnectionChecker networkConnectionChecker, List<WikiDataEntity> userInterest, OnDBResultListener onDBResultListener);
+    public abstract void addUserInterests(List<WikiDataEntity> userInterests,
+                                          DBUserInterestListener userInterestListener,
+                                          DBConnectionResultListener connectionResultListener,
+                                          NetworkConnectionChecker networkConnectionChecker);
+    public void addUserInterests(WikiDataEntity userInterest, DBUserInterestListener userInterestListener,
+                                 DBConnectionResultListener connectionResultListener,
+                                 NetworkConnectionChecker networkConnectionChecker){
+        List<WikiDataEntity> userInterests = new ArrayList<>(1);
+        userInterests.add(userInterest);
+        addUserInterests(userInterests, userInterestListener, connectionResultListener,
+                networkConnectionChecker);
+    }
     //fetching pronunciation info will be handled with this.
     //add user interest -> onResultListener -> add pronunciation concurrently
     public abstract void setPronunciation(String userInterestID, String pronunciation);
-
     public abstract void addSimilarInterest(String fromID, WikiDataEntity toEntity);
-    public abstract void getSimilarInterest(String id, OnDBResultListener onDBResultListener);
+    public abstract void getSimilarInterest(String id,
+                                            DBSimilarUserInterestResultListener similarUserInterestResultListener);
 
-    public abstract void addInstanceRecord(InstanceAttemptRecord record, OnDBResultListener onDBResultListener);
+    //INSTANCE ATTEMPT RECORD
+    public abstract void addInstanceAttemptRecord(InstanceAttemptRecord record,
+                                                  DBInstanceRecordResultListener instanceRecordResultListener);
 
+    //APP USAGE
     public abstract void addAppUsageLog(AppUsageLog log);
-    public abstract void getFirstAppUsageDate(OnDBResultListener onDBResultListener);
-    public abstract void getAppUsageForMonths(NetworkConnectionChecker networkConnectionChecker, String startMonthKey, String endMonthKey, OnDBResultListener onDBResultListener);
-
-    public abstract void addDailyLesson(String date, OnDBResultListener onDBResultListener);
+    public abstract void getFirstAppUsageDate(DBAppUsageResultListener appUsageResultListener);
+    public abstract void getAppUsageForMonths(int startMonth, int startYear, int endMonth, int endYear,
+                                              DBAppUsageResultListener appUsageResultListener,
+                                              DBConnectionResultListener connectionResultListener,
+                                              NetworkConnectionChecker networkConnectionChecker);
+    public abstract void incrementDailyLesson(String date, DBDailyLessonResultListener dailyLessonResultListener);
 
     //for admin use only
     public abstract void addSport(String sportWikiDataID, String verb, String object);
-    public abstract void getSports(Collection<String> sportWikiDataIDs, OnDBResultListener onDBResultListener);
+    public abstract void getSports(Collection<String> sportWikiDataIDs, DBSportResultListener sportResultListener);
 }
 

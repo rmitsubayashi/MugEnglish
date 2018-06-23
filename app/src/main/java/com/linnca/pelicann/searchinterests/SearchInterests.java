@@ -30,9 +30,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import pelicann.linnca.com.corefunctionality.connectors.WikiBaseEndpointConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataAPISearchConnector;
 import pelicann.linnca.com.corefunctionality.connectors.WikiDataSPARQLConnector;
+import pelicann.linnca.com.corefunctionality.db.DBConnectionResultListener;
+import pelicann.linnca.com.corefunctionality.db.DBUserInterestListener;
 import pelicann.linnca.com.corefunctionality.db.Database;
 import pelicann.linnca.com.corefunctionality.db.NetworkConnectionChecker;
-import pelicann.linnca.com.corefunctionality.db.OnDBResultListener;
 import pelicann.linnca.com.corefunctionality.searchinterests.SearchHelper;
 import pelicann.linnca.com.corefunctionality.searchinterests.SimilarUserInterestGetter;
 import pelicann.linnca.com.corefunctionality.userinterests.AddUserInterestHelper;
@@ -138,7 +139,7 @@ public class SearchInterests extends Fragment {
     private void addSearchFunctionality(){
         //we want to allow searching after we grab the user's current interests
         //because we need to be able to filter out user interests the user already has
-        OnDBResultListener onDBResultListener = new OnDBResultListener() {
+        DBUserInterestListener userInterestListener = new DBUserInterestListener() {
             @Override
             public void onUserInterestsQueried(List<WikiDataEntity> queriedUserInterests) {
                 userInterests.clear();
@@ -192,8 +193,29 @@ public class SearchInterests extends Fragment {
                 });
 
             }
+
+            @Override
+            public void onUserInterestsAdded() {
+
+            }
+
+            @Override
+            public void onUserInterestsRemoved() {
+
+            }
         };
 
+        DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+            @Override
+            public void onNoConnection() {
+
+            }
+
+            @Override
+            public void onSlowConnection() {
+
+            }
+        };
         NetworkConnectionChecker networkConnectionChecker = new
                 AndroidNetworkConnectionChecker(getContext());
         //we don't want to keep listening because
@@ -202,14 +224,20 @@ public class SearchInterests extends Fragment {
         // but if we kept on listening, it would
         // attach a new adapter instead
         // (persistentConnection=false)
-        db.getUserInterests(networkConnectionChecker, false, onDBResultListener);
+        db.getUserInterests(false, userInterestListener,
+                connectionResultListener, networkConnectionChecker);
     }
 
     private SearchResultsAdapter.SearchResultsAdapterListener getSearchResultsAdapterListener(){
         return new SearchResultsAdapter.SearchResultsAdapterListener() {
             @Override
             public void onAddInterest(final WikiDataEntity data) {
-                OnDBResultListener onDBResultListener = new OnDBResultListener() {
+                DBUserInterestListener userInterestListener = new DBUserInterestListener() {
+                    @Override
+                    public void onUserInterestsQueried(List<WikiDataEntity> userInterests) {
+
+                    }
+
                     @Override
                     public void onUserInterestsAdded() {
                         //in the background thread, find the item's
@@ -238,21 +266,33 @@ public class SearchInterests extends Fragment {
                     }
 
                     @Override
-                    public void onNoConnection(){
-                        //clear the search text
-                        searchView.setQuery("", false);
-                        searchView.clearFocus();
+                    public void onUserInterestsRemoved() {
 
-                        adapter.setOfflineAfterAdding(data);
                     }
                 };
 
                 //we are only adding one, but the method can handle more than one
                 List<WikiDataEntity> dataList = new ArrayList<>(1);
                 dataList.add(data);
+                DBConnectionResultListener connectionResultListener = new DBConnectionResultListener() {
+                    @Override
+                    public void onNoConnection() {
+                        //clear the search text
+                        searchView.setQuery("", false);
+                        searchView.clearFocus();
+
+                        adapter.setOfflineAfterAdding(data);
+                    }
+
+                    @Override
+                    public void onSlowConnection() {
+
+                    }
+                };
                 NetworkConnectionChecker networkConnectionChecker = new
                         AndroidNetworkConnectionChecker(getContext());
-                db.addUserInterests(networkConnectionChecker, dataList, onDBResultListener);
+                db.addUserInterests(dataList, userInterestListener,
+                        connectionResultListener, networkConnectionChecker);
             }
         };
     }

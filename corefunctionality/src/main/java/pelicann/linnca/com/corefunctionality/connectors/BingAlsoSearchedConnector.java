@@ -62,6 +62,8 @@ public class BingAlsoSearchedConnector implements EndpointConnectorReturnsXML {
             String ulStart = resultString.substring(ulStartIndex, resultString.length());
             int ulEndIndex = ulStart.indexOf("</ul>");
             String ulString = ulStart.substring(0, ulEndIndex+5);
+            //we are getting the <ul></ul> and turning it into a document
+            // for other methods to parse
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(new InputSource(new StringReader(ulString)));

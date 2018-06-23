@@ -8,7 +8,6 @@ public class FirebaseDBHeaders {
     public static final String SIMILAR_USER_INTERESTS = "similarUserInterests";
     public static final String LESSON_INSTANCES = "lessonInstances";
     public static final String LESSON_INSTANCE_TIMESTAMP = "timeStamp";
-    public static final String LESSON_INSTANCE_VOCABULARY = "lessonInstanceVocabulary";
     public static final String ENTITY_PROPERTY_DATA = "entityPropertyData";
     public static final String ENTITY_PROPERTY_DATA_WIKIDATA_ID = "wikidataID";
     public static final String INSTANCE_RECORDS = "instanceRecords";
@@ -17,10 +16,6 @@ public class FirebaseDBHeaders {
     public static final String UTILS_SPORT_VERB_MAPPING_OBJECT = "object";
     public static final String UTILS_SPORT_VERB_MAPPING_VERB = "verb";
     public static final String APP_USAGE = "appUsage";
-    public static final String VOCABULARY = "vocabulary";
-    public static final String REPORT_CARD = "reportCard";
-    public static final String REPORT_CARD_CORRECT = "correct";
-    public static final String REPORT_CARD_TOTAL = "total";
     public static final String DAILY_LESSON_CT = "dailyLessonCount";
 
     private FirebaseDBHeaders(){}

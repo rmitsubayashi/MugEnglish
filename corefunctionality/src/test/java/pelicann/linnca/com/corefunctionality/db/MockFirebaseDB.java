@@ -38,12 +38,14 @@ public class MockFirebaseDB extends Database {
     public void cleanupDB(){}
 
     @Override
-    public void searchEntityPropertyData(NetworkConnectionChecker networkConnectionChecker, String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
-                                OnDBResultListener onDBResultListener) {
+    public void searchEntityPropertyData(String lessonKey, List<WikiDataEntity> userInterests, int toPopulate,
+                                DBEntityPropertyDataResultListener entityPropertyDataResultListener,
+                                         DBConnectionResultListener connectionResultListener,
+                                         NetworkConnectionChecker networkConnectionChecker) {
         List<EntityPropertyData> entitiesToReturn = new ArrayList<>(toPopulate);
         List<WikiDataEntity> userInterestsChecked = new ArrayList<>(userInterests.size());
         if (toPopulate == 0){
-            onDBResultListener.onEntityPropertyDataSearched(entitiesToReturn, userInterestsChecked);
+            entityPropertyDataResultListener.onEntityPropertyDataSearched(entitiesToReturn, userInterestsChecked);
         }
         for (WikiDataEntity userInterest : userInterests){
             List<EntityPropertyData> set = entityPropertyData.get(userInterest.getWikiDataID());
@@ -59,12 +61,13 @@ public class MockFirebaseDB extends Database {
             }
         }
 
-        onDBResultListener.onEntityPropertyDataSearched(entitiesToReturn, userInterestsChecked);
+        entityPropertyDataResultListener.onEntityPropertyDataSearched(entitiesToReturn, userInterestsChecked);
 
     }
 
     @Override
-    public void addEntityPropertyData(String lessonKey, List<EntityPropertyData> entities, OnDBResultListener onDBResultListener) {
+    public void addEntityPropertyData(List<EntityPropertyData> entities, String lessonKey,
+                                      DBEntityPropertyDataResultListener entityPropertyDataResultListener) {
         for (EntityPropertyData dataToAdd : entities){
             List<EntityPropertyData> addList = entityPropertyData.get(dataToAdd.getWikidataID());
             if (addList == null){
@@ -72,16 +75,18 @@ public class MockFirebaseDB extends Database {
                 entityPropertyData.put(dataToAdd.getWikidataID(), addList);
             }
             addList.add(dataToAdd);
-            onDBResultListener.onEntityPropertyDataAdded(dataToAdd);
+            entityPropertyDataResultListener.onEntityPropertyDataAdded(dataToAdd);
         }
-        onDBResultListener.onAllEntityPropertyDataAdded();
+        entityPropertyDataResultListener.onAllEntityPropertyDataAdded();
     }
 
     @Override
-    public void getRandomEntityPropertyData(NetworkConnectionChecker networkConnectionChecker,
-                                            String lessonKey, final List<EntityPropertyData> toAvoid,
+    public void getRandomEntityPropertyData(
+            String lessonKey, final List<EntityPropertyData> toAvoid,
                                            final int toPopulate,
-                                           final OnDBResultListener onDBResultListener){
+                                           final DBEntityPropertyDataResultListener entityPropertyDataResultListener,
+            DBConnectionResultListener connectionResultListener,
+            NetworkConnectionChecker networkConnectionChecker){
         List<EntityPropertyData> result = new ArrayList<>(toPopulate);
         for (Map.Entry<String, List<EntityPropertyData>> entry : entityPropertyData.entrySet()){
             List<EntityPropertyData> set = entry.getValue();
@@ -94,47 +99,61 @@ public class MockFirebaseDB extends Database {
                 break;
             }
         }
-        onDBResultListener.onRandomEntityPropertyDataQueried(result);
+        entityPropertyDataResultListener.onRandomEntityPropertyDataQueried(result);
     }
 
     private int incrementLessonInstance = 1;
     @Override
-    public void addLessonInstance(NetworkConnectionChecker networkConnectionChecker, LessonInstanceData lessonInstanceData, List<String> lessonInstanceVocabularyIDs, OnDBResultListener onDBResultListener) {
+    public void addLessonInstance(LessonInstanceData lessonInstanceData,
+                                  DBLessonInstanceResultListener lessonInstanceResultListener,
+                                  DBConnectionResultListener connectionResultListener,
+                                  NetworkConnectionChecker networkConnectionChecker) {
         String id = "testID" + incrementLessonInstance++;
         lessonInstanceData.setId(id);
         lessonInstances.add(lessonInstanceData);
-        onDBResultListener.onLessonInstanceAdded();
+        lessonInstanceResultListener.onLessonInstanceAdded();
     }
 
     @Override
-    public void getLessonInstances(NetworkConnectionChecker networkConnectionChecker, String lessonKey, boolean persistentConnection, OnDBResultListener onDBResultListener) {
+    public void getLessonInstances(String lessonKey, boolean persistentConnection,
+                                   DBLessonInstanceResultListener lessonInstanceResultListener,
+                                   DBConnectionResultListener connectionResultListener,
+                                   NetworkConnectionChecker networkConnectionChecker) {
         // we are assuming a single lesson so we don't need to filter by lesson key
         List<LessonInstanceData> instancesList = new ArrayList<>(lessonInstances);
-        onDBResultListener.onLessonInstancesQueried(instancesList);
+        lessonInstanceResultListener.onLessonInstancesQueried(instancesList);
     }
 
     @Override
-    public void getMostRecentLessonInstance(NetworkConnectionChecker checker, String lessonKey,
-                                                OnDBResultListener onDBResultListener){
+    public void getMostRecentLessonInstance(String lessonKey,
+                                            DBLessonInstanceResultListener lessonInstanceResultListener,
+                                            DBConnectionResultListener connectionResultListener,
+                                            NetworkConnectionChecker checker){
         //first one = most recent
-        onDBResultListener.onLessonInstancesQueried(lessonInstances.subList(0,1));
+        lessonInstanceResultListener.onLessonInstancesQueried(lessonInstances.subList(0,1));
     }
 
     @Override
-    public void getUserInterests(NetworkConnectionChecker networkConnectionChecker, boolean persistentConnection, OnDBResultListener onDBResultListener) {
-        onDBResultListener.onUserInterestsQueried(userInterests);
+    public void getUserInterests(boolean persistentConnection, DBUserInterestListener userInterestListener,
+                                 DBConnectionResultListener connectionResultListener,
+                                 NetworkConnectionChecker networkConnectionChecker) {
+        userInterestListener.onUserInterestsQueried(userInterests);
     }
 
     @Override
-    public void removeUserInterests(List<WikiDataEntity> userInterests, OnDBResultListener onDBResultListener) {
+    public void removeUserInterests(List<WikiDataEntity> userInterests,
+                                    DBUserInterestListener userInterestListener) {
         this.userInterests.removeAll(userInterests);
-        onDBResultListener.onUserInterestsRemoved();
+        userInterestListener.onUserInterestsRemoved();
     }
 
     @Override
-    public void addUserInterests(NetworkConnectionChecker networkConnectionChecker, List<WikiDataEntity> userInterest, OnDBResultListener onDBResultListener) {
+    public void addUserInterests(List<WikiDataEntity> userInterest,
+                                 DBUserInterestListener userInterestListener,
+                                 DBConnectionResultListener connectionResultListener,
+                                 NetworkConnectionChecker networkConnectionChecker) {
         this.userInterests.addAll(userInterest);
-        onDBResultListener.onUserInterestsAdded();
+        userInterestListener.onUserInterestsAdded();
     }
 
     @Override
@@ -148,12 +167,13 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getSimilarInterest(String  wikidataID, OnDBResultListener onDBResultListener){
-        onDBResultListener.onSimilarUserInterestsQueried(new ArrayList<WikiDataEntity>());
+    public void getSimilarInterest(String  wikidataID, DBSimilarUserInterestResultListener similarUserInterestResultListener){
+        similarUserInterestResultListener.onSimilarUserInterestsQueried(new ArrayList<WikiDataEntity>());
     }
 
     @Override
-    public void addInstanceRecord(InstanceAttemptRecord record, OnDBResultListener onDBResultListener) {
+    public void addInstanceAttemptRecord(InstanceAttemptRecord record,
+                                         DBInstanceRecordResultListener instanceRecordResultListener) {
 
     }
 
@@ -163,17 +183,20 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getFirstAppUsageDate(OnDBResultListener onDBResultListener) {
+    public void getFirstAppUsageDate(DBAppUsageResultListener appUsageResultListener) {
 
     }
 
     @Override
-    public void getAppUsageForMonths(NetworkConnectionChecker networkConnectionChecker, String startMonthKey, String endMonthKey, OnDBResultListener onDBResultListener) {
+    public void getAppUsageForMonths(int startMonth, int startYear, int endMonth, int endYear,
+                                     DBAppUsageResultListener appUsageResultListener,
+                                     DBConnectionResultListener connectionResultListener,
+                                     NetworkConnectionChecker networkConnectionChecker) {
 
     }
 
     @Override
-    public void addDailyLesson(String date, OnDBResultListener onDBResultListener){}
+    public void incrementDailyLesson(String date, DBDailyLessonResultListener dbDailyLessonResultListener){}
 
     @Override
     public void addSport(String sportWikiDataID, String verb, String object) {
@@ -181,7 +204,7 @@ public class MockFirebaseDB extends Database {
     }
 
     @Override
-    public void getSports(Collection<String> sportWikiDataIDs, OnDBResultListener onDBResultListener) {
+    public void getSports(Collection<String> sportWikiDataIDs, DBSportResultListener sportResultListener) {
 
     }
 
