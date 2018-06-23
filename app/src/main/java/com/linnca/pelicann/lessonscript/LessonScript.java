@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.linnca.pelicann.R;
 import com.linnca.pelicann.db.AndroidLocalStorageManager;
@@ -123,6 +124,12 @@ public class LessonScript extends Fragment {
             @Override
             public void onLessonScriptLoaded(Script lessonScript, LessonInstanceData data) {
                 showScript(lessonScript, data);
+            }
+
+            @Override
+            public void onLessonScriptLoadFailed(){
+                hideLoading();
+                Toast.makeText(getContext(), getString(R.string.lesson_script_load_failed), Toast.LENGTH_SHORT).show();
             }
 
             @Override

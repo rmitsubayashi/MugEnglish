@@ -86,6 +86,7 @@
     <string name="lesson_script_to_prev">＜</string>
     <string name="lesson_script_to_next">＞</string>
     <string name="lesson_script_to_questions">問題へ</string>
+    <string name="lesson_script_load_failed">レッスンを読み込めませんでした</string>
 
     <!--verb question start page-->
     <string name="verb_question_title">重要動詞を覚えよう！</string>

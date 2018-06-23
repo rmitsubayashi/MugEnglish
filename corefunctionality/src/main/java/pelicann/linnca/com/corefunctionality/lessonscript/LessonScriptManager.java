@@ -26,6 +26,7 @@ public class LessonScriptManager {
 
     public interface LessonScriptManagerListener {
         void onLessonScriptLoaded(Script lessonScript, LessonInstanceData lessonInstanceData);
+        void onLessonScriptLoadFailed();
         void onNoConnection();
     }
 
@@ -104,6 +105,11 @@ public class LessonScriptManager {
                     public void onLessonCreated(LessonInstanceData lessonInstanceData) {
                         Script script = createScript(lessonInstanceData.getEntityPropertyData());
                         listener.onLessonScriptLoaded(script, lessonInstanceData);
+                    }
+
+                    @Override
+                    public void onLessonCreationFailed(){
+                        listener.onLessonScriptLoadFailed();
                     }
 
                     @Override

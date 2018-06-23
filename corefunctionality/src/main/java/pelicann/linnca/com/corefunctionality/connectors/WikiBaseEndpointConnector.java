@@ -73,7 +73,10 @@ public abstract class WikiBaseEndpointConnector implements EndpointConnectorRetu
 						document.getDocumentElement().normalize();
 						if (!listener.shouldStop()) {
 							listener.onFetchDOM(document);
-						} else {
+						}
+						//onFetchDOM might change the status
+						if (listener.shouldStop())
+						{
 							//doesn't stop threads already running?
 							executor.shutdownNow();
 							//just in case a non-killed thread tries

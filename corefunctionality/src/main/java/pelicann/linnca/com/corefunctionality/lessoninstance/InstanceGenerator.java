@@ -54,6 +54,7 @@ public abstract class InstanceGenerator {
 
     public interface LessonInstanceGeneratorListener {
         void onLessonCreated(LessonInstanceData lessonInstanceData);
+        void onLessonCreationFailed();
         void onNoConnection();
     }
 
@@ -200,9 +201,6 @@ public abstract class InstanceGenerator {
     // by matching the user's interests. if the user has not had that data yet,
     // add it to the list of entity data.
     private void getEntityDataFromDatabase(){
-        for (WikiDataEntity entity : userInterests){
-            System.out.println(entity.getLabel());
-        }
         if (userInterests.size() == 0){
             //skip trying to fetch entity data from db/wikiData.
             fillRemainingEntityPropertyData();
@@ -275,7 +273,6 @@ public abstract class InstanceGenerator {
     protected abstract String getSPARQLQuery();
     //一つ一つのクエリーを送って、まとめる
     private void searchWikiData(Set<WikiDataEntity> interests){
-        System.out.println("searching");
         //shuffle so we don't get the same interests over and over
         ArrayList<WikiDataEntity> interestList = new ArrayList<>(interests);
         Collections.shuffle(interestList);
@@ -357,6 +354,7 @@ public abstract class InstanceGenerator {
 
             @Override
             public void onAllEntityPropertyDataAdded() {
+                System.out.println("test");
                 if (uniqueEntitiesLeft <= 0) {
                     //we filled enough questions
                     saveInstance();
@@ -385,8 +383,7 @@ public abstract class InstanceGenerator {
     }
 
     //this is for if we can't populate the lesson instance with just the user interests.
-    //first, we check for any data in the db non-related to the user.
-    //if that doesn't work, then repeat the user's existing data
+    //we check for any data in the db non-related to the user.
     private void fillRemainingEntityPropertyData(){
         DBEntityPropertyDataResultListener entityPropertyDataResultListener = new DBEntityPropertyDataResultListener() {
             @Override
@@ -413,8 +410,14 @@ public abstract class InstanceGenerator {
                         break;
                     }
                 }
-                //now we are done
-                saveInstance();
+                if (uniqueEntitiesLeft == 0) {
+                    //now we are done
+                    saveInstance();
+                } else {
+                    //in case we forgot to prepopulate the DB
+                    // with backup lessons
+                    lessonListener.onLessonCreationFailed();
+                }
             }
         };
 
@@ -473,9 +476,7 @@ public abstract class InstanceGenerator {
             }
 
             @Override
-            public void onSlowConnection() {
-
-            }
+            public void onSlowConnection() {}
         };
         db.addLessonInstance(lessonInstanceData,
                 onLessonInstanceAddedResultListener,
